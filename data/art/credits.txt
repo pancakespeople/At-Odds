@@ -1,0 +1,3 @@
+SpaceShipNormal - https://opengameart.org/content/simple-spaceship-0
+explosion1 - https://opengameart.org/content/32x32-explosion
+bgspeedship - MillionthVector http://millionthvector.blogspot.com/p/free-sprites.html
