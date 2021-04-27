@@ -6,3 +6,12 @@ Space 4x/rts game
 ![game 2](img/game2.png)
 
 ![game 4](img/game4.png)
+
+# Building
+
+You should use a package manager or something to install the following dependencies:
+
+	sfml:x64 2.5.1
+	tgui:x64 0.8.8
+
+Then, use premake to generate project files
