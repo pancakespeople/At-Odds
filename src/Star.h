@@ -6,6 +6,7 @@
 #include "Projectile.h"
 #include "Animation.h"
 #include "GameState.h"
+#include "Building.h"
 
 class Hyperlane;
 class Faction;
@@ -56,17 +57,17 @@ public:
 	sf::Vector2f getLocalViewCenter();
 
 	void addSpaceship(Spaceship* ship);
-
+	
 	void removeSpaceship(Spaceship* ship);
+	
+	std::vector<Spaceship*>& getSpaceships() { return m_localShips; }
 
 	std::vector<JumpPoint>& getJumpPoints() { return m_jumpPoints; }
 
 	void addProjectile(Projectile proj);
 
-	std::vector<Spaceship*>& getSpaceships() { return m_localShips; }
-
 	void addAnimation(Animation&& anim);
-
+	
 	void cleanUpAnimations();
 
 	void update();
@@ -85,6 +86,8 @@ public:
 
 	sf::Vector2f getRandomLocalPos(float min, float max);
 
+	void createBuilding(Building building) { m_buildings.push_back(building); }
+
 private:
 	void handleCollisions();
 
@@ -93,23 +96,19 @@ private:
 	friend void GameState::changeToWorldView();
 	
 	sf::CircleShape m_shape;
-
-	std::vector<Hyperlane*> m_hyperlanes;
-
-	std::vector<JumpPoint> m_jumpPoints;
-
 	sf::Sprite m_localViewSprite;
 
+	std::vector<Hyperlane*> m_hyperlanes;
+	std::vector<JumpPoint> m_jumpPoints;
 	std::vector<Spaceship*> m_localShips;
-
 	std::vector<Projectile> m_projectiles;
-
+	std::vector<Building> m_buildings;
+	
 	std::vector<Animation> m_localViewAnimations;
 
 	bool m_localViewActive = false;
+	bool m_multipleFactionsPresent = false;
 
 	int m_allegiance = -1;
-
-	bool m_multipleFactionsPresent = false;
 };
 

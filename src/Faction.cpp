@@ -5,6 +5,7 @@
 #include "Constellation.h"
 #include "Random.h"
 #include "Player.h"
+#include "Building.h"
 
 Faction::Faction(Constellation* constellation) {
 	m_constellation = constellation;
@@ -39,6 +40,7 @@ void Faction::spawnAtRandomStar() {
 	}
 	
 	createShip(Spaceship(Spaceship::SPACESHIP_TYPE::DESTROYER_1, Random::randVec(-10000, 10000), m_capitol, m_id, m_color));
+	m_capitol->createBuilding(Building(Building::BUILDING_TYPE::OUTPOST, m_capitol->getRandomLocalPos(-10000, 10000), m_id, m_color));
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }

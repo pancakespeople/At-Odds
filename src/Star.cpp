@@ -84,6 +84,9 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		for (Spaceship* s : m_localShips) {
 			s->draw(window, emitter);
 		}
+		for (Building& b : m_buildings) {
+			b.draw(window);
+		}
 		for (Projectile& p : m_projectiles) {
 			p.draw(window);
 		}
@@ -250,6 +253,10 @@ void Star::update() {
 				factions.push_back(s->getAllegiance());
 			}
 		}
+	}
+	
+	for (Building& b : m_buildings) {
+		b.update();
 	}
 
 	if (factions.size() > 1) {
