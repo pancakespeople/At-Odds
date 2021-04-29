@@ -86,6 +86,7 @@ int main()
             unitGUI.onEvent(event, window, state, constellation.getStars());
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
+            emitter.onEvent(event);
         }
 
         optionsMenu.updateGameSettings(window, background, gui, emitter);
@@ -113,7 +114,7 @@ int main()
             constellation.draw(window, starShader);
         }
         else if (state.getState() == GameState::State::LOCAL_VIEW) {
-            state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer());
+            state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
         }
         
         gui.draw();

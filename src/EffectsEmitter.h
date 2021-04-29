@@ -6,6 +6,8 @@ public:
 	EffectsEmitter(sf::Vector2i resolution);
 
 	void init(sf::Vector2i resolution);
+
+	void onEvent(const sf::Event& event);
 	
 	void drawJumpBubble(sf::RenderWindow& window, const sf::Vector2f& pos, float radius, float percent);
 
@@ -15,10 +17,20 @@ public:
 
 	void drawFogOfWar(sf::RenderWindow& window);
 
+	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time);
+
 private:
+	void initShaders(sf::Vector2i resolution);
+	
 	sf::CircleShape m_jumpBubble;
 	sf::RectangleShape m_line;
-	sf::Shader m_distanceShader;
 	sf::RectangleShape m_fogOfWar;
+	
+	sf::Shader m_distanceShader;
+	sf::Shader m_starLocalViewShader;
+
+	sf::RectangleShape m_starLocalView;
+
+	sf::Vector2i m_resolution;
 };
 

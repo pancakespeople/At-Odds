@@ -6,7 +6,7 @@ in vec4 color;
 uniform vec2 resolution;
 
 void main() {
-	vec2 pixel = gl_FragCoord.xy / vec2(1400, 800);
+	vec2 pixel = gl_FragCoord.xy / resolution;
 	float dist = distance(pixel, vertPos.xy);
 
 	// float coolTime = tan( (dist - time * 2500) / 1000);

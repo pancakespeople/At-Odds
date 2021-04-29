@@ -24,7 +24,7 @@ public:
 
 	void draw(sf::RenderWindow& window, sf::Shader& shader);
 
-	void drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player);
+	void drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time);
 
 	void setPos(sf::Vector2f pos);
 

@@ -64,7 +64,7 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
 	}
 }
 
-void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player) {
+void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time) {
 	bool drawHidden = true;
 
 	if (player.hasFogOfWar()) {
@@ -74,7 +74,8 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		}
 	}
 	
-	window.draw(m_localViewSprite);
+	//window.draw(m_localViewSprite);
+	emitter.drawLocalStar(window, m_localViewSprite, time);
 	for (JumpPoint& j : m_jumpPoints) {
 		j.draw(window, emitter);
 	}
