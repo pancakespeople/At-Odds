@@ -91,6 +91,8 @@ public:
 private:
 	void handleCollisions();
 
+	void init(const sf::Vector2f& pos);
+
 	friend void GameState::changeToLocalView(Star* star);
 
 	friend void GameState::changeToWorldView();
@@ -110,5 +112,7 @@ private:
 	bool m_multipleFactionsPresent = false;
 
 	int m_allegiance = -1;
+
+	float m_shaderRandomSeed = 1.0f;
 };
 

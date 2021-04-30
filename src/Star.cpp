@@ -11,17 +11,41 @@
 #include "Random.h"
 
 Star::Star(sf::Vector2f pos) {
-	m_shape.setRadius(50);
-	m_shape.setPosition(pos);
-	m_localViewSprite.setTexture(TextureCache::getTexture("data/art/star1.png"));
-	m_localViewSprite.setPosition(pos);
+	init(pos);
 }
 
 Star::Star() {
+	init(sf::Vector2f(0.0f, 0.0f));
+}
+
+void Star::init(const sf::Vector2f& pos) {
 	m_shape.setRadius(50);
-	m_shape.setPosition(sf::Vector2f(0.0f, 0.0f));
-	m_localViewSprite.setTexture(TextureCache::getTexture("data/art/star1.png"));
-	m_localViewSprite.setPosition(sf::Vector2f(0.0f, 0.0f));
+	m_shape.setPosition(pos);
+	//m_localViewSprite.setTexture(TextureCache::getTexture("data/art/star1.png"));
+	m_localViewSprite.setPosition(pos);
+	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
+
+	int starColorRand = Random::randInt(0, 8);
+	if (starColorRand <= 3) { // 0, 1, 2, 3
+		// Red star
+		m_localViewSprite.setColor(sf::Color::Red);
+	}
+	else if (starColorRand <= 6) { // 4, 5, 6
+		// Yellow star
+		m_localViewSprite.setColor(sf::Color::Yellow);
+
+	}
+	else if (starColorRand <= 8) { // 7, 8
+		if (Random::randBool()) {
+			// Blue star
+			m_localViewSprite.setColor(sf::Color(0, 255, 255));
+		}
+		else {
+			// White star
+			m_localViewSprite.setColor(sf::Color::White);
+			m_localViewSprite.setScale(sf::Vector2f(0.5f, 0.5f));
+		}
+	}
 }
 
 void Star::draw(sf::RenderWindow& window) {
@@ -75,7 +99,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 	}
 	
 	//window.draw(m_localViewSprite);
-	emitter.drawLocalStar(window, m_localViewSprite, time);
+	emitter.drawLocalStar(window, m_localViewSprite, time, m_shaderRandomSeed);
 	for (JumpPoint& j : m_jumpPoints) {
 		j.draw(window, emitter);
 	}

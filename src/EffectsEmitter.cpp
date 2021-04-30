@@ -73,11 +73,13 @@ void EffectsEmitter::drawFogOfWar(sf::RenderWindow& window) {
 	window.setView(oldView);
 }
 
-void EffectsEmitter::drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starSprite, float time) {
-	m_starLocalView.setFillColor(sf::Color::Red);
+void EffectsEmitter::drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starSprite, float time, float seed) {
+	m_starLocalView.setFillColor(starSprite.getColor());
 	m_starLocalView.setPosition(starSprite.getPosition());
+	m_starLocalView.setScale(starSprite.getScale());
 
 	m_starLocalViewShader.setUniform("time", time);
+	m_starLocalViewShader.setUniform("randSeed", seed);
 
 	window.draw(m_starLocalView, &m_starLocalViewShader);
 }

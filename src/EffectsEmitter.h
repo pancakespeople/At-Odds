@@ -17,7 +17,7 @@ public:
 
 	void drawFogOfWar(sf::RenderWindow& window);
 
-	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time);
+	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time, float seed);
 
 private:
 	void initShaders(sf::Vector2i resolution);
