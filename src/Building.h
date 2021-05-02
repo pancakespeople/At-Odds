@@ -1,21 +1,24 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Building {
+#include "Unit.h"
+
+class Star;
+
+class Building : public Unit {
 public:
 	enum class BUILDING_TYPE {
 		OUTPOST
 	};
 
-	Building(BUILDING_TYPE type, sf::Vector2f pos, int allegiance, sf::Color color);
+	Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color);
 
 	void draw(sf::RenderWindow& window);
 
-	void update();
+	void update(Star* star);
+
 
 private:
 	sf::Sprite m_sprite;
-	sf::CircleShape m_collider;
-	int m_allegiance;
 };
 

@@ -29,7 +29,7 @@ bool JumpOrder::execute(Spaceship* ship) {
 	}
 }
 
-AttackOrder::AttackOrder(Spaceship* target) {
+AttackOrder::AttackOrder(Unit* target) {
 	m_target = target;
 	m_lastEnemyHealth = target->getHealth();
 	m_frustration = 0.0f;

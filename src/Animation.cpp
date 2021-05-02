@@ -3,10 +3,34 @@
 #include "Animation.h"
 #include "TextureCache.h"
 
+Animation::Animation(ANIMATION_TYPE type, sf::Vector2f pos) {
+	std::string filePath;
+	int frameWidth = 0;
+	int frameHeight = 0;
+	int frameDelay = 0;
+	float scale = 1.0f;
+	
+	switch (type) {
+	case ANIMATION_TYPE::EXPLOSION:
+		filePath = "data/art/explosion1.png";
+		frameWidth = 4;
+		frameHeight = 4;
+		frameDelay = 20;
+		scale = 16.0f;
+		break;
+	}
+
+	init(filePath, frameWidth, frameHeight, pos, frameDelay, scale);
+}
+
 Animation::Animation(const std::string& filePath, int frameWidth, int frameHeight, sf::Vector2f pos, int frameDelay, float scale) {
+	init(filePath, frameWidth, frameHeight, pos, frameDelay, scale);
+}
+
+void Animation::init(const std::string& filePath, int frameWidth, int frameHeight, sf::Vector2f pos, int frameDelay, float scale) {
 	int widthStep = TextureCache::getTexture(filePath).getSize().x / frameWidth;
 	int heightStep = TextureCache::getTexture(filePath).getSize().y / frameHeight;
-	
+
 	m_frames.reserve(static_cast<size_t>(frameWidth) * frameHeight);
 
 	for (int y = 0; y < frameHeight; y++) {

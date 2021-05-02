@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+#include "Collider.h"
+
 class Star;
 
 class Projectile {
@@ -23,7 +25,7 @@ public:
 
 	bool isDead() { return m_life <= 0.0f; }
 
-	bool isCollidingWith(sf::CircleShape& shape);
+	bool isCollidingWith(const Collider& collider);
 
 	void kill() { m_life = 0.0f; }
 

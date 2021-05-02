@@ -247,6 +247,12 @@ void Star::handleCollisions() {
 				p.kill();
 			}
 		}
+		for (Building& b : m_buildings) {
+			if (p.isCollidingWith(b.getCollider()) && p.getAllegiance() != b.getAllegiance()) {
+				b.takeDamage(p.getDamage());
+				p.kill();
+			}
+		}
 	}
 }
 
@@ -280,8 +286,12 @@ void Star::update() {
 		}
 	}
 	
-	for (Building& b : m_buildings) {
-		b.update();
+	for (int i = 0; i < m_buildings.size(); i++) {
+		m_buildings[i].update(this);
+		if (m_buildings[i].isDead()) {
+			m_buildings.erase(m_buildings.begin() + i);
+			i--;
+		}
 	}
 
 	if (factions.size() > 1) {

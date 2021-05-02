@@ -12,6 +12,7 @@
 #include "Faction.h"
 #include "Random.h"
 #include "Animation.h"
+#include "Building.h"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -22,11 +23,8 @@ void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Co
 
 	m_currentStar = star;
 
+	m_collider.setPosition(pos);
 	m_collider.setOutlineColor(color);
-	m_collider.setOutlineThickness(10.0f);
-	m_collider.setFillColor(sf::Color::Transparent);
-	m_collider.setOrigin(sf::Vector2f(m_collider.getRadius(), m_collider.getRadius()));
-	m_collider.setPosition(getPos());
 
 	m_allegiance = allegiance;
 }
@@ -61,7 +59,7 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_mass = 1000.0f;
 		m_health = 50.0f;
 		m_collider.setRadius(300.0f);
-		m_canRecieveOrders = false;
+		m_canReceiveOrders = false;
 		break;
 	default:
 		m_mass = 50000.0f;
@@ -184,7 +182,15 @@ void Spaceship::update() {
 	}
 	else if (m_weapons.size() > 0) {
 		std::vector<Spaceship*> enemies = findEnemies();
-		attackRandomEnemy(enemies);
+		if (enemies.size() > 0) {
+			attackRandomEnemy(enemies);
+		}
+		else {
+			std::vector<Building*> enemyBuildings = findEnemyBuildings();
+			if (enemyBuildings.size() > 0) {
+				attackRandomEnemyBuilding(enemyBuildings);
+			}
+		}
 	}
 	
 	m_velocity.x *= 0.99f;
@@ -196,7 +202,7 @@ void Spaceship::update() {
 		w.update();
 	}
 
-	m_collider.setPosition(m_sprite.getPosition());
+	m_collider.update(getPos());
 }
 
 float Spaceship::angleTo(const sf::Vector2f& pos) {
@@ -306,7 +312,7 @@ void Spaceship::fireAt(Spaceship* target, int weaponIdx) {
 	m_weapons[weaponIdx].fireAt(this, target->getPos(), m_currentStar);
 }
 
-void Spaceship::smartFireAt(Spaceship* target, int weaponIdx) {
+void Spaceship::smartFireAt(Unit* target, int weaponIdx) {
 	sf::Vector2f targetPos = target->getPos();
 	sf::Vector2f targetVel = target->getVelocity();
 	float dist = Math::distance(getPos(), targetPos);
@@ -366,4 +372,27 @@ void Spaceship::onSelected() {
 
 void Spaceship::onDeselected() {
 	m_selected = false;
+}
+
+std::vector<Building*> Spaceship::findEnemyBuildings() {
+	std::vector<Building*> buildings;
+	for (Building& b : m_currentStar->getBuildings()) {
+		if (b.getAllegiance() != m_allegiance) {
+			buildings.push_back(&b);
+		}
+	}
+	return buildings;
+}
+
+void Spaceship::attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings) {
+	int randIndex;
+	if (enemyBuildings.size() > 1) {
+		randIndex = Random::randInt(0, enemyBuildings.size() - 1);
+	}
+	else {
+		randIndex = 0;
+	}
+	if (enemyBuildings.size() > 0) {
+		addOrder(AttackOrder(enemyBuildings[randIndex]));
+	}
 }

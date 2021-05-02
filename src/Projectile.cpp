@@ -76,10 +76,10 @@ void Projectile::draw(sf::RenderWindow& window) {
 	}
 }
 
-bool Projectile::isCollidingWith(sf::CircleShape& shape) {
+bool Projectile::isCollidingWith(const Collider& collider) {
 	if (m_usesSprite) {
-		float dist = Math::distance(m_sprite.getPosition(), shape.getPosition());
-		if (dist <= shape.getRadius()) {
+		float dist = Math::distance(m_sprite.getPosition(), collider.getPosition());
+		if (dist <= collider.getRadius()) {
 			return true;
 		}
 		else {
@@ -87,8 +87,8 @@ bool Projectile::isCollidingWith(sf::CircleShape& shape) {
 		}
 	}
 	else {
-		float dist = Math::distance(m_shape.getPosition(), shape.getPosition());
-		if (dist <= shape.getRadius()) {
+		float dist = Math::distance(m_shape.getPosition(), collider.getPosition());
+		if (dist <= collider.getRadius()) {
 			return true;
 		}
 		else {

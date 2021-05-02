@@ -88,6 +88,8 @@ public:
 
 	void createBuilding(Building building) { m_buildings.push_back(building); }
 
+	std::vector<Building>& getBuildings() { return m_buildings; }
+
 private:
 	void handleCollisions();
 

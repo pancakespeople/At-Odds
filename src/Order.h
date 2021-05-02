@@ -4,6 +4,7 @@
 class Spaceship;
 class JumpPoint;
 class Star;
+class Unit;
 
 class Order {
 public:
@@ -37,13 +38,13 @@ private:
 
 class AttackOrder : public Order {
 public:
-	AttackOrder(Spaceship* target);
+	AttackOrder(Unit* target);
 
 	virtual bool execute(Spaceship* ship) override;
 
-	Spaceship* getTargetShip() { return m_target; }
+	Unit* getTargetShip() { return m_target; }
 private:
-	Spaceship* m_target;
+	Unit* m_target;
 	float m_frustration;
 	float m_lastEnemyHealth;
 };
