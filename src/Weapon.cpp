@@ -11,7 +11,9 @@
 const std::unordered_map<Weapon::WEAPON_TYPE, std::string> Weapon::weaponSounds = {
 	{WEAPON_TYPE::LASER_GUN, "data/sound/pew1.wav"},
 	{WEAPON_TYPE::GAUSS_CANNON, "data/sound/pew2.wav" },
-	{WEAPON_TYPE::MACHINE_GUN, "data/sound/gunshot3.wav"}
+	{WEAPON_TYPE::MACHINE_GUN, "data/sound/gunshot3.wav"},
+	{WEAPON_TYPE::LONG_RANGE_LASER_GUN, "data/sound/pew1.wav"},
+	{WEAPON_TYPE::LONG_RANGE_MACHINE_GUN, "data/sound/gunshot3.wav"},
 };
 
 Weapon::Weapon(WEAPON_TYPE type) {
@@ -27,6 +29,17 @@ Weapon::Weapon(WEAPON_TYPE type) {
 		m_cooldownRecovery = 5.0f;
 		m_accuracy = 0.9f;
 		break;
+	case WEAPON_TYPE::LONG_RANGE_LASER_GUN:
+		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LONG_RANGE_LASER);
+		m_cooldownRecovery = 0.5f;
+		m_accuracy = 0.95f;
+		break;
+	case WEAPON_TYPE::LONG_RANGE_MACHINE_GUN:
+		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LONG_RANGE_LIGHT_BALLISTIC);
+		m_cooldownRecovery = 0.5f;
+		m_accuracy = 0.95f;
+		m_numProjectiles = 2;
+		break;
 	default:
 		DEBUG_PRINT("Invalid weapon type");
 	}
@@ -34,18 +47,23 @@ Weapon::Weapon(WEAPON_TYPE type) {
 	m_type = type;
 }
 
-void Weapon::fireAtAngle(const Spaceship* source, float angleDegrees, Star* star) {
+void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
 	if (isOnCooldown()) return;
 	
 	float variability = (1.0f - m_accuracy) * 100.0f;
-	float angleVary = Random::randFloat(-variability, variability);
+	
+	for (int i = 0; i < m_numProjectiles; i++) {
+		float angleVary = Random::randFloat(-variability, variability);
 
-	m_projectile.setPos(source->getPos());
-	m_projectile.setRotation(angleDegrees + angleVary);
-	m_projectile.setAllegiance(source->getAllegiance());
-	star->addProjectile(m_projectile);
+		m_projectile.setPos(source->getPos());
+		m_projectile.setRotation(angleDegrees + angleVary);
+		m_projectile.setAllegiance(source->getAllegiance());
+		star->addProjectile(m_projectile);
+	}
 
-	Sounds::playSoundLocal(weaponSounds.at(m_type), star, 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+	if (weaponSounds.count(m_type) > 0) {
+		Sounds::playSoundLocal(weaponSounds.at(m_type), star, 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+	}
 
 	m_cooldownPercent = 100.0f;
 }
@@ -69,7 +87,7 @@ bool Weapon::isOnCooldown() {
 	}
 }
 
-void Weapon::fireAt(const Spaceship* source, const sf::Vector2f& target, Star* star) {
+void Weapon::fireAt(const Unit* source, const sf::Vector2f& target, Star* star) {
 	float angle = Math::angleBetween(source->getPos(), target);
 	fireAtAngle(source, angle, star);
 }

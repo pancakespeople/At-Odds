@@ -73,10 +73,6 @@ public:
 
 	void attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent = false);
 
-	std::vector<Weapon>& getWeapons() { return m_weapons; }
-
-	void addWeapon(Weapon weapon) { m_weapons.push_back(weapon); }
-
 	void onSelected();
 
 	void onDeselected();
@@ -95,8 +91,7 @@ private:
 	sf::Sprite m_sprite;
 	
 	std::deque<std::shared_ptr<Order>> m_orders;
-	std::vector<Weapon> m_weapons;
-
+	
 	float m_mass; // kg
 	float m_maxAcceleration;
 	float m_percentJumpDriveCharged = 0.0f;

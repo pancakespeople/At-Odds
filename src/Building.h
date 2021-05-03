@@ -4,6 +4,7 @@
 #include "Unit.h"
 
 class Star;
+class Spaceship;
 
 class Building : public Unit {
 public:
@@ -15,10 +16,14 @@ public:
 
 	void draw(sf::RenderWindow& window);
 
-	void update(Star* star);
+	void update();
 
 
 private:
+	void attackEnemies();
+
 	sf::Sprite m_sprite;
+
+	Spaceship* m_attackTarget = nullptr;
 };
 

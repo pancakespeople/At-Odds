@@ -287,7 +287,7 @@ void Star::update() {
 	}
 	
 	for (int i = 0; i < m_buildings.size(); i++) {
-		m_buildings[i].update(this);
+		m_buildings[i].update();
 		if (m_buildings[i].isDead()) {
 			m_buildings.erase(m_buildings.begin() + i);
 			i--;

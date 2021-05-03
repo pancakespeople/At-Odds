@@ -30,6 +30,20 @@ Projectile::Projectile(PROJECTILE_TYPE type) {
 		m_life = 100.0f;
 		m_speed = 15.0f;
 		break;
+	case PROJECTILE_TYPE::LONG_RANGE_LASER:
+		m_shape.setFillColor(sf::Color(255.0f, 0.0f, 0.0f));
+
+		m_damage = 10.0f;
+		m_life = 1000.0f;
+		m_speed = 10.0f;
+		break;
+	case PROJECTILE_TYPE::LONG_RANGE_LIGHT_BALLISTIC:
+		m_shape.setFillColor(sf::Color::Yellow);
+
+		m_damage = 1.0f;
+		m_life = 1000.0f;
+		m_speed = 15.0f;
+		break;
 	default:
 		DEBUG_PRINT("Invalid projectile type");
 	}

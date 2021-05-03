@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Collider.h"
+#include "Weapon.h"
 
 class Star;
 
@@ -25,11 +26,22 @@ public:
 
 	sf::Vector2f getVelocity() { return m_velocity; }
 
+	std::vector<Weapon>& getWeapons() { return m_weapons; }
+
+	void addWeapon(Weapon weapon) { m_weapons.push_back(weapon); }
+
+	std::vector<Spaceship*> findEnemyShips();
+
+	float getLongestWeaponRange();
+
+	void updateWeapons();
+
 protected:
 	Star* m_currentStar = nullptr;
 
 	Collider m_collider;
 	sf::Vector2f m_velocity;
+	std::vector<Weapon> m_weapons;
 
 	float m_health = 100.0f;
 	bool m_dead = false;
