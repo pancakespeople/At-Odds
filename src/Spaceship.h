@@ -67,7 +67,7 @@ public:
 
 	void smartFireAt(Unit* target, int weaponIdx);
 
-	void orbit(sf::Vector2f pos);
+	void orbit(const sf::Vector2f& pos);
 
 	void captureCurrentStar(Faction* faction);
 

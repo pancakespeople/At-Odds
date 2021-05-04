@@ -40,7 +40,13 @@ bool AttackOrder::execute(Spaceship* ship) {
 		return true;
 	}
 	
-	ship->flyTo(m_target->getPos());
+	if (m_target->getVelocity() == sf::Vector2f(0.0f, 0.0f)) {
+		ship->orbit(m_target->getPos());
+	}
+	else {
+		ship->flyTo(m_target->getPos());
+	}
+
 	float dist = Math::distance(ship->getPos(), m_target->getPos());
 	
 	std::vector<Weapon>& weapons = ship->getWeapons();
