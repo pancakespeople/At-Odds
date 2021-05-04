@@ -36,6 +36,8 @@ public:
 
 	void updateWeapons();
 
+	std::vector<Unit*> findEnemyUnits();
+
 protected:
 	Star* m_currentStar = nullptr;
 

@@ -24,6 +24,6 @@ private:
 
 	sf::Sprite m_sprite;
 
-	Spaceship* m_attackTarget = nullptr;
+	Unit* m_attackTarget = nullptr;
 };
 

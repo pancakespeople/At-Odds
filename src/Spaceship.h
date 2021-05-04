@@ -18,7 +18,8 @@ public:
 	enum class SPACESHIP_TYPE {
 		FRIGATE_1,
 		DESTROYER_1,
-		CLAIM_SHIP
+		CLAIM_SHIP,
+		CONSTRUCTION_SHIP
 	};
 
 	Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
@@ -59,7 +60,7 @@ public:
 
 	sf::Vector2f getPos() const { return m_sprite.getPosition(); }
 
-	std::vector<Spaceship*> findEnemies();
+	std::vector<Spaceship*> findEnemyShips();
 
 	void fireAt(Spaceship* target, int weaponIdx);
 

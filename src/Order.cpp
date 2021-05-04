@@ -13,7 +13,7 @@ bool FlyToOrder::execute(Spaceship* ship) {
 
 bool JumpOrder::execute(Spaceship* ship) {
 	if (m_attackEnemies) {
-		std::vector<Spaceship*> enemies = ship->findEnemies();
+		std::vector<Spaceship*> enemies = ship->findEnemyShips();
 
 		if (enemies.size() > 0) {
 			ship->attackRandomEnemy(enemies, true);

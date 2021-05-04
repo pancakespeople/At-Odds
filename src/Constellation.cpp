@@ -206,6 +206,8 @@ void Constellation::setupStars() {
             Spaceship ship(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, s.get(), -1, sf::Color(175, 175, 175));
             createShipAtStar(ship);
         }
+
+        //s->createBuilding(Building::Building(Building::BUILDING_TYPE::OUTPOST, s.get(), s->getRandomLocalPos(-10000.0f, 10000.0f), -1, sf::Color(175, 175, 175)));
     }
 }
 

@@ -30,3 +30,18 @@ void Unit::updateWeapons() {
 		weapon.update();
 	}
 }
+
+std::vector<Unit*> Unit::findEnemyUnits() {
+	std::vector<Unit*> units;
+	for (Spaceship* ship : m_currentStar->getSpaceships()) {
+		if (ship->getAllegiance() != m_allegiance) {
+			units.push_back(ship);
+		}
+	}
+	for (Building& building : m_currentStar->getBuildings()) {
+		if (building.getAllegiance() != m_allegiance) {
+			units.push_back(&building);
+		}
+	}
+	return units;
+}

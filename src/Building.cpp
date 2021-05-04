@@ -80,13 +80,13 @@ void Building::attackEnemies() {
 		}
 	}
 	else {
-		std::vector<Spaceship*> enemyShips = findEnemyShips();
+		std::vector<Unit*> enemyUnits = findEnemyUnits();
 
-		if (enemyShips.size() > 0) {
+		if (enemyUnits.size() > 0) {
 			float range = getLongestWeaponRange();
-			for (Spaceship* ship : enemyShips) {
-				if (Math::distance(getPos(), ship->getPos()) < range) {
-					m_attackTarget = ship;
+			for (Unit* unit : enemyUnits) {
+				if (Math::distance(getPos(), unit->getPos()) < range) {
+					m_attackTarget = unit;
 					break;
 				}
 			}

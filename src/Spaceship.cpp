@@ -61,6 +61,12 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_collider.setRadius(300.0f);
 		m_canReceiveOrders = false;
 		break;
+	case SPACESHIP_TYPE::CONSTRUCTION_SHIP:
+		m_sprite.setTexture(TextureCache::getTexture("data/art/constructionship.png"));
+		m_mass = 150000.0f;
+		m_health = 50.0f;
+		m_collider.setRadius(350.0f);
+		break;
 	default:
 		m_mass = 50000.0f;
 		m_health = 100.0f;
@@ -181,7 +187,7 @@ void Spaceship::update() {
 		}
 	}
 	else if (m_weapons.size() > 0) {
-		std::vector<Spaceship*> enemies = findEnemies();
+		std::vector<Spaceship*> enemies = findEnemyShips();
 		if (enemies.size() > 0) {
 			attackRandomEnemy(enemies);
 		}
@@ -297,7 +303,7 @@ Spaceship::JumpState Spaceship::jump(JumpPoint* point) {
 	}
 }
 
-std::vector<Spaceship*> Spaceship::findEnemies() {
+std::vector<Spaceship*> Spaceship::findEnemyShips() {
 	std::vector<Spaceship*>& allShips = m_currentStar->getSpaceships();
 	std::vector<Spaceship*> enemies;
 	for (Spaceship* s : allShips) {
@@ -343,7 +349,7 @@ void Spaceship::orbit(const sf::Vector2f& pos) {
 
 void Spaceship::captureCurrentStar(Faction* faction) {
 	if (m_currentStar->getAllegiance() != m_allegiance) {
-		if (findEnemies().size() == 0) {
+		if (findEnemyShips().size() == 0) {
 			m_currentStar->factionTakeOwnership(faction);
 			faction->createShip(Spaceship(SPACESHIP_TYPE::CLAIM_SHIP, getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
 		}
