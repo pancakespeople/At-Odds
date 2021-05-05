@@ -31,11 +31,37 @@ private:
 	std::vector<Spaceship*> m_selectedShips;
 };
 
+
 class HelpWindow {
 public:
 	HelpWindow() {}
 
 	void open(tgui::Gui& gui);
+};
+
+class BuildGUI {
+public:
+	BuildGUI() {}
+
+	void open(tgui::Gui& gui);
+
+	void onMouseEnter();
+
+	void onMouseExit();
+
+private:
+	tgui::Picture::Ptr m_buildIcon;
+};
+
+class PlayerGUI {
+public:
+	PlayerGUI() {}
+
+	void open(tgui::Gui& gui);
+
+private:
+	HelpWindow m_helpWindow;
+	BuildGUI m_buildGUI;
 };
 
 class NewGameMenu {
@@ -48,6 +74,8 @@ public:
 
 	bool isOpen() { return m_window->isEnabled(); }
 
+	PlayerGUI& getPlayerGUI() { return m_playerGui; }
+
 private:
 	void backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
 
@@ -59,7 +87,7 @@ private:
 
 	tgui::ChildWindow::Ptr m_window;
 
-	HelpWindow m_helpWindow;
+	PlayerGUI m_playerGui;
 };
 
 class OptionsMenu {
@@ -118,6 +146,8 @@ public:
 
 	OptionsMenu& getOptionsMenu() { return m_optionsMenu; }
 
+	NewGameMenu& getNewGameMenu() { return m_newGameMenu; }
+
 private:
 	void exitGame(GameState& state);
 
@@ -130,3 +160,4 @@ private:
 	OptionsMenu m_optionsMenu;
 	bool m_opened = false;
 };
+

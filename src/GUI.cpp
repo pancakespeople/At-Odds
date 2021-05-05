@@ -11,6 +11,7 @@
 #include "Background.h"
 #include "EffectsEmitter.h"
 #include "Sounds.h"
+#include "TextureCache.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -345,11 +346,13 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 	bool spectate = m_window->get<tgui::CheckBox>("spectateCheckBox")->isChecked();
 
+	gui.removeAllWidgets();
+
 	if (!spectate) {
 		constellation.getFactions()[0].controlByPlayer(state.getPlayer());
 		state.getCamera().setPos(constellation.getFactions()[0].getCapitol()->getCenter());
 
-		m_helpWindow.open(gui);
+		m_playerGui.open(gui);
 	}
 
 	state.changeToWorldView();
@@ -566,3 +569,33 @@ void HelpWindow::open(tgui::Gui& gui) {
 	text->setSize("100%", "100%");
 	window->add(text);
 }
+
+void BuildGUI::open(tgui::Gui& gui) {
+	auto panel = tgui::Panel::create();
+	panel->setSize("2.5%", "5%");
+	panel->setPosition("0%", "90%");
+	panel->setInheritedOpacity(0.75f);
+	gui.add(panel);
+
+	auto picture = tgui::Picture::create(TextureCache::getTexture("data/art/buildicon.png"));
+	picture->setSize("100%", "100%");
+	picture->setInheritedOpacity(0.75f);
+	picture->connect(tgui::Signals::Picture::MouseEntered, &BuildGUI::onMouseEnter, this);
+	picture->connect(tgui::Signals::Picture::MouseLeft, &BuildGUI::onMouseExit, this);
+	m_buildIcon = picture;
+	panel->add(picture);
+}
+
+void BuildGUI::onMouseEnter() {
+	m_buildIcon->showWithEffect(tgui::ShowAnimationType::Scale, sf::milliseconds(500));
+}
+
+void BuildGUI::onMouseExit() {
+
+}
+
+void PlayerGUI::open(tgui::Gui& gui) {
+	m_helpWindow.open(gui);
+	m_buildGUI.open(gui);
+}
+

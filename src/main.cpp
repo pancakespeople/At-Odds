@@ -27,6 +27,7 @@ int main()
 
     MainMenu mainMenu;
     OptionsMenu& optionsMenu = mainMenu.getOptionsMenu();
+    PlayerGUI& playerGui = mainMenu.getNewGameMenu().getPlayerGUI();
 
     sf::Vector2i resolution = optionsMenu.getResolution();
     OptionsMenu::Settings settings = optionsMenu.getSettings();
