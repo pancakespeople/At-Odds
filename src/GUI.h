@@ -3,6 +3,7 @@
 #include <TGUI/TGUI.hpp>
 
 #include "SimpleIni.h"
+#include "Building.h"
 
 class Star;
 class Spaceship;
@@ -41,16 +42,28 @@ public:
 
 class BuildGUI {
 public:
+	struct BuildingSelector {
+		BuildingPrototype prototype;
+		tgui::Picture::Ptr icon;
+		tgui::Panel::Ptr panel;
+	};
+	
 	BuildGUI() {}
 
 	void open(tgui::Gui& gui);
 
-	void onMouseEnter();
+	void onBuildIconMouseEnter();
 
-	void onMouseExit();
+	void onBuildIconClick(tgui::Gui& gui);
+
+	void addBuildingSelector(Building::BUILDING_TYPE type);
+
+	void onBuildingSelectorMouseEnter(int selectorIdx);
 
 private:
 	tgui::Picture::Ptr m_buildIcon;
+	tgui::ScrollablePanel::Ptr m_buildPanel;
+	std::vector<BuildingSelector> m_buildingSelectors;
 };
 
 class PlayerGUI {

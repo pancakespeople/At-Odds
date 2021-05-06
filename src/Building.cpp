@@ -7,10 +7,14 @@
 #include "Sounds.h"
 #include "Math.h"
 
+const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texturePaths = {
+	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"}
+};
+
 Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color) {
 	switch (type) {
 	case BUILDING_TYPE::OUTPOST:
-		m_sprite.setTexture(TextureCache::getTexture("data/art/outpost.png"));
+		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::OUTPOST)));
 		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
 
 		if (Random::randBool()) {
@@ -92,4 +96,10 @@ void Building::attackEnemies() {
 			}
 		}
 	}
+}
+
+BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
+	m_type = type;
+	sf::Texture& texture = TextureCache::getTexture(Building::texturePaths.at(Building::BUILDING_TYPE::OUTPOST));
+	m_sprite.setTexture(texture);
 }

@@ -572,30 +572,78 @@ void HelpWindow::open(tgui::Gui& gui) {
 
 void BuildGUI::open(tgui::Gui& gui) {
 	auto panel = tgui::Panel::create();
-	panel->setSize("2.5%", "5%");
 	panel->setPosition("0%", "90%");
+	panel->setSize("2.5%", "5%");
 	panel->setInheritedOpacity(0.75f);
+	panel->connect(tgui::Signals::Panel::Clicked, &BuildGUI::onBuildIconClick, this, std::ref(gui));
 	gui.add(panel);
 
 	auto picture = tgui::Picture::create(TextureCache::getTexture("data/art/buildicon.png"));
 	picture->setSize("100%", "100%");
 	picture->setInheritedOpacity(0.75f);
-	picture->connect(tgui::Signals::Picture::MouseEntered, &BuildGUI::onMouseEnter, this);
-	picture->connect(tgui::Signals::Picture::MouseLeft, &BuildGUI::onMouseExit, this);
+	picture->connect(tgui::Signals::Picture::MouseEntered, &BuildGUI::onBuildIconMouseEnter, this);
 	m_buildIcon = picture;
 	panel->add(picture);
 }
 
-void BuildGUI::onMouseEnter() {
+void BuildGUI::onBuildIconMouseEnter() {
 	m_buildIcon->showWithEffect(tgui::ShowAnimationType::Scale, sf::milliseconds(500));
 }
 
-void BuildGUI::onMouseExit() {
+void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
+	if (m_buildPanel == nullptr) {
+		m_buildPanel = tgui::ScrollablePanel::create();
+		m_buildPanel->setInheritedOpacity(0.75);
+		m_buildPanel->setPosition("2.5%", "66%");
+		m_buildPanel->setSize("20%", "29%");
+		gui.add(m_buildPanel);
 
+		for (int i = 0; i < 50; i++) {
+			addBuildingSelector(Building::BUILDING_TYPE::OUTPOST);
+		}
+	}
+	else {
+		gui.remove(m_buildPanel);
+		m_buildingSelectors.clear();
+		m_buildPanel = nullptr;
+	}
+}
+
+void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type) {
+	std::string xPosPercent;
+	std::string yPosPercent;
+	if (m_buildingSelectors.size() > 0) {
+		int x = m_buildingSelectors.size() % 5;
+		int y = m_buildingSelectors.size() / 5;
+		xPosPercent = std::to_string(18 * x) + "%";
+		yPosPercent = std::to_string(18 * y) + "%";
+	}
+	else {
+		xPosPercent = "0%";
+		yPosPercent = "0%";
+	}
+	
+	BuildingSelector selector;
+	selector.panel = tgui::Panel::create();
+	selector.panel->setPosition(xPosPercent, yPosPercent);
+	selector.panel->setSize("18%", "18%");
+	selector.panel->connect(tgui::Signals::Panel::MouseEntered, &BuildGUI::onBuildingSelectorMouseEnter, this, m_buildingSelectors.size());
+	m_buildPanel->add(selector.panel);
+
+	selector.prototype = BuildingPrototype(type);
+
+	selector.icon = tgui::Picture::create(std::move(TextureCache::getTexture(Building::texturePaths.at(type))));
+	selector.icon->setSize("100%", "100%");
+	selector.panel->add(selector.icon);
+
+	m_buildingSelectors.push_back(selector);
+}
+
+void BuildGUI::onBuildingSelectorMouseEnter(int selectorIdx) {
+	m_buildingSelectors[selectorIdx].icon->showWithEffect(tgui::ShowAnimationType::Fade, sf::milliseconds(500));
 }
 
 void PlayerGUI::open(tgui::Gui& gui) {
 	m_helpWindow.open(gui);
 	m_buildGUI.open(gui);
 }
-
