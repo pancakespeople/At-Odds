@@ -54,14 +54,19 @@ public:
 
 	void onBuildIconMouseEnter();
 
+	void onBuildIconMouseExit();
+
 	void onBuildIconClick(tgui::Gui& gui);
 
 	void addBuildingSelector(Building::BUILDING_TYPE type);
 
 	void onBuildingSelectorMouseEnter(int selectorIdx);
+	
+	void onBuildingSelectorMouseExit(int selectorIdx);
 
 private:
 	tgui::Picture::Ptr m_buildIcon;
+	tgui::Panel::Ptr m_buildIconPanel;
 	tgui::ScrollablePanel::Ptr m_buildPanel;
 	std::vector<BuildingSelector> m_buildingSelectors;
 };
@@ -71,6 +76,8 @@ public:
 	PlayerGUI() {}
 
 	void open(tgui::Gui& gui);
+
+	BuildGUI& getBuildGUI() { return m_buildGUI; }
 
 private:
 	HelpWindow m_helpWindow;

@@ -33,7 +33,7 @@ int main()
     OptionsMenu::Settings settings = optionsMenu.getSettings();
 
     sf::RenderWindow window;
-
+    
     if (settings.fullscreen) {
         window.create(sf::VideoMode(resolution.x, resolution.y), "At Odds", sf::Style::Fullscreen);
     }
@@ -41,12 +41,10 @@ int main()
         window.create(sf::VideoMode(resolution.x, resolution.y), "At Odds", sf::Style::Titlebar | sf::Style::Close);
     }
 
-
     window.setFramerateLimit(60);
 
-    tgui::Gui gui(window);
-    tgui::Theme blackTheme("data/tgui/Black.txt");
-    tgui::Theme::setDefault(&blackTheme);
+    tgui::GuiSFML gui(window);
+    tgui::Theme::setDefault("data/tgui/Black.txt");
 
     Constellation constellation;
     GameState state(Camera(0, 0, resolution.x, resolution.y));
@@ -54,7 +52,7 @@ int main()
     EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
     
     mainMenu.open(gui, constellation, state);
-
+    
     Background background("data/art/spacebackground1.png", resolution.x, resolution.y);
 
     sf::Shader starShader;

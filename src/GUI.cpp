@@ -178,35 +178,41 @@ void UnitGUI::drawStarPath(Star* begin, Star* end) {
 }
 
 void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state) {
-	auto guiWindow = tgui::ChildWindow::create("Main Menu");
-	guiWindow->setSize("20%", "40%");
-	guiWindow->setPosition("(parent.size - size) / 2");
-	guiWindow->setInheritedOpacity(0.75f);
-	guiWindow->setTitleButtons(tgui::ChildWindow::TitleButton::None);
-	gui.add(guiWindow);
-	m_window = guiWindow;
+	try {
+		auto guiWindow = tgui::ChildWindow::create("Main Menu");
+		guiWindow->setSize("20%", "40%");
+		guiWindow->setPosition("(parent.size - size) / 2");
+		guiWindow->setInheritedOpacity(0.75f);
+		guiWindow->setTitleButtons(tgui::ChildWindow::TitleButton::None);
+		gui.add(guiWindow);
+		m_window = guiWindow;
 
-	auto newGameButton = tgui::Button::create("New Game");
-	newGameButton->setPosition("(parent.width - width) / 2", "20%");
-	newGameButton->connect(tgui::Signals::Button::Pressed, &MainMenu::toNewGameMenu, this, std::ref(gui), std::ref(constellation), std::ref(state));
-	guiWindow->add(newGameButton);
+		auto newGameButton = tgui::Button::create("New Game");
+		newGameButton->setPosition("(parent.width - width) / 2", "20%");
+		newGameButton->onPress(&MainMenu::toNewGameMenu, this, std::ref(gui), std::ref(constellation), std::ref(state));
+		guiWindow->add(newGameButton);
 
-	auto loadGameButton = tgui::Button::create("Load Game");
-	loadGameButton->setPosition("(parent.width - width) / 2", "40%");
-	loadGameButton->onPress.connect([] {DEBUG_PRINT("Not implemented"); });
-	guiWindow->add(loadGameButton);
+		auto loadGameButton = tgui::Button::create("Load Game");
+		loadGameButton->setPosition("(parent.width - width) / 2", "40%");
+		loadGameButton->onPress.connect([] {DEBUG_PRINT("Not implemented"); });
+		guiWindow->add(loadGameButton);
 
-	auto optionsButton = tgui::Button::create("Options");
-	optionsButton->setPosition("(parent.width - width) / 2", "60%");
-	optionsButton->connect(tgui::Signals::Button::Pressed, &MainMenu::toOptionsMenu, this, std::ref(gui), std::ref(constellation), std::ref(state));
-	guiWindow->add(optionsButton);
+		auto optionsButton = tgui::Button::create("Options");
+		optionsButton->setPosition("(parent.width - width) / 2", "60%");
+		optionsButton->onPress(&MainMenu::toOptionsMenu, this, std::ref(gui), std::ref(constellation), std::ref(state));
+		guiWindow->add(optionsButton);
 
-	auto exitButton = tgui::Button::create("Exit");
-	exitButton->setPosition("(parent.width - width) / 2", "80%");
-	exitButton->connect(tgui::Signals::Button::Pressed, &MainMenu::exitGame, this, std::ref(state));
-	guiWindow->add(exitButton);
+		auto exitButton = tgui::Button::create("Exit");
+		exitButton->setPosition("(parent.width - width) / 2", "80%");
+		exitButton->onPress(&MainMenu::exitGame, this, std::ref(state));
+		guiWindow->add(exitButton);
 
-	m_opened = true;
+		m_opened = true;
+
+	}
+	catch (const tgui::Exception& e) {
+		DEBUG_PRINT(e.what());
+	}
 }
 
 void MainMenu::close() {
@@ -252,12 +258,12 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 
 	auto mainMenuButton = tgui::Button::create("<- Main Menu");
 	mainMenuButton->setPosition("5%", "90%");
-	mainMenuButton->connect(tgui::Signals::Button::Pressed, &NewGameMenu::backToMainMenu, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
+	mainMenuButton->onPress(&NewGameMenu::backToMainMenu, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
 	guiWindow->add(mainMenuButton);
 
 	auto startGameButton = tgui::Button::create("Start Game ->");
 	startGameButton->setPosition("95% - width", "90%");
-	startGameButton->connect(tgui::Signals::Button::Pressed, &NewGameMenu::startNewGame, this, std::ref(gui), std::ref(constellation), std::ref(state));
+	startGameButton->onPress(&NewGameMenu::startNewGame, this, std::ref(gui), std::ref(constellation), std::ref(state));
 	guiWindow->add(startGameButton);
 
 	// Stars slider
@@ -270,7 +276,7 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	numStarsSlider->setValue(20.0f);
 	numStarsSlider->setStep(1.0f);
 	numStarsSlider->setPosition("5%", "5%");
-	numStarsSlider->connect(tgui::Signals::Slider::ValueChanged, &NewGameMenu::onStarsSliderChange, this, std::ref(gui));
+	numStarsSlider->onValueChange(&NewGameMenu::onStarsSliderChange, this, std::ref(gui));
 	guiWindow->add(numStarsSlider, "starSlider");
 
 	auto numStarsNumLabel = tgui::Label::create(std::to_string(static_cast<int>(numStarsSlider->getValue())));
@@ -288,7 +294,7 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	numFactionsSlider->setValue(4.0f);
 	numFactionsSlider->setStep(1.0f);
 	numFactionsSlider->setPosition("5%", "20%");
-	numFactionsSlider->connect(tgui::Signals::Slider::ValueChanged, &NewGameMenu::onFactionsSliderChange, this, std::ref(gui));
+	numFactionsSlider->onValueChange(&NewGameMenu::onFactionsSliderChange, this, std::ref(gui));
 	guiWindow->add(numFactionsSlider, "factionSlider");
 
 	auto numFactionsNumLabel = tgui::Label::create(std::to_string(static_cast<int>(numFactionsSlider->getValue())));
@@ -419,7 +425,7 @@ void OptionsMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	tabs->setPosition("0%", "0%");
 	tabs->add("Video");
 	tabs->add("Audio", false);
-	tabs->connect(tgui::Signals::Tabs::TabSelected, &OptionsMenu::onTabChange, this, std::ref(gui));
+	tabs->onTabSelect(&OptionsMenu::onTabChange, this, std::ref(gui));
 	guiWindow->add(tabs, "optionsTabs");
 
 	auto group = tgui::Group::create();
@@ -429,7 +435,7 @@ void OptionsMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 
 	auto mainMenuButton = tgui::Button::create("<- Main Menu");
 	mainMenuButton->setPosition("5%", "90%");
-	mainMenuButton->connect(tgui::Signals::Button::Pressed, &OptionsMenu::backToMainMenu, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
+	mainMenuButton->onPress(&OptionsMenu::backToMainMenu, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
 	guiWindow->add(mainMenuButton);
 
 	m_group = group;
@@ -497,7 +503,7 @@ void OptionsMenu::changeSettings(tgui::Gui& gui) {
 		if (resolution->getSelectedItem() != m_settings.resolution) {
 			m_displayChanged = true;
 		}
-		m_settings.resolution = resolution->getSelectedItem();
+		m_settings.resolution = resolution->getSelectedItem().toStdString();
 	}
 	if (audioVolume != nullptr) m_settings.audioVolume = audioVolume->getValue();
 	if (fullscreen != nullptr) {
@@ -574,20 +580,27 @@ void BuildGUI::open(tgui::Gui& gui) {
 	auto panel = tgui::Panel::create();
 	panel->setPosition("0%", "90%");
 	panel->setSize("2.5%", "5%");
-	panel->setInheritedOpacity(0.75f);
-	panel->connect(tgui::Signals::Panel::Clicked, &BuildGUI::onBuildIconClick, this, std::ref(gui));
+	panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+	panel->getRenderer()->setOpacity(0.75f);
+	panel->onClick(&BuildGUI::onBuildIconClick, this, std::ref(gui));
+	panel->onMouseEnter(&BuildGUI::onBuildIconMouseEnter, this);
+	panel->onMouseLeave(&BuildGUI::onBuildIconMouseExit, this);
+	m_buildIconPanel = panel;
 	gui.add(panel);
 
-	auto picture = tgui::Picture::create(TextureCache::getTexture("data/art/buildicon.png"));
+	auto picture = tgui::Picture::create("data/art/buildicon.png");
 	picture->setSize("100%", "100%");
-	picture->setInheritedOpacity(0.75f);
-	picture->connect(tgui::Signals::Picture::MouseEntered, &BuildGUI::onBuildIconMouseEnter, this);
 	m_buildIcon = picture;
 	panel->add(picture);
 }
 
 void BuildGUI::onBuildIconMouseEnter() {
-	m_buildIcon->showWithEffect(tgui::ShowAnimationType::Scale, sf::milliseconds(500));
+	m_buildIconPanel->getRenderer()->setBackgroundColor(tgui::Color::White);
+}
+
+void BuildGUI::onBuildIconMouseExit() {
+	m_buildIconPanel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+	m_buildIconPanel->getRenderer()->setOpacity(0.75f);
 }
 
 void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
@@ -625,14 +638,17 @@ void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type) {
 	
 	BuildingSelector selector;
 	selector.panel = tgui::Panel::create();
-	selector.panel->setPosition(xPosPercent, yPosPercent);
+	selector.panel->setPosition(xPosPercent.c_str(), yPosPercent.c_str());
 	selector.panel->setSize("18%", "18%");
-	selector.panel->connect(tgui::Signals::Panel::MouseEntered, &BuildGUI::onBuildingSelectorMouseEnter, this, m_buildingSelectors.size());
+	selector.panel->onMouseEnter(&BuildGUI::onBuildingSelectorMouseEnter, this, m_buildingSelectors.size());
+	selector.panel->onMouseLeave(&BuildGUI::onBuildingSelectorMouseExit, this, m_buildingSelectors.size());
+	selector.panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+	selector.panel->getRenderer()->setOpacity(0.75f);
 	m_buildPanel->add(selector.panel);
 
 	selector.prototype = BuildingPrototype(type);
 
-	selector.icon = tgui::Picture::create(std::move(TextureCache::getTexture(Building::texturePaths.at(type))));
+	selector.icon = tgui::Picture::create(Building::texturePaths.at(type).c_str());
 	selector.icon->setSize("100%", "100%");
 	selector.panel->add(selector.icon);
 
@@ -640,7 +656,12 @@ void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type) {
 }
 
 void BuildGUI::onBuildingSelectorMouseEnter(int selectorIdx) {
-	m_buildingSelectors[selectorIdx].icon->showWithEffect(tgui::ShowAnimationType::Fade, sf::milliseconds(500));
+	m_buildingSelectors[selectorIdx].panel->getRenderer()->setBackgroundColor(tgui::Color::White);
+}
+
+void BuildGUI::onBuildingSelectorMouseExit(int selectorIdx) {
+	m_buildingSelectors[selectorIdx].panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+	m_buildingSelectors[selectorIdx].panel->getRenderer()->setOpacity(0.75f);
 }
 
 void PlayerGUI::open(tgui::Gui& gui) {

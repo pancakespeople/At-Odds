@@ -12,6 +12,6 @@ Space 4x/rts game
 You should use a package manager or something to install the following dependencies:
 
 	sfml:x64 2.5.1
-	tgui:x64 0.8.8
+	tgui:x64 0.9.1
 
 Then, use premake to generate project files
