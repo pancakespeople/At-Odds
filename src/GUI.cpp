@@ -356,12 +356,15 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 	if (!spectate) {
 		constellation.getFactions()[0].controlByPlayer(state.getPlayer());
-		state.getCamera().setPos(constellation.getFactions()[0].getCapitol()->getCenter());
+		state.changeToLocalView(constellation.getFactions()[0].getCapitol());
+		state.getCamera().setPos(constellation.getFactions()[0].getCapitol()->getLocalViewCenter());
 
 		m_playerGui.open(gui);
 	}
+	else {
+		state.changeToWorldView();
+	}
 
-	state.changeToWorldView();
 	close();
 }
 
@@ -561,8 +564,7 @@ void HelpWindow::open(tgui::Gui& gui) {
 
 	std::string helpText = "Welcome to At Odds. "
 		"Hold down the middle mouse button to move the camera. "
-		"Click on stars in order to go to their local view, and press tab to return to the global view. "
-		"At the center of the screen should be your home system. Click on it to view it. \n\n"
+		"Press tab to go to the global view, on the global view, click on stars to go to their local view. \n\n"
 		"Click and drag to select your units, right click to order them to move and right click on one of the swirly purple things to order a jump between systems. "
 		"You can also order ships to travel to a specified star by selecting them in the local view and clicking on a star in the global view. "
 		"Ships will automatically attack enemies unless ordered to move. \n\n"
@@ -614,6 +616,8 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 		for (int i = 0; i < 50; i++) {
 			addBuildingSelector(Building::BUILDING_TYPE::OUTPOST);
 		}
+
+		m_selectedBuildingIdx = -1;
 	}
 	else {
 		gui.remove(m_buildPanel);
@@ -642,6 +646,7 @@ void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type) {
 	selector.panel->setSize("18%", "18%");
 	selector.panel->onMouseEnter(&BuildGUI::onBuildingSelectorMouseEnter, this, m_buildingSelectors.size());
 	selector.panel->onMouseLeave(&BuildGUI::onBuildingSelectorMouseExit, this, m_buildingSelectors.size());
+	selector.panel->onClick(&BuildGUI::onBuildingSelectorClick, this, m_buildingSelectors.size());
 	selector.panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 	selector.panel->getRenderer()->setOpacity(0.75f);
 	m_buildPanel->add(selector.panel);
@@ -657,11 +662,51 @@ void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type) {
 
 void BuildGUI::onBuildingSelectorMouseEnter(int selectorIdx) {
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setBackgroundColor(tgui::Color::White);
+	m_canReceiveEvents = false;
 }
 
 void BuildGUI::onBuildingSelectorMouseExit(int selectorIdx) {
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setOpacity(0.75f);
+	m_canReceiveEvents = true;
+}
+
+void BuildGUI::onBuildingSelectorClick(int selectorIdx) {
+	if (m_selectedBuildingIdx == -1) {
+		m_selectedBuildingIdx = selectorIdx;
+	}
+	else {
+		m_selectedBuildingIdx = -1;
+	}
+}
+
+void BuildGUI::draw(sf::RenderWindow& window) {
+	if (m_selectedBuildingIdx > -1 && m_buildingSelectors.size() > 0) {
+		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+		sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+
+		m_buildingSelectors[m_selectedBuildingIdx].prototype.setPos(worldPos);
+		m_buildingSelectors[m_selectedBuildingIdx].prototype.draw(window);
+	}
+}
+
+void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, const Player& player) {
+	if (m_canReceiveEvents) {
+		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
+			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
+				sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+				sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+				
+				// Create new building
+				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
+				Building building(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor());
+
+				currentLocalStar->createBuilding(building);
+
+				m_selectedBuildingIdx = -1;
+			}
+		}
+	}
 }
 
 void PlayerGUI::open(tgui::Gui& gui) {

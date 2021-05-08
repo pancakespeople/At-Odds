@@ -1,19 +1,22 @@
 #pragma once
 class Player {
 public:
-	int getFaction() { return m_factionID; }
+	int getFaction() const { return m_factionID; }
 
-	void setFaction(int allegiance) { m_factionID = allegiance; }
+	void setFaction(int allegiance, sf::Color color);
 
-	bool hasFogOfWar() { return m_hasFogOfWar; }
+	bool hasFogOfWar() const { return m_hasFogOfWar; }
 
 	void enableFogOfWar() { m_hasFogOfWar = true; }
 
 	void disableFogOfWar() { m_hasFogOfWar = false; }
 
+	sf::Color getColor() const { return m_color; }
+
 private:
 	bool m_hasFogOfWar = false;
-
 	int m_factionID = -1;
+	
+	sf::Color m_color;
 };
 

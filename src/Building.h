@@ -39,6 +39,12 @@ public:
 
 	const sf::Texture* getTexture() { return m_sprite.getTexture(); }
 
+	void draw(sf::RenderWindow& window);
+
+	void setPos(const sf::Vector2f& pos) { m_sprite.setPosition(pos); }
+
+	Building::BUILDING_TYPE getType() const { return m_type; }
+
 private:
 	Building::BUILDING_TYPE m_type = Building::BUILDING_TYPE::OUTPOST;
 	sf::Sprite m_sprite;

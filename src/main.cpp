@@ -48,7 +48,8 @@ int main()
 
     Constellation constellation;
     GameState state(Camera(0, 0, resolution.x, resolution.y));
-    UnitGUI unitGUI;
+    UnitGUI unitGui;
+    BuildGUI& buildGui = playerGui.getBuildGUI();
     EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
     
     mainMenu.open(gui, constellation, state);
@@ -82,15 +83,16 @@ int main()
             state.getCamera().zoomEvent(event);
             constellation.onEvent(event, window, state);
             state.onEvent(event);
-            unitGUI.onEvent(event, window, state, constellation.getStars());
+            unitGui.onEvent(event, window, state, constellation.getStars());
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
             emitter.onEvent(event);
+            buildGui.onEvent(event, window, state.getLocalViewStar(), state.getPlayer());
         }
 
         optionsMenu.updateGameSettings(window, background, gui, emitter);
         if (state.getState() != GameState::State::MAIN_MENU) {
-            unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction());
+            unitGui.update(window, state.getLocalViewStar(), state.getPlayer().getFaction());
         }
         
         // Maintain a constant update rate
@@ -105,7 +107,7 @@ int main()
         window.clear();
         
         background.draw(window);
-        unitGUI.draw(window);
+        unitGui.draw(window);
         
         state.getCamera().update(window);
 
@@ -116,6 +118,7 @@ int main()
             state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
         }
         
+        buildGui.draw(window);
         gui.draw();
 
         window.display();

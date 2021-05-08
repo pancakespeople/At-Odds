@@ -102,4 +102,9 @@ BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
 	m_type = type;
 	sf::Texture& texture = TextureCache::getTexture(Building::texturePaths.at(Building::BUILDING_TYPE::OUTPOST));
 	m_sprite.setTexture(texture);
+	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
+}
+
+void BuildingPrototype::draw(sf::RenderWindow& window) {
+	window.draw(m_sprite);
 }

@@ -12,6 +12,7 @@ class GameState;
 class MainMenu;
 class Background;
 class EffectsEmitter;
+class Player;
 
 // This class handles GUI for selecting and moving units
 class UnitGUI {
@@ -52,6 +53,11 @@ public:
 
 	void open(tgui::Gui& gui);
 
+	void draw(sf::RenderWindow& window);
+
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, const Player& player);
+
+private:
 	void onBuildIconMouseEnter();
 
 	void onBuildIconMouseExit();
@@ -64,11 +70,15 @@ public:
 	
 	void onBuildingSelectorMouseExit(int selectorIdx);
 
-private:
+	void onBuildingSelectorClick(int selectorIdx);
+
 	tgui::Picture::Ptr m_buildIcon;
 	tgui::Panel::Ptr m_buildIconPanel;
 	tgui::ScrollablePanel::Ptr m_buildPanel;
 	std::vector<BuildingSelector> m_buildingSelectors;
+
+	int m_selectedBuildingIdx = -1;
+	bool m_canReceiveEvents = true;
 };
 
 class PlayerGUI {

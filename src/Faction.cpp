@@ -103,7 +103,7 @@ void Faction::createShip(Spaceship ship) {
 }
 
 void Faction::controlByPlayer(Player& player) {
-	player.setFaction(m_id);
+	player.setFaction(m_id, m_color);
 	player.enableFogOfWar();
 	m_aiEnabled = false;
 }
