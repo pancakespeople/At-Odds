@@ -38,6 +38,8 @@ public:
 
 	std::vector<Unit*> findEnemyUnits();
 
+	void fireAllWeaponsAt(Unit* target);
+
 protected:
 	Star* m_currentStar = nullptr;
 

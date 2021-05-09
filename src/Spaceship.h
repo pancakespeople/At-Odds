@@ -86,6 +86,8 @@ public:
 
 	void attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings);
 
+	float getConstructionSpeed() const { return m_constructionSpeed; }
+
 private:
 	void init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 
@@ -98,6 +100,7 @@ private:
 	float m_percentJumpDriveCharged = 0.0f;
 	float m_facingAngle = 90.0f;
 	float m_rotationSpeed;
+	float m_constructionSpeed = 0.0f;
 
 	bool m_selected = false;
 	bool m_canReceiveOrders = true;

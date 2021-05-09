@@ -74,7 +74,7 @@ private:
 
 	tgui::Picture::Ptr m_buildIcon;
 	tgui::Panel::Ptr m_buildIconPanel;
-	tgui::ScrollablePanel::Ptr m_buildPanel;
+	tgui::Panel::Ptr m_buildPanel;
 	std::vector<BuildingSelector> m_buildingSelectors;
 
 	int m_selectedBuildingIdx = -1;

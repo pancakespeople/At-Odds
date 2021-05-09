@@ -96,6 +96,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 					sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
 					JumpPoint* jumpPoint = nullptr;
 					Spaceship* attackTarget = nullptr;
+					Building* buildingClick = nullptr;
 
 					// Check if click was on a jump point
 					for (JumpPoint& j : state.getLocalViewStar()->getJumpPoints()) {
@@ -115,12 +116,27 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 						}
 					}
 
+					// Check if click was on a building
+					for (Building& building : state.getLocalViewStar()->getBuildings()) {
+						if (building.getCollider().getGlobalBounds().contains(worldClick)) {
+							buildingClick = &building;
+						}
+					}
+
 					// Add orders
 					for (Spaceship* s : m_selectedShips) {
 						if (state.getLocalViewStar() == s->getCurrentStar()) {
 							s->clearOrders();
 							if (attackTarget != nullptr) {
 								s->addOrder(AttackOrder(attackTarget));
+							}
+							else if (buildingClick != nullptr) {
+								if (buildingClick->getAllegiance() != s->getAllegiance()) {
+									s->addOrder(AttackOrder(buildingClick)); // Attack enemy building
+								}
+								else {
+									s->addOrder(InteractWithBuildingOrder(buildingClick)); // Interact with friendly building
+								}
 							}
 							else if (jumpPoint != nullptr) {
 								s->addOrder(JumpOrder(jumpPoint));
@@ -607,16 +623,14 @@ void BuildGUI::onBuildIconMouseExit() {
 
 void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 	if (m_buildPanel == nullptr) {
-		m_buildPanel = tgui::ScrollablePanel::create();
+		m_buildPanel = tgui::Panel::create();
 		m_buildPanel->setInheritedOpacity(0.75);
 		m_buildPanel->setPosition("2.5%", "66%");
 		m_buildPanel->setSize("20%", "29%");
 		gui.add(m_buildPanel);
 
-		for (int i = 0; i < 50; i++) {
-			addBuildingSelector(Building::BUILDING_TYPE::OUTPOST);
-		}
-
+		addBuildingSelector(Building::BUILDING_TYPE::OUTPOST);
+		
 		m_selectedBuildingIdx = -1;
 	}
 	else {
@@ -699,7 +713,7 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 				
 				// Create new building
 				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
-				Building building(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor());
+				Building building(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
 
 				currentLocalStar->createBuilding(building);
 

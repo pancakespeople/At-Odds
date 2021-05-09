@@ -66,6 +66,8 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_mass = 150000.0f;
 		m_health = 50.0f;
 		m_collider.setRadius(350.0f);
+		m_constructionSpeed = 10.0f;
+		addWeapon(Weapon(Weapon::WEAPON_TYPE::CONSTRUCTION_GUN));
 		break;
 	default:
 		m_mass = 50000.0f;
@@ -111,6 +113,11 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 			AttackOrder* attackOrder = dynamic_cast<AttackOrder*>(m_orders.front().get());
 			if (attackOrder != nullptr) {
 				emitter.drawLine(window, getPos(), attackOrder->getTargetShip()->getPos(), sf::Color::Red);
+			}
+
+			InteractWithBuildingOrder* interactOrder = dynamic_cast<InteractWithBuildingOrder*>(m_orders.front().get());
+			if (interactOrder != nullptr) {
+				emitter.drawLine(window, getPos(), interactOrder->getTargetBuilding()->getPos(), sf::Color(55, 55, 255));
 			}
 		}
 	}

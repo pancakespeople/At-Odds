@@ -45,3 +45,9 @@ std::vector<Unit*> Unit::findEnemyUnits() {
 	}
 	return units;
 }
+
+void Unit::fireAllWeaponsAt(Unit* target) {
+	for (Weapon& weapon : m_weapons) {
+		weapon.fireAt(this, target->getPos(), m_currentStar);
+	}
+}

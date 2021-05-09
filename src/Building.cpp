@@ -11,7 +11,7 @@ const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texture
 	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"}
 };
 
-Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color) {
+Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built) {
 	switch (type) {
 	case BUILDING_TYPE::OUTPOST:
 		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::OUTPOST)));
@@ -42,14 +42,37 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 	m_allegiance = allegiance;
 
 	m_currentStar = star;
+
+	if (built) {
+		m_constructionPercent = 100.0f;
+	}
+	else {
+		m_constructionPercent = 0.0f;
+	}
 }
 
 void Building::draw(sf::RenderWindow& window) {
-	window.draw(m_sprite);
+	if (m_constructionPercent < 100.0f) {
+		sf::Color oldColor = m_sprite.getColor();
+		sf::Color newColor = oldColor;
+
+		newColor.a = std::max(10.0f, 255 * (m_constructionPercent / 100.0f));
+
+		m_sprite.setColor(newColor);
+		window.draw(m_sprite);
+		m_sprite.setColor(oldColor);
+	}
+	else {
+		window.draw(m_sprite);
+	}
 	window.draw(m_collider);
 }
 
 void Building::update() {
+	if (m_constructionPercent < 100.0f) {
+		return;
+	}
+	
 	if (!m_dead && m_health <= 0.0f) {
 		m_dead = true;
 		m_currentStar->addAnimation(Animation(Animation::ANIMATION_TYPE::EXPLOSION, getPos()));
@@ -96,6 +119,15 @@ void Building::attackEnemies() {
 			}
 		}
 	}
+}
+
+void Building::construct(const Spaceship* constructor) {
+	if (m_constructionPercent >= 100.0f) {
+		return;
+	}
+
+	float percentIncrease = constructor->getConstructionSpeed() / m_health;
+	m_constructionPercent += percentIncrease;
 }
 
 BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {

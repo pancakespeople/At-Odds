@@ -16,19 +16,24 @@ public:
 
 	static const std::unordered_map<Building::BUILDING_TYPE, std::string> texturePaths;
 
-	Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color);
+	Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built = true);
 
 	void draw(sf::RenderWindow& window);
 
 	void update();
+
+	bool isBuilt() { return m_constructionPercent >= 100.0f; }
+
+	void construct(const Spaceship* constructor);
 
 
 private:
 	void attackEnemies();
 
 	sf::Sprite m_sprite;
-
 	Unit* m_attackTarget = nullptr;
+
+	float m_constructionPercent = 0.0f;
 };
 
 class BuildingPrototype {

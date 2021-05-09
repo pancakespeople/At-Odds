@@ -16,6 +16,7 @@ public:
 		MACHINE_GUN,
 		LONG_RANGE_LASER_GUN,
 		LONG_RANGE_MACHINE_GUN,
+		CONSTRUCTION_GUN
 	};
 	
 	static const std::unordered_map<WEAPON_TYPE, std::string> weaponSounds;

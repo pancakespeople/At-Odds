@@ -44,6 +44,14 @@ Projectile::Projectile(PROJECTILE_TYPE type) {
 		m_life = 1000.0f;
 		m_speed = 15.0f;
 		break;
+	case PROJECTILE_TYPE::CONSTRUCTION:
+		m_shape.setFillColor(sf::Color(100, 100, 255));
+		m_shape.setScale(sf::Vector2f(1.0f, 4.0f));
+
+		m_damage = 0.0f;
+		m_life = 100.0f;
+		m_speed = 15.0f;
+		break;
 	default:
 		DEBUG_PRINT("Invalid projectile type");
 	}

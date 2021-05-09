@@ -5,6 +5,7 @@ class Spaceship;
 class JumpPoint;
 class Star;
 class Unit;
+class Building;
 
 class Order {
 public:
@@ -59,4 +60,16 @@ private:
 	bool m_pathFound = false;
 	Star* m_endStar;
 	std::list<Star*> m_path;
+};
+
+class InteractWithBuildingOrder : public Order {
+public:
+	InteractWithBuildingOrder(Building* building);
+
+	virtual bool execute(Spaceship* ship) override;
+
+	Building* getTargetBuilding() { return m_building; }
+
+private:
+	Building* m_building;
 };

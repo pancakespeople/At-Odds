@@ -40,6 +40,10 @@ Weapon::Weapon(WEAPON_TYPE type) {
 		m_accuracy = 0.95f;
 		m_numProjectiles = 2;
 		break;
+	case WEAPON_TYPE::CONSTRUCTION_GUN:
+		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::CONSTRUCTION);
+		m_cooldownRecovery = 5.0f;
+		break;
 	default:
 		DEBUG_PRINT("Invalid weapon type");
 	}

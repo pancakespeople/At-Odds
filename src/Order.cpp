@@ -6,6 +6,7 @@
 #include "Math.h"
 #include "Pathfinder.h"
 #include "Star.h"
+#include "Building.h"
 
 bool FlyToOrder::execute(Spaceship* ship) {
 	return ship->flyTo(m_pos);
@@ -102,4 +103,35 @@ bool TravelOrder::execute(Spaceship* ship) {
 		}
 	}
 	return false;
+}
+
+InteractWithBuildingOrder::InteractWithBuildingOrder(Building* building) {
+	m_building = building;
+}
+
+bool InteractWithBuildingOrder::execute(Spaceship* ship) {
+	if (m_building->getCurrentStar() != ship->getCurrentStar() || m_building->isDead()) {
+		return true;
+	}
+	if (ship->getConstructionSpeed() > 0.0) {
+		// Construction ship
+		float insideRadius = m_building->getCollider().getRadius() * 4.0f;
+		if (Math::distance(ship->getPos(), m_building->getPos()) < insideRadius) {
+			if (!m_building->isBuilt()) {
+				m_building->construct(ship);
+				ship->fireAllWeaponsAt(m_building);
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			ship->flyTo(m_building->getPos());
+			return false;
+		}
+	}
+	else {
+		return ship->flyTo(m_building->getPos());
+	}
 }
