@@ -33,6 +33,19 @@ public:
 
 	float getRange() { return m_projectile.getRange(); }
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_cooldownPercent;
+		archive& m_cooldownRecovery;
+		archive& m_accuracy;
+		archive& m_numProjectiles;
+		archive& m_projectile;
+		archive& m_type;
+	}
+
+	Weapon() {}
+	
 	float m_cooldownPercent = 0.0f;
 	float m_cooldownRecovery = 1.0f;
 	float m_accuracy = 1.0f;

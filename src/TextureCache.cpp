@@ -3,7 +3,7 @@
 #include "TextureCache.h"
 #include "Debug.h"
 
-std::unordered_map<std::string, sf::Texture> TextureCache::m_textures;
+std::map<std::string, sf::Texture> TextureCache::m_textures;
 
 sf::Texture& TextureCache::getTexture(const std::string& filePath) {
 	if (m_textures.count(filePath) == 0) {
@@ -23,4 +23,13 @@ sf::Texture& TextureCache::getTexture(const std::string& filePath) {
 	else {
 		return m_textures[filePath];
 	}
+}
+
+std::string TextureCache::getTexturePath(const sf::Texture* texture) {
+	for (auto& pair : m_textures) {
+		if (&pair.second == texture) {
+			return pair.first;
+		}
+	}
+	return "";
 }

@@ -45,6 +45,19 @@ public:
 	void setAllegiance(int allegiance);
 
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_angle;
+		archive& m_shape;
+		archive& m_sprite;
+		archive& m_life;
+		archive& m_speed;
+		archive& m_allegiance;
+		archive& m_damage;
+		archive& m_usesSprite;
+	}
+	
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
 
 	float m_angle; // Degrees

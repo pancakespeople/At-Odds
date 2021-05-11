@@ -19,6 +19,18 @@ public:
 	void nextFrame();
 
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_frames;
+		archive& m_frameIndex;
+		archive& m_frameDelay;
+		archive& m_ticksToNextFrame;
+		archive& m_done;
+	}
+
+	Animation() {}
+	
 	void init(const std::string& filePath, int frameWidth, int frameHeight, sf::Vector2f pos, int frameDelay = 0, float scale = 1.0f);
 
 	std::vector<sf::Sprite> m_frames;

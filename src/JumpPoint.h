@@ -32,6 +32,17 @@ public:
 	bool isPointInRadius(sf::Vector2f point);
 
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_sprite;
+		archive& m_trail;
+		archive& m_hyperlane;
+		archive& m_isOutgoing;
+	}
+
+	JumpPoint() {}
+	
 	sf::Sprite m_sprite;
 	sf::RectangleShape m_trail;
 	Hyperlane* m_hyperlane;

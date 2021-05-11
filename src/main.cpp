@@ -18,6 +18,8 @@
 #include "Pathfinder.h"
 #include "GUI.h"
 #include "Player.h"
+#include "SaveLoader.h"
+#include "TextureCache.h"
 
 int main()
 {
@@ -48,9 +50,11 @@ int main()
 
     Constellation constellation;
     GameState state(Camera(0, 0, resolution.x, resolution.y));
+    Player& player = state.getPlayer();
     UnitGUI unitGui;
     BuildGUI& buildGui = playerGui.getBuildGUI();
     EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
+    SaveLoader saveLoader;
     
     mainMenu.open(gui, constellation, state);
     
@@ -75,7 +79,11 @@ int main()
     float updatesPerSecondTarget = 60.0f;
     float updateStep = 1.0f;
 
-    while (window.isOpen() && state.getState() != GameState::State::EXITING) {
+    sf::Texture& texture = TextureCache::getTexture("data/art/spacebackground1.png");
+    DEBUG_PRINT(TextureCache::getTexturePath(&texture));
+
+    while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
+        state.getMetaState() != GameState::MetaState::EXIT_AND_SAVE) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -128,6 +136,27 @@ int main()
 
         fps = 1.0f / fpsClock.getElapsedTime().asSeconds();
         fpsClock.restart();
+
+        if (state.getMetaState() == GameState::MetaState::LOAD_GAME) {
+            saveLoader.loadGame("data/saves/game.save", constellation, state);
+            mainMenu.close();
+            state.resetMetaState();
+
+            if (player.getFaction() != -1) {
+                buildGui.open(gui);
+            }
+
+            DEBUG_PRINT("Loaded game");
+        }
+    }
+
+    if (!window.isOpen()) {
+        state.exitGame();
+    }
+
+    if (state.getMetaState() == GameState::MetaState::EXIT_AND_SAVE) {
+        saveLoader.saveGame("data/saves/game.save", constellation, state);
+        DEBUG_PRINT("Game saved");
     }
 
     return 0;

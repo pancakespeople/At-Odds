@@ -13,6 +13,7 @@ class MainMenu;
 class Background;
 class EffectsEmitter;
 class Player;
+class SaveLoader;
 
 // This class handles GUI for selecting and moving units
 class UnitGUI {

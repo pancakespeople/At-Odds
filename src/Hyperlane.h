@@ -26,6 +26,19 @@ public:
 	void enablePathEffect();
 
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_shape;
+		archive& m_pathEffectShape;
+		archive& m_beginStar;
+		archive& m_endStar;
+		archive& m_angleDegrees;
+		archive& m_pathEffectEnabled;
+	}
+
+	Hyperlane() {}
+	
 	sf::RectangleShape m_shape;
 	sf::RectangleShape m_pathEffectShape;
 	Star* m_beginStar;

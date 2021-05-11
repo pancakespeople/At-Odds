@@ -43,6 +43,17 @@ public:
 	std::vector<std::unique_ptr<Spaceship>>& getShips() { return m_spaceships; }
 
 private:
+	friend class boost::serialization::access;
+	
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_stars;
+		archive & m_hyperlanes;
+		archive & m_spaceships;
+		archive & m_toBeDeletedShips;
+		archive & m_factions;
+	}
+	
 	void recursiveConstellation(std::unique_ptr<Star>& root, int numStars);
 
 	float distBetweenVecs(const sf::Vector2f& a, const sf::Vector2f& b);

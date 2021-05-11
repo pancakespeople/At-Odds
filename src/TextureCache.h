@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <unordered_map>
+#include <map>
 
 class TextureCache {
 public:
@@ -8,7 +8,9 @@ public:
 	
 	static sf::Texture& getTexture(const std::string& filePath);
 
+	static std::string getTexturePath(const sf::Texture* texture);
+
 private:
-	static std::unordered_map<std::string, sf::Texture> m_textures;
+	static std::map<std::string, sf::Texture> m_textures;
 };
 

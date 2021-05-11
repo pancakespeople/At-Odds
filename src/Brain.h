@@ -11,6 +11,15 @@ public:
 	void controlFaction(Faction* faction);
 
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_expansionTarget;
+		archive& m_launchingAttack;
+		archive& m_attackTimer;
+		archive& m_attackFrustration;
+	}
+	
 	Star* m_expansionTarget = nullptr; // Star that the AI wants to attack
 	
 	bool m_launchingAttack = false; // If an attack has been ordered on a star

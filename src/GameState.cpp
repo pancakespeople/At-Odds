@@ -44,3 +44,12 @@ GameState::GameState(Camera camera) {
 	m_camera = camera;
 }
 
+void GameState::exitGame() {
+	if (m_state == State::MAIN_MENU) {
+		// Do not save if on main menu
+		m_metaState = MetaState::EXITING;
+	}
+	else {
+		m_metaState = MetaState::EXIT_AND_SAVE;
+	}
+}

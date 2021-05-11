@@ -43,26 +43,38 @@ public:
 	void controlByPlayer(Player& player);
 
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_constellation;
+		archive& m_capitol;
+		archive& m_color;
+		archive& m_ownedSystems;
+		archive& m_ships;
+		archive& m_ai;
+		archive& m_ticksUntilNextAIAction;
+		archive& m_id;
+		archive& m_freeShipTimer;
+		archive& m_numFreeShips;
+		archive& m_aiEnabled;
+	}
+	
+	Faction() {}
+
 	Constellation* m_constellation;
-	
-	sf::Color m_color;
-	
-	std::vector<Star*> m_ownedSystems;
-	
 	Star* m_capitol = nullptr;
 	
-	int m_ticksUntilNextAIAction;
-	
-	int m_id;
-
+	sf::Color m_color;
+	std::vector<Star*> m_ownedSystems;
 	std::vector<Spaceship*> m_ships;
-
+	
 	Brain m_ai;
-
+	
+	int m_ticksUntilNextAIAction;
+	int m_id;
 	int m_freeShipTimer = 2000;
-
 	int m_numFreeShips = 0;
-
+	
 	bool m_aiEnabled = true;
 };
 

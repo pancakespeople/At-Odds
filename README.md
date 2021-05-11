@@ -13,5 +13,6 @@ You should use a package manager or something to install the following dependenc
 
 	sfml:x64 2.5.1
 	tgui:x64 0.9.1
+	boost-serialization:x64 1.75.0
 
 Then, use premake to generate project files

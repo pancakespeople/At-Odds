@@ -18,7 +18,6 @@ class Star {
 public:
 	Star(sf::Vector2f pos);
 
-	Star();
 
 	void draw(sf::RenderWindow& window);
 
@@ -90,10 +89,30 @@ public:
 
 	std::vector<Building>& getBuildings() { return m_buildings; }
 
+
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_shape;
+		archive & m_localViewSprite;
+		archive & m_hyperlanes;
+		archive & m_jumpPoints;
+		archive & m_localShips;
+		archive & m_projectiles;
+		archive & m_buildings;
+		archive & m_localViewAnimations;
+		archive & m_localViewActive;
+		archive & m_multipleFactionsPresent;
+		archive & m_allegiance;
+		archive & m_shaderRandomSeed;
+	}
+	
 	void handleCollisions();
 
 	void init(const sf::Vector2f& pos);
+
+	Star() {}
 
 	friend void GameState::changeToLocalView(Star* star);
 

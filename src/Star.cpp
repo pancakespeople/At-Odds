@@ -9,13 +9,10 @@
 #include "Hyperlane.h"
 #include "Player.h"
 #include "Random.h"
+#include "Unit.h"
 
 Star::Star(sf::Vector2f pos) {
 	init(pos);
-}
-
-Star::Star() {
-	init(sf::Vector2f(0.0f, 0.0f));
 }
 
 void Star::init(const sf::Vector2f& pos) {

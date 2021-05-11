@@ -28,6 +28,17 @@ public:
 
 
 private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& boost::serialization::base_object<Unit>(*this);
+		archive& m_sprite;
+		archive& m_attackTarget;
+		archive& m_constructionPercent;
+	}
+
+	Building() {}
+	
 	void attackEnemies();
 
 	sf::Sprite m_sprite;

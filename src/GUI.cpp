@@ -12,6 +12,7 @@
 #include "EffectsEmitter.h"
 #include "Sounds.h"
 #include "TextureCache.h"
+#include "SaveLoader.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -210,7 +211,9 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 
 		auto loadGameButton = tgui::Button::create("Load Game");
 		loadGameButton->setPosition("(parent.width - width) / 2", "40%");
-		loadGameButton->onPress.connect([] {DEBUG_PRINT("Not implemented"); });
+		loadGameButton->onPress([&state] {
+			state.loadGame();
+		});
 		guiWindow->add(loadGameButton);
 
 		auto optionsButton = tgui::Button::create("Options");
@@ -325,7 +328,8 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 }
 
 void NewGameMenu::close() {
-	m_window->close();
+	if (m_window != nullptr) 
+		m_window->close();
 }
 
 void NewGameMenu::backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu) {

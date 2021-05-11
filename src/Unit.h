@@ -40,7 +40,21 @@ public:
 
 	void fireAllWeaponsAt(Unit* target);
 
+	void setCurrentStar(Star* star) { m_currentStar = star; }
+
 protected:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive& m_currentStar;
+		archive& m_collider;
+		archive& m_velocity;
+		archive& m_weapons;
+		archive& m_health;
+		archive& m_dead;
+		archive& m_allegiance;
+	}
+
 	Star* m_currentStar = nullptr;
 
 	Collider m_collider;
