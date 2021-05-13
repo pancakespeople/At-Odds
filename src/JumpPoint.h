@@ -2,12 +2,13 @@
 #include <SFML/Graphics.hpp>
 
 #include "EffectsEmitter.h"
+#include "Identifiable.h"
 
 class Hyperlane;
 class Spaceship;
 class Star;
 
-class JumpPoint {
+class JumpPoint : public Identifiable {
 public:
 	JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing);
 
@@ -35,10 +36,11 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& m_sprite;
-		archive& m_trail;
-		archive& m_hyperlane;
-		archive& m_isOutgoing;
+		archive & boost::serialization::base_object<Identifiable>(*this);
+		archive & m_sprite;
+		archive & m_trail;
+		archive & m_hyperlane;
+		archive & m_isOutgoing;
 	}
 
 	JumpPoint() {}

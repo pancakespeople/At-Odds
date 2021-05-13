@@ -31,7 +31,7 @@ public:
 
 	void accelerate(float amount);
 
-	void update();
+	void update(Star* currentStar);
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
@@ -92,21 +92,15 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		/*archive.template register_type<FlyToOrder>();
-		archive.template register_type<JumpOrder>();
-		archive.template register_type<AttackOrder>();
-		archive.template register_type<TravelOrder>();
-		archive.template register_type<InteractWithBuildingOrder>();*/
 		archive& boost::serialization::base_object<Unit>(*this);
 		archive& m_sprite;
-		//archive& m_orders;
+		archive& m_orders;
 		archive& m_mass;
 		archive& m_maxAcceleration;
 		archive& m_percentJumpDriveCharged;
 		archive& m_facingAngle;
 		archive& m_rotationSpeed;
 		archive& m_constructionSpeed;
-		archive& m_selected;
 		archive& m_canReceiveOrders;
 	}
 

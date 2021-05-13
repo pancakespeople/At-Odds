@@ -47,10 +47,10 @@ private:
 	
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_stars;
-		archive & m_hyperlanes;
 		archive & m_spaceships;
 		archive & m_toBeDeletedShips;
+		archive & m_stars;
+		archive & m_hyperlanes;
 		archive & m_factions;
 	}
 	

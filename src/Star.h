@@ -18,77 +18,51 @@ class Star {
 public:
 	Star(sf::Vector2f pos);
 
-
 	void draw(sf::RenderWindow& window);
-
 	void draw(sf::RenderWindow& window, sf::Shader& shader);
-
 	void drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time);
-
 	void setPos(sf::Vector2f pos);
-
-	sf::Vector2f getPos() { return m_shape.getPosition(); }
-
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
+	void connectHyperlane(Hyperlane* lane);
+	void factionTakeOwnership(Faction* faction, bool spawnClaimUnit = false);
+	void setRadius(float radius) { m_shape.setRadius(radius); }
+	void clicked(sf::Event ev, GameState& state);
+	void setupJumpPoints();
+	void addSpaceship(Spaceship* ship);
+	void removeSpaceship(Spaceship* ship);
+	void addProjectile(Projectile proj);
+	void addAnimation(Animation&& anim);
+	void cleanUpAnimations();
+	void update();
+	void destroyAllShips();
+	void clearAnimations() { m_localViewAnimations.clear(); }
+	void createBuilding(Building building) { m_buildings.push_back(building); }
 
 	float getRadius() { return m_shape.getRadius(); }
-
 	float distBetweenStar(Star& s);
 
 	bool isStarInRadius(Star& s, float radius);
-
-	void connectHyperlane(Hyperlane* lane);
-
-	std::vector<Hyperlane*> getHyperlanes() { return m_hyperlanes; }
-
-	void factionTakeOwnership(Faction* faction, bool spawnClaimUnit = false);
-
-	void setRadius(float radius) { m_shape.setRadius(radius); }
-
 	bool isInShapeRadius(float x, float y);
-
-	sf::Vector2f getCenter();
-
-	void clicked(sf::Event ev, GameState& state);
-
-	void setupJumpPoints();
-
-	sf::Vector2f getLocalViewCenter();
-
-	void addSpaceship(Spaceship* ship);
-	
-	void removeSpaceship(Spaceship* ship);
-	
-	std::vector<Spaceship*>& getSpaceships() { return m_localShips; }
-
-	std::vector<JumpPoint>& getJumpPoints() { return m_jumpPoints; }
-
-	void addProjectile(Projectile proj);
-
-	void addAnimation(Animation&& anim);
-	
-	void cleanUpAnimations();
-
-	void update();
-
 	bool isLocalViewActive() { return m_localViewActive; }
 
 	int getAllegiance() { return m_allegiance; }
-
-	void destroyAllShips();
-
-	std::vector<Star*> getConnectedStars();
-
 	int numAlliedShips(int allegiance);
 
-	void clearAnimations() { m_localViewAnimations.clear(); }
-
+	sf::Vector2f getPos() { return m_shape.getPosition(); }
+	sf::Vector2f getCenter();
+	sf::Vector2f getLocalViewCenter();
 	sf::Vector2f getRandomLocalPos(float min, float max);
 
-	void createBuilding(Building building) { m_buildings.push_back(building); }
-
+	std::vector<Hyperlane*> getHyperlanes() { return m_hyperlanes; }
+	std::vector<Spaceship*>& getSpaceships() { return m_localShips; }
+	std::vector<JumpPoint>& getJumpPoints() { return m_jumpPoints; }
+	std::vector<Star*> getConnectedStars();
 	std::vector<Building>& getBuildings() { return m_buildings; }
 
+	Unit* getUnitByID(unsigned int id);
+	Spaceship* getShipByID(unsigned int id);
+	Building* getBuildingByID(unsigned int id);
+	JumpPoint* getJumpPointByID(unsigned int id);
 
 private:
 	friend class boost::serialization::access;

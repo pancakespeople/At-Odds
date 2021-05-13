@@ -272,7 +272,7 @@ void Star::update() {
 	std::vector<int> factions;
 	
 	for (Spaceship* s : m_localShips) {
-		s->update();
+		s->update(this);
 		if (factions.size() == 0) {
 			factions.push_back(s->getAllegiance());
 		}
@@ -336,4 +336,41 @@ int Star::numAlliedShips(int allegiance) {
 
 sf::Vector2f Star::getRandomLocalPos(float min, float max) {
 	return getLocalViewCenter() + Random::randVec(min, max);
+}
+
+Unit* Star::getUnitByID(unsigned int id) {
+	Spaceship* ship = getShipByID(id);
+	if (ship != nullptr) return ship;
+	
+	Building* building = getBuildingByID(id);
+	if (building != nullptr) return building;
+	
+	return nullptr;
+}
+
+Spaceship* Star::getShipByID(unsigned int id) {
+	for (Spaceship* ship : m_localShips) {
+		if (ship->getID() == id) {
+			return ship;
+		}
+	}
+	return nullptr;
+}
+
+Building* Star::getBuildingByID(unsigned int id) {
+	for (Building& building : m_buildings) {
+		if (building.getID() == id) {
+			return &building;
+		}
+	}
+	return nullptr;
+}
+
+JumpPoint* Star::getJumpPointByID(unsigned int id) {
+	for (JumpPoint& j : m_jumpPoints) {
+		if (j.getID() == id) {
+			return &j;
+		}
+	}
+	return nullptr;
 }

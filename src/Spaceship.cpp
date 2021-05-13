@@ -100,25 +100,7 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 
 		// Visualizes orders when selected
 		if (m_orders.size() > 0) {
-			FlyToOrder* flyOrder = dynamic_cast<FlyToOrder*>(m_orders.front().get());
-			if (flyOrder != nullptr) {
-				emitter.drawLine(window, getPos(), flyOrder->getTargetPos(), sf::Color::Green);
-			}
-
-			JumpOrder* jumpOrder = dynamic_cast<JumpOrder*>(m_orders.front().get());
-			if (jumpOrder != nullptr) {
-				emitter.drawLine(window, getPos(), jumpOrder->getTargetJumpPoint()->getPos(), sf::Color::Yellow);
-			}
-
-			AttackOrder* attackOrder = dynamic_cast<AttackOrder*>(m_orders.front().get());
-			if (attackOrder != nullptr) {
-				emitter.drawLine(window, getPos(), attackOrder->getTargetShip()->getPos(), sf::Color::Red);
-			}
-
-			InteractWithBuildingOrder* interactOrder = dynamic_cast<InteractWithBuildingOrder*>(m_orders.front().get());
-			if (interactOrder != nullptr) {
-				emitter.drawLine(window, getPos(), interactOrder->getTargetBuilding()->getPos(), sf::Color(55, 55, 255));
-			}
+			m_orders.front()->draw(window, emitter, getPos());
 		}
 	}
 }
@@ -181,7 +163,9 @@ void Spaceship::accelerate(float amount) {
 	m_velocity.y += -std::sin(m_facingAngle * Math::toRadians) * amount;
 }
 
-void Spaceship::update() {
+void Spaceship::update(Star* currentStar) {
+	m_currentStar = currentStar;
+	
 	if (!m_dead && m_health <= 0.0f) {
 		m_dead = true;
 		m_currentStar->addAnimation(Animation("data/art/explosion1.png", 4, 4, getPos(), 20, 16.0f));
@@ -189,7 +173,7 @@ void Spaceship::update() {
 	}
 
 	if (!m_orders.empty()) {
-		if (m_orders.front()->execute(this)) {
+		if (m_orders.front()->execute(this, currentStar)) {
 			m_orders.pop_front();
 		}
 	}

@@ -6,12 +6,14 @@ class JumpPoint;
 class Star;
 class Unit;
 class Building;
-
+class EffectsEmitter;
 
 class Order {
 public:
 	// Should return true if order is finished
-	virtual bool execute(Spaceship* ship) { return true; }
+	virtual bool execute(Spaceship* ship, Star* currentStar) { return true; }
+
+	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {}
 
 	Order() {}
 private:
@@ -25,9 +27,10 @@ class FlyToOrder : public Order {
 public:
 	FlyToOrder(sf::Vector2f pos) { m_pos = pos; }
 
-	virtual bool execute(Spaceship* ship) override;
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
-	sf::Vector2f getTargetPos() { return m_pos; }
+	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) override;
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -41,64 +44,62 @@ private:
 	sf::Vector2f m_pos;
 };
 
-//BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
-
 class JumpOrder : public Order {
 public:
-	JumpOrder(JumpPoint* point, bool attackEnemies = false) { m_jumpPoint = point; m_attackEnemies = attackEnemies; }
+	JumpOrder(JumpPoint* point, bool attackEnemies = false);
 
-	virtual bool execute(Spaceship* ship) override;
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
-	JumpPoint* getTargetJumpPoint() { return m_jumpPoint; }
+	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) override;
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		boost::serialization::base_object<Order>(*this);
-		archive& m_jumpPoint;
-		archive& m_attackEnemies;
+		archive & m_jumpPointID;
+		archive & m_attackEnemies;
 	}
 
 	JumpOrder() {}
 
-	JumpPoint* m_jumpPoint;
-	bool m_attackEnemies;
+	JumpPoint* m_jumpPoint = nullptr;
+	unsigned int m_jumpPointID = 0;
+	bool m_attackEnemies = false;
 };
-
-//BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
 
 class AttackOrder : public Order {
 public:
 	AttackOrder(Unit* target);
 
-	virtual bool execute(Spaceship* ship) override;
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
-	Unit* getTargetShip() { return m_target; }
+	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) override;
+
+	unsigned int getTargetShipID() { return m_targetID; }
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		boost::serialization::base_object<Order>(*this);
-		archive& m_target;
-		archive& m_frustration;
-		archive& m_lastEnemyHealth;
+		archive & m_targetID;
+		archive & m_frustration;
+		archive & m_lastEnemyHealth;
 	}
 
 	AttackOrder() {}
 
-	Unit* m_target;
-	float m_frustration;
-	float m_lastEnemyHealth;
+	unsigned int m_targetID = 0;
+	Unit* m_target = nullptr;
+	float m_frustration = 0.0f;
+	float m_lastEnemyHealth = 100.0f;
 };
-
-//BOOST_CLASS_EXPORT_GUID(AttackOrder, "AttackOrder")
 
 class TravelOrder : public Order {
 public:
 	TravelOrder(Star* star);
 
-	virtual bool execute(Spaceship* ship) override;
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
 private:
 	friend class boost::serialization::access;
@@ -113,31 +114,28 @@ private:
 	TravelOrder() {}
 
 	bool m_pathFound = false;
-	Star* m_endStar;
+	Star* m_endStar = nullptr;
 	std::list<Star*> m_path;
 };
-
-//BOOST_CLASS_EXPORT_GUID(TravelOrder, "TravelOrder")
 
 class InteractWithBuildingOrder : public Order {
 public:
 	InteractWithBuildingOrder(Building* building);
 
-	virtual bool execute(Spaceship* ship) override;
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
-	Building* getTargetBuilding() { return m_building; }
+	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos);
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		boost::serialization::base_object<Order>(*this);
-		archive& m_building;
+		archive& m_buildingID;
 	}
 
 	InteractWithBuildingOrder() {}
 	
-	Building* m_building;
+	unsigned int m_buildingID = 0;
+	Building* m_building = nullptr;
 };
-
-//BOOST_CLASS_EXPORT_GUID(InteractWithBuildingOrder, "InteractWithBuildingOrder")

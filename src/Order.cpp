@@ -7,12 +7,36 @@
 #include "Pathfinder.h"
 #include "Star.h"
 #include "Building.h"
+#include "SaveLoader.h"
+#include "Hyperlane.h"
 
-bool FlyToOrder::execute(Spaceship* ship) {
+BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
+BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
+BOOST_CLASS_EXPORT_GUID(AttackOrder, "AttackOrder")
+BOOST_CLASS_EXPORT_GUID(TravelOrder, "TravelOrder")
+BOOST_CLASS_EXPORT_GUID(InteractWithBuildingOrder, "InteractWithBuildingOrder")
+
+bool FlyToOrder::execute(Spaceship* ship, Star* currentStar) {
 	return ship->flyTo(m_pos);
 }
 
-bool JumpOrder::execute(Spaceship* ship) {
+void FlyToOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+	emitter.drawLine(window, shipPos, m_pos, sf::Color::Green);
+}
+
+JumpOrder::JumpOrder(JumpPoint* point, bool attackEnemies) {
+	m_jumpPointID = point->getID();
+	m_attackEnemies = attackEnemies;
+}
+
+bool JumpOrder::execute(Spaceship* ship, Star* currentStar) {
+	if (m_jumpPoint == nullptr) {
+		m_jumpPoint = currentStar->getJumpPointByID(m_jumpPointID);
+		if (m_jumpPoint == nullptr) {
+			return true;
+		}
+	}
+	
 	if (m_attackEnemies) {
 		std::vector<Spaceship*> enemies = ship->findEnemyShips();
 
@@ -30,13 +54,24 @@ bool JumpOrder::execute(Spaceship* ship) {
 	}
 }
 
+void JumpOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+	if (m_jumpPoint != nullptr)
+		emitter.drawLine(window, shipPos, m_jumpPoint->getPos(), sf::Color::Yellow);
+}
+
 AttackOrder::AttackOrder(Unit* target) {
-	m_target = target;
+	m_targetID = target->getID();
 	m_lastEnemyHealth = target->getHealth();
 	m_frustration = 0.0f;
 }
 
-bool AttackOrder::execute(Spaceship* ship) {
+bool AttackOrder::execute(Spaceship* ship, Star* currentStar) {
+	if (m_target == nullptr) {
+		m_target = currentStar->getUnitByID(m_targetID);
+		if (m_target == nullptr)
+			return true;
+	}
+	
 	if (m_target->getCurrentStar() != ship->getCurrentStar() || m_target->getAllegiance() == ship->getAllegiance()) {
 		return true;
 	}
@@ -77,11 +112,17 @@ bool AttackOrder::execute(Spaceship* ship) {
 	}
 }
 
+void AttackOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+	if (m_target != nullptr) {
+		emitter.drawLine(window, shipPos, m_target->getPos(), sf::Color::Red);
+	}
+}
+
 TravelOrder::TravelOrder(Star* star) {
 	m_endStar = star;
 }
 
-bool TravelOrder::execute(Spaceship* ship) {
+bool TravelOrder::execute(Spaceship* ship, Star* currentStar) {
 	if (!m_pathFound) {
 		m_path = Pathfinder::findPath(ship->getCurrentStar(), m_endStar);
 		m_pathFound = true;
@@ -106,10 +147,16 @@ bool TravelOrder::execute(Spaceship* ship) {
 }
 
 InteractWithBuildingOrder::InteractWithBuildingOrder(Building* building) {
-	m_building = building;
+	m_buildingID = building->getID();
 }
 
-bool InteractWithBuildingOrder::execute(Spaceship* ship) {
+bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
+	if (m_building == nullptr) {
+		m_building = currentStar->getBuildingByID(m_buildingID);
+		if (m_building == nullptr)
+			return true;
+	}
+	
 	if (m_building->getCurrentStar() != ship->getCurrentStar() || m_building->isDead()) {
 		return true;
 	}
@@ -134,4 +181,9 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship) {
 	else {
 		return ship->flyTo(m_building->getPos());
 	}
+}
+
+void InteractWithBuildingOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+	if (m_building != nullptr)
+		emitter.drawLine(window, shipPos, m_building->getPos(), sf::Color(100, 100, 255));
 }
