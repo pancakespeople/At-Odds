@@ -51,8 +51,8 @@ int main()
     Constellation constellation;
     GameState state(Camera(0, 0, resolution.x, resolution.y));
     Player& player = state.getPlayer();
-    UnitGUI unitGui;
-    BuildGUI& buildGui = playerGui.getBuildGUI();
+    UnitGUI& unitGui = playerGui.unitGUI;
+    BuildGUI& buildGui = playerGui.buildGUI;
     EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
     SaveLoader saveLoader;
     
@@ -115,7 +115,6 @@ int main()
         window.clear();
         
         background.draw(window);
-        unitGui.draw(window);
         
         state.getCamera().update(window);
 
@@ -127,6 +126,7 @@ int main()
         }
         
         buildGui.draw(window);
+        unitGui.draw(window);
         gui.draw();
 
         window.display();
@@ -143,7 +143,8 @@ int main()
             state.resetMetaState();
 
             if (player.getFaction() != -1) {
-                buildGui.open(gui);
+                playerGui.open(gui);
+                playerGui.helpWindow.close();
             }
 
             DEBUG_PRINT("Loaded game");

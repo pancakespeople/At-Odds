@@ -18,6 +18,22 @@ UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
 }
 
+void UnitGUI::open(tgui::Gui& gui) {
+	if (m_panel == nullptr) {
+		m_panel = tgui::Panel::create();
+		m_panel->setPosition("90%", "90%");
+		m_panel->setSize("7.5%", "5%");
+		m_panel->getRenderer()->setOpacity(0.75f);
+		m_panel->setVisible(false);
+		gui.add(m_panel);
+
+		m_label = tgui::Label::create();
+		m_label->setSize("100%", "100%");
+		m_label->setText(std::to_string(m_selectedShips.size()) + "x " + "selected");
+		m_panel->add(m_label);
+	}
+}
+
 void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int playerFaction) {
 	static bool mouseHeld = false;
 
@@ -78,13 +94,25 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 	}
 
 	mouseHeld = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+	if (m_selectedShips.size() > 0) {
+		m_panel->setVisible(true);
+		m_label->setText(std::to_string(m_selectedShips.size()) + "x " + "selected");
+	}
+	else {
+		m_panel->setVisible(false);
+	}
 }
 
 void UnitGUI::draw(sf::RenderWindow& window) {
+	sf::View oldView = window.getView();
 	window.setView(window.getDefaultView());
+	
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 		window.draw(m_mouseSelectionBox);
 	}
+
+	window.setView(oldView);
 }
 
 void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars) {
@@ -366,6 +394,7 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	auto& stars = constellation.getStars();
 
 	constellation.generateFactions(factionsNum);
+	constellation.generateNeutralSquatters();
 
 	state.getCamera().setPos(stars[0]->getPos());
 	state.getCamera().resetZoom();
@@ -582,6 +611,8 @@ void HelpWindow::open(tgui::Gui& gui) {
 	window->setInheritedOpacity(0.75f);
 	gui.add(window);
 
+	m_window = window;
+
 	std::string helpText = "Welcome to At Odds. "
 		"Hold down the middle mouse button to move the camera. "
 		"Press tab to go to the global view, on the global view, click on stars to go to their local view. \n\n"
@@ -596,6 +627,12 @@ void HelpWindow::open(tgui::Gui& gui) {
 	auto text = tgui::Label::create(helpText);
 	text->setSize("100%", "100%");
 	window->add(text);
+}
+
+void HelpWindow::close() {
+	if (m_window != nullptr) {
+		m_window->close();
+	}
 }
 
 void BuildGUI::open(tgui::Gui& gui) {
@@ -728,6 +765,7 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 }
 
 void PlayerGUI::open(tgui::Gui& gui) {
-	m_helpWindow.open(gui);
-	m_buildGUI.open(gui);
+	helpWindow.open(gui);
+	buildGUI.open(gui);
+	unitGUI.open(gui);
 }

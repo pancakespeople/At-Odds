@@ -196,18 +196,6 @@ float Constellation::findClosestStarDistance(sf::Vector2f& targetPos) {
 void Constellation::setupStars() {
     for (std::unique_ptr<Star>& s : m_stars) {
         s->setupJumpPoints();
-
-        // Generate neutral/hostile ships
-        int numShips = Random::randInt(0, 10);
-        for (int i = 0; i < numShips; i++) {
-            sf::Vector2f pos = s->getLocalViewCenter();
-            pos.x += Random::randFloat(-10000.0f, 10000.0f);
-            pos.y += Random::randFloat(-10000.0f, 10000.0f);
-            Spaceship ship(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, s.get(), -1, sf::Color(175, 175, 175));
-            createShipAtStar(ship);
-        }
-
-        //s->createBuilding(Building::Building(Building::BUILDING_TYPE::OUTPOST, s.get(), s->getRandomLocalPos(-10000.0f, 10000.0f), -1, sf::Color(175, 175, 175)));
     }
 }
 
@@ -245,6 +233,22 @@ void Constellation::cleanUpDeadShips() {
             m_toBeDeletedShips.push(std::move(m_spaceships[i]));
             m_spaceships.erase(m_spaceships.begin() + i);
             i--;
+        }
+    }
+}
+
+void Constellation::generateNeutralSquatters() {
+    // Generate neutral/hostile ships
+    
+    for (std::unique_ptr<Star>& star : m_stars) {
+        if (star->getAllegiance() == -1) {
+
+            int numShips = Random::randInt(0, 10);
+            for (int i = 0; i < numShips; i++) {
+                sf::Vector2f pos = star->getRandomLocalPos(-10000, 10000);
+                Spaceship ship(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, star.get(), -1, sf::Color(175, 175, 175));
+                createShipAtStar(ship);
+            }
         }
     }
 }

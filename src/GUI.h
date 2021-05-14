@@ -19,6 +19,8 @@ class SaveLoader;
 class UnitGUI {
 public:
 	UnitGUI();
+
+	void open(tgui::Gui& gui);
 	
 	void update(const sf::RenderWindow& window, Star* currentStar, int playerFaction);
 
@@ -32,6 +34,9 @@ private:
 	sf::RectangleShape m_mouseSelectionBox;
 
 	std::vector<Spaceship*> m_selectedShips;
+
+	tgui::Panel::Ptr m_panel = nullptr;
+	tgui::Label::Ptr m_label = nullptr;
 };
 
 
@@ -40,6 +45,11 @@ public:
 	HelpWindow() {}
 
 	void open(tgui::Gui& gui);
+
+	void close();
+
+private:
+	tgui::ChildWindow::Ptr m_window = nullptr;
 };
 
 class BuildGUI {
@@ -82,17 +92,14 @@ private:
 	bool m_canReceiveEvents = true;
 };
 
-class PlayerGUI {
-public:
+struct PlayerGUI {
 	PlayerGUI() {}
 
 	void open(tgui::Gui& gui);
 
-	BuildGUI& getBuildGUI() { return m_buildGUI; }
-
-private:
-	HelpWindow m_helpWindow;
-	BuildGUI m_buildGUI;
+	HelpWindow helpWindow;
+	BuildGUI buildGUI;
+	UnitGUI unitGUI;
 };
 
 class NewGameMenu {
