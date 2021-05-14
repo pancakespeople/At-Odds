@@ -45,7 +45,8 @@ void main() {
 	vec3 noiseColor;
 
 	if (radius - 1000.0 + change <= 1.0) {
-		vec2 noisePos = worldPos / 100.0;
+		vec2 noisePos = (worldPos*sqrt(radius)) / 2500.0;
+		//vec2 noisePos = worldPos / 100.0;
 		vec2 angleVector = random2(vec2(randSeed));
 		noisePos.x += angleVector.x * time;
 		noisePos.y += angleVector.y * time;
