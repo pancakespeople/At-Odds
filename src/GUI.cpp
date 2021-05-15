@@ -180,9 +180,9 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 					}
 
 					// Check if click was on a building
-					for (Building& building : state.getLocalViewStar()->getBuildings()) {
-						if (building.getCollider().getGlobalBounds().contains(worldClick)) {
-							buildingClick = &building;
+					for (auto& building : state.getLocalViewStar()->getBuildings()) {
+						if (building->getCollider().getGlobalBounds().contains(worldClick)) {
+							buildingClick = building.get();
 						}
 					}
 

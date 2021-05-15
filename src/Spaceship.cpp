@@ -375,9 +375,9 @@ void Spaceship::onDeselected() {
 
 std::vector<Building*> Spaceship::findEnemyBuildings() {
 	std::vector<Building*> buildings;
-	for (Building& b : m_currentStar->getBuildings()) {
-		if (b.getAllegiance() != m_allegiance) {
-			buildings.push_back(&b);
+	for (auto& b : m_currentStar->getBuildings()) {
+		if (b->getAllegiance() != m_allegiance) {
+			buildings.push_back(b.get());
 		}
 	}
 	return buildings;

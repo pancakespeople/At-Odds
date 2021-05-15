@@ -38,9 +38,9 @@ std::vector<Unit*> Unit::findEnemyUnits() {
 			units.push_back(ship);
 		}
 	}
-	for (Building& building : m_currentStar->getBuildings()) {
-		if (building.getAllegiance() != m_allegiance) {
-			units.push_back(&building);
+	for (auto& building : m_currentStar->getBuildings()) {
+		if (building->getAllegiance() != m_allegiance) {
+			units.push_back(building.get());
 		}
 	}
 	return units;

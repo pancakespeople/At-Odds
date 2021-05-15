@@ -36,7 +36,7 @@ public:
 	void update();
 	void destroyAllShips();
 	void clearAnimations() { m_localViewAnimations.clear(); }
-	void createBuilding(Building building) { m_buildings.push_back(building); }
+	void createBuilding(Building building) { m_buildings.push_back(std::make_unique<Building>(building)); }
 
 	float getRadius() { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);
@@ -57,7 +57,7 @@ public:
 	std::vector<Spaceship*>& getSpaceships() { return m_localShips; }
 	std::vector<JumpPoint>& getJumpPoints() { return m_jumpPoints; }
 	std::vector<Star*> getConnectedStars();
-	std::vector<Building>& getBuildings() { return m_buildings; }
+	std::vector<std::unique_ptr<Building>>& getBuildings() { return m_buildings; }
 
 	Unit* getUnitByID(unsigned int id);
 	Spaceship* getShipByID(unsigned int id);
@@ -99,9 +99,8 @@ private:
 	std::vector<JumpPoint> m_jumpPoints;
 	std::vector<Spaceship*> m_localShips;
 	std::vector<Projectile> m_projectiles;
-	std::vector<Building> m_buildings;
-	
-	std::vector<Animation> m_localViewAnimations;
+	std::vector<std::unique_ptr<Building>> m_buildings;
+	std::vector<Animation> m_localViewAnimations;	
 
 	bool m_localViewActive = false;
 	bool m_multipleFactionsPresent = false;

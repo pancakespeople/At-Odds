@@ -106,8 +106,8 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		for (Spaceship* s : m_localShips) {
 			s->draw(window, emitter);
 		}
-		for (Building& b : m_buildings) {
-			b.draw(window);
+		for (std::unique_ptr<Building>& b : m_buildings) {
+			b->draw(window);
 		}
 		for (Projectile& p : m_projectiles) {
 			p.draw(window);
@@ -244,9 +244,9 @@ void Star::handleCollisions() {
 				p.kill();
 			}
 		}
-		for (Building& b : m_buildings) {
-			if (p.isCollidingWith(b.getCollider()) && p.getAllegiance() != b.getAllegiance()) {
-				b.takeDamage(p.getDamage());
+		for (auto& b : m_buildings) {
+			if (p.isCollidingWith(b->getCollider()) && p.getAllegiance() != b->getAllegiance()) {
+				b->takeDamage(p.getDamage());
 				p.kill();
 			}
 		}
@@ -284,8 +284,8 @@ void Star::update() {
 	}
 	
 	for (int i = 0; i < m_buildings.size(); i++) {
-		m_buildings[i].update();
-		if (m_buildings[i].isDead()) {
+		m_buildings[i]->update();
+		if (m_buildings[i]->isDead()) {
 			m_buildings.erase(m_buildings.begin() + i);
 			i--;
 		}
@@ -358,9 +358,9 @@ Spaceship* Star::getShipByID(unsigned int id) {
 }
 
 Building* Star::getBuildingByID(unsigned int id) {
-	for (Building& building : m_buildings) {
-		if (building.getID() == id) {
-			return &building;
+	for (auto& building : m_buildings) {
+		if (building->getID() == id) {
+			return building.get();
 		}
 	}
 	return nullptr;

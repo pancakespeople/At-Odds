@@ -50,8 +50,8 @@ void Constellation::generateRecursiveConstellation(int sizeWidth, int sizeHeight
     m_stars.reserve(numStars);
     m_hyperlanes.reserve(numStars);
 
-    Star root(sf::Vector2f(initialX, initialY));
-    m_stars.push_back(std::make_unique<Star>(root));
+    //Star root(sf::Vector2f(initialX, initialY));
+    m_stars.push_back(std::move(std::make_unique<Star>(Star(sf::Vector2f(initialX, initialY)))));
 
     for (int i = 0; i < numConnections; i++) {
         float dist = rand() % (maxDistStar - minDistStar) + minDistStar;
@@ -112,59 +112,59 @@ void Constellation::generateRandomHyperlanes(int size, int numStars) {
         m_hyperlanes.push_back(std::move(std::make_unique<Hyperlane>(Hyperlane(s.get(), m_stars[otherStarIndex].get()))));
     }
 }
-
-void Constellation::generateRobustHyperlanes(int size, int numStars) {
-    for (int i = 0; i < numStars; i++) {
-        sf::Vector2f randPos(rand() % size, rand() % size);
-        Star nstar(randPos);
-        m_stars.push_back(std::make_unique<Star>(nstar));
-    }
-
-    // Get the average distance between each closest star then average that
-    float sumDistClosestStars = 0.0f;
-    float avgDistClosestStars;
-
-    for (int i = 0; i < m_stars.size(); i++) {
-        float distClosestStar = 0.0f;
-
-        if (i + 1 == m_stars.size()) {
-            distClosestStar = m_stars[i]->distBetweenStar(*m_stars[0]);
-        }
-        else {
-            distClosestStar = m_stars[i]->distBetweenStar(*m_stars[i + 1]);
-        }
-
-        // Find distance for closest star
-        for (int j = 0; j < m_stars.size(); j++) {
-            if (m_stars[j] != m_stars[i]) {
-                if (m_stars[i]->distBetweenStar(*m_stars[j]) < distClosestStar) {
-                    distClosestStar = m_stars[i]->distBetweenStar(*m_stars[j]);
-                }
-            }
-        }
-
-        //DEBUG_PRINT(distClosestStar);
-        sumDistClosestStars += distClosestStar;
-    }
-    avgDistClosestStars = sumDistClosestStars / m_stars.size();
-
-    DEBUG_PRINT("Average distance between stars: " << avgDistClosestStars);
-
-    for (int i = 0; i < m_stars.size(); i++) {
-        std::vector<Star*> closeStars;
-        for (int j = 0; j < m_stars.size(); j++) {
-            if (m_stars[i]->isStarInRadius(*m_stars[j], avgDistClosestStars * 4) && m_stars[i] != m_stars[j]) {
-                closeStars.push_back(m_stars[j].get());
-            }
-        }
-
-        if (closeStars.size() > 0) {
-            int randIndex = rand() % closeStars.size();
-            m_hyperlanes.push_back(std::make_unique<Hyperlane>(Hyperlane(m_stars[i].get(), closeStars[randIndex])));
-        }
-    }
-}
-
+//
+//void Constellation::generateRobustHyperlanes(int size, int numStars) {
+//    for (int i = 0; i < numStars; i++) {
+//        sf::Vector2f randPos(rand() % size, rand() % size);
+//        Star nstar(randPos);
+//        m_stars.push_back(std::make_unique<Star>(nstar));
+//    }
+//
+//    // Get the average distance between each closest star then average that
+//    float sumDistClosestStars = 0.0f;
+//    float avgDistClosestStars;
+//
+//    for (int i = 0; i < m_stars.size(); i++) {
+//        float distClosestStar = 0.0f;
+//
+//        if (i + 1 == m_stars.size()) {
+//            distClosestStar = m_stars[i]->distBetweenStar(*m_stars[0]);
+//        }
+//        else {
+//            distClosestStar = m_stars[i]->distBetweenStar(*m_stars[i + 1]);
+//        }
+//
+//        // Find distance for closest star
+//        for (int j = 0; j < m_stars.size(); j++) {
+//            if (m_stars[j] != m_stars[i]) {
+//                if (m_stars[i]->distBetweenStar(*m_stars[j]) < distClosestStar) {
+//                    distClosestStar = m_stars[i]->distBetweenStar(*m_stars[j]);
+//                }
+//            }
+//        }
+//
+//        //DEBUG_PRINT(distClosestStar);
+//        sumDistClosestStars += distClosestStar;
+//    }
+//    avgDistClosestStars = sumDistClosestStars / m_stars.size();
+//
+//    DEBUG_PRINT("Average distance between stars: " << avgDistClosestStars);
+//
+//    for (int i = 0; i < m_stars.size(); i++) {
+//        std::vector<Star*> closeStars;
+//        for (int j = 0; j < m_stars.size(); j++) {
+//            if (m_stars[i]->isStarInRadius(*m_stars[j], avgDistClosestStars * 4) && m_stars[i] != m_stars[j]) {
+//                closeStars.push_back(m_stars[j].get());
+//            }
+//        }
+//
+//        if (closeStars.size() > 0) {
+//            int randIndex = rand() % closeStars.size();
+//            m_hyperlanes.push_back(std::make_unique<Hyperlane>(Hyperlane(m_stars[i].get(), closeStars[randIndex])));
+//        }
+//    }
+//}
+//
 void Constellation::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state) {
     if (ev.type == sf::Event::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
