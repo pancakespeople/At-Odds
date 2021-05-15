@@ -83,7 +83,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 		m_mouseSelectionBox.setSize(sf::Vector2f(0.0f, 0.0f));
 	}
 	
-	// Mouse click - deselect ships
+	// Mouse click - deselect ships or select individual unit
 	else if (mouseHeld && !sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_mouseSelectionBox.getSize().x < 5.0f && m_mouseSelectionBox.getSize().y < 5.0f) {
 		for (Spaceship* s : m_selectedShips) {
 			if (s->isSelected()) {
@@ -91,6 +91,21 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 			}
 		}
 		m_selectedShips.clear();
+
+		// Select an individual unit
+
+		sf::Vector2i screenPos = sf::Mouse::getPosition(window);
+		sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
+
+		for (Spaceship* s : currentStar->getSpaceships()) {
+			if (s->getCollider().getGlobalBounds().contains(worldClick)) {
+				if (s->getAllegiance() == playerFaction) {
+					m_selectedShips.push_back(s);
+					s->onSelected();
+					break;
+				}
+			}
+		}
 	}
 
 	mouseHeld = sf::Mouse::isButtonPressed(sf::Mouse::Left);
@@ -119,7 +134,8 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 	if (state.getState() == GameState::State::LOCAL_VIEW) {
 		if (ev.type == sf::Event::MouseButtonPressed) {
 			if (ev.mouseButton.button == sf::Mouse::Right) {
-				
+				// Give orders to selected ships
+
 				if (m_selectedShips.size() > 0) {
 					sf::Vector2i screenPos = sf::Mouse::getPosition(window);
 					sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
