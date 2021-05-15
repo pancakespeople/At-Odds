@@ -58,7 +58,8 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 	else if (mouseHeld && !sf::Mouse::isButtonPressed(sf::Mouse::Left) 
 		&& std::abs(m_mouseSelectionBox.getSize().x) >= 5.0f 
 		&& std::abs(m_mouseSelectionBox.getSize().y) >= 5.0f) {
-		
+		bool allowConstructionShips = true;
+
 		m_selectedShips.clear();
 		
 		if (currentStar != nullptr) {
@@ -70,6 +71,10 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 
 					if (screenPos.x >= selection.left && screenPos.x <= selection.left + selection.width &&
 						screenPos.y >= selection.top && screenPos.y <= selection.top + selection.height) {
+						if (s->getConstructionSpeed() == 0.0f) {
+							allowConstructionShips = false;
+						}
+						
 						s->onSelected();
 						m_selectedShips.push_back(s);
 					}
@@ -77,6 +82,19 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 						s->onDeselected();
 					}
 				}
+			}
+
+			// Don't mix combat and construction ships - delete from container
+			if (!allowConstructionShips) {
+				auto it = std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* ship) {
+					if (ship->getConstructionSpeed() > 0.0f) {
+						ship->onDeselected();
+						return true;
+					}
+					return false;
+				});
+
+				m_selectedShips.erase(it, m_selectedShips.end());
 			}
 		}
 
