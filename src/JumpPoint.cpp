@@ -70,8 +70,7 @@ void JumpPoint::jumpShipThrough(Spaceship* ship, Star* currentStar) {
 	ship->setPos(nextPoint->getPos());
 	
 	Star* nextStar = getConnectedOtherStar();
-	currentStar->removeSpaceship(ship);
-	nextStar->addSpaceship(ship);
+	currentStar->moveShipToOtherStar(ship, nextStar);
 }
 
 bool JumpPoint::isPointInRadius(sf::Vector2f point) {

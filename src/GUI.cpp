@@ -63,7 +63,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 		m_selectedShips.clear();
 		
 		if (currentStar != nullptr) {
-			for (Spaceship* s : currentStar->getSpaceships()) {
+			for (auto& s : currentStar->getSpaceships()) {
 				if (s->getCurrentStar()->isLocalViewActive() && s->getAllegiance() == playerFaction) {
 
 					sf::Vector2i screenPos = window.mapCoordsToPixel(s->getPos());
@@ -76,7 +76,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 						}
 						
 						s->onSelected();
-						m_selectedShips.push_back(s);
+						m_selectedShips.push_back(s.get());
 					}
 					else if (s->isSelected()) {
 						s->onDeselected();
@@ -112,17 +112,21 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 
 		// Select an individual unit
 
-		sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-		sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
+		if (currentStar != nullptr) {
 
-		for (Spaceship* s : currentStar->getSpaceships()) {
-			if (s->getCollider().getGlobalBounds().contains(worldClick)) {
-				if (s->getAllegiance() == playerFaction) {
-					m_selectedShips.push_back(s);
-					s->onSelected();
-					break;
+			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
+			sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
+
+			for (auto& s : currentStar->getSpaceships()) {
+				if (s->getCollider().getGlobalBounds().contains(worldClick)) {
+					if (s->getAllegiance() == playerFaction) {
+						m_selectedShips.push_back(s.get());
+						s->onSelected();
+						break;
+					}
 				}
 			}
+
 		}
 	}
 
@@ -170,10 +174,10 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 					}
 
 					// Check if click was on an enemy ship
-					for (Spaceship* s : state.getLocalViewStar()->getSpaceships()) {
+					for (auto& s : state.getLocalViewStar()->getSpaceships()) {
 						if (s->getAllegiance() != m_selectedShips[0]->getAllegiance()) {
 							if (s->getCollider().getGlobalBounds().contains(worldClick)) {
-								attackTarget = s;
+								attackTarget = s.get();
 								break;
 							}
 						}

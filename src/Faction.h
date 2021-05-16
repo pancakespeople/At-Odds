@@ -38,8 +38,6 @@ public:
 		}
 	}
 
-	void createShip(std::unique_ptr<Spaceship>& ship);
-
 	void controlByPlayer(Player& player);
 
 private:

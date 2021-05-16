@@ -13,6 +13,7 @@ class Faction;
 class GameState;
 class EffectsEmitter;
 class Player;
+class Constellation;
 
 class Star {
 public:
@@ -28,15 +29,18 @@ public:
 	void setRadius(float radius) { m_shape.setRadius(radius); }
 	void clicked(sf::Event ev, GameState& state);
 	void setupJumpPoints();
-	void addSpaceship(Spaceship* ship);
-	void removeSpaceship(Spaceship* ship);
+	/*void addSpaceship(Spaceship* ship);
+	void removeSpaceship(Spaceship* ship);*/
 	void addProjectile(Projectile proj);
 	void addAnimation(Animation&& anim);
 	void cleanUpAnimations();
-	void update();
+	void update(Constellation* constellation);
 	void destroyAllShips();
 	void clearAnimations() { m_localViewAnimations.clear(); }
 	void createBuilding(Building building) { m_buildings.push_back(std::make_unique<Building>(building)); }
+	void moveShipToOtherStar(Spaceship* ship, Star* other);
+	
+	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
 
 	float getRadius() { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);
@@ -54,7 +58,7 @@ public:
 	sf::Vector2f getRandomLocalPos(float min, float max);
 
 	std::vector<Hyperlane*> getHyperlanes() { return m_hyperlanes; }
-	std::vector<Spaceship*>& getSpaceships() { return m_localShips; }
+	std::vector<std::unique_ptr<Spaceship>>& getSpaceships() { return m_localShips; }
 	std::vector<JumpPoint>& getJumpPoints() { return m_jumpPoints; }
 	std::vector<Star*> getConnectedStars();
 	std::vector<std::unique_ptr<Building>>& getBuildings() { return m_buildings; }
@@ -97,7 +101,7 @@ private:
 
 	std::vector<Hyperlane*> m_hyperlanes;
 	std::vector<JumpPoint> m_jumpPoints;
-	std::vector<Spaceship*> m_localShips;
+	std::vector<std::unique_ptr<Spaceship>> m_localShips;
 	std::vector<Projectile> m_projectiles;
 	std::vector<std::unique_ptr<Building>> m_buildings;
 	std::vector<Animation> m_localViewAnimations;	

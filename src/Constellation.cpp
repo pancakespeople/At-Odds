@@ -199,12 +199,6 @@ void Constellation::setupStars() {
     }
 }
 
-Spaceship* Constellation::createShipAtStar(std::unique_ptr<Spaceship>& ship) {
-    m_spaceships.push_back(std::move(ship));
-    m_spaceships.back().get()->getCurrentStar()->addSpaceship(m_spaceships.back().get());
-    return m_spaceships.back().get();
-}
-
 void Constellation::generateFactions(int numFactions) {
     for (int i = 0; i < numFactions; i++) {
         Faction newFaction(this);
@@ -218,21 +212,19 @@ void Constellation::update() {
         f.update();
     }
     for (std::unique_ptr<Star>& s : m_stars) {
-        s->update();
+        s->update(this);
     }
     cleanUpDeadShips();
 }
 
 void Constellation::cleanUpDeadShips() {
-    while (m_toBeDeletedShips.size() > 0) {
-        m_toBeDeletedShips.front()->getCurrentStar()->removeSpaceship(m_toBeDeletedShips.front().get());
-        m_toBeDeletedShips.pop();
-    }
-    for (int i = 0; i < m_spaceships.size(); i++) {
-        if (m_spaceships[i]->isDead()) {
-            m_toBeDeletedShips.push(std::move(m_spaceships[i]));
-            m_spaceships.erase(m_spaceships.begin() + i);
+    for (int i = 0; i < m_shipPurgatory.size(); i++) {
+        if (m_shipPurgatory[i].timer == 0) {
+            m_shipPurgatory.erase(m_shipPurgatory.begin() + i);
             i--;
+        }
+        else {
+            m_shipPurgatory[i].timer--;
         }
     }
 }
@@ -247,8 +239,15 @@ void Constellation::generateNeutralSquatters() {
             for (int i = 0; i < numShips; i++) {
                 sf::Vector2f pos = star->getRandomLocalPos(-10000, 10000);
                 auto& ship = std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, star.get(), -1, sf::Color(175, 175, 175));
-                createShipAtStar(ship);
+                star->createSpaceship(ship);
             }
         }
     }
+}
+
+void Constellation::moveShipToPurgatory(std::unique_ptr<Spaceship>& ship) {
+    PurgatoryItem<Spaceship> item;
+
+    ship.swap(item.obj);
+    m_shipPurgatory.push_back(std::move(item));
 }

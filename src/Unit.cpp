@@ -3,11 +3,11 @@
 #include "Star.h"
 
 std::vector<Spaceship*> Unit::findEnemyShips() {
-	std::vector<Spaceship*>& allShips = m_currentStar->getSpaceships();
+	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
 	std::vector<Spaceship*> enemies;
-	for (Spaceship* s : allShips) {
+	for (auto& s : allShips) {
 		if (s->getAllegiance() != m_allegiance) {
-			enemies.push_back(s);
+			enemies.push_back(s.get());
 		}
 	}
 	return enemies;
@@ -33,9 +33,9 @@ void Unit::updateWeapons() {
 
 std::vector<Unit*> Unit::findEnemyUnits() {
 	std::vector<Unit*> units;
-	for (Spaceship* ship : m_currentStar->getSpaceships()) {
+	for (auto& ship : m_currentStar->getSpaceships()) {
 		if (ship->getAllegiance() != m_allegiance) {
-			units.push_back(ship);
+			units.push_back(ship.get());
 		}
 	}
 	for (auto& building : m_currentStar->getBuildings()) {

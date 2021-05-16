@@ -295,11 +295,11 @@ Spaceship::JumpState Spaceship::jump(JumpPoint* point) {
 }
 
 std::vector<Spaceship*> Spaceship::findEnemyShips() {
-	std::vector<Spaceship*>& allShips = m_currentStar->getSpaceships();
+	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
 	std::vector<Spaceship*> enemies;
-	for (Spaceship* s : allShips) {
+	for (auto& s : allShips) {
 		if (s->getAllegiance() != m_allegiance) {
-			enemies.push_back(s);
+			enemies.push_back(s.get());
 		}
 	}
 	return enemies;
@@ -342,7 +342,7 @@ void Spaceship::captureCurrentStar(Faction* faction) {
 	if (m_currentStar->getAllegiance() != m_allegiance) {
 		if (findEnemyShips().size() == 0) {
 			m_currentStar->factionTakeOwnership(faction);
-			faction->createShip(std::make_unique<Spaceship>(SPACESHIP_TYPE::CLAIM_SHIP, getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
+			m_currentStar->createSpaceship(std::make_unique<Spaceship>(SPACESHIP_TYPE::CLAIM_SHIP, getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
 		}
 	}
 }

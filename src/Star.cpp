@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Random.h"
 #include "Unit.h"
+#include "Constellation.h"
 
 Star::Star(sf::Vector2f pos) {
 	init(pos);
@@ -103,7 +104,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 
 	if (drawHidden) {
 
-		for (Spaceship* s : m_localShips) {
+		for (std::unique_ptr<Spaceship>& s : m_localShips) {
 			s->draw(window, emitter);
 		}
 		for (std::unique_ptr<Building>& b : m_buildings) {
@@ -167,7 +168,7 @@ void Star::factionTakeOwnership(Faction* faction, bool spawnClaimUnit) {
 	faction->addOwnedSystem(this);
 
 	if (spawnClaimUnit) {
-		faction->createShip(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CLAIM_SHIP, getRandomLocalPos(-10000.0f, 10000.0f), this, faction->getID(), faction->getColor()));
+		createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CLAIM_SHIP, getRandomLocalPos(-10000.0f, 10000.0f), this, faction->getID(), faction->getColor()));
 	}
 }
 
@@ -224,13 +225,13 @@ sf::Vector2f Star::getLocalViewCenter() {
 	return pos;
 }
 
-void Star::addSpaceship(Spaceship* ship) {
-	m_localShips.push_back(ship);
-}
-
-void Star::removeSpaceship(Spaceship* ship) {
-	m_localShips.erase(std::remove(m_localShips.begin(), m_localShips.end(), ship), m_localShips.end());
-}
+//void Star::addSpaceship(Spaceship* ship) {
+//	m_localShips.push_back(ship);
+//}
+//
+//void Star::removeSpaceship(Spaceship* ship) {
+//	m_localShips.erase(std::remove(m_localShips.begin(), m_localShips.end(), ship), m_localShips.end());
+//}
 
 void Star::addProjectile(Projectile proj) {
 	m_projectiles.push_back(proj);
@@ -238,7 +239,7 @@ void Star::addProjectile(Projectile proj) {
 
 void Star::handleCollisions() {
 	for (Projectile& p : m_projectiles) {
-		for (Spaceship* s : m_localShips) {
+		for (auto& s : m_localShips) {
 			if (p.isCollidingWith(s->getCollider()) && p.getAllegiance() != s->getAllegiance()) {
 				s->takeDamage(p.getDamage());
 				p.kill();
@@ -268,18 +269,31 @@ void Star::cleanUpAnimations() {
 	}
 }
 
-void Star::update() {
+void Star::update(Constellation* constellation) {
 	std::vector<int> factions;
 	
-	for (Spaceship* s : m_localShips) {
-		s->update(this);
+	for (int i = 0; i < m_localShips.size(); i++) {
+		m_localShips[i]->update(this);
+
+		if (m_localShips[i] == nullptr) {
+			// It left
+			m_localShips.erase(m_localShips.begin() + i);
+			i--;
+			continue;
+		}
+
 		if (factions.size() == 0) {
-			factions.push_back(s->getAllegiance());
+			factions.push_back(m_localShips[i]->getAllegiance());
 		}
 		else {
-			if (std::find(factions.begin(), factions.end(), s->getAllegiance()) == factions.end()) {
-				factions.push_back(s->getAllegiance());
+			if (std::find(factions.begin(), factions.end(), m_localShips[i]->getAllegiance()) == factions.end()) {
+				factions.push_back(m_localShips[i]->getAllegiance());
 			}
+		}
+		if (m_localShips[i]->isDead()) {
+			constellation->moveShipToPurgatory(m_localShips[i]);
+			m_localShips.erase(m_localShips.begin() + i);
+			i--;
 		}
 	}
 	
@@ -311,7 +325,7 @@ void Star::update() {
 }
 
 void Star::destroyAllShips() {
-	for (Spaceship* s : m_localShips) {
+	for (auto& s : m_localShips) {
 		s->kill();
 	}
 }
@@ -326,7 +340,7 @@ std::vector<Star*> Star::getConnectedStars() {
 
 int Star::numAlliedShips(int allegiance) {
 	int count = 0;
-	for (Spaceship* s : m_localShips) {
+	for (auto& s : m_localShips) {
 		if (s->getAllegiance() == allegiance) {
 			count++;
 		}
@@ -349,9 +363,9 @@ Unit* Star::getUnitByID(unsigned int id) {
 }
 
 Spaceship* Star::getShipByID(unsigned int id) {
-	for (Spaceship* ship : m_localShips) {
+	for (auto& ship : m_localShips) {
 		if (ship->getID() == id) {
-			return ship;
+			return ship.get();
 		}
 	}
 	return nullptr;
@@ -373,4 +387,18 @@ JumpPoint* Star::getJumpPointByID(unsigned int id) {
 		}
 	}
 	return nullptr;
+}
+
+Spaceship* Star::createSpaceship(std::unique_ptr<Spaceship>& ship) {
+	m_localShips.push_back(std::move(ship));
+	return m_localShips.back().get();
+}
+
+void Star::moveShipToOtherStar(Spaceship* ship, Star* other) {
+	for (int i = 0; i < m_localShips.size(); i++) {
+		if (m_localShips[i].get() == ship) {
+			other->m_localShips.push_back(std::move(m_localShips[i]));
+			return;
+		}
+	}
 }
