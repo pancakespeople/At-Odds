@@ -36,15 +36,15 @@ void Faction::spawnAtRandomStar() {
 
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		createShip(Spaceship(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color));
+		createShip(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color));
 	}
 
 	for (int i = 0; i < 3; i++) {
 		sf::Vector2f pos = m_capitol->getRandomLocalPos(-10000.0f, 10000.0f);
-		createShip(Spaceship(Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos, m_capitol, m_id, m_color));
+		createShip(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos, m_capitol, m_id, m_color));
 	}
 	
-	createShip(Spaceship(Spaceship::SPACESHIP_TYPE::DESTROYER_1, Random::randVec(-10000, 10000), m_capitol, m_id, m_color));
+	createShip(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, Random::randVec(-10000, 10000), m_capitol, m_id, m_color));
 	m_capitol->createBuilding(Building(Building::BUILDING_TYPE::OUTPOST, m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), m_id, m_color));
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
@@ -78,10 +78,10 @@ void Faction::update() {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
 		
 		if (m_numFreeShips % 10 == 0 && m_numFreeShips != 0) {
-			createShip(Spaceship(Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos, m_capitol, m_id, m_color));
+			createShip(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos, m_capitol, m_id, m_color));
 		}
 		else {
-			createShip(Spaceship(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color));
+			createShip(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color));
 		}
 
 		m_numFreeShips++;
@@ -98,7 +98,7 @@ void Faction::update() {
 	m_ships.erase(std::remove_if(m_ships.begin(), m_ships.end(), [](Spaceship* s) {return s->isDead(); }), m_ships.end());
 }
 
-void Faction::createShip(Spaceship ship) {
+void Faction::createShip(std::unique_ptr<Spaceship>& ship) {
 	m_ships.push_back(m_constellation->createShipAtStar(ship));
 }
 

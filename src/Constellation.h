@@ -30,7 +30,7 @@ public:
 	std::vector<std::unique_ptr<Spaceship>>& getShips() { return m_spaceships; }
 	std::vector<Faction>& getFactions() { return m_factions; }
 
-	Spaceship* createShipAtStar(Spaceship ship);
+	Spaceship* createShipAtStar(std::unique_ptr<Spaceship>& ship);
 
 private:
 	friend class boost::serialization::access;

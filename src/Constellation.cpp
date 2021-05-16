@@ -199,8 +199,8 @@ void Constellation::setupStars() {
     }
 }
 
-Spaceship* Constellation::createShipAtStar(Spaceship ship) {
-    m_spaceships.push_back(std::make_unique<Spaceship>(ship));
+Spaceship* Constellation::createShipAtStar(std::unique_ptr<Spaceship>& ship) {
+    m_spaceships.push_back(std::move(ship));
     m_spaceships.back().get()->getCurrentStar()->addSpaceship(m_spaceships.back().get());
     return m_spaceships.back().get();
 }
@@ -246,7 +246,7 @@ void Constellation::generateNeutralSquatters() {
             int numShips = Random::randInt(0, 10);
             for (int i = 0; i < numShips; i++) {
                 sf::Vector2f pos = star->getRandomLocalPos(-10000, 10000);
-                Spaceship ship(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, star.get(), -1, sf::Color(175, 175, 175));
+                auto& ship = std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, star.get(), -1, sf::Color(175, 175, 175));
                 createShipAtStar(ship);
             }
         }

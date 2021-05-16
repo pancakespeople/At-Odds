@@ -342,7 +342,7 @@ void Spaceship::captureCurrentStar(Faction* faction) {
 	if (m_currentStar->getAllegiance() != m_allegiance) {
 		if (findEnemyShips().size() == 0) {
 			m_currentStar->factionTakeOwnership(faction);
-			faction->createShip(Spaceship(SPACESHIP_TYPE::CLAIM_SHIP, getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
+			faction->createShip(std::make_unique<Spaceship>(SPACESHIP_TYPE::CLAIM_SHIP, getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
 		}
 	}
 }

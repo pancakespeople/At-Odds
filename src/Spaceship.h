@@ -23,6 +23,7 @@ public:
 	};
 
 	Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
+	Spaceship(const Spaceship& old) = delete;
 	
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
 
@@ -43,10 +44,10 @@ public:
 	void keepSpeed(float speed);
 
 	template <typename T>
-	void addOrder(const T order) { if (m_canReceiveOrders) m_orders.push_back(std::make_shared<T>(order)); }
+	void addOrder(const T order) { if (m_canReceiveOrders) m_orders.push_back(std::make_unique<T>(order)); }
 
 	template <typename T>
-	void addOrderFront(const T order) { if (m_canReceiveOrders) m_orders.push_front(std::make_shared<T>(order)); }
+	void addOrderFront(const T order) { if (m_canReceiveOrders) m_orders.push_front(std::make_unique<T>(order)); }
 
 	enum class JumpState {
 		TRAVEL,
@@ -110,7 +111,7 @@ private:
 
 	sf::Sprite m_sprite;
 	
-	std::deque<std::shared_ptr<Order>> m_orders;
+	std::deque<std::unique_ptr<Order>> m_orders;
 	
 	float m_mass; // kg
 	float m_maxAcceleration;
