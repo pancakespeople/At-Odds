@@ -79,6 +79,7 @@ void Faction::update() {
 		
 		if (m_numFreeShips % 10 == 0 && m_numFreeShips != 0) {
 			m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos, m_capitol, m_id, m_color)));
+			m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos, m_capitol, m_id, m_color)));
 		}
 		else {
 			m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color)));
@@ -102,4 +103,25 @@ void Faction::controlByPlayer(Player& player) {
 	player.setFaction(m_id, m_color);
 	player.enableFogOfWar();
 	m_aiEnabled = false;
+}
+
+std::vector<Spaceship*> Faction::getConstructionShips() {
+	std::vector<Spaceship*> constructionShips;
+	for (Spaceship* ship : m_ships) {
+		if (ship->getConstructionSpeed() > 0.0f) {
+			constructionShips.push_back(ship);
+		}
+	}
+	return constructionShips;
+}
+
+void Faction::orderConstructionShipsBuild(Building* building) {
+	if (building->getAllegiance() == getID() && !building->isBuilt()) {
+		for (Spaceship* ship : getConstructionShips()) {
+			if (building->getCurrentStar() != ship->getCurrentStar()) {
+				ship->addOrder(TravelOrder(building->getCurrentStar()));
+			}
+			ship->addOrder(InteractWithBuildingOrder(building));
+		}
+	}
 }

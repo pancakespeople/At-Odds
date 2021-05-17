@@ -338,7 +338,7 @@ std::vector<Star*> Star::getConnectedStars() {
 	return stars;
 }
 
-int Star::numAlliedShips(int allegiance) {
+int Star::numAlliedShips(int allegiance) const {
 	int count = 0;
 	for (auto& s : m_localShips) {
 		if (s->getAllegiance() == allegiance) {
@@ -401,4 +401,19 @@ void Star::moveShipToOtherStar(Spaceship* ship, Star* other) {
 			return;
 		}
 	}
+}
+
+int Star::numAlliedBuildings(int allegiance) const {
+	int c = 0;
+	for (auto& building : m_buildings) {
+		if (building->getAllegiance() == allegiance) {
+			c++;
+		}
+	}
+	return c;
+}
+
+Building* Star::createBuilding(Building building) { 
+	m_buildings.push_back(std::make_unique<Building>(building));
+	return m_buildings.back().get();
 }

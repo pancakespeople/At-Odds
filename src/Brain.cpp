@@ -4,34 +4,95 @@
 #include "Spaceship.h"
 #include "Order.h"
 #include "Constellation.h"
+#include "Random.h"
+#include "Building.h"
 
 void Brain::onStart(Faction* faction) {
 	
 }
 
 void Brain::controlFaction(Faction* faction) {
-	if (m_expansionTarget == nullptr) {
-		
+	if (m_state == AI_STATE::NONE || m_stateChangeTimer <= 0) {
+		considerChangingState();
+	}
+	else if (m_state == AI_STATE::ATTACKING) {
+		considerAttack(faction);
+	}
+	else if (m_state == AI_STATE::FORTIFYING) {
+		considerFortifying(faction);
+	}
+
+	m_stateChangeTimer--;
+}
+
+void Brain::considerChangingState() {
+	if (Random::randFloat(0.0f, 1.0f) < m_personality.aggressiveness) {
+		m_state = AI_STATE::ATTACKING;
+	}
+	else {
+		m_state = AI_STATE::FORTIFYING;
+	}
+
+	m_stateChangeTimer = 3000;
+}
+
+void Brain::onSpawn(Faction* faction) {
+
+}
+
+void Brain::considerFortifying(Faction* faction) {
+	if (m_fortifyingVars.fortifyingTimer == 0) {
+		for (Star* star : faction->getOwnedStars()) {
+			if (star->numAlliedBuildings(faction->getID()) == 0) {
+				// Build outpost
+
+				Building building(Building::BUILDING_TYPE::OUTPOST, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
+				Building* realBuilding = star->createBuilding(building);
+
+				// Give construction ships order to build it
+				faction->orderConstructionShipsBuild(realBuilding);
+
+				AI_DEBUG_PRINT("Building outpost");
+			}
+			else {
+				for (auto& building : star->getBuildings()) {
+					// Build any unbuilt buildings
+					if (building->getAllegiance() == faction->getID() && !building->isBuilt()) {
+						faction->orderConstructionShipsBuild(building.get());
+						AI_DEBUG_PRINT("Ordering build of unbuilt building");
+					}
+				}
+			}
+		}
+		m_fortifyingVars.fortifyingTimer = 1600;
+	}
+
+	m_fortifyingVars.fortifyingTimer--;
+}
+
+void Brain::considerAttack(Faction* faction) {
+	if (m_attackVars.expansionTarget == nullptr) {
+
 		// Secure stars connected to capitol
 		for (Star* s : faction->getCapitol()->getConnectedStars()) {
 			if (s->getAllegiance() != faction->getID()) {
-				m_expansionTarget = s;
-				AI_DEBUG_PRINT("Expansion target (near capitol) chosen");
+				m_attackVars.expansionTarget = s;
+				//AI_DEBUG_PRINT("Expansion target (near capitol) chosen");
 				break;
 			}
 		}
 
-		if (m_expansionTarget == nullptr) {
+		if (m_attackVars.expansionTarget == nullptr) {
 			std::vector<Star*>& ownedStars = faction->getOwnedStars();
 			for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
 				for (Star* adj : ownedStars[i]->getConnectedStars()) {
 					if (adj->getAllegiance() != faction->getID()) {
-						m_expansionTarget = adj;
-						AI_DEBUG_PRINT("Expansion target chosen");
+						m_attackVars.expansionTarget = adj;
+						//AI_DEBUG_PRINT("Expansion target chosen");
 						break;
 					}
 				}
-				if (m_expansionTarget != nullptr) {
+				if (m_attackVars.expansionTarget != nullptr) {
 					break;
 				}
 			}
@@ -39,44 +100,40 @@ void Brain::controlFaction(Faction* faction) {
 
 	}
 	else {
-		if (!m_launchingAttack) {
-			faction->giveAllShipsOrder(TravelOrder(m_expansionTarget));
-			m_launchingAttack = true;
-			m_attackTimer = 1600;
-			AI_DEBUG_PRINT("Begun attack");
+		if (!m_attackVars.launchingAttack) {
+			faction->giveAllCombatShipsOrder(TravelOrder(m_attackVars.expansionTarget));
+			m_attackVars.launchingAttack = true;
+			m_attackVars.attackTimer = 1600;
+			//AI_DEBUG_PRINT("Begun attack");
 		}
 		else {
-			if (m_attackTimer == 0) {
-				if (m_expansionTarget->getAllegiance() == faction->getID()) {
-					m_expansionTarget = nullptr;
-					m_launchingAttack = false;
-					AI_DEBUG_PRINT("Capture of star complete");
+			if (m_attackVars.attackTimer == 0) {
+				if (m_attackVars.expansionTarget->getAllegiance() == faction->getID()) {
+					m_attackVars.expansionTarget = nullptr;
+					m_attackVars.launchingAttack = false;
+					//AI_DEBUG_PRINT("Capture of star complete");
 				}
 				else {
-					m_attackTimer = 1600;
-					
-					if (m_expansionTarget->numAlliedShips(faction->getID()) == 0) {
-						m_attackFrustration++;
+					m_attackVars.attackTimer = 1600;
+
+					if (m_attackVars.expansionTarget->numAlliedShips(faction->getID()) == 0) {
+						m_attackVars.attackFrustration++;
 					}
 					else {
-						m_attackFrustration = 0;
+						m_attackVars.attackFrustration = 0;
 					}
 
-					if (m_attackFrustration >= 5) {
-						m_expansionTarget = nullptr;
-						m_launchingAttack = false;
-						m_attackFrustration = 0;
-						AI_DEBUG_PRINT("Gave up on capture of star");
+					if (m_attackVars.attackFrustration >= 5) {
+						m_attackVars.expansionTarget = nullptr;
+						m_attackVars.launchingAttack = false;
+						m_attackVars.attackFrustration = 0;
+						//AI_DEBUG_PRINT("Gave up on capture of star");
 					}
 				}
 			}
 			else {
-				m_attackTimer--;
+				m_attackVars.attackTimer--;
 			}
 		}
 	}
-}
-
-void Brain::onSpawn(Faction* faction) {
-
 }

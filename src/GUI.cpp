@@ -450,6 +450,8 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	}
 	else {
 		state.changeToWorldView();
+
+		m_playerGui.unitGUI.open(gui);
 	}
 
 	close();

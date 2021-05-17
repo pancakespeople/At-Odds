@@ -4,31 +4,28 @@
 
 class Constellation;
 class Player;
+class Building;
 
 class Faction {
 public:
 	Faction(Constellation* constellation);
 
 	void spawnAtRandomStar();
-
 	void addOwnedSystem(Star* star);
-
 	void makeCapitol(Star* star);
-
 	void update();
-
-	sf::Color getColor() { return m_color; }
-
-	//Faction(const Faction&) = delete;
-
-	Star* getCapitol() { return m_capitol; }
+	void controlByPlayer(Player& player);
+	void orderConstructionShipsBuild(Building* building);
 
 	int getID() { return m_id; }
+	
+	sf::Color getColor() { return m_color; }
 
 	std::vector<Spaceship*>& getShips() { return m_ships; }
-
+	std::vector<Spaceship*> getConstructionShips();
 	std::vector<Star*>& getOwnedStars() { return m_ownedSystems; }
 
+	Star* getCapitol() { return m_capitol; }
 	Constellation* getConstellation() { return m_constellation; }
 
 	template <typename T>
@@ -38,7 +35,14 @@ public:
 		}
 	}
 
-	void controlByPlayer(Player& player);
+	template<typename T>
+	void giveAllCombatShipsOrder(const T order) {
+		for (Spaceship* s : m_ships) {
+			if (s->getConstructionSpeed() == 0.0f) {
+				s->addOrder(order);
+			}
+		}
+	}
 
 private:
 	friend class boost::serialization::access;

@@ -4,28 +4,52 @@ class Star;
 
 class Brain {
 public:
+	enum class AI_STATE {
+		NONE,
+		ATTACKING,
+		FORTIFYING
+	};
+	
 	void onStart(Faction* faction);
-
 	void onSpawn(Faction* faction);
-
 	void controlFaction(Faction* faction);
+	void considerAttack(Faction* faction);
+	void considerFortifying(Faction* faction);
+	void considerChangingState();
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& m_expansionTarget;
-		archive& m_launchingAttack;
-		archive& m_attackTimer;
-		archive& m_attackFrustration;
+		archive & m_state;
+		archive & m_stateChangeTimer;
+		archive & m_personality.aggressiveness;
+		archive & m_attackVars.expansionTarget;
+		archive & m_attackVars.launchingAttack;
+		archive & m_attackVars.attackTimer;
+		archive & m_attackVars.attackFrustration;
+		archive & m_fortifyingVars.fortifyingTimer;
 	}
 	
-	Star* m_expansionTarget = nullptr; // Star that the AI wants to attack
-	
-	bool m_launchingAttack = false; // If an attack has been ordered on a star
+	AI_STATE m_state = AI_STATE::NONE;
+	int m_stateChangeTimer = 0;
 
-	int m_attackTimer = 0; // Time to when the AI checks if the expansion target has been captured
+	struct Personality {
+		// All vals are percent
+		float aggressiveness = 0.5f;
+	} m_personality;
 
-	int m_attackFrustration = 0;
+	struct AttackVars {
+		Star* expansionTarget = nullptr; // Star that the AI wants to attack
+
+		bool launchingAttack = false; // If an attack has been ordered on a star
+
+		int attackTimer = 0; // Time to when the AI checks if the expansion target has been captured
+		int attackFrustration = 0;
+	} m_attackVars;
+
+	struct FortifyingVars {
+		int fortifyingTimer = 0;
+	} m_fortifyingVars;
 };
 

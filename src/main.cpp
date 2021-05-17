@@ -146,6 +146,9 @@ int main()
                 playerGui.open(gui);
                 playerGui.helpWindow.close();
             }
+            else {
+                playerGui.unitGUI.open(gui);
+            }
 
             DEBUG_PRINT("Loaded game");
         }

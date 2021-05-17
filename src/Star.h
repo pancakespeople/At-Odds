@@ -29,18 +29,16 @@ public:
 	void setRadius(float radius) { m_shape.setRadius(radius); }
 	void clicked(sf::Event ev, GameState& state);
 	void setupJumpPoints();
-	/*void addSpaceship(Spaceship* ship);
-	void removeSpaceship(Spaceship* ship);*/
 	void addProjectile(Projectile proj);
 	void addAnimation(Animation&& anim);
 	void cleanUpAnimations();
 	void update(Constellation* constellation);
 	void destroyAllShips();
 	void clearAnimations() { m_localViewAnimations.clear(); }
-	void createBuilding(Building building) { m_buildings.push_back(std::make_unique<Building>(building)); }
 	void moveShipToOtherStar(Spaceship* ship, Star* other);
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
+	Building* createBuilding(Building building);
 
 	float getRadius() { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);
@@ -49,8 +47,9 @@ public:
 	bool isInShapeRadius(float x, float y);
 	bool isLocalViewActive() { return m_localViewActive; }
 
-	int getAllegiance() { return m_allegiance; }
-	int numAlliedShips(int allegiance);
+	int getAllegiance() const { return m_allegiance; }
+	int numAlliedShips(int allegiance) const;
+	int numAlliedBuildings(int allegiance) const;
 
 	sf::Vector2f getPos() { return m_shape.getPosition(); }
 	sf::Vector2f getCenter();

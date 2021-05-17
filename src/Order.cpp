@@ -154,13 +154,11 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
 	if (m_building == nullptr) {
 		m_building = currentStar->getBuildingByID(m_buildingID);
 		if (m_building == nullptr) {
-			DEBUG_PRINT("Building doesnt exist");
 			return true;
 		}
 	}
 	
 	if (m_building->getCurrentStar() != ship->getCurrentStar() || m_building->isDead()) {
-		DEBUG_PRINT("Building died or moved");
 		return true;
 	}
 	if (ship->getConstructionSpeed() > 0.0) {
@@ -173,7 +171,6 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
 				return false;
 			}
 			else {
-				DEBUG_PRINT("Building was built");
 				return true;
 			}
 		}
