@@ -710,7 +710,7 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 		m_buildPanel->setSize("20%", "29%");
 		gui.add(m_buildPanel);
 
-		addBuildingSelector(Building::BUILDING_TYPE::OUTPOST);
+		addBuildingSelector(Building::BUILDING_TYPE::OUTPOST, "Outpost");
 		
 		m_selectedBuildingIdx = -1;
 	}
@@ -721,7 +721,7 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 	}
 }
 
-void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type) {
+void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type, const std::string& name) {
 	std::string xPosPercent;
 	std::string yPosPercent;
 	if (m_buildingSelectors.size() > 0) {
@@ -751,6 +751,10 @@ void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type) {
 	selector.icon = tgui::Picture::create(Building::texturePaths.at(type).c_str());
 	selector.icon->setSize("100%", "100%");
 	selector.panel->add(selector.icon);
+
+	auto tooltip = tgui::Label::create(name);
+	tgui::ToolTip::setInitialDelay(0);
+	selector.panel->setToolTip(tooltip);
 
 	m_buildingSelectors.push_back(selector);
 }

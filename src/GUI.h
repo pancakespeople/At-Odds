@@ -63,24 +63,16 @@ public:
 	BuildGUI() {}
 
 	void open(tgui::Gui& gui);
-
 	void draw(sf::RenderWindow& window);
-
 	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, const Player& player);
 
 private:
 	void onBuildIconMouseEnter();
-
 	void onBuildIconMouseExit();
-
 	void onBuildIconClick(tgui::Gui& gui);
-
-	void addBuildingSelector(Building::BUILDING_TYPE type);
-
+	void addBuildingSelector(Building::BUILDING_TYPE type, const std::string& name);
 	void onBuildingSelectorMouseEnter(int selectorIdx);
-	
 	void onBuildingSelectorMouseExit(int selectorIdx);
-
 	void onBuildingSelectorClick(int selectorIdx);
 
 	tgui::Picture::Ptr m_buildIcon;
