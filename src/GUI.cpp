@@ -711,6 +711,7 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 		gui.add(m_buildPanel);
 
 		addBuildingSelector(Building::BUILDING_TYPE::OUTPOST, "Outpost");
+		addBuildingSelector(Building::BUILDING_TYPE::LASER_TURRET, "Laser Turret");
 		
 		m_selectedBuildingIdx = -1;
 	}

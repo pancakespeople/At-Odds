@@ -11,7 +11,8 @@ class Spaceship;
 class Building : public Unit {
 public:
 	enum class BUILDING_TYPE {
-		OUTPOST
+		OUTPOST,
+		LASER_TURRET
 	};
 
 	static const std::unordered_map<Building::BUILDING_TYPE, std::string> texturePaths;

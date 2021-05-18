@@ -8,7 +8,8 @@
 #include "Math.h"
 
 const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texturePaths = {
-	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"}
+	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"},
+	{BUILDING_TYPE::LASER_TURRET, "data/art/laserturret.png"}
 };
 
 Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built) {
@@ -30,6 +31,13 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 
 		m_health = 1000.0f;
 
+		break;
+	case BUILDING_TYPE::LASER_TURRET:
+		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::LASER_TURRET)));
+
+		addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+
+		m_health = 150.0f;
 		break;
 	}
 
@@ -132,7 +140,7 @@ void Building::construct(const Spaceship* constructor) {
 
 BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
 	m_type = type;
-	sf::Texture& texture = TextureCache::getTexture(Building::texturePaths.at(Building::BUILDING_TYPE::OUTPOST));
+	sf::Texture& texture = TextureCache::getTexture(Building::texturePaths.at(type));
 	m_sprite.setTexture(texture);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
 }
