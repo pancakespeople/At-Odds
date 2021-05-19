@@ -9,7 +9,9 @@
 
 const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texturePaths = {
 	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"},
-	{BUILDING_TYPE::LASER_TURRET, "data/art/laserturret.png"}
+	{BUILDING_TYPE::LASER_TURRET, "data/art/laserturret.png"},
+	{BUILDING_TYPE::MACHINE_GUN_TURRET, "data/art/machinegunturret.png"},
+	{BUILDING_TYPE::GAUSS_TURRET, "data/art/gaussturret.png"}
 };
 
 Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built) {
@@ -38,6 +40,21 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 		addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
 
 		m_health = 150.0f;
+		break;
+	case BUILDING_TYPE::MACHINE_GUN_TURRET:
+		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::MACHINE_GUN_TURRET)));
+
+		addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+
+		m_health = 150.0f;
+		break;
+	case BUILDING_TYPE::GAUSS_TURRET:
+		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::GAUSS_TURRET)));
+
+		addWeapon(Weapon(Weapon::WEAPON_TYPE::GAUSS_CANNON));
+
+		m_health = 350.0f;
+		m_constructionSpeedMultiplier = 0.5f;
 		break;
 	}
 
@@ -135,7 +152,7 @@ void Building::construct(const Spaceship* constructor) {
 	}
 
 	float percentIncrease = constructor->getConstructionSpeed() / m_health;
-	m_constructionPercent += percentIncrease;
+	m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
 }
 
 BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {

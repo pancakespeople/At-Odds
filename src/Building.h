@@ -12,7 +12,9 @@ class Building : public Unit {
 public:
 	enum class BUILDING_TYPE {
 		OUTPOST,
-		LASER_TURRET
+		LASER_TURRET,
+		MACHINE_GUN_TURRET,
+		GAUSS_TURRET
 	};
 
 	static const std::unordered_map<Building::BUILDING_TYPE, std::string> texturePaths;
@@ -29,10 +31,11 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& boost::serialization::base_object<Unit>(*this);
-		archive& m_sprite;
-		archive& m_attackTarget;
-		archive& m_constructionPercent;
+		archive & boost::serialization::base_object<Unit>(*this);
+		archive & m_sprite;
+		archive & m_attackTarget;
+		archive & m_constructionPercent;
+		archive & m_constructionSpeedMultiplier;
 	}
 
 	Building() {}
@@ -43,6 +46,7 @@ private:
 	Unit* m_attackTarget = nullptr;
 
 	float m_constructionPercent = 0.0f;
+	float m_constructionSpeedMultiplier = 1.0f;
 };
 
 class BuildingPrototype {
