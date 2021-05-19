@@ -90,7 +90,8 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 	bool drawHidden = true;
 
 	if (player.hasFogOfWar()) {
-		if (numAlliedShips(player.getFaction()) == 0) {
+		int numAllies = numAlliedShips(player.getFaction()) + numAlliedBuildings(player.getFaction());
+		if (numAllies == 0) {
 			drawHidden = false;
 			emitter.drawFogOfWar(window);
 		}
