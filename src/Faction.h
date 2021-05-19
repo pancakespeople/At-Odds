@@ -18,6 +18,7 @@ public:
 	void orderConstructionShipsBuild(Building* building);
 
 	int getID() { return m_id; }
+	int numUnbuiltBuildings(Star* star);
 	
 	sf::Color getColor() { return m_color; }
 

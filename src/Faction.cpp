@@ -125,3 +125,13 @@ void Faction::orderConstructionShipsBuild(Building* building) {
 		}
 	}
 }
+
+int Faction::numUnbuiltBuildings(Star* star) {
+	int c = 0;
+	for (auto& building : star->getBuildings()) {
+		if (building->getAllegiance() == m_id && !building->isBuilt()) {
+			c++;
+		}
+	}
+	return c;
+}

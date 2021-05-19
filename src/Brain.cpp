@@ -62,6 +62,44 @@ void Brain::considerFortifying(Faction* faction) {
 						AI_DEBUG_PRINT("Ordering build of unbuilt building");
 					}
 				}
+
+				if (Random::randBool() && faction->numUnbuiltBuildings(star) == 0) {
+					// Build turrets around jump points
+
+					std::vector<JumpPoint>& jumpPoints = star->getJumpPoints();
+
+					int numTurrets = Random::randInt(0, 4);
+					int randJumpPointIndex = Random::randInt(0, jumpPoints.size() - 1);
+
+					JumpPoint& point = jumpPoints[randJumpPointIndex];
+
+					for (int i = 0; i < numTurrets; i++) {
+						sf::Vector2f pos = point.getPos() + Random::randVec(-2500.0f, 2500.0f);
+						int rnd = Random::randInt(0, 4);
+
+						Building* turret = nullptr;
+						Building::BUILDING_TYPE type = Building::BUILDING_TYPE::LASER_TURRET;
+
+						// Choose type
+						if (rnd < 4) {
+							if (Random::randBool()) {
+								type = Building::BUILDING_TYPE::LASER_TURRET;
+							}
+							else {
+								type = Building::BUILDING_TYPE::MACHINE_GUN_TURRET;
+							}
+						}
+						else {
+							type = Building::BUILDING_TYPE::GAUSS_TURRET;
+						}
+
+						// Create turret
+						Building building(type, star, pos, faction->getID(), faction->getColor(), false);
+						turret = star->createBuilding(building);
+					}
+
+					AI_DEBUG_PRINT("Building " << numTurrets << " turrets");
+				}
 			}
 		}
 		m_fortifyingVars.fortifyingTimer = 1600;

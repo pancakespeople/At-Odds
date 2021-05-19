@@ -175,8 +175,13 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
 			}
 		}
 		else {
-			ship->flyTo(m_building->getPos());
-			return false;
+			if (m_building->isBuilt()) {
+				return true;
+			}
+			else {
+				ship->flyTo(m_building->getPos());
+				return false;
+			}
 		}
 	}
 	else {

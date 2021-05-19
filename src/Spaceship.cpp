@@ -233,7 +233,7 @@ float Spaceship::angleTo(const sf::Vector2f& pos) {
 
 bool Spaceship::flyTo(const sf::Vector2f& pos) {
 	float angle = angleTo(pos);
-	float dist = Math::distance(m_sprite.getPosition(), pos);
+	float dist = Math::distance(m_sprite.getPosition(), pos) - m_collider.getRadius();
 	float closeArea = 25000000 / m_mass;
 	float farArea = 250000000 / m_mass;
 	
