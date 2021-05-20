@@ -79,9 +79,6 @@ int main()
     float updatesPerSecondTarget = 60.0f;
     float updateStep = 1.0f;
 
-    sf::Texture& texture = TextureCache::getTexture("data/art/spacebackground1.png");
-    DEBUG_PRINT(TextureCache::getTexturePath(&texture));
-
     while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
         state.getMetaState() != GameState::MetaState::EXIT_AND_SAVE) {
         sf::Event event;

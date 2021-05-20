@@ -50,6 +50,7 @@ public:
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;
 	int numAlliedBuildings(int allegiance) const;
+	int numAllies(int allegiance) const;
 
 	sf::Vector2f getPos() { return m_shape.getPosition(); }
 	sf::Vector2f getCenter();

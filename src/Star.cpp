@@ -90,8 +90,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 	bool drawHidden = true;
 
 	if (player.hasFogOfWar()) {
-		int numAllies = numAlliedShips(player.getFaction()) + numAlliedBuildings(player.getFaction());
-		if (numAllies == 0) {
+		if (numAllies(player.getFaction()) == 0) {
 			drawHidden = false;
 			emitter.drawFogOfWar(window);
 		}
@@ -226,14 +225,6 @@ sf::Vector2f Star::getLocalViewCenter() {
 	return pos;
 }
 
-//void Star::addSpaceship(Spaceship* ship) {
-//	m_localShips.push_back(ship);
-//}
-//
-//void Star::removeSpaceship(Spaceship* ship) {
-//	m_localShips.erase(std::remove(m_localShips.begin(), m_localShips.end(), ship), m_localShips.end());
-//}
-
 void Star::addProjectile(Projectile proj) {
 	m_projectiles.push_back(proj);
 }
@@ -248,8 +239,14 @@ void Star::handleCollisions() {
 		}
 		for (auto& b : m_buildings) {
 			if (p.isCollidingWith(b->getCollider()) && p.getAllegiance() != b->getAllegiance()) {
-				b->takeDamage(p.getDamage());
-				p.kill();
+				if (!b->isBuilt()) {
+					b->kill();
+					p.kill();
+				}
+				else {
+					b->takeDamage(p.getDamage());
+					p.kill();
+				}
 			}
 		}
 	}
@@ -417,4 +414,8 @@ int Star::numAlliedBuildings(int allegiance) const {
 Building* Star::createBuilding(std::unique_ptr<Building>& building) {
 	m_buildings.push_back(std::move(building));
 	return m_buildings.back().get();
+}
+
+int Star::numAllies(int allegiance) const {
+	return numAlliedShips(allegiance) + numAlliedBuildings(allegiance);
 }

@@ -796,16 +796,18 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 	if (m_canReceiveEvents) {
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
-				sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-				sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
-				
-				// Create new building
-				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
-				std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
+				if (currentLocalStar->numAllies(player.getFaction()) > 0) {
+					sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+					sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-				currentLocalStar->createBuilding(building);
+					// Create new building
+					BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
+					std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
 
-				m_selectedBuildingIdx = -1;
+					currentLocalStar->createBuilding(building);
+
+					m_selectedBuildingIdx = -1;
+				}
 			}
 		}
 	}
