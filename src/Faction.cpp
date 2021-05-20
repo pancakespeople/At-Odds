@@ -105,23 +105,30 @@ void Faction::controlByPlayer(Player& player) {
 	m_aiEnabled = false;
 }
 
-std::vector<Spaceship*> Faction::getConstructionShips() {
+std::vector<Spaceship*> Faction::getConstructionShips(bool onlyIdleShips) {
 	std::vector<Spaceship*> constructionShips;
 	for (Spaceship* ship : m_ships) {
 		if (ship->getConstructionSpeed() > 0.0f) {
+			if (onlyIdleShips && ship->numOrders() > 0) {
+				continue;
+			}
 			constructionShips.push_back(ship);
 		}
 	}
 	return constructionShips;
 }
 
-void Faction::orderConstructionShipsBuild(Building* building) {
+void Faction::orderConstructionShipsBuild(Building* building, bool onlyIdleShips, bool onlyOne) {
 	if (building->getAllegiance() == getID() && !building->isBuilt()) {
 		for (Spaceship* ship : getConstructionShips()) {
+			if (onlyIdleShips && ship->numOrders() > 0) {
+				continue;
+			}
 			if (building->getCurrentStar() != ship->getCurrentStar()) {
 				ship->addOrder(TravelOrder(building->getCurrentStar()));
 			}
 			ship->addOrder(InteractWithBuildingOrder(building));
+			if (onlyOne) break;
 		}
 	}
 }
@@ -134,4 +141,8 @@ int Faction::numUnbuiltBuildings(Star* star) {
 		}
 	}
 	return c;
+}
+
+int Faction::numIdleConstructionShips() {
+	return getConstructionShips(true).size();
 }

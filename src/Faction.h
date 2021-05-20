@@ -15,15 +15,16 @@ public:
 	void makeCapitol(Star* star);
 	void update();
 	void controlByPlayer(Player& player);
-	void orderConstructionShipsBuild(Building* building);
+	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
+	int numIdleConstructionShips();
 	
 	sf::Color getColor() { return m_color; }
 
 	std::vector<Spaceship*>& getShips() { return m_ships; }
-	std::vector<Spaceship*> getConstructionShips();
+	std::vector<Spaceship*> getConstructionShips(bool onlyIdleShips = false);
 	std::vector<Star*>& getOwnedStars() { return m_ownedSystems; }
 
 	Star* getCapitol() { return m_capitol; }

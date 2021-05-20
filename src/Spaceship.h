@@ -21,27 +21,44 @@ public:
 		CLAIM_SHIP,
 		CONSTRUCTION_SHIP
 	};
+	
+	enum class JumpState {
+		TRAVEL,
+		JUMPING,
+		DONE
+	};
 
 	Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 	Spaceship(const Spaceship& old) = delete;
 	
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
+	void accelerate(float amount);
+	void update(Star* currentStar);
+	void keepSpeed(float speed);
+	void smartFireAt(Unit* target, int weaponIdx);
+	void orbit(const sf::Vector2f& pos);
+	void captureCurrentStar(Faction* faction);
+	void attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent = false);
+	void onSelected();
+	void onDeselected();
+	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
+	void clearOrders() { m_orders.clear(); }
+	void attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings);
+	void fireAt(Spaceship* target, int weaponIdx);
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
-
-	void accelerate(float amount);
-
-	void update(Star* currentStar);
+	bool flyTo(const sf::Vector2f& pos);
+	bool isSelected() { return m_selected; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
-
-	bool flyTo(const sf::Vector2f& pos);
-
 	float getSpeed();
+	float getConstructionSpeed() const { return m_constructionSpeed; }
 
-	void keepSpeed(float speed);
+	int numOrders() { return m_orders.size(); }
+
+	sf::Vector2f getPos() const { return m_sprite.getPosition(); }
 
 	template <typename T>
 	void addOrder(const T order) { if (m_canReceiveOrders) m_orders.push_back(std::make_unique<T>(order)); }
@@ -49,45 +66,12 @@ public:
 	template <typename T>
 	void addOrderFront(const T order) { if (m_canReceiveOrders) m_orders.push_front(std::make_unique<T>(order)); }
 
-	enum class JumpState {
-		TRAVEL,
-		JUMPING,
-		DONE
-	};
-
 	JumpState jump(JumpPoint* point);
-
-	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
-
-	sf::Vector2f getPos() const { return m_sprite.getPosition(); }
-
-	std::vector<Spaceship*> findEnemyShips();
-
-	void fireAt(Spaceship* target, int weaponIdx);
 
 	Star* getCurrentStar() { return m_currentStar; }
 
-	void smartFireAt(Unit* target, int weaponIdx);
-
-	void orbit(const sf::Vector2f& pos);
-
-	void captureCurrentStar(Faction* faction);
-
-	void attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent = false);
-
-	void onSelected();
-
-	void onDeselected();
-
-	bool isSelected() { return m_selected; }
-
-	void clearOrders() { m_orders.clear(); }
-
 	std::vector<Building*> findEnemyBuildings();
-
-	void attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings);
-
-	float getConstructionSpeed() const { return m_constructionSpeed; }
+	std::vector<Spaceship*> findEnemyShips();
 
 private:
 	friend class boost::serialization::access;

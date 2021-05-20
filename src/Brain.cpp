@@ -43,15 +43,15 @@ void Brain::onSpawn(Faction* faction) {
 void Brain::considerFortifying(Faction* faction) {
 	if (m_fortifyingVars.fortifyingTimer == 0) {
 		for (Star* star : faction->getOwnedStars()) {
-			if (star->numAlliedBuildings(faction->getID()) == 0) {
+			if (star->numAlliedBuildings(faction->getID()) == 0 && faction->numIdleConstructionShips() > 0) {
 				// Build outpost
 
 				std::unique_ptr<Building> building = std::make_unique<Building>(
 					Building::BUILDING_TYPE::OUTPOST, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
 				Building* realBuilding = star->createBuilding(building);
 
-				// Give construction ships order to build it
-				faction->orderConstructionShipsBuild(realBuilding);
+				// Give idle construction ships order to build it
+				faction->orderConstructionShipsBuild(realBuilding, true);
 
 				AI_DEBUG_PRINT("Building outpost");
 			}
@@ -59,12 +59,12 @@ void Brain::considerFortifying(Faction* faction) {
 				for (auto& building : star->getBuildings()) {
 					// Build any unbuilt buildings
 					if (building->getAllegiance() == faction->getID() && !building->isBuilt()) {
-						faction->orderConstructionShipsBuild(building.get());
+						faction->orderConstructionShipsBuild(building.get(), true, true);
 						AI_DEBUG_PRINT("Ordering build of unbuilt building");
 					}
 				}
 
-				if (Random::randBool() && faction->numUnbuiltBuildings(star) == 0) {
+				if (Random::randBool() && faction->numUnbuiltBuildings(star) == 0 && faction->numIdleConstructionShips() > 0) {
 					// Build turrets around jump points
 
 					std::vector<JumpPoint>& jumpPoints = star->getJumpPoints();
@@ -73,6 +73,9 @@ void Brain::considerFortifying(Faction* faction) {
 					int randJumpPointIndex = Random::randInt(0, jumpPoints.size() - 1);
 
 					JumpPoint& point = jumpPoints[randJumpPointIndex];
+
+					// Pick the first idle construction ship found to build the turrets
+					Spaceship* conShip = faction->getConstructionShips(true)[0];
 
 					for (int i = 0; i < numTurrets; i++) {
 						sf::Vector2f pos = point.getPos() + Random::randVec(-2500.0f, 2500.0f);
@@ -97,6 +100,9 @@ void Brain::considerFortifying(Faction* faction) {
 						// Create turret
 						std::unique_ptr<Building> building = std::make_unique<Building>(type, star, pos, faction->getID(), faction->getColor(), false);
 						turret = star->createBuilding(building);
+
+						// Order turret to be built
+						conShip->addOrder(InteractWithBuildingOrder(turret));
 					}
 
 					AI_DEBUG_PRINT("Building " << numTurrets << " turrets");
