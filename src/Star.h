@@ -38,7 +38,7 @@ public:
 	void moveShipToOtherStar(Spaceship* ship, Star* other);
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
-	Building* createBuilding(Building building);
+	Building* createBuilding(std::unique_ptr<Building>& building);
 
 	float getRadius() { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);

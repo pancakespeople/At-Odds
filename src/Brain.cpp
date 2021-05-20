@@ -46,7 +46,8 @@ void Brain::considerFortifying(Faction* faction) {
 			if (star->numAlliedBuildings(faction->getID()) == 0) {
 				// Build outpost
 
-				Building building(Building::BUILDING_TYPE::OUTPOST, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
+				std::unique_ptr<Building> building = std::make_unique<Building>(
+					Building::BUILDING_TYPE::OUTPOST, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
 				Building* realBuilding = star->createBuilding(building);
 
 				// Give construction ships order to build it
@@ -94,7 +95,7 @@ void Brain::considerFortifying(Faction* faction) {
 						}
 
 						// Create turret
-						Building building(type, star, pos, faction->getID(), faction->getColor(), false);
+						std::unique_ptr<Building> building = std::make_unique<Building>(type, star, pos, faction->getID(), faction->getColor(), false);
 						turret = star->createBuilding(building);
 					}
 

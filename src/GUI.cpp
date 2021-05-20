@@ -801,7 +801,7 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 				
 				// Create new building
 				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
-				Building building(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
+				std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
 
 				currentLocalStar->createBuilding(building);
 

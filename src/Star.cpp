@@ -414,7 +414,7 @@ int Star::numAlliedBuildings(int allegiance) const {
 	return c;
 }
 
-Building* Star::createBuilding(Building building) { 
-	m_buildings.push_back(std::make_unique<Building>(building));
+Building* Star::createBuilding(std::unique_ptr<Building>& building) {
+	m_buildings.push_back(std::move(building));
 	return m_buildings.back().get();
 }
