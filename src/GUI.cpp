@@ -714,6 +714,7 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 		addBuildingSelector(Building::BUILDING_TYPE::LASER_TURRET, "Laser Turret");
 		addBuildingSelector(Building::BUILDING_TYPE::MACHINE_GUN_TURRET, "Machine Gun Turret");
 		addBuildingSelector(Building::BUILDING_TYPE::GAUSS_TURRET, "Gauss Turret");
+		addBuildingSelector(Building::BUILDING_TYPE::SHIP_FACTORY, "Ship Factory");
 		
 		m_selectedBuildingIdx = -1;
 	}

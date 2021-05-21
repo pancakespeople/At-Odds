@@ -14,7 +14,8 @@ public:
 		OUTPOST,
 		LASER_TURRET,
 		MACHINE_GUN_TURRET,
-		GAUSS_TURRET
+		GAUSS_TURRET,
+		SHIP_FACTORY
 	};
 
 	static const std::unordered_map<Building::BUILDING_TYPE, std::string> texturePaths;
