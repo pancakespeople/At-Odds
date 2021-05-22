@@ -5,8 +5,10 @@
 #include "Weapon.h"
 #include "SaveLoader.h"
 #include "Identifiable.h"
+#include "Mod.h"
 
 class Star;
+class Faction;
 
 class Unit : public Identifiable {
 public:
@@ -31,9 +33,14 @@ public:
 	void addWeapon(Weapon weapon) { m_weapons.push_back(weapon); }
 	void updateWeapons();
 	void fireAllWeaponsAt(Unit* target);
-	void setCurrentStar(Star* star) { m_currentStar = star; }
-
+	void updateMods(Star* currentStar, Faction& faction);
+	
 	int getAllegiance() const { return m_allegiance; }
+
+	template <typename T>
+	void addMod(const T& mod) {
+		m_mods.push_back(std::make_unique<T>(mod));
+	}
 
 protected:
 	friend class boost::serialization::access;
@@ -47,13 +54,16 @@ protected:
 		archive & m_health;
 		archive & m_dead;
 		archive & m_allegiance;
+		archive & m_mods;
 	}
 
 	Star* m_currentStar = nullptr;
 
 	Collider m_collider;
 	sf::Vector2f m_velocity;
+	
 	std::vector<Weapon> m_weapons;
+	std::vector<std::unique_ptr<Mod>> m_mods;
 
 	int m_allegiance = 0;
 	float m_health = 100.0f;

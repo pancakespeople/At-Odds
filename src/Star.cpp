@@ -296,7 +296,7 @@ void Star::update(Constellation* constellation) {
 	}
 	
 	for (int i = 0; i < m_buildings.size(); i++) {
-		m_buildings[i]->update();
+		m_buildings[i]->update(this, constellation->getFaction(m_buildings[i]->getAllegiance()));
 		if (m_buildings[i]->isDead()) {
 			m_buildings.erase(m_buildings.begin() + i);
 			i--;

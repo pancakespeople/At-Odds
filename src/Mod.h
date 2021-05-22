@@ -1,0 +1,35 @@
+#pragma once
+
+class Unit;
+class Star;
+class Faction;
+
+class Mod {
+public:
+	Mod() {}
+
+	virtual void update(Unit* unit, Star* currentStar, Faction& faction) {}
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {}
+};
+
+class FactoryMod : public Mod {
+public:
+
+	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		boost::serialization::base_object<Mod>(*this);
+		archive & m_ticksToNextShip;
+		archive & m_numShips;
+	}
+	
+	int m_ticksToNextShip = 2000;
+	int m_numShips = 0;
+};

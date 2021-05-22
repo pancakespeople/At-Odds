@@ -6,6 +6,7 @@
 #include "Star.h"
 #include "Sounds.h"
 #include "Math.h"
+#include "Mod.h"
 
 const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texturePaths = {
 	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"},
@@ -61,6 +62,8 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::SHIP_FACTORY)));
 		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
 
+		addMod(FactoryMod());
+
 		m_health = 2500.0f;
 		m_constructionSpeedMultiplier = 1.5f;
 		break;
@@ -101,7 +104,9 @@ void Building::draw(sf::RenderWindow& window) {
 	window.draw(m_collider);
 }
 
-void Building::update() {
+void Building::update(Star* currentStar, Faction& faction) {
+	m_currentStar = currentStar;
+	
 	if (!m_dead && m_health <= 0.0f) {
 		m_dead = true;
 		m_currentStar->addAnimation(Animation(Animation::ANIMATION_TYPE::EXPLOSION, getPos()));
@@ -112,6 +117,7 @@ void Building::update() {
 		return;
 	}
 	
+	updateMods(currentStar, faction);
 	updateWeapons();
 	attackEnemies();
 

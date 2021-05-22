@@ -7,6 +7,7 @@
 
 class Star;
 class Spaceship;
+class Faction;
 
 class Building : public Unit {
 public:
@@ -23,7 +24,7 @@ public:
 	Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built = true);
 
 	void draw(sf::RenderWindow& window);
-	void update();
+	void update(Star* currentStar, Faction& faction);
 	void construct(const Spaceship* constructor);
 
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }

@@ -8,7 +8,7 @@ class Building;
 
 class Faction {
 public:
-	Faction(Constellation* constellation);
+	Faction(Constellation* constellation, int id);
 
 	void spawnAtRandomStar();
 	void addOwnedSystem(Star* star);
@@ -16,6 +16,7 @@ public:
 	void update();
 	void controlByPlayer(Player& player);
 	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
+	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); }
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);

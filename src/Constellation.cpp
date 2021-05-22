@@ -201,14 +201,14 @@ void Constellation::setupStars() {
 
 void Constellation::generateFactions(int numFactions) {
     for (int i = 0; i < numFactions; i++) {
-        Faction newFaction(this);
+        Faction newFaction(this, i);
         newFaction.spawnAtRandomStar();
         m_factions.push_back(std::move(newFaction));
     }
 }
 
 void Constellation::update() {
-    for (Faction& f : m_factions) {
+    for (auto& f : m_factions) {
         f.update();
     }
     for (std::unique_ptr<Star>& s : m_stars) {

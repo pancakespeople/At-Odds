@@ -7,15 +7,12 @@
 #include "Player.h"
 #include "Building.h"
 
-Faction::Faction(Constellation* constellation) {
+Faction::Faction(Constellation* constellation, int id) {
 	m_constellation = constellation;
 	m_color = sf::Color(rand() % 255, rand() % 255, rand() % 255);
 	m_ticksUntilNextAIAction = 100;
 
-	static int numFactions = 0;
-
-	m_id = numFactions;
-	numFactions++;
+	m_id = id;
 
 	if (m_aiEnabled) m_ai.onStart(this);
 }

@@ -30,6 +30,8 @@ public:
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }
 	std::vector<Faction>& getFactions() { return m_factions; }
 
+	Faction& getFaction(int id) { return m_factions[id]; }
+
 private:
 	friend class boost::serialization::access;
 	

@@ -1,6 +1,7 @@
 #include "gamepch.h"
 #include "Unit.h"
 #include "Star.h"
+#include "Faction.h"
 
 std::vector<Spaceship*> Unit::findEnemyShips() {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
@@ -49,5 +50,11 @@ std::vector<Unit*> Unit::findEnemyUnits() {
 void Unit::fireAllWeaponsAt(Unit* target) {
 	for (Weapon& weapon : m_weapons) {
 		weapon.fireAt(this, target->getPos(), m_currentStar);
+	}
+}
+
+void Unit::updateMods(Star* currentStar, Faction& faction) {
+	for (auto& mod : m_mods) {
+		mod->update(this, currentStar, faction);
 	}
 }
