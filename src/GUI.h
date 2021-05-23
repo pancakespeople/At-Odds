@@ -63,7 +63,7 @@ public:
 	BuildGUI() {}
 
 	void open(tgui::Gui& gui);
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, const Star* currentStar, const Player& player);
 	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, const Player& player);
 
 private:

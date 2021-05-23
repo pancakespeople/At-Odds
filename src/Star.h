@@ -40,22 +40,23 @@ public:
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
 	Building* createBuilding(std::unique_ptr<Building>& building);
 
-	float getRadius() { return m_shape.getRadius(); }
+	float getRadius() const { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);
 
-	bool isStarInRadius(Star& s, float radius);
-	bool isInShapeRadius(float x, float y);
-	bool isLocalViewActive() { return m_localViewActive; }
+	bool isStarInRadius(Star& s, float radius) const;
+	bool isInShapeRadius(float x, float y) const;
+	bool isLocalViewActive() const { return m_localViewActive; }
+	bool containsBuildingType(Building::BUILDING_TYPE type) const;
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;
 	int numAlliedBuildings(int allegiance) const;
 	int numAllies(int allegiance) const;
 
-	sf::Vector2f getPos() { return m_shape.getPosition(); }
-	sf::Vector2f getCenter();
-	sf::Vector2f getLocalViewCenter();
-	sf::Vector2f getRandomLocalPos(float min, float max);
+	sf::Vector2f getPos() const { return m_shape.getPosition(); }
+	sf::Vector2f getCenter() const;
+	sf::Vector2f getLocalViewCenter() const;
+	sf::Vector2f getRandomLocalPos(float min, float max) const;
 
 	std::vector<Hyperlane*> getHyperlanes() { return m_hyperlanes; }
 	std::vector<std::unique_ptr<Spaceship>>& getSpaceships() { return m_localShips; }

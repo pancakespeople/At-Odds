@@ -783,13 +783,13 @@ void BuildGUI::onBuildingSelectorClick(int selectorIdx) {
 	}
 }
 
-void BuildGUI::draw(sf::RenderWindow& window) {
+void BuildGUI::draw(sf::RenderWindow& window, const Star* currentStar, const Player& player) {
 	if (m_selectedBuildingIdx > -1 && m_buildingSelectors.size() > 0) {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 		sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
 		m_buildingSelectors[m_selectedBuildingIdx].prototype.setPos(worldPos);
-		m_buildingSelectors[m_selectedBuildingIdx].prototype.draw(window);
+		m_buildingSelectors[m_selectedBuildingIdx].prototype.draw(window, currentStar, player);
 	}
 }
 
@@ -803,11 +803,14 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 
 					// Create new building
 					BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
-					std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
 
-					currentLocalStar->createBuilding(building);
+					if (Building::checkBuildCondition(selector.prototype.getType(), currentLocalStar)) {
+						std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
 
-					m_selectedBuildingIdx = -1;
+						currentLocalStar->createBuilding(building);
+
+						m_selectedBuildingIdx = -1;
+					}
 				}
 			}
 		}

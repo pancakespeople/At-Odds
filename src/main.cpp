@@ -122,7 +122,7 @@ int main()
             state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
         }
         
-        buildGui.draw(window);
+        buildGui.draw(window, state.getLocalViewStar(), player);
         unitGui.draw(window);
         gui.draw();
 

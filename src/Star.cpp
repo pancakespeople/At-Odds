@@ -132,7 +132,7 @@ float Star::distBetweenStar(Star& s) {
 	return std::sqrt(std::pow(otherPos.x - thisPos.x, 2) + std::pow(otherPos.y - thisPos.y, 2));
 }
 
-bool Star::isStarInRadius(Star& s, float radius) {
+bool Star::isStarInRadius(Star& s, float radius) const {
 	sf::Vector2f otherPos = s.getCenter();
 	sf::Vector2f thisPos = getCenter();
 
@@ -145,7 +145,7 @@ bool Star::isStarInRadius(Star& s, float radius) {
 	else return false;
 }
 
-bool Star::isInShapeRadius(float x, float y) {
+bool Star::isInShapeRadius(float x, float y) const {
 	float radius = m_shape.getRadius();
 	sf::Vector2f thisPos = getCenter();
 
@@ -172,7 +172,7 @@ void Star::factionTakeOwnership(Faction* faction, bool spawnClaimUnit) {
 	}
 }
 
-sf::Vector2f Star::getCenter() {
+sf::Vector2f Star::getCenter() const {
 	sf::Vector2f pos = getPos();
 	pos.x += getRadius();
 	pos.y += getRadius();
@@ -215,7 +215,7 @@ void Star::setupJumpPoints() {
 	}
 }
 
-sf::Vector2f Star::getLocalViewCenter() {
+sf::Vector2f Star::getLocalViewCenter() const {
 	sf::IntRect rect = m_localViewSprite.getTextureRect();
 	sf::Vector2f pos = getPos();
 
@@ -346,7 +346,7 @@ int Star::numAlliedShips(int allegiance) const {
 	return count;
 }
 
-sf::Vector2f Star::getRandomLocalPos(float min, float max) {
+sf::Vector2f Star::getRandomLocalPos(float min, float max) const {
 	return getLocalViewCenter() + Random::randVec(min, max);
 }
 
@@ -418,4 +418,13 @@ Building* Star::createBuilding(std::unique_ptr<Building>& building) {
 
 int Star::numAllies(int allegiance) const {
 	return numAlliedShips(allegiance) + numAlliedBuildings(allegiance);
+}
+
+bool Star::containsBuildingType(Building::BUILDING_TYPE type) const {
+	for (auto& building : m_buildings) {
+		if (building->getType() == type) {
+			return true;
+		}
+	}
+	return false;
 }

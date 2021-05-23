@@ -8,10 +8,12 @@
 class Star;
 class Spaceship;
 class Faction;
+class Player;
 
 class Building : public Unit {
 public:
 	enum class BUILDING_TYPE {
+		NONE,
 		OUTPOST,
 		LASER_TURRET,
 		MACHINE_GUN_TURRET,
@@ -27,7 +29,11 @@ public:
 	void update(Star* currentStar, Faction& faction);
 	void construct(const Spaceship* constructor);
 
+	static bool checkBuildCondition(BUILDING_TYPE type, const Star* star, bool player = false, int playerAllegiance = 0);
+
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }
+
+	BUILDING_TYPE getType() { return m_type; }
 
 private:
 	friend class boost::serialization::access;
@@ -38,6 +44,7 @@ private:
 		archive & m_attackTarget;
 		archive & m_constructionPercent;
 		archive & m_constructionSpeedMultiplier;
+		archive & m_type;
 	}
 
 	Building() {}
@@ -49,6 +56,8 @@ private:
 
 	float m_constructionPercent = 0.0f;
 	float m_constructionSpeedMultiplier = 1.0f;
+
+	BUILDING_TYPE m_type = BUILDING_TYPE::NONE;
 };
 
 class BuildingPrototype {
@@ -60,7 +69,7 @@ public:
 
 	Building::BUILDING_TYPE getType() const { return m_type; }
 
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, const Star* currentStar, const Player& player);
 	void setPos(const sf::Vector2f& pos) { m_sprite.setPosition(pos); }
 
 private:

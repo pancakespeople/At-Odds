@@ -7,6 +7,7 @@
 #include "Sounds.h"
 #include "Math.h"
 #include "Mod.h"
+#include "Player.h"
 
 const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texturePaths = {
 	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"},
@@ -76,7 +77,7 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 	m_sprite.setRotation(Random::randFloat(0.0f, 360.0f));
 	
 	m_allegiance = allegiance;
-
+	m_type = type;
 	m_currentStar = star;
 
 	if (built) {
@@ -169,6 +170,28 @@ void Building::construct(const Spaceship* constructor) {
 	m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
 }
 
+bool Building::checkBuildCondition(BUILDING_TYPE type, const Star* star, bool player, int playerAllegiance) {
+	if (star == nullptr) {
+		return false;
+	}
+	else if (player) {
+		if (star->numAllies(playerAllegiance) == 0) {
+			return false;
+		}
+	}
+	
+	switch (type) {
+	case BUILDING_TYPE::OUTPOST: // Only one allowed per star
+		return !star->containsBuildingType(type);
+		break;
+	case BUILDING_TYPE::SHIP_FACTORY: // Only one allowed per star
+		return !star->containsBuildingType(type);
+		break;
+	default:
+		return true;
+	}
+}
+
 BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
 	m_type = type;
 	sf::Texture& texture = TextureCache::getTexture(Building::texturePaths.at(type));
@@ -176,6 +199,13 @@ BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
 }
 
-void BuildingPrototype::draw(sf::RenderWindow& window) {
-	window.draw(m_sprite);
+void BuildingPrototype::draw(sf::RenderWindow& window, const Star* currentStar, const Player& player) {
+	if (Building::checkBuildCondition(m_type, currentStar, true, player.getFaction())) {
+		m_sprite.setColor(sf::Color(0, 200, 0));
+		window.draw(m_sprite);
+	}
+	else {
+		m_sprite.setColor(sf::Color(200, 0, 0));
+		window.draw(m_sprite);
+	}
 }
