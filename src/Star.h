@@ -46,7 +46,7 @@ public:
 	bool isStarInRadius(Star& s, float radius) const;
 	bool isInShapeRadius(float x, float y) const;
 	bool isLocalViewActive() const { return m_localViewActive; }
-	bool containsBuildingType(Building::BUILDING_TYPE type) const;
+	bool containsBuildingType(Building::BUILDING_TYPE type, bool allegianceOnly = false, int allegiance = 0) const;
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;

@@ -420,10 +420,17 @@ int Star::numAllies(int allegiance) const {
 	return numAlliedShips(allegiance) + numAlliedBuildings(allegiance);
 }
 
-bool Star::containsBuildingType(Building::BUILDING_TYPE type) const {
+bool Star::containsBuildingType(Building::BUILDING_TYPE type, bool allegianceOnly, int allegiance) const {
 	for (auto& building : m_buildings) {
-		if (building->getType() == type) {
-			return true;
+		if (allegianceOnly) {
+			if (building->getType() == type && building->getAllegiance() == allegiance) {
+				return true;
+			}
+		}
+		else {
+			if (building->getType() == type) {
+				return true;
+			}
 		}
 	}
 	return false;

@@ -797,21 +797,19 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 	if (m_canReceiveEvents) {
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
-				if (currentLocalStar->numAllies(player.getFaction()) > 0) {
-					sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-					sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+				sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+				sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-					// Create new building
-					BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
+				// Create new building
+				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
 
-					if (Building::checkBuildCondition(selector.prototype.getType(), currentLocalStar)) {
-						std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
+				if (Building::checkBuildCondition(selector.prototype.getType(), currentLocalStar, player.getFaction(), true)) {
+					std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
 
-						currentLocalStar->createBuilding(building);
+					currentLocalStar->createBuilding(building);
 
-						if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-							m_selectedBuildingIdx = -1;
-						}
+					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+						m_selectedBuildingIdx = -1;
 					}
 				}
 			}

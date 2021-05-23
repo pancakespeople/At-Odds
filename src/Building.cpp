@@ -170,22 +170,22 @@ void Building::construct(const Spaceship* constructor) {
 	m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
 }
 
-bool Building::checkBuildCondition(BUILDING_TYPE type, const Star* star, bool player, int playerAllegiance) {
+bool Building::checkBuildCondition(BUILDING_TYPE type, const Star* star, int allegiance, bool player) {
 	if (star == nullptr) {
 		return false;
 	}
 	else if (player) {
-		if (star->numAllies(playerAllegiance) == 0) {
+		if (star->numAllies(allegiance) == 0) {
 			return false;
 		}
 	}
 	
 	switch (type) {
-	case BUILDING_TYPE::OUTPOST: // Only one allowed per star
-		return !star->containsBuildingType(type);
+	case BUILDING_TYPE::OUTPOST: // Only one allowed per star, per faction
+		return !star->containsBuildingType(type, true, allegiance);
 		break;
-	case BUILDING_TYPE::SHIP_FACTORY: // Only one allowed per star
-		return !star->containsBuildingType(type);
+	case BUILDING_TYPE::SHIP_FACTORY: // Only one allowed per star, per faction
+		return !star->containsBuildingType(type, true, allegiance);
 		break;
 	default:
 		return true;
@@ -200,7 +200,7 @@ BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
 }
 
 void BuildingPrototype::draw(sf::RenderWindow& window, const Star* currentStar, const Player& player) {
-	if (Building::checkBuildCondition(m_type, currentStar, true, player.getFaction())) {
+	if (Building::checkBuildCondition(m_type, currentStar, player.getFaction(), true)) {
 		m_sprite.setColor(sf::Color(0, 200, 0));
 		window.draw(m_sprite);
 	}

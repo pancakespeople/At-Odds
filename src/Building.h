@@ -29,7 +29,7 @@ public:
 	void update(Star* currentStar, Faction& faction);
 	void construct(const Spaceship* constructor);
 
-	static bool checkBuildCondition(BUILDING_TYPE type, const Star* star, bool player = false, int playerAllegiance = 0);
+	static bool checkBuildCondition(BUILDING_TYPE type, const Star* star, int allegiance, bool player = false);
 
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }
 
