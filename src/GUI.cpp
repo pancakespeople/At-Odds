@@ -809,7 +809,9 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 
 						currentLocalStar->createBuilding(building);
 
-						m_selectedBuildingIdx = -1;
+						if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+							m_selectedBuildingIdx = -1;
+						}
 					}
 				}
 			}
