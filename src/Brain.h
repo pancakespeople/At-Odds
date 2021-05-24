@@ -7,7 +7,8 @@ public:
 	enum class AI_STATE {
 		NONE,
 		ATTACKING,
-		FORTIFYING
+		FORTIFYING,
+		SHIP_BUILDING
 	};
 	
 	void onStart(Faction* faction);
@@ -15,6 +16,7 @@ public:
 	void controlFaction(Faction* faction);
 	void considerAttack(Faction* faction);
 	void considerFortifying(Faction* faction);
+	void considerShipBuilding(Faction* faction);
 	void considerChangingState();
 
 private:
@@ -37,6 +39,7 @@ private:
 	struct Personality {
 		// All vals are percent
 		float aggressiveness = 0.5f;
+		float admiral = 0.5f;
 	} m_personality;
 
 	struct AttackVars {

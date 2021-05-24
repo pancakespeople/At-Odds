@@ -21,6 +21,9 @@ void Brain::controlFaction(Faction* faction) {
 	else if (m_state == AI_STATE::FORTIFYING) {
 		considerFortifying(faction);
 	}
+	else if (m_state == AI_STATE::SHIP_BUILDING) {
+		considerShipBuilding(faction);
+	}
 
 	m_stateChangeTimer--;
 }
@@ -30,7 +33,12 @@ void Brain::considerChangingState() {
 		m_state = AI_STATE::ATTACKING;
 	}
 	else {
-		m_state = AI_STATE::FORTIFYING;
+		if (Random::randFloat(0.0f, 1.0f) < m_personality.admiral) {
+			m_state = AI_STATE::SHIP_BUILDING;
+		}
+		else {
+			m_state = AI_STATE::FORTIFYING;
+		}
 	}
 
 	m_stateChangeTimer = 3000;
@@ -43,28 +51,30 @@ void Brain::onSpawn(Faction* faction) {
 void Brain::considerFortifying(Faction* faction) {
 	if (m_fortifyingVars.fortifyingTimer == 0) {
 		for (Star* star : faction->getOwnedStars()) {
-			if (star->numAlliedBuildings(faction->getID()) == 0 && faction->numIdleConstructionShips() > 0) {
-				// Build outpost
+			if (Random::randBool()) {
+				if (!star->containsBuildingType(Building::BUILDING_TYPE::OUTPOST, true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
+					// Build outpost
 
-				std::unique_ptr<Building> building = std::make_unique<Building>(
-					Building::BUILDING_TYPE::OUTPOST, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
-				Building* realBuilding = star->createBuilding(building);
+					std::unique_ptr<Building> building = std::make_unique<Building>(
+						Building::BUILDING_TYPE::OUTPOST, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
+					Building* realBuilding = star->createBuilding(building);
 
-				// Give idle construction ships order to build it
-				faction->orderConstructionShipsBuild(realBuilding, true);
+					// Give idle construction ships order to build it
+					faction->orderConstructionShipsBuild(realBuilding, true);
 
-				AI_DEBUG_PRINT("Building outpost");
+					AI_DEBUG_PRINT("Building outpost");
+				}
 			}
 			else {
 				for (auto& building : star->getBuildings()) {
 					// Build any unbuilt buildings
 					if (building->getAllegiance() == faction->getID() && !building->isBuilt()) {
 						faction->orderConstructionShipsBuild(building.get(), true, true);
-						AI_DEBUG_PRINT("Ordering build of unbuilt building");
+						//AI_DEBUG_PRINT("Ordering build of unbuilt building");
 					}
 				}
 
-				if (Random::randBool() && faction->numUnbuiltBuildings(star) == 0 && faction->numIdleConstructionShips() > 0) {
+				if (Random::randBool() && faction->numIdleConstructionShips() > 0) {
 					// Build turrets around jump points
 
 					std::vector<JumpPoint>& jumpPoints = star->getJumpPoints();
@@ -109,7 +119,7 @@ void Brain::considerFortifying(Faction* faction) {
 				}
 			}
 		}
-		m_fortifyingVars.fortifyingTimer = 1600;
+		m_fortifyingVars.fortifyingTimer = 500;
 	}
 
 	m_fortifyingVars.fortifyingTimer--;
@@ -179,6 +189,23 @@ void Brain::considerAttack(Faction* faction) {
 			else {
 				m_attackVars.attackTimer--;
 			}
+		}
+	}
+}
+
+void Brain::considerShipBuilding(Faction* faction) {
+	for (Star* star : faction->getOwnedStars()) {
+		if (!star->containsBuildingType(Building::BUILDING_TYPE::SHIP_FACTORY, true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
+			std::unique_ptr<Building> factory = std::make_unique<Building>(
+				Building::BUILDING_TYPE::SHIP_FACTORY, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
+
+			Building* ptr = star->createBuilding(factory);
+			faction->orderConstructionShipsBuild(ptr, true);
+
+			AI_DEBUG_PRINT("Building ship factory");
+
+			m_state = AI_STATE::NONE;
+			break;
 		}
 	}
 }

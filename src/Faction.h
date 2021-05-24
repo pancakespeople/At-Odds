@@ -21,6 +21,8 @@ public:
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
 	int numIdleConstructionShips();
+
+	bool isDead() { return m_dead; }
 	
 	sf::Color getColor() { return m_color; }
 
@@ -51,14 +53,15 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& m_constellation;
-		archive& m_capitol;
-		archive& m_color;
-		archive& m_ownedSystems;
-		archive& m_ships;
-		archive& m_ai;
-		archive& m_id;
-		archive& m_aiEnabled;
+		archive & m_constellation;
+		archive & m_capitol;
+		archive & m_color;
+		archive & m_ownedSystems;
+		archive & m_ships;
+		archive & m_ai;
+		archive & m_id;
+		archive & m_aiEnabled;
+		archive & m_dead;
 	}
 	
 	Faction() {}
@@ -75,5 +78,6 @@ private:
 	int m_id;
 	
 	bool m_aiEnabled = true;
+	bool m_dead = false;
 };
 

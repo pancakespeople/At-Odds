@@ -61,10 +61,10 @@ void Faction::update() {
 			m_capitol = m_ownedSystems[0];
 		}
 		else {
-			if (m_ships.size() > 0) {
-				m_ships.clear();
+			if (m_ships.size() == 0) {
+				m_dead = true;
+				return;
 			}
-			return;
 		}
 	}
 	
