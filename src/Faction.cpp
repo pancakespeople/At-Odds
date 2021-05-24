@@ -10,7 +10,6 @@
 Faction::Faction(Constellation* constellation, int id) {
 	m_constellation = constellation;
 	m_color = sf::Color(rand() % 255, rand() % 255, rand() % 255);
-	m_ticksUntilNextAIAction = 100;
 
 	m_id = id;
 
@@ -43,6 +42,7 @@ void Faction::spawnAtRandomStar() {
 	
 	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::OUTPOST, m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), m_id, m_color));
+	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SHIP_FACTORY, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -61,6 +61,9 @@ void Faction::update() {
 			m_capitol = m_ownedSystems[0];
 		}
 		else {
+			if (m_ships.size() > 0) {
+				m_ships.clear();
+			}
 			return;
 		}
 	}
@@ -71,24 +74,6 @@ void Faction::update() {
 		
 	if (m_aiEnabled) m_ai.controlFaction(this);
 	
-	if (m_freeShipTimer <= 0) {
-		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		
-		if (m_numFreeShips % 10 == 0 && m_numFreeShips != 0) {
-			m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos, m_capitol, m_id, m_color)));
-			m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos, m_capitol, m_id, m_color)));
-		}
-		else {
-			m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color)));
-		}
-
-		m_numFreeShips++;
-		m_freeShipTimer = 2000;
-	}
-	else {
-		m_freeShipTimer -= 1 + (m_ownedSystems.size() * 0.25);
-	}
-
 	// Delete unowned systems from list
 	m_ownedSystems.erase(std::remove_if(m_ownedSystems.begin(), m_ownedSystems.end(), [&](Star* s) {return s->getAllegiance() != m_id; }), m_ownedSystems.end());
 

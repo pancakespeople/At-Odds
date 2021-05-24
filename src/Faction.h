@@ -57,10 +57,7 @@ private:
 		archive& m_ownedSystems;
 		archive& m_ships;
 		archive& m_ai;
-		archive& m_ticksUntilNextAIAction;
 		archive& m_id;
-		archive& m_freeShipTimer;
-		archive& m_numFreeShips;
 		archive& m_aiEnabled;
 	}
 	
@@ -75,10 +72,7 @@ private:
 	
 	Brain m_ai;
 	
-	int m_ticksUntilNextAIAction;
 	int m_id;
-	int m_freeShipTimer = 2000;
-	int m_numFreeShips = 0;
 	
 	bool m_aiEnabled = true;
 };
