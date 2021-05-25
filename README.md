@@ -5,7 +5,9 @@ Space 4x/rts game
 
 ![game 2](img/game2.png)
 
-![game 4](img/game4.png)
+![constellation](img/constellation.png)
+
+![bigbattle](img/bigbattle.png)
 
 # Building
 

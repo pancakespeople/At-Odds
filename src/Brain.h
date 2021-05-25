@@ -26,6 +26,7 @@ private:
 		archive & m_state;
 		archive & m_stateChangeTimer;
 		archive & m_personality.aggressiveness;
+		archive & m_personality.admiral;
 		archive & m_attackVars.expansionTarget;
 		archive & m_attackVars.launchingAttack;
 		archive & m_attackVars.attackTimer;
