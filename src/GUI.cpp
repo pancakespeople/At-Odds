@@ -659,9 +659,6 @@ void HelpWindow::open(tgui::Gui& gui) {
 		"Click and drag to select your units, right click to order them to move and right click on one of the swirly purple things to order a jump between systems. "
 		"You can also order ships to travel to a specified star by selecting them in the local view and clicking on a star in the global view. "
 		"Ships will automatically attack enemies unless ordered to move. \n\n"
-		"At the moment you just receive a free ship every so often, "
-		"and that time period decreases based on how many systems you own. "
-		"So you will get more ships if you own more systems. \n\n"
 		"Your goal is to defeat all your enemies. Good luck!";
 
 	auto text = tgui::Label::create(helpText);
