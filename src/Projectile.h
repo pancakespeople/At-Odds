@@ -21,28 +21,22 @@ public:
 	Projectile();
 	
 	void update();
-
 	void draw(sf::RenderWindow& window);
+	void kill() { m_life = 0.0f; }
+	void setPos(const sf::Vector2f& pos);
+	void setRotation(float angleDegrees);
+	void setAllegiance(int allegiance);
 
+	float getDamage() { return m_damage; }
+	float getRange() { return m_life * m_speed; }
 	float getLife() { return m_life; }
 
 	bool isDead() { return m_life <= 0.0f; }
-
 	bool isCollidingWith(const Collider& collider);
-
-	void kill() { m_life = 0.0f; }
 
 	int getAllegiance() { return m_allegiance; }
 
-	float getDamage() { return m_damage; }
-
-	float getRange() { return m_life * m_speed; }
-
-	void setPos(const sf::Vector2f& pos);
-
-	void setRotation(float angleDegrees);
-
-	void setAllegiance(int allegiance);
+	sf::Vector2f getPos() { if (m_usesSprite) return m_sprite.getPosition(); else return m_shape.getPosition(); }
 
 private:
 	friend class boost::serialization::access;

@@ -116,8 +116,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		for (Animation& a : m_localViewAnimations) {
 			a.draw(window);
 		}
-
-
+		m_particleSystem.drawParticles(window);
 	}
 }
 
@@ -235,6 +234,9 @@ void Star::handleCollisions() {
 			if (p.isCollidingWith(s->getCollider()) && p.getAllegiance() != s->getAllegiance()) {
 				s->takeDamage(p.getDamage());
 				p.kill();
+				m_particleSystem.createParticle(
+					ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), s->getCollider().getOutlineColor()
+				);
 			}
 		}
 		for (auto& b : m_buildings) {
@@ -247,6 +249,9 @@ void Star::handleCollisions() {
 					b->takeDamage(p.getDamage());
 					p.kill();
 				}
+				m_particleSystem.createParticle(
+					ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), b->getCollider().getOutlineColor()
+				);
 			}
 		}
 	}
@@ -316,7 +321,9 @@ void Star::update(Constellation* constellation) {
 	for (Animation& a : m_localViewAnimations) {
 		a.nextFrame();
 	}
-	
+
+	m_particleSystem.updateParticles();
+
 	handleCollisions();
 	m_projectiles.erase(std::remove_if(m_projectiles.begin(), m_projectiles.end(), [](Projectile& p) {return p.isDead(); }), m_projectiles.end());
 	cleanUpAnimations();

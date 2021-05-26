@@ -7,6 +7,7 @@
 #include "Animation.h"
 #include "GameState.h"
 #include "Building.h"
+#include "ParticleSystem.h"
 
 class Hyperlane;
 class Faction;
@@ -113,5 +114,7 @@ private:
 	int m_allegiance = -1;
 
 	float m_shaderRandomSeed = 1.0f;
+
+	ParticleSystem m_particleSystem;
 };
 
