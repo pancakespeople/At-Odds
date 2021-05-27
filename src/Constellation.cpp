@@ -238,7 +238,7 @@ void Constellation::generateNeutralSquatters() {
             int numShips = Random::randInt(0, 10);
             for (int i = 0; i < numShips; i++) {
                 sf::Vector2f pos = star->getRandomLocalPos(-10000, 10000);
-                auto& ship = std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, star.get(), -1, sf::Color(175, 175, 175));
+                auto ship = std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, star.get(), -1, sf::Color(175, 175, 175));
                 star->createSpaceship(ship);
             }
         }
