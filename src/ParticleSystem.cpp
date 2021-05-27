@@ -65,3 +65,9 @@ void ParticleSystem::drawParticles(sf::RenderWindow& window) {
 void ParticleSystem::createProjectileHitParticle(const sf::Vector2f& pos) {
 	createParticle(Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, pos, sf::Color(255, 165, 0));
 }
+
+void ParticleSystem::createParticleExplosion(const sf::Vector2f& pos, const sf::Color& color, float velocity, int numParticles) {
+	for (int i = 0; i < numParticles; i++) {
+		createParticle(Particle{ 1000, Random::randVec(-velocity, velocity) }, pos, color);
+	}
+}

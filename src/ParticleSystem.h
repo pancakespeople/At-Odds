@@ -13,6 +13,7 @@ public:
 	void updateParticles();
 	void drawParticles(sf::RenderWindow& window);
 	void createProjectileHitParticle(const sf::Vector2f& pos);
+	void createParticleExplosion(const sf::Vector2f& pos, const sf::Color& color, float velocity, int numParticles);
 
 private:
 	std::vector<Particle> m_particles;
