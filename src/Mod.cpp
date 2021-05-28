@@ -48,23 +48,19 @@ FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::C
 }
 
 void FighterBayMod::update(Unit* unit, Star* currentStar, Faction& faction) {
+	if (unit->isDead()) {
+		// Spit out fighters if unit died
+		
+		launchFighters(currentStar);
+		return;
+	}
+	
 	int numEnemyUnits = unit->findEnemyUnits().size();
 	
 	if (numEnemyUnits > 0 && m_fighterStatus == FIGHTER_STATUS::DOCKED) {
 		// Enable fighters if enemies are in system
 		
-		for (int i = 0; i < m_fighterShipIds.size(); i++) {
-			Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
-			if (fighter != nullptr) {
-				fighter->enable();
-			}
-			else {
-				m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
-				i--;
-			}
-		}
-		
-		m_fighterStatus = FIGHTER_STATUS::FIGHTING;
+		launchFighters(currentStar);
 	}
 	
 	if (numEnemyUnits == 0 && m_fighterStatus == FIGHTER_STATUS::FIGHTING) {
@@ -111,4 +107,19 @@ void FighterBayMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 			DEBUG_PRINT("fighters docked");
 		}
 	}
+}
+
+void FighterBayMod::launchFighters(Star* currentStar) {
+	for (int i = 0; i < m_fighterShipIds.size(); i++) {
+		Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
+		if (fighter != nullptr) {
+			fighter->enable();
+		}
+		else {
+			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
+			i--;
+		}
+	}
+
+	m_fighterStatus = FIGHTER_STATUS::FIGHTING;
 }

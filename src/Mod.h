@@ -46,6 +46,8 @@ public:
 	
 	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
 
+	void launchFighters(Star* currentStar);
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
