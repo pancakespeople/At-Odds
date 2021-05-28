@@ -19,7 +19,8 @@ public:
 		FRIGATE_1,
 		DESTROYER_1,
 		CLAIM_SHIP,
-		CONSTRUCTION_SHIP
+		CONSTRUCTION_SHIP,
+		FIGHTER
 	};
 	
 	enum class JumpState {
@@ -45,11 +46,14 @@ public:
 	void clearOrders() { m_orders.clear(); }
 	void attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings);
 	void fireAt(Spaceship* target, int weaponIdx);
+	void disable() { m_disabled = true; }
+	void enable() { m_disabled = false; }
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
 	bool flyTo(const sf::Vector2f& pos);
 	bool isSelected() { return m_selected; }
+	bool isDisabled() { return m_disabled; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
@@ -77,16 +81,17 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& boost::serialization::base_object<Unit>(*this);
-		archive& m_sprite;
-		archive& m_orders;
-		archive& m_mass;
-		archive& m_maxAcceleration;
-		archive& m_percentJumpDriveCharged;
-		archive& m_facingAngle;
-		archive& m_rotationSpeed;
-		archive& m_constructionSpeed;
-		archive& m_canReceiveOrders;
+		archive & boost::serialization::base_object<Unit>(*this);
+		archive & m_sprite;
+		archive & m_orders;
+		archive & m_mass;
+		archive & m_maxAcceleration;
+		archive & m_percentJumpDriveCharged;
+		archive & m_facingAngle;
+		archive & m_rotationSpeed;
+		archive & m_constructionSpeed;
+		archive & m_canReceiveOrders;
+		archive & m_disabled;
 	}
 
 	Spaceship() {}
@@ -106,5 +111,6 @@ private:
 
 	bool m_selected = false;
 	bool m_canReceiveOrders = true;
+	bool m_disabled = false;
 };
 

@@ -69,6 +69,20 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_constructionSpeed = 10.0f;
 		addWeapon(Weapon(Weapon::WEAPON_TYPE::CONSTRUCTION_GUN));
 		break;
+	case SPACESHIP_TYPE::FIGHTER:
+		m_sprite.setTexture(TextureCache::getTexture("data/art/SpaceShipNormal.png"));
+		m_sprite.setScale(sf::Vector2f(0.5f, 0.5f));
+		m_mass = 25000.0f;
+		m_health = 50.0f;
+		m_collider.setRadius(50.0f);
+
+		if (Random::randBool()) {
+			addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+		}
+		else {
+			addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+		}
+		break;
 	default:
 		m_mass = 50000.0f;
 		m_health = 100.0f;
@@ -79,6 +93,8 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 }
 
 void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
+	if (m_disabled) return;
+	
 	window.draw(m_sprite);
 	window.draw(m_collider);
 	
@@ -164,6 +180,8 @@ void Spaceship::accelerate(float amount) {
 }
 
 void Spaceship::update(Star* currentStar) {
+	if (m_disabled) return;
+	
 	m_currentStar = currentStar;
 	
 	if (!m_dead && m_health <= 0.0f) {

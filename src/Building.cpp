@@ -34,6 +34,8 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 			}
 		}
 
+		addMod(FighterBayMod(this, star, allegiance, color));
+
 		m_health = 1000.0f;
 
 		break;
