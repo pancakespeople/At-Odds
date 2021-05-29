@@ -36,7 +36,7 @@ private:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		boost::serialization::base_object<Order>(*this);
-		archive& m_pos;
+		archive & m_pos;
 	}
 
 	FlyToOrder() {}
@@ -70,7 +70,7 @@ private:
 
 class AttackOrder : public Order {
 public:
-	AttackOrder(Unit* target);
+	AttackOrder(Unit* target, bool aggressive = false);
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
@@ -85,6 +85,7 @@ private:
 		archive & m_targetID;
 		archive & m_frustration;
 		archive & m_lastEnemyHealth;
+		archive & m_aggressive;
 	}
 
 	AttackOrder() {}
@@ -93,6 +94,7 @@ private:
 	Unit* m_target = nullptr;
 	float m_frustration = 0.0f;
 	float m_lastEnemyHealth = 100.0f;
+	bool m_aggressive = false;
 };
 
 class TravelOrder : public Order {

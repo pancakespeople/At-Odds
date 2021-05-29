@@ -59,10 +59,11 @@ void JumpOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf
 		emitter.drawLine(window, shipPos, m_jumpPoint->getPos(), sf::Color::Yellow);
 }
 
-AttackOrder::AttackOrder(Unit* target) {
+AttackOrder::AttackOrder(Unit* target, bool aggressive) {
 	m_targetID = target->getID();
 	m_lastEnemyHealth = target->getHealth();
 	m_frustration = 0.0f;
+	m_aggressive = aggressive;
 }
 
 bool AttackOrder::execute(Spaceship* ship, Star* currentStar) {
@@ -76,7 +77,7 @@ bool AttackOrder::execute(Spaceship* ship, Star* currentStar) {
 		return true;
 	}
 	
-	if (m_target->getVelocity() == sf::Vector2f(0.0f, 0.0f)) {
+	if (m_target->getVelocity() == sf::Vector2f(0.0f, 0.0f) || m_aggressive) {
 		ship->orbit(m_target->getPos());
 	}
 	else {

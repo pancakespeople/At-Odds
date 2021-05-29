@@ -75,6 +75,7 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_mass = 25000.0f;
 		m_health = 50.0f;
 		m_collider.setRadius(50.0f);
+		m_fighterAI = true;
 
 		if (Random::randBool()) {
 			addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
@@ -196,6 +197,8 @@ void Spaceship::update(Star* currentStar) {
 		}
 	}
 	else if (m_weapons.size() > 0) {
+		// Attack enemies in system
+		
 		std::vector<Spaceship*> enemies = findEnemyShips();
 		if (enemies.size() > 0) {
 			attackRandomEnemy(enemies);
@@ -374,7 +377,15 @@ void Spaceship::attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent)
 		randIndex = 0;
 	}
 	if (enemies.size() > 0) {
-		if (urgent) {
+		if (m_fighterAI) {
+			if (urgent) {
+				addOrderFront(AttackOrder(enemies[randIndex], true));
+			}
+			else {
+				addOrder(AttackOrder(enemies[randIndex], true));
+			}
+		}
+		else if (urgent) {
 			addOrderFront(AttackOrder(enemies[randIndex]));
 		}
 		else {

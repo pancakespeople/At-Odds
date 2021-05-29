@@ -92,6 +92,7 @@ private:
 		archive & m_constructionSpeed;
 		archive & m_canReceiveOrders;
 		archive & m_disabled;
+		archive & m_fighterAI;
 	}
 
 	Spaceship() {}
@@ -112,5 +113,6 @@ private:
 	bool m_selected = false;
 	bool m_canReceiveOrders = true;
 	bool m_disabled = false;
+	bool m_fighterAI = false;
 };
 

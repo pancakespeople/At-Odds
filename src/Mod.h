@@ -47,6 +47,8 @@ public:
 	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
 
 	void launchFighters(Star* currentStar);
+	void recallFighters(Star* currentStar, Unit* unit);
+	void dockReturningFighters(Star* currentStar, Unit* unit);
 
 private:
 	friend class boost::serialization::access;

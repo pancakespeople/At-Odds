@@ -66,46 +66,13 @@ void FighterBayMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 	if (numEnemyUnits == 0 && m_fighterStatus == FIGHTER_STATUS::FIGHTING) {
 		//Recall fighters
 
-		for (int i = 0; i < m_fighterShipIds.size(); i++) {
-			Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
-			if (fighter != nullptr) {
-				fighter->clearOrders();
-				fighter->addOrder(FlyToOrder(unit->getPos()));
-			}
-			else {
-				m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
-				i--;
-			}
-		}
-
-		m_fighterStatus = FIGHTER_STATUS::RETURNING;
+		recallFighters(currentStar, unit);
 	}
 	
 	if (m_fighterStatus == FIGHTER_STATUS::RETURNING) {
-		int numReturningFighters = 0;
+		// Disable fighters that have returned until all are docked
 		
-		for (int i = 0; i < m_fighterShipIds.size(); i++) {
-			Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
-			if (fighter != nullptr) {
-				if (!fighter->isDisabled()) {
-					if (Math::distance(fighter->getPos(), unit->getPos()) < unit->getCollider().getRadius()) {
-						fighter->disable();
-					}
-					else {
-						numReturningFighters++;
-					}
-				}
-			}
-			else {
-				m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
-				i--;
-			}
-		}
-
-		if (m_fighterShipIds.size() == 0 || numReturningFighters == 0) {
-			m_fighterStatus = FIGHTER_STATUS::DOCKED;
-			DEBUG_PRINT("fighters docked");
-		}
+		dockReturningFighters(currentStar, unit);
 	}
 }
 
@@ -122,4 +89,46 @@ void FighterBayMod::launchFighters(Star* currentStar) {
 	}
 
 	m_fighterStatus = FIGHTER_STATUS::FIGHTING;
+}
+
+void FighterBayMod::recallFighters(Star* currentStar, Unit* unit) {
+	for (int i = 0; i < m_fighterShipIds.size(); i++) {
+		Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
+		if (fighter != nullptr) {
+			fighter->clearOrders();
+			fighter->addOrder(FlyToOrder(unit->getPos()));
+		}
+		else {
+			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
+			i--;
+		}
+	}
+
+	m_fighterStatus = FIGHTER_STATUS::RETURNING;
+}
+
+void FighterBayMod::dockReturningFighters(Star* currentStar, Unit* unit) {
+	int numReturningFighters = 0;
+
+	for (int i = 0; i < m_fighterShipIds.size(); i++) {
+		Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
+		if (fighter != nullptr) {
+			if (!fighter->isDisabled()) {
+				if (Math::distance(fighter->getPos(), unit->getPos()) < unit->getCollider().getRadius()) {
+					fighter->disable();
+				}
+				else {
+					numReturningFighters++;
+				}
+			}
+		}
+		else {
+			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
+			i--;
+		}
+	}
+
+	if (m_fighterShipIds.size() == 0 || numReturningFighters == 0) {
+		m_fighterStatus = FIGHTER_STATUS::DOCKED;
+	}
 }
