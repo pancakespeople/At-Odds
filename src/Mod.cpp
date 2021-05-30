@@ -40,9 +40,13 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {
 	for (int i = 0; i < 4; i++) {
-		auto ship = std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FIGHTER, unit->getPos(), star, allegiance, color);
+		float radius = unit->getCollider().getRadius();
+		auto ship = std::make_unique<Spaceship>(
+			Spaceship::SPACESHIP_TYPE::FIGHTER, unit->getPos() + Random::randVec(-radius, radius), star, allegiance, color);
+		
 		Spaceship* shipPtr = star->createSpaceship(ship);
 		shipPtr->disable();
+		
 		m_fighterShipIds.push_back(shipPtr->getID());
 	}
 }
@@ -74,6 +78,18 @@ void FighterBayMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 		
 		dockReturningFighters(currentStar, unit);
 	}
+
+	// Delete ids for dead ships
+	for (int i = 0; i < m_fighterShipIds.size(); i++) {
+		if (currentStar->getShipByID(m_fighterShipIds[i]) == nullptr) {
+			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
+			i--;
+		}
+	}
+
+	if (m_fighterShipIds.size() < m_maxFighters) {
+		constructNewFighter(currentStar, unit);
+	}
 }
 
 void FighterBayMod::launchFighters(Star* currentStar) {
@@ -81,10 +97,6 @@ void FighterBayMod::launchFighters(Star* currentStar) {
 		Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
 		if (fighter != nullptr) {
 			fighter->enable();
-		}
-		else {
-			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
-			i--;
 		}
 	}
 
@@ -97,10 +109,6 @@ void FighterBayMod::recallFighters(Star* currentStar, Unit* unit) {
 		if (fighter != nullptr) {
 			fighter->clearOrders();
 			fighter->addOrder(FlyToOrder(unit->getPos()));
-		}
-		else {
-			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
-			i--;
 		}
 	}
 
@@ -122,13 +130,32 @@ void FighterBayMod::dockReturningFighters(Star* currentStar, Unit* unit) {
 				}
 			}
 		}
-		else {
-			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
-			i--;
-		}
 	}
 
 	if (m_fighterShipIds.size() == 0 || numReturningFighters == 0) {
 		m_fighterStatus = FIGHTER_STATUS::DOCKED;
+	}
+}
+
+void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit) {
+	if (m_ticksToNextFighter == 0) {
+		float radius = unit->getCollider().getRadius();
+		auto ship = std::make_unique<Spaceship>(
+			Spaceship::SPACESHIP_TYPE::FIGHTER, unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
+
+		Spaceship* shipPtr = currentStar->createSpaceship(ship);
+		
+		if (m_fighterStatus != FIGHTER_STATUS::FIGHTING) {
+			shipPtr->disable();
+		}
+
+		m_fighterShipIds.push_back(shipPtr->getID());
+
+		m_ticksToNextFighter = 1000;
+
+		DEBUG_PRINT("constructed new fighter");
+	}
+	else {
+		m_ticksToNextFighter--;
 	}
 }

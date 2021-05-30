@@ -49,6 +49,7 @@ public:
 	void launchFighters(Star* currentStar);
 	void recallFighters(Star* currentStar, Unit* unit);
 	void dockReturningFighters(Star* currentStar, Unit* unit);
+	void constructNewFighter(Star* currentStar, Unit* unit);
 
 private:
 	friend class boost::serialization::access;
@@ -57,10 +58,13 @@ private:
 		boost::serialization::base_object<Mod>(*this);
 		archive & m_fighterShipIds;
 		archive & m_fighterStatus;
+		archive & m_ticksToNextFighter;
 	}
 	
 	FighterBayMod() {}
 
 	std::vector<unsigned int> m_fighterShipIds;
 	FIGHTER_STATUS m_fighterStatus = FIGHTER_STATUS::DOCKED;
+	const int m_maxFighters = 4;
+	int m_ticksToNextFighter = 1000;
 };

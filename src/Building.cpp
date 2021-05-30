@@ -34,6 +34,7 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 			}
 		}
 
+		m_collider = Collider(pos, color, m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
 		addMod(FighterBayMod(this, star, allegiance, color));
 
 		m_health = 1000.0f;
@@ -73,7 +74,7 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 	}
 
 	m_collider = Collider(pos, color, m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
-	
+
 	m_sprite.setPosition(pos);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
 	m_sprite.setRotation(Random::randFloat(0.0f, 360.0f));
