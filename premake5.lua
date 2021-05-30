@@ -5,10 +5,23 @@ project "at_odds"
    language "C++"
    targetdir "bin/%{cfg.buildcfg}"
    
-   pchheader "gamepch.h"
+   pchheader "src/gamepch.h"
    pchsource "src/gamepch.cpp"
 
    files { "**.h", "**.cpp" }
+   
+   filter "system:Windows"
+      pchheader "gamepch.h"
+   
+   filter "system:Linux"
+      links {
+         "sfml-graphics",
+         "sfml-window",
+         "sfml-system",
+         "sfml-audio",
+         "boost_serialization",
+         "tgui"
+      }
    
    filter "configurations:Debug"
       kind "ConsoleApp"

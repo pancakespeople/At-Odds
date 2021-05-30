@@ -398,6 +398,11 @@ JumpPoint* Star::getJumpPointByID(unsigned int id) {
 	return nullptr;
 }
 
+Spaceship* Star::createSpaceship(std::unique_ptr<Spaceship>&& ship) {
+	m_localShips.push_back(std::move(ship));
+	return m_localShips.back().get();
+}
+
 Spaceship* Star::createSpaceship(std::unique_ptr<Spaceship>& ship) {
 	m_localShips.push_back(std::move(ship));
 	return m_localShips.back().get();
@@ -420,6 +425,11 @@ int Star::numAlliedBuildings(int allegiance) const {
 		}
 	}
 	return c;
+}
+
+Building* Star::createBuilding(std::unique_ptr<Building>&& building) {
+	m_buildings.push_back(std::move(building));
+	return m_buildings.back().get();
 }
 
 Building* Star::createBuilding(std::unique_ptr<Building>& building) {

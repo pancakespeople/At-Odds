@@ -38,7 +38,10 @@ public:
 	void clearAnimations() { m_localViewAnimations.clear(); }
 	void moveShipToOtherStar(Spaceship* ship, Star* other);
 	
+	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
+	
+	Building* createBuilding(std::unique_ptr<Building>&& building);
 	Building* createBuilding(std::unique_ptr<Building>& building);
 
 	float getRadius() const { return m_shape.getRadius(); }
