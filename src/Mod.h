@@ -9,11 +9,19 @@ public:
 	Mod() {}
 
 	virtual void update(Unit* unit, Star* currentStar, Faction& faction) {}
+	void enable() { m_enabled = true; }
+	void disable() { m_enabled = false; }
+
+	bool isEnabled() { return m_enabled; }
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {}
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_enabled;
+	}
+
+	bool m_enabled = false;
 };
 
 class FactoryMod : public Mod {
@@ -50,6 +58,7 @@ public:
 	void recallFighters(Star* currentStar, Unit* unit);
 	void dockReturningFighters(Star* currentStar, Unit* unit);
 	void constructNewFighter(Star* currentStar, Unit* unit);
+	void killAllFighters(Star* currentStar);
 
 private:
 	friend class boost::serialization::access;

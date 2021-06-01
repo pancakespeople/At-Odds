@@ -11,6 +11,8 @@ BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
 
 void FactoryMod::update(Unit* unit, Star* currentStar, Faction& faction) {
+	if (!isEnabled()) return;
+	
 	if (m_ticksToNextShip <= 0) {
 		sf::Vector2f pos = unit->getPos();
 		float radius = unit->getCollider().getRadius();
@@ -53,11 +55,16 @@ FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::C
 
 void FighterBayMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 	if (unit->isDead()) {
-		// Spit out fighters if unit died
-		
-		launchFighters(currentStar);
+		if (!isEnabled()) {
+			killAllFighters(currentStar); // They just die if the building was never constructed, no free fighters!
+		}
+		else {
+			launchFighters(currentStar); // Pop out fighters
+		}
 		return;
 	}
+
+	if (!isEnabled()) return;
 	
 	int numEnemyUnits = unit->findEnemyUnits().size();
 	
@@ -158,4 +165,15 @@ void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit) {
 	else {
 		m_ticksToNextFighter--;
 	}
+}
+
+void FighterBayMod::killAllFighters(Star* currentStar) {
+	for (int i = 0; i < m_fighterShipIds.size(); i++) {
+		Spaceship* fighter = currentStar->getShipByID(m_fighterShipIds[i]);
+		if (fighter != nullptr) {
+			fighter->enable();
+			fighter->kill();
+		}
+	}
+	m_fighterShipIds.clear();
 }

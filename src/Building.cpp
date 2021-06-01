@@ -84,6 +84,7 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 	m_currentStar = star;
 
 	if (built) {
+		enableAllMods();
 		m_constructionPercent = 100.0f;
 	}
 	else {
@@ -117,11 +118,12 @@ void Building::update(Star* currentStar, Faction& faction) {
 		Sounds::playSoundLocal("data/sound/boom1.wav", m_currentStar, 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
 	
+	updateMods(currentStar, faction);
+	
 	if (m_constructionPercent < 100.0f) {
 		return;
 	}
 	
-	updateMods(currentStar, faction);
 	updateWeapons();
 	attackEnemies();
 

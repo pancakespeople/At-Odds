@@ -58,3 +58,9 @@ void Unit::updateMods(Star* currentStar, Faction& faction) {
 		mod->update(this, currentStar, faction);
 	}
 }
+
+void Unit::enableAllMods() {
+	for (auto& mod : m_mods) {
+		mod->enable();
+	}
+}

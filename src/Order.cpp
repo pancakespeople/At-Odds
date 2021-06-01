@@ -172,6 +172,7 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
 				return false;
 			}
 			else {
+				m_building->enableAllMods();
 				return true;
 			}
 		}
