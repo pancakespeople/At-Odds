@@ -819,3 +819,42 @@ void PlayerGUI::open(tgui::Gui& gui) {
 	buildGUI.open(gui);
 	unitGUI.open(gui);
 }
+
+void DebugConsole::open(tgui::Gui& gui) {
+	m_console = tgui::Group::create();
+	m_console->getRenderer()->setOpacity(0.75f);
+	
+	m_chatBox = tgui::ChatBox::create();
+	m_chatBox->setSize("33%", "25%");
+	m_chatBox->setTextColor(tgui::Color::White);
+	m_console->add(m_chatBox);
+
+	m_editBox = tgui::EditBox::create();
+	m_editBox->setPosition("0%", "25%");
+	m_editBox->setSize("33%", "5%");
+	m_editBox->onReturnKeyPress([this]() {
+		m_chatBox->addLine(">>> " + m_editBox->getText());
+		m_editBox->setText("");
+	});
+	m_console->add(m_editBox);
+
+	gui.add(m_console);
+}
+
+void DebugConsole::close(tgui::Gui& gui) {
+	if (m_console != nullptr) {
+		gui.remove(m_console);
+		m_console = nullptr;
+	}
+}
+
+void DebugConsole::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
+	if (ev.type == sf::Event::EventType::KeyReleased && ev.key.code == sf::Keyboard::Tilde && state.getState() != GameState::State::MAIN_MENU) {
+		if (isOpen()) {
+			close(gui);
+		}
+		else {
+			open(gui);
+		}
+	}
+}

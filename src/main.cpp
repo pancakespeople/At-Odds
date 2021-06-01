@@ -55,6 +55,7 @@ int main()
     BuildGUI& buildGui = playerGui.buildGUI;
     EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
     SaveLoader saveLoader;
+    DebugConsole console;
     
     mainMenu.open(gui, constellation, state);
     
@@ -93,6 +94,7 @@ int main()
             gui.handleEvent(event);
             emitter.onEvent(event);
             buildGui.onEvent(event, window, state.getLocalViewStar(), state.getPlayer());
+            console.onEvent(event, gui, state);
         }
 
         optionsMenu.updateGameSettings(window, background, gui, emitter);

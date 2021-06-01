@@ -191,3 +191,18 @@ private:
 	bool m_opened = false;
 };
 
+class DebugConsole {
+public:
+	DebugConsole() {}
+
+	void open(tgui::Gui& gui);
+	void close(tgui::Gui& gui);
+	void onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state);
+
+	bool isOpen() { return m_console != nullptr; }
+
+private:
+	tgui::Group::Ptr m_console;
+	tgui::ChatBox::Ptr m_chatBox;
+	tgui::EditBox::Ptr m_editBox;
+};
