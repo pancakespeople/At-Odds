@@ -21,7 +21,7 @@
 #include "SaveLoader.h"
 #include "TextureCache.h"
 
-int main()
+int main(int argc, const char* argv[])
 {
     srand(time(NULL));
     
@@ -79,6 +79,18 @@ int main()
     sf::Clock updateClock;
     float updatesPerSecondTarget = 60.0f;
     float updateStep = 1.0f;
+
+    // Process args
+    if (argc > 1) {
+        DEBUG_PRINT("Arguments: ");
+        for (int i = 1; i < argc; i++) {
+            DEBUG_PRINT("\"" << argv[i] << "\"");
+            if (std::string(argv[i]) == std::string("--exit")) {
+                DEBUG_PRINT("Exiting game...");
+                state.exitGame();
+            }
+        }
+    }
 
     while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
         state.getMetaState() != GameState::MetaState::EXIT_AND_SAVE) {
