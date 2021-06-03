@@ -86,7 +86,7 @@ int main(int argc, const char* argv[])
         for (int i = 1; i < argc; i++) {
             DEBUG_PRINT("\"" << argv[i] << "\"");
             if (std::string(argv[i]) == std::string("--exit")) {
-                DEBUG_PRINT("Exiting game...");
+                std::cout << "Exiting game..." << std::endl;
                 state.exitGame();
             }
         }
