@@ -124,6 +124,8 @@ int main()
             state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
         }
         
+        console.runCommands(constellation, state, window);
+
         buildGui.draw(window, state.getLocalViewStar(), player);
         unitGui.draw(window);
         gui.draw();

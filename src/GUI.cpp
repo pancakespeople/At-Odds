@@ -834,6 +834,7 @@ void DebugConsole::open(tgui::Gui& gui) {
 	m_editBox->setSize("33%", "5%");
 	m_editBox->onReturnKeyPress([this]() {
 		m_chatBox->addLine(">>> " + m_editBox->getText());
+		processCommand(m_editBox->getText().toStdString());
 		m_editBox->setText("");
 	});
 	m_console->add(m_editBox);
@@ -855,6 +856,67 @@ void DebugConsole::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
 		}
 		else {
 			open(gui);
+		}
+	}
+}
+
+void DebugConsole::processCommand(std::string rawCommand) {
+	std::stringstream strs(rawCommand);
+	std::string word;
+	std::vector<std::string> split;
+
+	while (strs >> word) {
+		split.push_back(word);
+	}
+
+	if (split.size() == 0) return;
+
+	std::string command = split[0];
+	std::vector<std::string> args;
+
+	if (split.size() > 1) {
+		args.insert(args.begin(), split.begin() + 1, split.end());
+	}
+
+	Command c;
+	c.command = command;
+	c.args = args;
+
+	m_commandQueue.push(c);
+}
+
+void DebugConsole::runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window) {
+	while (m_commandQueue.size() > 0) {
+		Command command = m_commandQueue.front();
+		m_commandQueue.pop();
+
+		m_chatBox->addLine("Running command " + command.command);
+
+		if (command.command == "spawnship") {
+			if (command.args.size() != 2) {
+				m_chatBox->addLine("Invalid arguments for command " + command.command);
+			}
+			else {
+				if (state.getState() != GameState::State::LOCAL_VIEW) {
+					m_chatBox->addLine(command.command + " can only be used in local view");
+				}
+				else {
+					Spaceship::SPACESHIP_TYPE type = static_cast<Spaceship::SPACESHIP_TYPE>(std::atoi(command.args[0].c_str()));
+					int allegiance = std::atoi(command.args[1].c_str());
+					sf::Vector2f pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+					Star* star = state.getLocalViewStar();
+					Faction& faction = constellation.getFaction(allegiance);
+					sf::Color color = faction.getColor();
+
+					std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
+					faction.addSpaceship(star->createSpaceship(ship));
+
+					m_chatBox->addLine("Created spaceship at mouse cursor");
+				}
+			}
+		}
+		else {
+			m_chatBox->addLine("Invalid command " + command.command);
 		}
 	}
 }
