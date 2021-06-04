@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "Building.h"
 #include "ParticleSystem.h"
+#include "Planet.h"
 
 class Hyperlane;
 class Faction;
@@ -89,6 +90,7 @@ private:
 		archive & m_multipleFactionsPresent;
 		archive & m_allegiance;
 		archive & m_shaderRandomSeed;
+		archive & m_planets;
 	}
 	
 	void handleCollisions();
@@ -110,6 +112,7 @@ private:
 	std::vector<Projectile> m_projectiles;
 	std::vector<std::unique_ptr<Building>> m_buildings;
 	std::vector<Animation> m_localViewAnimations;	
+	std::vector<Planet> m_planets;
 
 	bool m_localViewActive = false;
 	bool m_multipleFactionsPresent = false;

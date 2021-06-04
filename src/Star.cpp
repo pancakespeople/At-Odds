@@ -44,6 +44,9 @@ void Star::init(const sf::Vector2f& pos) {
 			m_localViewSprite.setScale(sf::Vector2f(0.5f, 0.5f));
 		}
 	}
+
+	Planet planet(getRandomLocalPos(-10000.0f, 10000.0f));
+	m_planets.push_back(planet);
 }
 
 void Star::draw(sf::RenderWindow& window) {
@@ -98,8 +101,13 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 	
 	//window.draw(m_localViewSprite);
 	emitter.drawLocalStar(window, m_localViewSprite, time, m_shaderRandomSeed);
+	
 	for (JumpPoint& j : m_jumpPoints) {
 		j.draw(window, emitter);
+	}
+
+	for (Planet& planet : m_planets) {
+		planet.draw(window, emitter);
 	}
 
 	if (drawHidden) {
