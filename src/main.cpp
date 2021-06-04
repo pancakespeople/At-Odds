@@ -23,6 +23,18 @@
 
 int main(int argc, const char* argv[])
 {
+    // Process args
+    if (argc > 1) {
+        DEBUG_PRINT("Arguments: ");
+        for (int i = 1; i < argc; i++) {
+            DEBUG_PRINT("\"" << argv[i] << "\"");
+            if (std::string(argv[i]) == std::string("--exit")) {
+                std::cout << "Exiting game..." << std::endl;
+                return 0;
+            }
+        }
+    }
+    
     srand(time(NULL));
     
     DEBUG_PRINT("test debug print");
@@ -79,18 +91,6 @@ int main(int argc, const char* argv[])
     sf::Clock updateClock;
     float updatesPerSecondTarget = 60.0f;
     float updateStep = 1.0f;
-
-    // Process args
-    if (argc > 1) {
-        DEBUG_PRINT("Arguments: ");
-        for (int i = 1; i < argc; i++) {
-            DEBUG_PRINT("\"" << argv[i] << "\"");
-            if (std::string(argv[i]) == std::string("--exit")) {
-                std::cout << "Exiting game..." << std::endl;
-                state.exitGame();
-            }
-        }
-    }
 
     while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
         state.getMetaState() != GameState::MetaState::EXIT_AND_SAVE) {
