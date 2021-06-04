@@ -28,10 +28,13 @@ jobs:
         run: sh ./linux_build.sh
         
       - name: Copy Binaries
-        run: cp -r ./bin/Release/. .
+        run: |
+          mkdir run
+          cp -r ./bin/Release/. ./run
+          ldd ./run/at_odds | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' ./run
 
       - name: Test
-        run: ./at_odds --exit
+        run: ./run/at_odds --exit
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
@@ -39,5 +42,5 @@ jobs:
           name: linux-build
           path: |
             ./data
-            ./at_odds
+            ./run
           
