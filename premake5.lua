@@ -22,6 +22,7 @@ project "at_odds"
          "boost_serialization",
          "tgui"
       }
+      linkoptions { "-Wl,-rpath='.'" }
    
    filter "configurations:Debug"
       kind "ConsoleApp"

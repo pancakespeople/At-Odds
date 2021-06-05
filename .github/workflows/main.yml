@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir run
           cp -r ./bin/Release/. ./run
+          chmod +x ./run/at_odds
           ldd ./run/at_odds | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' ./run
 
       - name: Test
@@ -42,5 +43,5 @@ jobs:
           name: linux-build
           path: |
             ./data
-            ./run
+            ./run/*
           
