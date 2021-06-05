@@ -11,6 +11,7 @@
 #include "Random.h"
 #include "Unit.h"
 #include "Constellation.h"
+#include "Math.h"
 
 Star::Star(sf::Vector2f pos) {
 	init(pos);
@@ -45,8 +46,7 @@ void Star::init(const sf::Vector2f& pos) {
 		}
 	}
 
-	Planet planet(getRandomLocalPos(-10000.0f, 10000.0f));
-	m_planets.push_back(planet);
+	generatePlanets();
 }
 
 void Star::draw(sf::RenderWindow& window) {
@@ -333,6 +333,9 @@ void Star::update(Constellation* constellation) {
 	for (Animation& a : m_localViewAnimations) {
 		a.nextFrame();
 	}
+	for (Planet& planet : m_planets) {
+		planet.update();
+	}
 
 	m_particleSystem.updateParticles();
 
@@ -463,4 +466,19 @@ bool Star::containsBuildingType(Building::BUILDING_TYPE type, bool allegianceOnl
 		}
 	}
 	return false;
+}
+
+void Star::generatePlanets() {
+	int numPlanets = Random::randInt(0, 15);
+	float latestRadius = Random::randFloat(1000.0f, 10000.0f);
+
+	for (int i = 0; i < numPlanets; i++) {
+		float angle = Random::randFloat(0.0f, 2.0f * Math::pi);
+		sf::Vector2f pos(latestRadius * std::cos(angle), latestRadius * std::sin(angle));
+
+		Planet planet(pos, getLocalViewCenter());
+		m_planets.push_back(planet);
+
+		latestRadius += Random::randFloat(500.0f, 10000.0f);
+	}
 }

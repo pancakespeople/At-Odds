@@ -38,6 +38,7 @@ public:
 	void destroyAllShips();
 	void clearAnimations() { m_localViewAnimations.clear(); }
 	void moveShipToOtherStar(Spaceship* ship, Star* other);
+	void generatePlanets();
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
