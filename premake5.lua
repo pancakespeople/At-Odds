@@ -8,7 +8,7 @@ project "at_odds"
    pchheader "src/gamepch.h"
    pchsource "src/gamepch.cpp"
 
-   files { "**.h", "**.cpp" }
+   files { "src/**.h", "src/**.cpp" }
    
    filter "system:Windows"
       pchheader "gamepch.h"

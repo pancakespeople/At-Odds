@@ -41,7 +41,12 @@ jobs:
       
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
-      
+
+      - name: Vcpkg
+        uses: lukka/run-vcpkg@v7.3
+        with:
+          setupOnly: true
+
       - name: Build
         run: ./win_build.ps1
         
