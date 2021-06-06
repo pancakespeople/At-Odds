@@ -46,10 +46,10 @@ jobs:
         run: win_build.bat
         
       - name: Copy Binaries
-        run: xcopy bin\Release\at_odds.exe .
+        run: Copy-Item ./bin/Release/at_odds.exe .
 
       - name: Test
-        run: at_odds.exe --exit
+        run: ./at_odds.exe --exit
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
