@@ -43,7 +43,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
       
       - name: Build
-        run: win_build.bat
+        run: ./win_build.ps1
         
       - name: Copy Binaries
         run: Copy-Item ./bin/Release/at_odds.exe .
@@ -57,4 +57,4 @@ jobs:
           name: win-build
           path: |
             ./data
-            ./at_odds
+            ./at_odds.exe
