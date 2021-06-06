@@ -1,27 +1,18 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   linux-build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       - name: Build
@@ -30,12 +21,10 @@ jobs:
       - name: Copy Binaries
         run: |
           mkdir run
-          cp -r ./bin/Release/. ./run
-          chmod +x ./run/at_odds
-          ldd ./run/at_odds | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' ./run
+          cp -r ./bin/Release/. .
 
       - name: Test
-        run: ./run/at_odds --exit
+        run: ./at_odds --exit
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
@@ -43,5 +32,29 @@ jobs:
           name: linux-build
           path: |
             ./data
-            ./run/*
-          
+            ./at_odds
+  win-build:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+      
+      - name: Build
+        run: win_build.bat
+        
+      - name: Copy Binaries
+        run: xcopy bin\Release\at_odds.exe .
+
+      - name: Test
+        run: at_odds.exe --exit
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: win-build
+          path: |
+            ./data
+            ./at_odds
