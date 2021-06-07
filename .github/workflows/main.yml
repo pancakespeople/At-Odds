@@ -33,34 +33,35 @@ jobs:
           path: |
             ./data
             ./at_odds
-  win-build:
-    runs-on: windows-latest
-    
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
-
-      - name: Vcpkg
-        uses: lukka/run-vcpkg@v7.3
-        with:
-          setupOnly: true
-          vcpkgGitCommitId: 'b2544fd780b2e9a05d903314cbbd37268ba43d81'
-
-      - name: Build
-        run: ./win_build.ps1
-        
-      - name: Copy Binaries
-        run: Copy-Item ./bin/Release/at_odds.exe .
-
-      - name: Test
-        run: ./at_odds.exe --exit
-
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2.2.3
-        with:
-          name: win-build
-          path: |
-            ./data
-            ./at_odds.exe
+#  win-build:
+#    runs-on: windows-latest
+#    
+#    steps:
+#      - uses: actions/checkout@v2
+#      
+#      - name: Add MSBuild to PATH
+#        uses: microsoft/setup-msbuild@v1.0.2
+#
+#      - name: Vcpkg
+#        uses: lukka/run-vcpkg@v7.3
+#        with:
+#          setupOnly: true
+#          vcpkgGitCommitId: 'b2544fd780b2e9a05d903314cbbd37268ba43d81'
+#
+#      - name: Build
+#        run: ./win_build.ps1
+#        
+#      - name: Copy Binaries
+#        run: Copy-Item ./bin/Release/at_odds.exe .
+#
+#      - name: Test
+#        run: ./at_odds.exe --exit
+#
+#      - name: Upload a Build Artifact
+#        uses: actions/upload-artifact@v2.2.3
+#        with:
+#          name: win-build
+#          path: |
+#            ./data
+#            ./at_odds.exe
+#
