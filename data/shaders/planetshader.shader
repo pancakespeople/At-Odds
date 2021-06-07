@@ -5,6 +5,8 @@ in vec4 color;
 
 uniform vec2 size;
 uniform float randSeed;
+uniform bool gasGiant;
+uniform float time;
 
 vec2 random2(vec2 st) {
 	st = vec2(dot(st, vec2(127.1, 311.7)),
@@ -28,10 +30,21 @@ float noise(vec2 st) {
 
 void main() {
 	vec2 pixel = gl_FragCoord.xy / size;
-	vec2 worldPos = vertPos.xy - size / 2.0;
+	vec2 worldPos = vertPos.xy - size;
 	float radius = distance(worldPos, pixel) * 2.0;
+	vec2 noisePos;
 	
-	vec2 noisePos = worldPos / 50.0;
+	if (!gasGiant) {
+		noisePos = worldPos / 50.0;
+	}
+	else {
+		noisePos = (worldPos * pow(radius, 0.4)) / 3000.0;
+		
+		vec2 angleVector = random2(vec2(randSeed)) * 5.0;
+
+		noisePos.x += angleVector.x * time;
+		noisePos.y += angleVector.y * time;
+	}
 
 	gl_FragColor = color * vec4(vec3(noise(noisePos * 0.5 + 0.5)) + 0.5 * 2.0, 1.0);
 }

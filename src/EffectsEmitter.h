@@ -12,8 +12,8 @@ public:
 	void drawWithDistanceShader(sf::RenderWindow& window, sf::Shape& s, const sf::Vector2i& pos);
 	void drawFogOfWar(sf::RenderWindow& window);
 	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time, float seed);
-	void drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, float seed);
-	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size);
+	void drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, float seed, float size, bool gasGiant, float time);
+	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
 
 private:
 	void initShaders(sf::Vector2i resolution);

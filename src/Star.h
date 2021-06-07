@@ -69,6 +69,7 @@ public:
 	std::vector<JumpPoint>& getJumpPoints() { return m_jumpPoints; }
 	std::vector<Star*> getConnectedStars();
 	std::vector<std::unique_ptr<Building>>& getBuildings() { return m_buildings; }
+	std::vector<Planet>& getPlanets() { return m_planets; }
 
 	Unit* getUnitByID(unsigned int id);
 	Spaceship* getShipByID(unsigned int id);
@@ -87,11 +88,12 @@ private:
 		archive & m_projectiles;
 		archive & m_buildings;
 		archive & m_localViewAnimations;
+		archive & m_planets;
 		archive & m_localViewActive;
 		archive & m_multipleFactionsPresent;
 		archive & m_allegiance;
 		archive & m_shaderRandomSeed;
-		archive & m_planets;
+		archive & m_temperature;
 	}
 	
 	void handleCollisions();
@@ -121,6 +123,7 @@ private:
 	int m_allegiance = -1;
 
 	float m_shaderRandomSeed = 1.0f;
+	float m_temperature = 5000.0f; // Kelvin
 
 	ParticleSystem m_particleSystem;
 };

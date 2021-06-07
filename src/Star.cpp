@@ -28,21 +28,25 @@ void Star::init(const sf::Vector2f& pos) {
 	if (starColorRand <= 3) { // 0, 1, 2, 3
 		// Red star
 		m_localViewSprite.setColor(sf::Color::Red);
+		m_temperature = Random::randFloat(3000.0f, 5000.0f);
 	}
 	else if (starColorRand <= 6) { // 4, 5, 6
 		// Yellow star
 		m_localViewSprite.setColor(sf::Color::Yellow);
+		m_temperature = Random::randFloat(5000.0f, 10000.0f);
 
 	}
 	else if (starColorRand <= 8) { // 7, 8
 		if (Random::randBool()) {
 			// Blue star
 			m_localViewSprite.setColor(sf::Color(0, 255, 255));
+			m_temperature = Random::randFloat(10000.0f, 45000.0f);
 		}
 		else {
 			// White star
 			m_localViewSprite.setColor(sf::Color::White);
 			m_localViewSprite.setScale(sf::Vector2f(0.5f, 0.5f));
+			m_temperature = Random::randFloat(15000.0f, 35000.0f);
 		}
 	}
 
@@ -107,7 +111,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 	}
 
 	for (Planet& planet : m_planets) {
-		planet.draw(window, emitter);
+		planet.draw(window, emitter, time);
 	}
 
 	if (drawHidden) {
@@ -476,7 +480,7 @@ void Star::generatePlanets() {
 		float angle = Random::randFloat(0.0f, 2.0f * Math::pi);
 		sf::Vector2f pos(latestRadius * std::cos(angle), latestRadius * std::sin(angle));
 
-		Planet planet(pos, getLocalViewCenter());
+		Planet planet(pos, getLocalViewCenter(), m_temperature * m_localViewSprite.getScale().x);
 		m_planets.push_back(planet);
 
 		latestRadius += Random::randFloat(500.0f, 10000.0f);

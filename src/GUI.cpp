@@ -915,6 +915,22 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 				}
 			}
 		}
+		else if (command.command == "planetdebug") {
+			if (command.args.size() != 0) {
+				m_chatBox->addLine("Invalid arguments for command " + command.command);
+			}
+			else {
+				if (state.getState() != GameState::State::LOCAL_VIEW) {
+					m_chatBox->addLine(command.command + " can only be used in local view");
+				}
+				else {
+					std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
+					for (int i = 0; i < planets.size(); i++) {
+						m_chatBox->addLine("Planet " + std::to_string(i + 1) + ": " + "Temperature " + std::to_string(planets[i].getTemperature()));
+					}
+				}
+			}
+		}
 		else {
 			m_chatBox->addLine("Invalid command " + command.command);
 		}

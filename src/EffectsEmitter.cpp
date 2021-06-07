@@ -90,16 +90,20 @@ void EffectsEmitter::drawLocalStar(sf::RenderWindow& window, const sf::Sprite& s
 	window.draw(m_starLocalView, &m_starLocalViewShader);
 }
 
-void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, float seed) {
+void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, float seed, float size, bool gasGiant, float time) {
 	m_planetShader.setUniform("randSeed", seed);
+	m_planetShader.setUniform("size", sf::Glsl::Vec2(size, size));
+	m_planetShader.setUniform("time", time);
+	m_planetShader.setUniform("gasGiant", gasGiant);
 
 	window.draw(shape, &m_planetShader);
 }
 
-void EffectsEmitter::drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size) {
+void EffectsEmitter::drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color) {
 	m_glow.setSize(sf::Vector2f(size, size));
 	m_glow.setOrigin(sf::Vector2f(size / 2.0f, size / 2.0f));
 	m_glow.setPosition(pos);
+	m_glow.setFillColor(color);
 
 	m_glowShader.setUniform("size", sf::Glsl::Vec2(size, size));
 
