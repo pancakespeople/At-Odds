@@ -4,6 +4,7 @@
 
 #include "SimpleIni.h"
 #include "Building.h"
+#include "GameState.h"
 
 class Star;
 class Spaceship;
@@ -207,6 +208,8 @@ public:
 	void runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window);
 
 	bool isOpen() { return m_console != nullptr; }
+	bool validateArgs(const Command& command, int numArgs);
+	bool validateState(const Command& command, const GameState& state, GameState::State requestedState);
 
 private:
 	tgui::Group::Ptr m_console;

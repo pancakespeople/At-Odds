@@ -4,7 +4,6 @@
 
 #include "Camera.h"
 #include "Player.h"
-#include "GUI.h"
 
 class Star;
 
@@ -25,9 +24,9 @@ public:
 
 	GameState(Camera camera);
 	
-	State getState() { return m_state; }
+	State getState() const { return m_state; }
 
-	MetaState getMetaState() { return m_metaState; }
+	MetaState getMetaState() const { return m_metaState; }
 
 	void changeToLocalView(Star* star);
 

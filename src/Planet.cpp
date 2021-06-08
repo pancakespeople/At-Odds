@@ -10,22 +10,21 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 
 	float radiusFromStar = Math::distance(pos, starPos);
 	float orbitSpeed = 1000.0f / radiusFromStar;
+	float baseTemperature = std::min(starTemperature, (starTemperature * 1000.0f) / radiusFromStar);
+
 	m_orbit = Orbit(pos, starPos, orbitSpeed);
 
-	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
-	m_temperature = std::min(starTemperature, (starTemperature * 1000.0f) / radiusFromStar);
-
-	if (m_temperature < 273.15f) {
+	if (baseTemperature < 273.15f) {
 		// Mostly gas giants and frozen rocks
 		if (Random::randFloat(0.0f, 1.0f) < 0.75f) {
 			// Gas giant
 
-			generateGasGiant();
+			generateGasGiant(baseTemperature);
 		}
 		else {
 			// Rocky planet
 
-			generateTerrestrial(true);
+			generateTerrestrial(baseTemperature, true);
 		}
 	}
 	else {
@@ -34,14 +33,16 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 		if (Random::randFloat(0.0f, 1.0f) < 0.8f) {
 			// Rocky planet
 
-			generateTerrestrial(false);
+			generateTerrestrial(baseTemperature, false);
 		}
 		else {
 			// Gas giant
 
-			generateGasGiant();
+			generateGasGiant(baseTemperature);
 		}
 	}
+
+	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
 
 	m_shape.setOrigin(sf::Vector2f(m_shape.getRadius(), m_shape.getRadius()));
 }
@@ -56,10 +57,10 @@ void Planet::update() {
 	m_shape.setPosition(m_orbit.update());
 }
 
-void Planet::generateGasGiant() {
+void Planet::generateGasGiant(float baseTemperature) {
 	m_shape.setRadius(m_shape.getRadius() * Random::randFloat(2.0f, 4.0f));
 	
-	if (m_temperature < 100.0f) {
+	if (baseTemperature < 100.0f) {
 		// Blue
 		int otherColors = Random::randInt(0, 155);
 		m_shape.setFillColor(sf::Color(otherColors, otherColors, Random::randInt(155, 255)));
@@ -73,12 +74,39 @@ void Planet::generateGasGiant() {
 		m_shape.setFillColor(sf::Color(r, g, b));
 	}
 
+	m_atmosphere = Random::randFloat(1000.0f, 1000000.0f);
+	m_temperature = baseTemperature;
+
 	m_gasGiant = true;
 }
 
-void Planet::generateTerrestrial(bool dwarf) {
+void Planet::generateTerrestrial(float baseTemperature, bool dwarf) {
 	if (dwarf) m_shape.setRadius(m_shape.getRadius() * Random::randFloat(0.25f, 0.5f));
 	else m_shape.setRadius(m_shape.getRadius() * Random::randFloat(0.75f, 1.9f));
+
+	if (baseTemperature > 400.0f) {
+		// Too hot to sustain an atmosphere
+
+		m_atmosphere = 0.0f;
+	}
+	else {
+		float rnd = Random::randFloat(0.0, 1.0);
+		if (rnd > 0.9) {
+			// 10% chance to be a toxic world
+
+			m_atmosphere = Random::randFloat(50.0f, 200.0f);
+		}
+		else if (rnd > 0.45) {
+			// Earth like atmosphere
+
+			m_atmosphere = Random::randFloat(0.0f, 3.0f);
+		}
+		else {
+			// No atmosphere
+
+			m_atmosphere = 0.0f;
+		}
+	}
 
 	if (Random::randBool()) {
 		// Orange
@@ -96,4 +124,6 @@ void Planet::generateTerrestrial(bool dwarf) {
 
 		m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
 	}
+
+	m_temperature = baseTemperature + std::max(0.0f, std::log(m_atmosphere + 0.25f) * baseTemperature);
 }

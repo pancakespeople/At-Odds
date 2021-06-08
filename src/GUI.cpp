@@ -893,46 +893,66 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 		m_chatBox->addLine("Running command " + command.command);
 
 		if (command.command == "spawnship") {
-			if (command.args.size() != 2) {
-				m_chatBox->addLine("Invalid arguments for command " + command.command);
-			}
-			else {
-				if (state.getState() != GameState::State::LOCAL_VIEW) {
-					m_chatBox->addLine(command.command + " can only be used in local view");
-				}
-				else {
-					Spaceship::SPACESHIP_TYPE type = static_cast<Spaceship::SPACESHIP_TYPE>(std::atoi(command.args[0].c_str()));
-					int allegiance = std::atoi(command.args[1].c_str());
-					sf::Vector2f pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-					Star* star = state.getLocalViewStar();
-					Faction& faction = constellation.getFaction(allegiance);
-					sf::Color color = faction.getColor();
+			if (validateArgs(command, 2) && validateState(command, state, GameState::State::LOCAL_VIEW)) {
+				Spaceship::SPACESHIP_TYPE type = static_cast<Spaceship::SPACESHIP_TYPE>(std::atoi(command.args[0].c_str()));
+				int allegiance = std::atoi(command.args[1].c_str());
+				sf::Vector2f pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+				Star* star = state.getLocalViewStar();
+				Faction& faction = constellation.getFaction(allegiance);
+				sf::Color color = faction.getColor();
 
-					std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
-					faction.addSpaceship(star->createSpaceship(ship));
+				std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
+				faction.addSpaceship(star->createSpaceship(ship));
 
-					m_chatBox->addLine("Created spaceship at mouse cursor");
-				}
+				m_chatBox->addLine("Created spaceship at mouse cursor");
 			}
 		}
 		else if (command.command == "planetdebug") {
-			if (command.args.size() != 0) {
-				m_chatBox->addLine("Invalid arguments for command " + command.command);
+			if (validateArgs(command, 0) && validateState(command, state, GameState::State::LOCAL_VIEW)) {
+				std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
+				for (int i = 0; i < planets.size(); i++) {
+					m_chatBox->addLine("Planet " + std::to_string(i));
+					m_chatBox->addLine("Temperature: " + std::to_string(planets[i].getTemperature()));
+					m_chatBox->addLine("Atmospheric Pressure: " + std::to_string(planets[i].getAtmosphericPressure()));
+				}
 			}
-			else {
-				if (state.getState() != GameState::State::LOCAL_VIEW) {
-					m_chatBox->addLine(command.command + " can only be used in local view");
+		}
+		else if (command.command == "goplanet") {
+			if (validateArgs(command, 1) && validateState(command, state, GameState::State::LOCAL_VIEW)) {
+				int index = std::atoi(command.args[0].c_str());
+				std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
+
+				if (index < 0 || index >= planets.size()) {
+					m_chatBox->addLine("Invalid index");
 				}
 				else {
-					std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
-					for (int i = 0; i < planets.size(); i++) {
-						m_chatBox->addLine("Planet " + std::to_string(i + 1) + ": " + "Temperature " + std::to_string(planets[i].getTemperature()));
-					}
+					state.getCamera().setPos(planets[index].getPos());
+					m_chatBox->addLine("Set camera pos to planet " + command.args[0]);
 				}
 			}
 		}
 		else {
 			m_chatBox->addLine("Invalid command " + command.command);
 		}
+	}
+}
+
+bool DebugConsole::validateArgs(const Command& command, int numArgs) {
+	if (command.args.size() == numArgs) {
+		return true;
+	}
+	else {
+		m_chatBox->addLine("Invalid arguments for command " + command.command);
+		return false;
+	}
+}
+
+bool DebugConsole::validateState(const Command& command, const GameState& state, GameState::State requestedState) {
+	if (state.getState() == requestedState) {
+		return true;
+	}
+	else {
+		m_chatBox->addLine("Invalid game state for command " + command.command);
+		return false;
 	}
 }
