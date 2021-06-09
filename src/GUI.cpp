@@ -914,6 +914,7 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 					m_chatBox->addLine("Planet " + std::to_string(i));
 					m_chatBox->addLine("Temperature: " + std::to_string(planets[i].getTemperature()));
 					m_chatBox->addLine("Atmospheric Pressure: " + std::to_string(planets[i].getAtmosphericPressure()));
+					m_chatBox->addLine("Water: " + std::to_string(planets[i].getWater()));
 				}
 			}
 		}

@@ -50,7 +50,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time) {
 	m_orbit.draw(window);
 	emitter.drawGlow(window, m_shape.getPosition(), m_shape.getRadius() * 3.0f, m_shape.getFillColor());
-	emitter.drawPlanet(window, m_shape, m_shaderRandomSeed, m_shape.getRadius(), m_gasGiant, time);
+	emitter.drawPlanet(window, m_shape, this, m_shaderRandomSeed, time);
 }
 
 void Planet::update() {
@@ -108,22 +108,67 @@ void Planet::generateTerrestrial(float baseTemperature, bool dwarf) {
 		}
 	}
 
-	if (Random::randBool()) {
-		// Orange
+	m_temperature = baseTemperature + std::max(0.0f, std::log(m_atmosphere + 0.25f) * baseTemperature);
 
-		int r = Random::randInt(155, 255);
-		int g = r / 1.5f;
-		int b = Random::randInt(0, 155);
-
-		m_shape.setFillColor(sf::Color(r, g, b));
+	if (m_temperature > 325.0f || m_atmosphere == 0.0f) {
+		m_water = 0.0f;
 	}
 	else {
-		// Gray/white
-
-		int rgb = Random::randInt(125, 255);
-
-		m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+		m_water = Random::randFloat(0.0f, 1.0f);
 	}
 
-	m_temperature = baseTemperature + std::max(0.0f, std::log(m_atmosphere + 0.25f) * baseTemperature);
+	// Colors
+	if (m_temperature > 273.15 && m_temperature < 325.0f &&
+		m_atmosphere > 0.5f && m_atmosphere < 3.0f &&
+		m_water > 0.4f) {
+		// Terra
+
+		m_shape.setFillColor(sf::Color::Green);
+	}
+	else {
+		if (m_atmosphere >= 50.0f) {
+			// Toxic
+
+			m_shape.setFillColor(sf::Color::Yellow);
+		}
+		else if (m_water == 0.0f) {
+			// Mercury
+			// Gray/white
+
+			int rgb = Random::randInt(125, 255);
+
+			m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+		}
+		else if (m_water > 0.4f && m_temperature < 273.15f) {
+			// Tundra
+			// Gray/white
+
+			int rgb = Random::randInt(125, 255);
+
+			m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+		}
+		else {
+			// Desert/Martian
+
+			if (Random::randBool()) {
+				// Orange
+
+				int r = Random::randInt(155, 255);
+				int g = r / 1.5f;
+				int b = Random::randInt(0, 155);
+
+				m_shape.setFillColor(sf::Color(r, g, b));
+			}
+			else {
+				// Sand
+
+				int r = Random::randInt(155, 255);
+				int g = std::max(0, r - 36);
+				int b = std::max(0, r - 62);
+
+				m_shape.setFillColor(sf::Color(r, g, b));
+				
+			}
+		}
+	}
 }

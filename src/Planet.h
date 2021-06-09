@@ -14,8 +14,12 @@ public:
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature, bool dwarf);
 
-	float getTemperature() { return m_temperature; }
-	float getAtmosphericPressure() { return m_atmosphere; }
+	float getTemperature() const { return m_temperature; }
+	float getAtmosphericPressure() const { return m_atmosphere; }
+	float getWater() const { return m_water; }
+	float getRadius() const { return m_shape.getRadius(); }
+
+	bool isGasGiant() const { return m_gasGiant; }
 
 	sf::Vector2f getPos() { return m_shape.getPosition(); }
 
@@ -27,8 +31,9 @@ private:
 		archive & m_shaderRandomSeed;
 		archive & m_temperature;
 		archive & m_atmosphere;
-		archive & m_orbit;
 		archive & m_gasGiant;
+		archive & m_water;
+		archive & m_orbit;
 	}
 	
 	Planet() {}
@@ -38,6 +43,7 @@ private:
 	float m_shaderRandomSeed = 1.0f;
 	float m_temperature = 500.0f; // Kelvin
 	float m_atmosphere = 1.0f; // Atmospheric pressure in Earth atmospheres
+	float m_water = 0.0f; // Percent of planet covered in water from 0-1
 	
 	bool m_gasGiant = false;
 

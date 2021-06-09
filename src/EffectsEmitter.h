@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+class Planet;
+
 class EffectsEmitter {
 public:
 	EffectsEmitter(sf::Vector2i resolution);
@@ -12,7 +14,7 @@ public:
 	void drawWithDistanceShader(sf::RenderWindow& window, sf::Shape& s, const sf::Vector2i& pos);
 	void drawFogOfWar(sf::RenderWindow& window);
 	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time, float seed);
-	void drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, float seed, float size, bool gasGiant, float time);
+	void drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, const Planet* planet, float seed, float time);
 	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
 
 private:

@@ -6,6 +6,8 @@ in vec4 color;
 uniform vec2 size;
 uniform float randSeed;
 uniform bool gasGiant;
+uniform bool frozen;
+uniform float water;
 uniform float time;
 
 vec2 random2(vec2 st) {
@@ -46,5 +48,14 @@ void main() {
 		noisePos.y += angleVector.y * time;
 	}
 
-	gl_FragColor = color * vec4(vec3(noise(noisePos * 0.5 + 0.5)) + 0.5 * 2.0, 1.0);
+	float noiseVal = noise(noisePos * 0.5 + 0.5);
+	vec4 noiseVec = vec4(vec3(noiseVal) + 0.5 * 2.0, 1.0);
+
+	if (noiseVal + 0.5 < water && !gasGiant) {
+		if (frozen) gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		else gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+	}
+	else {
+		gl_FragColor = color * noiseVec;
+	}
 }

@@ -2,6 +2,7 @@
 
 #include "EffectsEmitter.h"
 #include "Math.h"
+#include "Planet.h"
 
 EffectsEmitter::EffectsEmitter(sf::Vector2i resolution) {
 	init(resolution);
@@ -90,11 +91,13 @@ void EffectsEmitter::drawLocalStar(sf::RenderWindow& window, const sf::Sprite& s
 	window.draw(m_starLocalView, &m_starLocalViewShader);
 }
 
-void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, float seed, float size, bool gasGiant, float time) {
+void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, const Planet* planet, float seed, float time) {
 	m_planetShader.setUniform("randSeed", seed);
-	m_planetShader.setUniform("size", sf::Glsl::Vec2(size, size));
+	m_planetShader.setUniform("size", sf::Glsl::Vec2(planet->getRadius(), planet->getRadius()));
 	m_planetShader.setUniform("time", time);
-	m_planetShader.setUniform("gasGiant", gasGiant);
+	m_planetShader.setUniform("gasGiant", planet->isGasGiant());
+	m_planetShader.setUniform("water", planet->getWater());
+	m_planetShader.setUniform("frozen", planet->getTemperature() < 273.15f);
 
 	window.draw(shape, &m_planetShader);
 }
