@@ -18,20 +18,20 @@ jobs:
       - name: Build
         run: sh ./linux_build.sh
         
-      - name: Copy Binaries
+      - name: Copy Files
         run: |
-          mkdir run
-          cp -r ./bin/Release/. .
+          mkdir at_odds
+          cp -r ./data ./at_odds
+          cp -r ./bin/Release/. ./at_odds
 
       - name: Test
-        run: ./at_odds --exit
+        run: ./at_odds/at_odds --exit
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
         with:
           name: linux-build
           path: |
-            ./data
             ./at_odds
   win-build:
     runs-on: windows-latest
@@ -51,18 +51,20 @@ jobs:
       - name: Build
         run: ./win_build.ps1
         
-      - name: Copy Data
-        run: Copy-Item ./data ./bin/Release/ -Recurse
+      - name: Copy Files
+        run: |
+          mkdir at_odds
+          Copy-Item ./data ./at_odds -Recurse
+          Copy-Item ./bin/Release/at_odds.exe ./at_odds
+          Copy-Item ./bin/Release/*.dll ./at_odds
 
       - name: Test
-        run: ./bin/Release/at_odds.exe --exit
+        run: ./at_odds/at_odds.exe --exit
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
         with:
           name: win-build
           path: |
-            ./data
-            ./bin/Release/at_odds.exe
-            ./bin/Release/*.dll
+            ./at_odds
 
