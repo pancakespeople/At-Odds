@@ -14,6 +14,8 @@ void GameState::changeToLocalView(Star* star) {
 	star->m_localViewActive = true;
 	m_localViewStar = star;
 	m_state = GameState::State::LOCAL_VIEW;
+
+	callOnChangeStateCallbacks();
 }
 
 void GameState::changeToWorldView() {
@@ -31,6 +33,8 @@ void GameState::changeToWorldView() {
 	m_localViewStar->clearAnimations();
 	m_localViewStar = nullptr;
 	m_state = GameState::State::WORLD_VIEW;
+
+	callOnChangeStateCallbacks();
 }
 
 void GameState::onEvent(sf::Event ev) {
@@ -51,5 +55,11 @@ void GameState::exitGame() {
 	}
 	else {
 		m_metaState = MetaState::EXIT_AND_SAVE;
+	}
+}
+
+void GameState::callOnChangeStateCallbacks() {
+	for (auto& func : m_changeStateCallbacks) {
+		func();
 	}
 }

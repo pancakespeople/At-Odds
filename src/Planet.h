@@ -7,12 +7,23 @@
 
 class Planet {
 public:
+	enum class PLANET_TYPE {
+		UNKNOWN,
+		DESERT,
+		TERRA,
+		BARREN,
+		TUNDRA,
+		GAS_GIANT,
+		ICE_GIANT,
+		TOXIC
+	};
+	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature);
 
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time);
 	void update();
 	void generateGasGiant(float baseTemperature);
-	void generateTerrestrial(float baseTemperature, bool dwarf);
+	void generateTerrestrial(float baseTemperature);
 
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
@@ -22,6 +33,8 @@ public:
 	bool isGasGiant() const { return m_gasGiant; }
 
 	sf::Vector2f getPos() { return m_shape.getPosition(); }
+
+	std::string getTypeString();
 
 private:
 	friend class boost::serialization::access;
@@ -34,6 +47,7 @@ private:
 		archive & m_gasGiant;
 		archive & m_water;
 		archive & m_orbit;
+		archive & m_type;
 	}
 	
 	Planet() {}
@@ -48,4 +62,5 @@ private:
 	bool m_gasGiant = false;
 
 	Orbit m_orbit;
+	PLANET_TYPE m_type;
 };

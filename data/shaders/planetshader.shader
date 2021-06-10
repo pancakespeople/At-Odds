@@ -51,7 +51,7 @@ void main() {
 	float noiseVal = noise(noisePos * 0.5 + 0.5);
 	vec4 noiseVec = vec4(vec3(noiseVal) + 0.5 * 2.0, 1.0);
 
-	if (noiseVal + 0.5 < water && !gasGiant) {
+	if (max(0.0f, noiseVal + 0.5f) < water && !gasGiant) {
 		if (frozen) gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 		else gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 	}

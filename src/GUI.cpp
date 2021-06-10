@@ -440,18 +440,19 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	bool spectate = m_window->get<tgui::CheckBox>("spectateCheckBox")->isChecked();
 
 	gui.removeAllWidgets();
+	state.clearCallbacks();
 
 	if (!spectate) {
 		constellation.getFactions()[0].controlByPlayer(state.getPlayer());
 		state.changeToLocalView(constellation.getFactions()[0].getCapitol());
 		state.getCamera().setPos(constellation.getFactions()[0].getCapitol()->getLocalViewCenter());
 
-		m_playerGui.open(gui);
+		m_playerGui.open(gui, state, false);
 	}
 	else {
 		state.changeToWorldView();
 
-		m_playerGui.unitGUI.open(gui);
+		m_playerGui.open(gui, state, true);
 	}
 
 	close();
@@ -814,10 +815,17 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 	}
 }
 
-void PlayerGUI::open(tgui::Gui& gui) {
-	helpWindow.open(gui);
-	buildGUI.open(gui);
-	unitGUI.open(gui);
+void PlayerGUI::open(tgui::Gui& gui, GameState& state, bool spectator) {
+	if (!spectator) {
+		helpWindow.open(gui);
+		buildGUI.open(gui);
+		unitGUI.open(gui);
+		planetGUI.open(gui, state);
+	}
+	else {
+		unitGUI.open(gui);
+		planetGUI.open(gui, state);
+	}
 }
 
 void DebugConsole::open(tgui::Gui& gui) {
@@ -912,6 +920,7 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 				std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
 				for (int i = 0; i < planets.size(); i++) {
 					m_chatBox->addLine("Planet " + std::to_string(i));
+					m_chatBox->addLine("Type: " + planets[i].getTypeString());
 					m_chatBox->addLine("Temperature: " + std::to_string(planets[i].getTemperature()));
 					m_chatBox->addLine("Atmospheric Pressure: " + std::to_string(planets[i].getAtmosphericPressure()));
 					m_chatBox->addLine("Water: " + std::to_string(planets[i].getWater()));
@@ -956,4 +965,49 @@ bool DebugConsole::validateState(const Command& command, const GameState& state,
 		m_chatBox->addLine("Invalid game state for command " + command.command);
 		return false;
 	}
+}
+
+void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
+	m_planetIconPanel = tgui::Panel::create();
+	m_planetIconPanel->setPosition("0%", "85%");
+	m_planetIconPanel->setSize("2.5%", "5%");
+	m_planetIconPanel->getRenderer()->setOpacity(0.75f);
+
+	m_planetIconPanel->onMouseEnter([this]() {
+		m_planetIconPanel->getRenderer()->setBackgroundColor(tgui::Color::White);
+	});
+
+	m_planetIconPanel->onMouseLeave([this]() {
+		m_planetIconPanel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+		m_planetIconPanel->getRenderer()->setOpacity(0.75f);
+	});
+
+	m_planetIconPanel->onClick([this, &gui, &state]() {
+		if (m_planetPanel == nullptr) {
+			if (state.getLocalViewStar() != nullptr) {
+				m_planetPanel = tgui::Panel::create();
+				m_planetPanel->setInheritedOpacity(0.75);
+				m_planetPanel->setPosition("2.5%", "61%");
+				m_planetPanel->setSize("20%", "29%");
+				gui.add(m_planetPanel);
+			}
+		}
+		else {
+			gui.remove(m_planetPanel);
+			m_planetPanel = nullptr;
+		}
+	});
+
+	state.addOnChangeStateCallback([this, &gui]() {
+		if (m_planetPanel != nullptr) {
+			gui.remove(m_planetPanel);
+			m_planetPanel = nullptr;
+		}
+	});
+
+	gui.add(m_planetIconPanel);
+
+	auto picture = tgui::Picture::create("data/art/planetsicon.png");
+	picture->setSize("100%", "100%");
+	m_planetIconPanel->add(picture);
 }

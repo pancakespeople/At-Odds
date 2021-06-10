@@ -153,14 +153,16 @@ int main(int argc, const char* argv[])
         if (state.getMetaState() == GameState::MetaState::LOAD_GAME) {
             saveLoader.loadGame("data/saves/game.save", constellation, state);
             mainMenu.close();
+            
             state.resetMetaState();
+            state.clearCallbacks();
 
             if (player.getFaction() != -1) {
-                playerGui.open(gui);
+                playerGui.open(gui, state, false);
                 playerGui.helpWindow.close();
             }
             else {
-                playerGui.unitGUI.open(gui);
+                playerGui.open(gui, state, true);
             }
 
             DEBUG_PRINT("Loaded game");

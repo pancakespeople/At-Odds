@@ -22,11 +22,8 @@ public:
 	UnitGUI();
 
 	void open(tgui::Gui& gui);
-	
 	void update(const sf::RenderWindow& window, Star* currentStar, int playerFaction);
-
 	void draw(sf::RenderWindow& window);
-
 	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars);
 	
 private:
@@ -44,9 +41,7 @@ private:
 class HelpWindow {
 public:
 	HelpWindow() {}
-
 	void open(tgui::Gui& gui);
-
 	void close();
 
 private:
@@ -85,14 +80,26 @@ private:
 	bool m_canReceiveEvents = true;
 };
 
+class PlanetGUI {
+public:
+	PlanetGUI() {}
+
+	void open(tgui::Gui& gui, GameState& state);
+
+private:
+	tgui::Panel::Ptr m_planetIconPanel;
+	tgui::Panel::Ptr m_planetPanel;
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
-	void open(tgui::Gui& gui);
+	void open(tgui::Gui& gui, GameState& state, bool spectator);
 
 	HelpWindow helpWindow;
 	BuildGUI buildGUI;
 	UnitGUI unitGUI;
+	PlanetGUI planetGUI;
 };
 
 class NewGameMenu {
@@ -100,7 +107,6 @@ public:
 	NewGameMenu() {}
 
 	void open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
-
 	void close();
 
 	bool isOpen() { return m_window->isEnabled(); }
@@ -109,11 +115,8 @@ public:
 
 private:
 	void backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
-
 	void onStarsSliderChange(tgui::Gui& gui);
-
 	void onFactionsSliderChange(tgui::Gui& gui);
-
 	void startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state);
 
 	tgui::ChildWindow::Ptr m_window;
@@ -132,9 +135,7 @@ public:
 	OptionsMenu();
 
 	void open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
-
 	void close(tgui::Gui& gui);
-
 	void updateGameSettings(sf::RenderWindow& window, Background& background, tgui::Gui& gui, EffectsEmitter& emitter, bool force = false);
 
 	sf::Vector2i getResolution();
@@ -145,23 +146,18 @@ public:
 
 private:
 	void backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
-
 	void onTabChange(tgui::Gui& gui);
+	void saveSettingsToFile();
+	void changeSettings(tgui::Gui& gui);
 
 	std::string getKeyIni(CSimpleIniA& ini, const char* section, const char* key, const char* defaultValue);
 
-	void saveSettingsToFile();
-
-	void changeSettings(tgui::Gui& gui);
-
 	tgui::ChildWindow::Ptr m_window;
-
 	tgui::Group::Ptr m_group;
 
 	Settings m_settings;
 
 	bool m_updateGameSettings = false;
-
 	bool m_displayChanged = false;
 };
 
@@ -170,20 +166,14 @@ public:
 	MainMenu() {}
 
 	void open(tgui::Gui& gui, Constellation& constellation, GameState& state);
-
 	void close();
-
 	void onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state);
-
 	OptionsMenu& getOptionsMenu() { return m_optionsMenu; }
-
 	NewGameMenu& getNewGameMenu() { return m_newGameMenu; }
 
 private:
 	void exitGame(GameState& state);
-
 	void toNewGameMenu(tgui::Gui& gui, Constellation& constellation, GameState& state);
-
 	void toOptionsMenu(tgui::Gui& gui, Constellation& constellation, GameState& state);
 
 	tgui::ChildWindow::Ptr m_window;

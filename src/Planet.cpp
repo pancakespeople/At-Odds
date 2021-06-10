@@ -15,7 +15,6 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_orbit = Orbit(pos, starPos, orbitSpeed);
 
 	if (baseTemperature < 273.15f) {
-		// Mostly gas giants and frozen rocks
 		if (Random::randFloat(0.0f, 1.0f) < 0.75f) {
 			// Gas giant
 
@@ -24,16 +23,14 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 		else {
 			// Rocky planet
 
-			generateTerrestrial(baseTemperature, true);
+			generateTerrestrial(baseTemperature);
 		}
 	}
 	else {
-		// Mostly rocky planets with the occasional gas giant
-
 		if (Random::randFloat(0.0f, 1.0f) < 0.8f) {
 			// Rocky planet
 
-			generateTerrestrial(baseTemperature, false);
+			generateTerrestrial(baseTemperature);
 		}
 		else {
 			// Gas giant
@@ -64,6 +61,8 @@ void Planet::generateGasGiant(float baseTemperature) {
 		// Blue
 		int otherColors = Random::randInt(0, 155);
 		m_shape.setFillColor(sf::Color(otherColors, otherColors, Random::randInt(155, 255)));
+
+		m_type = PLANET_TYPE::ICE_GIANT;
 	}
 	else {
 		// Orange
@@ -72,6 +71,8 @@ void Planet::generateGasGiant(float baseTemperature) {
 		int b = Random::randInt(0, 155);
 
 		m_shape.setFillColor(sf::Color(r, g, b));
+
+		m_type = PLANET_TYPE::GAS_GIANT;
 	}
 
 	m_atmosphere = Random::randFloat(1000.0f, 1000000.0f);
@@ -80,9 +81,8 @@ void Planet::generateGasGiant(float baseTemperature) {
 	m_gasGiant = true;
 }
 
-void Planet::generateTerrestrial(float baseTemperature, bool dwarf) {
-	if (dwarf) m_shape.setRadius(m_shape.getRadius() * Random::randFloat(0.25f, 0.5f));
-	else m_shape.setRadius(m_shape.getRadius() * Random::randFloat(0.75f, 1.9f));
+void Planet::generateTerrestrial(float baseTemperature) {
+	m_shape.setRadius(m_shape.getRadius() * Random::randFloat(0.75f, 1.9f));
 
 	if (baseTemperature > 400.0f) {
 		// Too hot to sustain an atmosphere
@@ -124,12 +124,14 @@ void Planet::generateTerrestrial(float baseTemperature, bool dwarf) {
 		// Terra
 
 		m_shape.setFillColor(sf::Color::Green);
+		m_type = PLANET_TYPE::TERRA;
 	}
 	else {
 		if (m_atmosphere >= 50.0f) {
 			// Toxic
 
 			m_shape.setFillColor(sf::Color::Yellow);
+			m_type = PLANET_TYPE::TOXIC;
 		}
 		else if (m_water == 0.0f) {
 			// Mercury
@@ -138,14 +140,14 @@ void Planet::generateTerrestrial(float baseTemperature, bool dwarf) {
 			int rgb = Random::randInt(125, 255);
 
 			m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+			m_type = PLANET_TYPE::BARREN;
 		}
 		else if (m_water > 0.4f && m_temperature < 273.15f) {
 			// Tundra
-			// Gray/white
+			// White
 
-			int rgb = Random::randInt(125, 255);
-
-			m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+			m_shape.setFillColor(sf::Color::White);
+			m_type = PLANET_TYPE::TUNDRA;
 		}
 		else {
 			// Desert/Martian
@@ -169,6 +171,29 @@ void Planet::generateTerrestrial(float baseTemperature, bool dwarf) {
 				m_shape.setFillColor(sf::Color(r, g, b));
 				
 			}
+
+			m_type = PLANET_TYPE::DESERT;
 		}
+	}
+}
+
+std::string Planet::getTypeString() {
+	switch (m_type) {
+	case PLANET_TYPE::BARREN:
+		return "Barren";
+	case PLANET_TYPE::DESERT:
+		return "Desert";
+	case PLANET_TYPE::GAS_GIANT:
+		return "Gas Giant";
+	case PLANET_TYPE::ICE_GIANT:
+		return "Ice Giant";
+	case PLANET_TYPE::TERRA:
+		return "Terra";
+	case PLANET_TYPE::TOXIC:
+		return "Toxic";
+	case PLANET_TYPE::TUNDRA:
+		return "Tundra";
+	default:
+		return "Unknown";
 	}
 }
