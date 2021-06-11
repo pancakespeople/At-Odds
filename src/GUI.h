@@ -15,6 +15,7 @@ class Background;
 class EffectsEmitter;
 class Player;
 class SaveLoader;
+class Planet;
 
 // This class handles GUI for selecting and moving units
 class UnitGUI {
@@ -87,8 +88,11 @@ public:
 	void open(tgui::Gui& gui, GameState& state);
 
 private:
+	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, int index);
+	
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;
+	tgui::Panel::Ptr m_planetInfoPanel;
 };
 
 struct PlayerGUI {

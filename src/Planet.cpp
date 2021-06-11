@@ -133,7 +133,7 @@ void Planet::generateTerrestrial(float baseTemperature) {
 			m_shape.setFillColor(sf::Color::Yellow);
 			m_type = PLANET_TYPE::TOXIC;
 		}
-		else if (m_water == 0.0f) {
+		else if (m_water == 0.0f && m_atmosphere == 0.0f) {
 			// Mercury
 			// Gray/white
 

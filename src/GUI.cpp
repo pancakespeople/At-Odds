@@ -990,6 +990,62 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 				m_planetPanel->setPosition("2.5%", "61%");
 				m_planetPanel->setSize("20%", "29%");
 				gui.add(m_planetPanel);
+
+				m_planetInfoPanel = tgui::Panel::create();
+				m_planetInfoPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
+				m_planetInfoPanel->getRenderer()->setBorderColor(tgui::Color::White);
+				m_planetInfoPanel->getRenderer()->setBorders(1.0f);
+				m_planetInfoPanel->setPosition("0%", "20%");
+				m_planetInfoPanel->setSize("100%", "80%");
+				m_planetPanel->add(m_planetInfoPanel);
+
+				std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
+
+				auto planetList = tgui::ComboBox::create();
+				planetList->setPosition("25%", "5%");
+				planetList->setSize("50%", "10%");
+				planetList->onItemSelect([this, planetList, &state]() {
+					setSelectedPlanet(planetList, state, planetList->getSelectedItemIndex());
+				});
+				m_planetPanel->add(planetList);
+
+				// Add planets to dropdown list
+				for (int i = 0; i < planets.size(); i++) {
+					planetList->addItem("Planet " + std::to_string(i));
+				}
+
+				// Set first planet as selected
+				if (planetList->getItemCount() > 0) {
+					setSelectedPlanet(planetList, state, 0);
+				}
+				
+				auto backButton = tgui::Button::create("<-");
+				backButton->setPosition("5%", "5%");
+				backButton->onClick([this, planetList, &state]() {
+					if (planetList->getItemCount() > 1) {
+						if (planetList->getSelectedItemIndex() == 0) {
+							setSelectedPlanet(planetList, state, planetList->getItemCount() - 1);
+						}
+						else {
+							setSelectedPlanet(planetList, state, planetList->getSelectedItemIndex() - 1);
+						}
+					}
+				});
+				m_planetPanel->add(backButton);
+
+				auto forwardButton = tgui::Button::create("->");
+				forwardButton->setPosition("84%", "5%");
+				forwardButton->onClick([this, planetList, &state]() {
+					if (planetList->getItemCount() > 1) {
+						if (planetList->getSelectedItemIndex() == planetList->getItemCount() - 1) {
+							setSelectedPlanet(planetList, state, 0);
+						}
+						else {
+							setSelectedPlanet(planetList, state, planetList->getSelectedItemIndex() + 1);
+						}
+					}
+				});
+				m_planetPanel->add(forwardButton);
 			}
 		}
 		else {
@@ -1010,4 +1066,35 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 	auto picture = tgui::Picture::create("data/art/planetsicon.png");
 	picture->setSize("100%", "100%");
 	m_planetIconPanel->add(picture);
+}
+
+void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, int index) {
+	planetList->setSelectedItemByIndex(index);
+	m_planetInfoPanel->removeAllWidgets();
+
+	Planet& planet = state.getLocalViewStar()->getPlanets()[index];
+
+	auto planetTypeLabel = tgui::Label::create();
+	planetTypeLabel->setText("Type: " + planet.getTypeString());
+	planetTypeLabel->setPosition("0%", "5%");
+	m_planetInfoPanel->add(planetTypeLabel);
+
+	auto planetTemperatureLabel = tgui::Label::create();
+	planetTemperatureLabel->setText("Temperature: " + std::to_string(planet.getTemperature()));
+	planetTemperatureLabel->setPosition("0%", "15%");
+	m_planetInfoPanel->add(planetTemperatureLabel);
+
+	auto planetAtmosLabel = tgui::Label::create();
+	planetAtmosLabel->setText("Atmosphere: " + std::to_string(planet.getAtmosphericPressure()));
+	planetAtmosLabel->setPosition("0%", "25%");
+	m_planetInfoPanel->add(planetAtmosLabel);
+
+	auto planetWaterLabel = tgui::Label::create();
+	planetWaterLabel->setText("Water: " + std::to_string(planet.getWater()));
+	planetWaterLabel->setPosition("0%", "35%");
+	m_planetInfoPanel->add(planetWaterLabel);
+
+	// Focus camera
+	state.getCamera().setPos(planet.getPos());
+	state.getCamera().setAbsoluteZoom(10.0f);
 }
