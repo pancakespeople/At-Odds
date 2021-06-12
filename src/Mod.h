@@ -77,3 +77,23 @@ private:
 	const int m_maxFighters = 4;
 	int m_ticksToNextFighter = 1000;
 };
+
+class HabitatMod : public Mod {
+public:
+	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		boost::serialization::base_object<Mod>(*this);
+		archive & m_population;
+		archive & m_ticksToNextGrowth;
+		archive & m_growthRate;
+	}
+	
+	int m_population = 100000;
+	int m_ticksToNextGrowth = 1000;
+
+	float m_growthRate = 0.01f;
+};

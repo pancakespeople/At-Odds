@@ -9,6 +9,7 @@
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
+BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
 
 void FactoryMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 	if (!isEnabled()) return;
@@ -176,4 +177,14 @@ void FighterBayMod::killAllFighters(Star* currentStar) {
 		}
 	}
 	m_fighterShipIds.clear();
+}
+
+void HabitatMod::update(Unit* unit, Star* currentStar, Faction& faction) {
+	if (m_ticksToNextGrowth == 0) {
+		m_population += m_population * m_growthRate;
+		m_ticksToNextGrowth = 1000;
+	}
+	else {
+		m_ticksToNextGrowth--;
+	}
 }

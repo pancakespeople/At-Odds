@@ -14,7 +14,8 @@ const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texture
 	{BUILDING_TYPE::LASER_TURRET, "data/art/laserturret.png"},
 	{BUILDING_TYPE::MACHINE_GUN_TURRET, "data/art/machinegunturret.png"},
 	{BUILDING_TYPE::GAUSS_TURRET, "data/art/gaussturret.png"},
-	{BUILDING_TYPE::SHIP_FACTORY, "data/art/factory.png"}
+	{BUILDING_TYPE::SHIP_FACTORY, "data/art/factory.png"},
+	{BUILDING_TYPE::SPACE_HABITAT, "data/art/spacehabitat.png"}
 };
 
 Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built) {
@@ -70,6 +71,14 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 
 		m_health = 2500.0f;
 		m_constructionSpeedMultiplier = 1.5f;
+		break;
+	case BUILDING_TYPE::SPACE_HABITAT:
+		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::SPACE_HABITAT)));
+		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
+
+		addMod(HabitatMod());
+
+		m_health = 1000.0f;
 		break;
 	}
 
