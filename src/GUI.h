@@ -86,6 +86,7 @@ public:
 	PlanetGUI() {}
 
 	void open(tgui::Gui& gui, GameState& state);
+	void update(GameState& state);
 
 private:
 	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, int index);

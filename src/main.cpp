@@ -113,6 +113,7 @@ int main(int argc, const char* argv[])
         optionsMenu.updateGameSettings(window, background, gui, emitter);
         if (state.getState() != GameState::State::MAIN_MENU) {
             unitGui.update(window, state.getLocalViewStar(), state.getPlayer().getFaction());
+            playerGui.planetGUI.update(state);
         }
         
         // Maintain a constant update rate

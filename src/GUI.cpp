@@ -1008,7 +1008,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 				planetList->onItemSelect([this, planetList, &state]() {
 					setSelectedPlanet(planetList, state, planetList->getSelectedItemIndex());
 				});
-				m_planetPanel->add(planetList);
+				m_planetPanel->add(planetList, "planetList");
 
 				// Add planets to dropdown list
 				for (int i = 0; i < planets.size(); i++) {
@@ -1097,7 +1097,18 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
-	state.getCamera().setAbsoluteZoom(10.0f);
+}
+
+void PlanetGUI::update(GameState& state) {
+	if (m_planetPanel != nullptr) {
+		auto planetList = m_planetPanel->get<tgui::ComboBox>("planetList");
+		if (planetList->getItemCount() > 0) {
+			Planet& planet = state.getLocalViewStar()->getPlanets()[planetList->getSelectedItemIndex()];
+
+			// Lock camera on planet
+			state.getCamera().setPos(planet.getPos());
+		}
+	}
 }
 
 void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar) {
