@@ -105,6 +105,7 @@ int main(int argc, const char* argv[])
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
             emitter.onEvent(event);
+            playerGui.buildingGUI.onEvent(event, window, gui, state.getLocalViewStar());
             buildGui.onEvent(event, window, state.getLocalViewStar(), state.getPlayer());
             console.onEvent(event, gui, state);
         }

@@ -35,6 +35,9 @@ public:
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }
 
 	BUILDING_TYPE getType() { return m_type; }
+	
+	std::string getTypeString();
+	std::string getInfoString();
 
 private:
 	friend class boost::serialization::access;

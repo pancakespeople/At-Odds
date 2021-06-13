@@ -13,6 +13,7 @@
 #include "Sounds.h"
 #include "TextureCache.h"
 #include "SaveLoader.h"
+#include "Math.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -1097,4 +1098,33 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
 	state.getCamera().setAbsoluteZoom(10.0f);
+}
+
+void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar) {
+	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && currentStar != nullptr) {
+		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
+		sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseScreenPos);
+		
+		for (auto& building : currentStar->getBuildings()) {
+			float dist = Math::distance(building->getPos(), mouseWorldPos);
+			if (dist < building->getCollider().getRadius()) {
+				if (m_window != nullptr) {
+					gui.remove(m_window);
+				}
+
+				m_window = tgui::ChildWindow::create();
+				m_window->getRenderer()->setOpacity(0.75f);
+				m_window->setSize("10%", "15%");
+				m_window->setPosition(mouseScreenPos.x, mouseScreenPos.y);
+				m_window->setTitle(building->getTypeString());
+				gui.add(m_window);
+
+				auto text = tgui::Label::create();
+				text->setText(building->getInfoString());
+				m_window->add(text);
+
+				break;
+			}
+		}
+	}
 }

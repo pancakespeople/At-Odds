@@ -95,6 +95,17 @@ private:
 	tgui::Panel::Ptr m_planetInfoPanel;
 };
 
+// Not to be confused with BuildGUI, this one is for the popup when you click on a building
+class BuildingGUI {
+public:
+	BuildingGUI() {}
+
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar);
+
+private:
+	tgui::ChildWindow::Ptr m_window;
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
@@ -104,6 +115,7 @@ struct PlayerGUI {
 	BuildGUI buildGUI;
 	UnitGUI unitGUI;
 	PlanetGUI planetGUI;
+	BuildingGUI buildingGUI;
 };
 
 class NewGameMenu {

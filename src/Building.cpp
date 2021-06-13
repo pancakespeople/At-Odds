@@ -206,6 +206,34 @@ bool Building::checkBuildCondition(BUILDING_TYPE type, const Star* star, int all
 	}
 }
 
+std::string Building::getTypeString() {
+	switch (m_type) {
+	case BUILDING_TYPE::GAUSS_TURRET:
+		return "Gauss Turret";
+	case BUILDING_TYPE::LASER_TURRET:
+		return "Laser Turret";
+	case BUILDING_TYPE::MACHINE_GUN_TURRET:
+		return "Machine Gun Turret";
+	case BUILDING_TYPE::OUTPOST:
+		return "Outpost";
+	case BUILDING_TYPE::SHIP_FACTORY:
+		return "Ship Factory";
+	case BUILDING_TYPE::SPACE_HABITAT:
+		return "Space Habitat";
+	default:
+		return "Building";
+	}
+}
+
+std::string Building::getInfoString() {
+	std::string info;
+	for (auto& mod : m_mods) {
+		info += mod->getInfoString();
+		info += "\n";
+	}
+	return info;
+}
+
 BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
 	m_type = type;
 	sf::Texture& texture = TextureCache::getTexture(Building::texturePaths.at(type));

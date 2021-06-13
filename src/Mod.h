@@ -14,6 +14,8 @@ public:
 
 	bool isEnabled() { return m_enabled; }
 
+	virtual std::string getInfoString() { return ""; }
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -28,6 +30,7 @@ class FactoryMod : public Mod {
 public:
 
 	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+	virtual std::string getInfoString() override;
 
 private:
 	friend class boost::serialization::access;
@@ -53,6 +56,7 @@ public:
 	FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color);
 	
 	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+	virtual std::string getInfoString() override;
 
 	void launchFighters(Star* currentStar);
 	void recallFighters(Star* currentStar, Unit* unit);
@@ -81,6 +85,8 @@ private:
 class HabitatMod : public Mod {
 public:
 	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+
+	virtual std::string getInfoString() override;
 
 private:
 	friend class boost::serialization::access;

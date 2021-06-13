@@ -41,6 +41,10 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 	}
 }
 
+std::string FactoryMod::getInfoString() {
+	return "Next ship: " + std::to_string(m_ticksToNextShip / 60.0f) + "s";
+}
+
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {
 	for (int i = 0; i < 4; i++) {
 		float radius = unit->getCollider().getRadius();
@@ -179,6 +183,10 @@ void FighterBayMod::killAllFighters(Star* currentStar) {
 	m_fighterShipIds.clear();
 }
 
+std::string FighterBayMod::getInfoString() {
+	return "Fighters: " + std::to_string(m_fighterShipIds.size());
+}
+
 void HabitatMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 	if (m_ticksToNextGrowth == 0) {
 		m_population += m_population * m_growthRate;
@@ -187,4 +195,10 @@ void HabitatMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 	else {
 		m_ticksToNextGrowth--;
 	}
+}
+
+std::string HabitatMod::getInfoString() {
+	std::string info;
+	info += "Population: " + std::to_string(m_population);
+	return info;
 }
