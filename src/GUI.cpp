@@ -1095,6 +1095,11 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	planetWaterLabel->setPosition("0%", "35%");
 	m_planetInfoPanel->add(planetWaterLabel);
 
+	auto planetHabitabilityLabel = tgui::Label::create();
+	planetHabitabilityLabel->setText("Habitability: " + std::to_string(planet.getHabitability()));
+	planetHabitabilityLabel->setPosition("0%", "45%");
+	m_planetInfoPanel->add(planetHabitabilityLabel);
+
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
 }

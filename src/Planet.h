@@ -29,12 +29,13 @@ public:
 	float getAtmosphericPressure() const { return m_atmosphere; }
 	float getWater() const { return m_water; }
 	float getRadius() const { return m_shape.getRadius(); }
+	float getHabitability() const;
 
 	bool isGasGiant() const { return m_gasGiant; }
 
-	sf::Vector2f getPos() { return m_shape.getPosition(); }
+	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 
-	std::string getTypeString();
+	std::string getTypeString() const;
 
 private:
 	friend class boost::serialization::access;

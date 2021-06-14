@@ -177,7 +177,7 @@ void Planet::generateTerrestrial(float baseTemperature) {
 	}
 }
 
-std::string Planet::getTypeString() {
+std::string Planet::getTypeString() const {
 	switch (m_type) {
 	case PLANET_TYPE::BARREN:
 		return "Barren";
@@ -195,5 +195,23 @@ std::string Planet::getTypeString() {
 		return "Tundra";
 	default:
 		return "Unknown";
+	}
+}
+
+float Planet::getHabitability() const {
+	const float temperatureGoal = 288.0f;
+	const float atmosGoal = 1.0f;
+	const float waterGoal = 0.71f;
+
+	float temperatureDiff = std::abs(m_temperature - temperatureGoal);
+	float atmosDiff = std::abs(m_atmosphere - atmosGoal);
+	float waterDiff = std::abs(m_water - waterGoal);
+
+	float diff = temperatureDiff + atmosDiff + waterDiff;
+	if (diff == 0.0f) {
+		return 1000000;
+	}
+	else {
+		return 1.0f / diff;
 	}
 }
