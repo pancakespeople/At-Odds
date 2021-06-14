@@ -217,6 +217,7 @@ public:
 	bool isOpen() { return m_console != nullptr; }
 	bool validateArgs(const Command& command, int numArgs);
 	bool validateState(const Command& command, const GameState& state, GameState::State requestedState);
+	bool validateNotState(const Command& command, const GameState& state, GameState::State notState);
 
 private:
 	tgui::Group::Ptr m_console;

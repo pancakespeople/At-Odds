@@ -942,6 +942,38 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 				}
 			}
 		}
+		else if (command.command == "mosthabitable") {
+			if (validateArgs(command, 0) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
+				if (state.getState() == GameState::State::LOCAL_VIEW) {
+					state.changeToWorldView();
+				}
+				Star* highestHabitabilityStar = nullptr;
+				Planet* highestHabitabilityPlanet = nullptr;
+				float highestHabitability = 0.0f;
+
+				for (auto& star : constellation.getStars()) {
+					for (auto& planet : star->getPlanets()) {
+						float habitability = planet.getHabitability();
+						if (habitability > highestHabitability) {
+							highestHabitability = habitability;
+							highestHabitabilityStar = star.get();
+							highestHabitabilityPlanet = &planet;
+						}
+					}
+				}
+
+				if (highestHabitabilityPlanet == nullptr) {
+					m_chatBox->addLine("Didn't find a planet somehow");
+				}
+				else {
+					state.changeToLocalView(highestHabitabilityStar);
+					state.getCamera().setPos(highestHabitabilityPlanet->getPos());
+					state.getCamera().setAbsoluteZoom(1.0f);
+					m_chatBox->addLine("Zoomed to the most habitable planet in the constellation");
+				}
+
+			}
+		}
 		else {
 			m_chatBox->addLine("Invalid command " + command.command);
 		}
@@ -960,6 +992,16 @@ bool DebugConsole::validateArgs(const Command& command, int numArgs) {
 
 bool DebugConsole::validateState(const Command& command, const GameState& state, GameState::State requestedState) {
 	if (state.getState() == requestedState) {
+		return true;
+	}
+	else {
+		m_chatBox->addLine("Invalid game state for command " + command.command);
+		return false;
+	}
+}
+
+bool DebugConsole::validateNotState(const Command& command, const GameState& state, GameState::State notState) {
+	if (state.getState() != notState) {
 		return true;
 	}
 	else {
