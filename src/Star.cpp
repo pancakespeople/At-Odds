@@ -114,6 +114,8 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		planet.draw(window, emitter, time);
 	}
 
+	//emitter.drawHabitableZone(window, getLocalViewCenter(), m_temperature);
+
 	if (drawHidden) {
 
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {

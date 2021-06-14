@@ -112,3 +112,23 @@ void EffectsEmitter::drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos,
 
 	window.draw(m_glow, &m_glowShader);
 }
+
+void EffectsEmitter::drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature) {
+	float thinnestAtmosTemp = temperature + std::max(0.0f, std::log(0.5f + 0.25f) * temperature);
+	float thickestAtmosTemp = temperature + std::max(0.0f, std::log(3.0f + 0.25f) * temperature);
+	
+	float habitableInnerRadius = (thickestAtmosTemp * 1000.0f) / 325.0f;
+	float habitableOuterRadius = (thinnestAtmosTemp * 1000.0f) / 273.15f;
+
+	m_habitableZone.setPosition(starPos);
+	m_habitableZone.setRadius(habitableInnerRadius);
+	m_habitableZone.setOrigin(sf::Vector2f(habitableInnerRadius, habitableInnerRadius));
+	m_habitableZone.setFillColor(sf::Color::Transparent);
+	m_habitableZone.setOutlineColor(sf::Color::Green);
+	m_habitableZone.setOutlineThickness(25.0f);
+
+	window.draw(m_habitableZone);
+	m_habitableZone.setRadius(habitableOuterRadius);
+	m_habitableZone.setOrigin(sf::Vector2f(habitableOuterRadius, habitableOuterRadius));
+	window.draw(m_habitableZone);
+}

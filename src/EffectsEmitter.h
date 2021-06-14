@@ -16,11 +16,14 @@ public:
 	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time, float seed);
 	void drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, const Planet* planet, float seed, float time);
 	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
+	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);
 
 private:
 	void initShaders(sf::Vector2i resolution);
 	
 	sf::CircleShape m_jumpBubble;
+	sf::CircleShape m_habitableZone;
+
 	sf::RectangleShape m_line;
 	sf::RectangleShape m_fogOfWar;
 	sf::RectangleShape m_starLocalView;
