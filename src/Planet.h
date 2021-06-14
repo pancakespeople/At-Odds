@@ -15,7 +15,8 @@ public:
 		TUNDRA,
 		GAS_GIANT,
 		ICE_GIANT,
-		TOXIC
+		TOXIC,
+		LAVA
 	};
 	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature);

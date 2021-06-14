@@ -134,13 +134,24 @@ void Planet::generateTerrestrial(float baseTemperature) {
 			m_type = PLANET_TYPE::TOXIC;
 		}
 		else if (m_water == 0.0f && m_atmosphere == 0.0f) {
-			// Mercury
-			// Gray/white
+			if (m_temperature > 2000.0f) {
+				// Lava
+				// Red
 
-			int rgb = Random::randInt(125, 255);
+				int gb = std::min(255.0f, m_temperature * 0.05f);
 
-			m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
-			m_type = PLANET_TYPE::BARREN;
+				m_shape.setFillColor(sf::Color(255, 100, 100));
+				m_type = PLANET_TYPE::LAVA;
+			}
+			else {
+				// Mercury
+				// Gray/white
+
+				int rgb = Random::randInt(125, 255);
+
+				m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+				m_type = PLANET_TYPE::BARREN;
+			}
 		}
 		else if (m_water > 0.4f && m_temperature < 273.15f) {
 			// Tundra
@@ -193,6 +204,8 @@ std::string Planet::getTypeString() const {
 		return "Toxic";
 	case PLANET_TYPE::TUNDRA:
 		return "Tundra";
+	case PLANET_TYPE::LAVA:
+		return "Lava";
 	default:
 		return "Unknown";
 	}
