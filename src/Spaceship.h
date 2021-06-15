@@ -20,7 +20,8 @@ public:
 		DESTROYER_1,
 		CLAIM_SHIP,
 		CONSTRUCTION_SHIP,
-		FIGHTER
+		FIGHTER,
+		SPACE_BUS
 	};
 	
 	enum class JumpState {

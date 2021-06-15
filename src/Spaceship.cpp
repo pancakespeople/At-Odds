@@ -84,6 +84,12 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 			addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
 		}
 		break;
+	case SPACESHIP_TYPE::SPACE_BUS:
+		m_sprite.setTexture(TextureCache::getTexture("data/art/spacebus.png"));
+		m_mass = 125000.0f;
+		m_health = 50.0f;
+		m_collider.setRadius(150.0f);
+		break;
 	default:
 		m_mass = 50000.0f;
 		m_health = 100.0f;

@@ -216,7 +216,7 @@ float Planet::getHabitability() const {
 	const float atmosGoal = 1.0f;
 	const float waterGoal = 0.71f;
 
-	float temperatureDiff = std::abs(m_temperature - temperatureGoal);
+	float temperatureDiff = std::abs(m_temperature - temperatureGoal) / 288.0f;
 	float atmosDiff = std::abs(m_atmosphere - atmosGoal);
 	float waterDiff = std::abs(m_water - waterGoal);
 
