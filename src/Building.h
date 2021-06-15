@@ -27,7 +27,7 @@ public:
 	Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built = true);
 
 	void draw(sf::RenderWindow& window);
-	void update(Star* currentStar, Faction& faction);
+	void update(Star* currentStar);
 	void construct(const Spaceship* constructor);
 
 	static bool checkBuildCondition(BUILDING_TYPE type, const Star* star, int allegiance, bool player = false);

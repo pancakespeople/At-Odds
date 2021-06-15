@@ -251,3 +251,8 @@ void Constellation::moveShipToPurgatory(std::unique_ptr<Spaceship>& ship) {
     ship.swap(item.obj);
     m_shipPurgatory.push_back(std::move(item));
 }
+
+Faction* Constellation::getFaction(int id) {
+    if (id < 0 || id >= m_factions.size()) return nullptr;
+    else return &m_factions[id];
+}

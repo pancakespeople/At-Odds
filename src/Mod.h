@@ -8,7 +8,8 @@ class Mod {
 public:
 	Mod() {}
 
-	virtual void update(Unit* unit, Star* currentStar, Faction& faction) {}
+	// Faction can be nullptr, others cant
+	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
 
@@ -29,7 +30,7 @@ private:
 class FactoryMod : public Mod {
 public:
 
-	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 	virtual std::string getInfoString() override;
 
 private:
@@ -55,7 +56,7 @@ public:
 	
 	FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color);
 	
-	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 	virtual std::string getInfoString() override;
 
 	void launchFighters(Star* currentStar);
@@ -84,7 +85,7 @@ private:
 
 class HabitatMod : public Mod {
 public:
-	virtual void update(Unit* unit, Star* currentStar, Faction& faction) override;
+	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 
 	virtual std::string getInfoString() override;
 

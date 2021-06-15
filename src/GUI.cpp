@@ -907,11 +907,11 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 				int allegiance = std::atoi(command.args[1].c_str());
 				sf::Vector2f pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 				Star* star = state.getLocalViewStar();
-				Faction& faction = constellation.getFaction(allegiance);
-				sf::Color color = faction.getColor();
+				Faction* faction = constellation.getFaction(allegiance);
+				sf::Color color = faction->getColor();
 
 				std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
-				faction.addSpaceship(star->createSpaceship(ship));
+				faction->addSpaceship(star->createSpaceship(ship));
 
 				m_chatBox->addLine("Created spaceship at mouse cursor");
 			}

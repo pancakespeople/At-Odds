@@ -11,7 +11,7 @@ BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
 BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
 
-void FactoryMod::update(Unit* unit, Star* currentStar, Faction& faction) {
+void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (!isEnabled()) return;
 	
 	if (m_ticksToNextShip <= 0) {
@@ -21,16 +21,16 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction& faction) {
 		if (m_numShips % 10 == 0 && m_numShips != 0) {
 			Spaceship* destroyer = currentStar->createSpaceship(std::make_unique<Spaceship>(
 				Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			faction.addSpaceship(destroyer);
+			if (faction != nullptr) faction->addSpaceship(destroyer);
 
 			Spaceship* constrShip = currentStar->createSpaceship(std::make_unique<Spaceship>(
 				Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			faction.addSpaceship(constrShip);
+			if (faction != nullptr) faction->addSpaceship(constrShip);
 		}
 		else {
 			Spaceship* frigate = currentStar->createSpaceship(std::make_unique<Spaceship>(
 				Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			faction.addSpaceship(frigate);
+			if (faction != nullptr) faction->addSpaceship(frigate);
 		}
 
 		m_numShips++;
@@ -58,7 +58,7 @@ FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::C
 	}
 }
 
-void FighterBayMod::update(Unit* unit, Star* currentStar, Faction& faction) {
+void FighterBayMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (unit->isDead()) {
 		if (!isEnabled()) {
 			killAllFighters(currentStar); // They just die if the building was never constructed, no free fighters!
@@ -187,7 +187,7 @@ std::string FighterBayMod::getInfoString() {
 	return "Fighters: " + std::to_string(m_fighterShipIds.size());
 }
 
-void HabitatMod::update(Unit* unit, Star* currentStar, Faction& faction) {
+void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (m_ticksToNextGrowth == 0) {
 		m_population += m_population * m_growthRate;
 		m_ticksToNextGrowth = 1000;

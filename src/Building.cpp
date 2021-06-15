@@ -118,7 +118,7 @@ void Building::draw(sf::RenderWindow& window) {
 	window.draw(m_collider);
 }
 
-void Building::update(Star* currentStar, Faction& faction) {
+void Building::update(Star* currentStar) {
 	m_currentStar = currentStar;
 	
 	if (!m_dead && m_health <= 0.0f) {
@@ -126,8 +126,6 @@ void Building::update(Star* currentStar, Faction& faction) {
 		m_currentStar->addAnimation(Animation(Animation::ANIMATION_TYPE::EXPLOSION, getPos()));
 		Sounds::playSoundLocal("data/sound/boom1.wav", m_currentStar, 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
-	
-	updateMods(currentStar, faction);
 	
 	if (m_constructionPercent < 100.0f) {
 		return;

@@ -35,7 +35,7 @@ public:
 	void addWeapon(Weapon weapon) { m_weapons.push_back(weapon); }
 	void updateWeapons();
 	void fireAllWeaponsAt(Unit* target);
-	void updateMods(Star* currentStar, Faction& faction);
+	void updateMods(Star* currentStar, Faction* faction);
 	void enableAllMods();
 	
 	int getAllegiance() const { return m_allegiance; }

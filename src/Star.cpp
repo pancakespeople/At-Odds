@@ -317,7 +317,8 @@ void Star::update(Constellation* constellation) {
 	}
 	
 	for (int i = 0; i < m_buildings.size(); i++) {
-		m_buildings[i]->update(this, constellation->getFaction(m_buildings[i]->getAllegiance()));
+		m_buildings[i]->updateMods(this, constellation->getFaction(m_buildings[i]->getAllegiance()));
+		m_buildings[i]->update(this);
 		if (m_buildings[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_buildings[i]->getPos(), m_buildings[i]->getCollider().getOutlineColor(), 10.0f, 100);
 			

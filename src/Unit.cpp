@@ -53,7 +53,7 @@ void Unit::fireAllWeaponsAt(Unit* target) {
 	}
 }
 
-void Unit::updateMods(Star* currentStar, Faction& faction) {
+void Unit::updateMods(Star* currentStar, Faction* faction) {
 	for (auto& mod : m_mods) {
 		mod->update(this, currentStar, faction);
 	}
