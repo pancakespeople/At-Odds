@@ -5,6 +5,17 @@
 #include "Orbit.h"
 #include "ParticleSystem.h"
 
+struct Colony {
+	int population = 0;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & population;
+	}
+};
+
 class Planet {
 public:
 	enum class PLANET_TYPE {
@@ -32,11 +43,14 @@ public:
 	float getRadius() const { return m_shape.getRadius(); }
 	float getHabitability() const;
 
+	int getPopulation() { return m_colony.population; }
+
 	bool isGasGiant() const { return m_gasGiant; }
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 
 	std::string getTypeString() const;
+
 
 private:
 	friend class boost::serialization::access;
@@ -50,6 +64,7 @@ private:
 		archive & m_water;
 		archive & m_orbit;
 		archive & m_type;
+		archive & m_colony;
 	}
 	
 	Planet() {}
@@ -64,5 +79,6 @@ private:
 	bool m_gasGiant = false;
 
 	Orbit m_orbit;
-	PLANET_TYPE m_type;
+	PLANET_TYPE m_type = PLANET_TYPE::UNKNOWN;
+	Colony m_colony;
 };

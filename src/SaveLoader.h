@@ -90,16 +90,20 @@ namespace boost {
 		void save(Archive& archive, const sf::CircleShape& shape, const unsigned int version) {
 			archive& boost::serialization::base_object<sf::Shape>(shape);
 			archive& shape.getRadius();
+			archive& shape.getPointCount();
 		}
 
 		template<class Archive>
 		void load(Archive& archive, sf::CircleShape& shape, const unsigned int version) {
 			float radius;
-			
+			size_t pointCount;
+
 			archive& boost::serialization::base_object<sf::Shape>(shape);
 			archive& radius;
+			archive& pointCount;
 
 			shape.setRadius(radius);
+			shape.setPointCount(pointCount);
 		}
 
 		// sf::Sprite

@@ -1011,6 +1011,11 @@ bool DebugConsole::validateNotState(const Command& command, const GameState& sta
 }
 
 void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
+	if (m_planetPanel != nullptr) {
+		gui.remove(m_planetPanel);
+		m_planetPanel = nullptr;
+	}
+	
 	m_planetIconPanel = tgui::Panel::create();
 	m_planetIconPanel->setPosition("0%", "85%");
 	m_planetIconPanel->setSize("2.5%", "5%");
@@ -1047,30 +1052,30 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 				auto planetList = tgui::ComboBox::create();
 				planetList->setPosition("25%", "5%");
 				planetList->setSize("50%", "10%");
-				planetList->onItemSelect([this, planetList, &state]() {
-					setSelectedPlanet(planetList, state, planetList->getSelectedItemIndex());
+				planetList->onItemSelect([this, planetList, &state, &gui]() {
+					setSelectedPlanet(planetList, state, gui, planetList->getSelectedItemIndex());
 				});
 				m_planetPanel->add(planetList, "planetList");
 
 				// Add planets to dropdown list
 				for (int i = 0; i < planets.size(); i++) {
-					planetList->addItem("Planet " + std::to_string(i));
+					planetList->addItem(std::to_string(i + 1) + ": " + planets[i].getTypeString());
 				}
 
 				// Set first planet as selected
 				if (planetList->getItemCount() > 0) {
-					setSelectedPlanet(planetList, state, 0);
+					setSelectedPlanet(planetList, state, gui, 0);
 				}
 				
 				auto backButton = tgui::Button::create("<-");
 				backButton->setPosition("5%", "5%");
-				backButton->onClick([this, planetList, &state]() {
+				backButton->onClick([this, planetList, &state, &gui]() {
 					if (planetList->getItemCount() > 1) {
 						if (planetList->getSelectedItemIndex() == 0) {
-							setSelectedPlanet(planetList, state, planetList->getItemCount() - 1);
+							setSelectedPlanet(planetList, state, gui, planetList->getItemCount() - 1);
 						}
 						else {
-							setSelectedPlanet(planetList, state, planetList->getSelectedItemIndex() - 1);
+							setSelectedPlanet(planetList, state, gui, planetList->getSelectedItemIndex() - 1);
 						}
 					}
 				});
@@ -1078,13 +1083,13 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 
 				auto forwardButton = tgui::Button::create("->");
 				forwardButton->setPosition("84%", "5%");
-				forwardButton->onClick([this, planetList, &state]() {
+				forwardButton->onClick([this, planetList, &state, &gui]() {
 					if (planetList->getItemCount() > 1) {
 						if (planetList->getSelectedItemIndex() == planetList->getItemCount() - 1) {
-							setSelectedPlanet(planetList, state, 0);
+							setSelectedPlanet(planetList, state, gui, 0);
 						}
 						else {
-							setSelectedPlanet(planetList, state, planetList->getSelectedItemIndex() + 1);
+							setSelectedPlanet(planetList, state, gui, planetList->getSelectedItemIndex() + 1);
 						}
 					}
 				});
@@ -1094,6 +1099,11 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 		else {
 			gui.remove(m_planetPanel);
 			m_planetPanel = nullptr;
+
+			if (m_colonyInfoWindow != nullptr) {
+				gui.remove(m_colonyInfoWindow);
+				m_colonyInfoWindow = nullptr;
+			}
 		}
 	});
 
@@ -1101,6 +1111,10 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 		if (m_planetPanel != nullptr) {
 			gui.remove(m_planetPanel);
 			m_planetPanel = nullptr;
+		}
+		if (m_colonyInfoWindow != nullptr) {
+			gui.remove(m_colonyInfoWindow);
+			m_colonyInfoWindow = nullptr;
 		}
 	});
 
@@ -1111,9 +1125,12 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 	m_planetIconPanel->add(picture);
 }
 
-void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, int index) {
+void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, tgui::Gui& gui, int index) {
 	planetList->setSelectedItemByIndex(index);
 	m_planetInfoPanel->removeAllWidgets();
+	
+	gui.remove(m_colonyInfoWindow);
+	m_colonyInfoWindow = nullptr;
 
 	Planet& planet = state.getLocalViewStar()->getPlanets()[index];
 
@@ -1141,6 +1158,32 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	planetHabitabilityLabel->setText("Habitability: " + std::to_string(planet.getHabitability()));
 	planetHabitabilityLabel->setPosition("0%", "45%");
 	m_planetInfoPanel->add(planetHabitabilityLabel);
+
+	auto colonyInfoButton = tgui::Button::create();
+	colonyInfoButton->setPosition("75%", "80%");
+	colonyInfoButton->setText("Colony");
+	colonyInfoButton->onClick([this, &gui, &planet]() {
+		if (m_colonyInfoWindow == nullptr) {
+			m_colonyInfoWindow = tgui::ChildWindow::create();
+			m_colonyInfoWindow->setPosition("22.5%", "61%");
+			m_colonyInfoWindow->setSize("20%", "29%");
+			m_colonyInfoWindow->setTitle("Colony");
+			m_colonyInfoWindow->getRenderer()->setOpacity(0.75f);
+			m_colonyInfoWindow->setPositionLocked(true);
+			m_colonyInfoWindow->onClose([this]() {
+				m_colonyInfoWindow = nullptr;
+			});
+			gui.add(m_colonyInfoWindow);
+
+			auto populationLabel = tgui::Label::create("Population: " + std::to_string(planet.getPopulation()));
+			m_colonyInfoWindow->add(populationLabel);
+		}
+		else {
+			gui.remove(m_colonyInfoWindow);
+			m_colonyInfoWindow = nullptr;
+		}
+	});
+	m_planetInfoPanel->add(colonyInfoButton);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());

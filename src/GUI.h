@@ -89,11 +89,12 @@ public:
 	void update(GameState& state);
 
 private:
-	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, int index);
+	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, tgui::Gui& gui, int index);
 	
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;
 	tgui::Panel::Ptr m_planetInfoPanel;
+	tgui::ChildWindow::Ptr m_colonyInfoWindow;
 };
 
 // Not to be confused with BuildGUI, this one is for the popup when you click on a building
