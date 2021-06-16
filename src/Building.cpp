@@ -76,7 +76,7 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::SPACE_HABITAT)));
 		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
 
-		addMod(HabitatMod());
+		addMod(HabitatMod(100000, 1000000));
 
 		m_health = 1000.0f;
 		break;

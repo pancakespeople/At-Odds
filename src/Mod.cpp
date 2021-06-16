@@ -187,9 +187,21 @@ std::string FighterBayMod::getInfoString() {
 	return "Fighters: " + std::to_string(m_fighterShipIds.size());
 }
 
+HabitatMod::HabitatMod(int population, int maxPopulation) {
+	m_population = population;
+	m_popCap = maxPopulation;
+}
+
 void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (m_ticksToNextGrowth == 0) {
-		m_population += m_population * m_growthRate;
+		if (m_population != m_popCap) {
+			m_population += m_population * m_growthRate;
+		}
+
+		if (m_population > m_popCap) {
+			m_population = m_popCap;
+		}
+		
 		m_ticksToNextGrowth = 1000;
 	}
 	else {

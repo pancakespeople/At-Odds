@@ -85,6 +85,8 @@ private:
 
 class HabitatMod : public Mod {
 public:
+	HabitatMod(int population, int maxPopulation);
+	
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 
 	virtual std::string getInfoString() override;
@@ -96,11 +98,15 @@ private:
 		boost::serialization::base_object<Mod>(*this);
 		archive & m_population;
 		archive & m_ticksToNextGrowth;
+		archive & m_popCap;
 		archive & m_growthRate;
 	}
+
+	HabitatMod() {}
 	
 	int m_population = 100000;
 	int m_ticksToNextGrowth = 1000;
+	int m_popCap = 1000000;
 
 	float m_growthRate = 0.01f;
 };
