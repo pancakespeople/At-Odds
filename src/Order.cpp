@@ -9,12 +9,14 @@
 #include "Building.h"
 #include "SaveLoader.h"
 #include "Hyperlane.h"
+#include "Planet.h"
 
 BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
 BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
 BOOST_CLASS_EXPORT_GUID(AttackOrder, "AttackOrder")
 BOOST_CLASS_EXPORT_GUID(TravelOrder, "TravelOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithBuildingOrder, "InteractWithBuildingOrder")
+BOOST_CLASS_EXPORT_GUID(InteractWithPlanetOrder, "InteractWithPlanetOrder")
 
 bool FlyToOrder::execute(Spaceship* ship, Star* currentStar) {
 	return ship->flyTo(m_pos);
@@ -194,4 +196,32 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
 void InteractWithBuildingOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
 	if (m_building != nullptr)
 		emitter.drawLine(window, shipPos, m_building->getPos(), sf::Color(100, 100, 255));
+}
+
+InteractWithPlanetOrder::InteractWithPlanetOrder(Planet* planet, Star* star) {
+	m_planetID = planet->getID();
+}
+
+bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
+	if (m_planet == nullptr) {
+		m_planet = currentStar->getPlanetByID(m_planetID);
+		if (m_planet == nullptr) {
+			return true;
+		}
+	}
+
+	ship->orbit(m_planet->getPos());
+
+	if (Math::distance(ship->getPos(), m_planet->getPos()) < (m_planet->getRadius() + ship->getCollider().getRadius())) {
+		for (auto& mod : ship->getMods()) {
+			mod->interactWithPlanet(m_planet);
+		}
+		return true;
+	}
+	return false;
+}
+
+void InteractWithPlanetOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+	if (m_planet != nullptr)
+		emitter.drawLine(window, shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
 }

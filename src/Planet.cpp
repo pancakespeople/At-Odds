@@ -9,7 +9,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_shape.setPosition(pos);
 
 	float radiusFromStar = Math::distance(pos, starPos);
-	float orbitSpeed = 1000.0f / radiusFromStar;
+	float orbitSpeed = 500.0f / radiusFromStar;
 	float baseTemperature = std::min(starTemperature, (starTemperature * 1000.0f) / radiusFromStar);
 
 	m_orbit = Orbit(pos, starPos, orbitSpeed);

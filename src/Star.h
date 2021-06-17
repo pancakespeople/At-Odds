@@ -75,6 +75,9 @@ public:
 	Spaceship* getShipByID(unsigned int id);
 	Building* getBuildingByID(unsigned int id);
 	JumpPoint* getJumpPointByID(unsigned int id);
+	Planet* getPlanetByID(unsigned int id);
+
+	Planet& getMostHabitablePlanet();
 
 private:
 	friend class boost::serialization::access;

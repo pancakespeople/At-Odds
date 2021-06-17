@@ -13,6 +13,7 @@
 #include "Random.h"
 #include "Animation.h"
 #include "Building.h"
+#include "Mod.h"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -27,6 +28,8 @@ void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Co
 	m_collider.setOutlineColor(color);
 
 	m_allegiance = allegiance;
+
+	enableAllMods();
 }
 
 Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
@@ -86,9 +89,12 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		break;
 	case SPACESHIP_TYPE::SPACE_BUS:
 		m_sprite.setTexture(TextureCache::getTexture("data/art/spacebus.png"));
-		m_mass = 125000.0f;
+		m_mass = 75000.0f;
 		m_health = 50.0f;
 		m_collider.setRadius(150.0f);
+		
+		addMod(HabitatMod(1000, 1000, false));
+
 		break;
 	default:
 		m_mass = 50000.0f;

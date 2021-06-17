@@ -24,6 +24,7 @@ public:
 	std::vector<Weapon>& getWeapons() { return m_weapons; }
 	std::vector<Spaceship*> findEnemyShips();
 	std::vector<Unit*> findEnemyUnits();
+	std::vector<std::unique_ptr<Mod>>& getMods() { return m_mods; }
 
 	float getLongestWeaponRange();
 	float getHealth() const { return m_health; }

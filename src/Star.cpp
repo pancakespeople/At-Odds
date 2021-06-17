@@ -290,6 +290,7 @@ void Star::update(Constellation* constellation) {
 	std::vector<int> factions;
 	
 	for (int i = 0; i < m_localShips.size(); i++) {
+		m_localShips[i]->updateMods(this, constellation->getFaction(m_localShips[i]->getAllegiance()));
 		m_localShips[i]->update(this);
 
 		if (m_localShips[i] == nullptr) {
@@ -488,4 +489,25 @@ void Star::generatePlanets() {
 
 		latestRadius += Random::randFloat(500.0f, 20000.0f);
 	}
+}
+
+Planet* Star::getPlanetByID(unsigned int id) {
+	for (Planet& planet : m_planets) {
+		if (planet.getID() == id) {
+			return &planet;
+		}
+	}
+	return nullptr;
+}
+
+Planet& Star::getMostHabitablePlanet() {
+	float highest = 0.0f;
+	int index = 0;
+	for (int i = 0; i < m_planets.size(); i++) {
+		if (m_planets[i].getHabitability() > highest) {
+			highest = m_planets[i].getHabitability();
+			index = i;
+		}
+	}
+	return m_planets[index];
 }

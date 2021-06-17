@@ -3,6 +3,7 @@
 class Unit;
 class Star;
 class Faction;
+class Planet;
 
 class Mod {
 public:
@@ -10,6 +11,7 @@ public:
 
 	// Faction can be nullptr, others cant
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
+	virtual void interactWithPlanet(Planet* planet) {}
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
 
@@ -85,9 +87,10 @@ private:
 
 class HabitatMod : public Mod {
 public:
-	HabitatMod(int population, int maxPopulation);
+	HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus);
 	
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	virtual void interactWithPlanet(Planet* planet) override;
 
 	virtual std::string getInfoString() override;
 
@@ -99,7 +102,9 @@ private:
 		archive & m_population;
 		archive & m_ticksToNextGrowth;
 		archive & m_popCap;
+		archive & m_ticksToNextBus;
 		archive & m_growthRate;
+		archive & m_spawnsSpaceBus;
 	}
 
 	HabitatMod() {}
@@ -107,6 +112,9 @@ private:
 	int m_population = 100000;
 	int m_ticksToNextGrowth = 1000;
 	int m_popCap = 1000000;
+	int m_ticksToNextBus = 3500;
 
 	float m_growthRate = 0.01f;
+
+	bool m_spawnsSpaceBus = false;
 };

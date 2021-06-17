@@ -4,6 +4,7 @@
 #include "EffectsEmitter.h"
 #include "Orbit.h"
 #include "ParticleSystem.h"
+#include "Identifiable.h"
 
 struct Colony {
 	int population = 0;
@@ -16,7 +17,7 @@ private:
 	}
 };
 
-class Planet {
+class Planet : public Identifiable {
 public:
 	enum class PLANET_TYPE {
 		UNKNOWN,
@@ -43,7 +44,7 @@ public:
 	float getRadius() const { return m_shape.getRadius(); }
 	float getHabitability() const;
 
-	int getPopulation() { return m_colony.population; }
+	Colony& getColony() { return m_colony; }
 
 	bool isGasGiant() const { return m_gasGiant; }
 
@@ -56,6 +57,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Identifiable>(*this);
 		archive & m_shape;
 		archive & m_shaderRandomSeed;
 		archive & m_temperature;

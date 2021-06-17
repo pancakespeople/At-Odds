@@ -12,6 +12,7 @@ project "at_odds"
    
    filter "system:Windows"
       pchheader "gamepch.h"
+      buildoptions "/bigobj"
    
    filter "system:Linux"
       links {

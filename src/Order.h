@@ -7,6 +7,7 @@ class Star;
 class Unit;
 class Building;
 class EffectsEmitter;
+class Planet;
 
 class Order {
 public:
@@ -126,7 +127,7 @@ public:
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos);
+	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) override;
 
 private:
 	friend class boost::serialization::access;
@@ -140,4 +141,26 @@ private:
 	
 	unsigned int m_buildingID = 0;
 	Building* m_building = nullptr;
+};
+
+class InteractWithPlanetOrder : public Order {
+public:
+	InteractWithPlanetOrder(Planet* planet, Star* star);
+
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
+
+	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		boost::serialization::base_object<Order>(*this);
+		archive & m_planetID;
+	}
+	
+	InteractWithPlanetOrder() {}
+
+	unsigned int m_planetID = 0;
+	Planet* m_planet = nullptr;
 };

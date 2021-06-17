@@ -1175,7 +1175,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 			});
 			gui.add(m_colonyInfoWindow);
 
-			auto populationLabel = tgui::Label::create("Population: " + std::to_string(planet.getPopulation()));
+			auto populationLabel = tgui::Label::create("Population: " + std::to_string(planet.getColony().population));
 			m_colonyInfoWindow->add(populationLabel);
 		}
 		else {

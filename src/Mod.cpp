@@ -6,6 +6,7 @@
 #include "Random.h"
 #include "Order.h"
 #include "Math.h"
+#include "Planet.h"
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
@@ -187,9 +188,10 @@ std::string FighterBayMod::getInfoString() {
 	return "Fighters: " + std::to_string(m_fighterShipIds.size());
 }
 
-HabitatMod::HabitatMod(int population, int maxPopulation) {
+HabitatMod::HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus) {
 	m_population = population;
 	m_popCap = maxPopulation;
+	m_spawnsSpaceBus = spawnsSpaceBus;
 }
 
 void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
@@ -207,10 +209,33 @@ void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	else {
 		m_ticksToNextGrowth--;
 	}
+
+	if (m_spawnsSpaceBus) {
+		if (m_ticksToNextBus == 0) {
+			if (currentStar->getPlanets().size() > 0) {
+				Planet& targetPlanet = currentStar->getMostHabitablePlanet();
+				Spaceship* bus = currentStar->createSpaceship(
+					std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, unit->getPos(), currentStar, unit->getAllegiance(), unit->getFactionColor())
+				);
+				bus->addOrder(InteractWithPlanetOrder(&targetPlanet, currentStar));
+
+				m_population -= 1000;
+			}
+			m_ticksToNextBus = 3500;
+		}
+		else {
+			m_ticksToNextBus--;
+		}
+	}
 }
 
 std::string HabitatMod::getInfoString() {
 	std::string info;
 	info += "Population: " + std::to_string(m_population);
 	return info;
+}
+
+void HabitatMod::interactWithPlanet(Planet* planet) {
+	planet->getColony().population += m_population;
+	m_population = 0;
 }
