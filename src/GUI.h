@@ -16,6 +16,7 @@ class EffectsEmitter;
 class Player;
 class SaveLoader;
 class Planet;
+class Background;
 
 // This class handles GUI for selecting and moving units
 class UnitGUI {
@@ -126,13 +127,13 @@ public:
 
 	void open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
 	void close();
+	void addGameStartCallbacK(std::function<void()> func) { m_gameStartCallbacks.push_back(func); }
 
 	bool isOpen() { return m_window->isEnabled(); }
 
 	PlayerGUI& getPlayerGUI() { return m_playerGui; }
 
 private:
-	void backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
 	void onStarsSliderChange(tgui::Gui& gui);
 	void onFactionsSliderChange(tgui::Gui& gui);
 	void startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state);
@@ -140,6 +141,8 @@ private:
 	tgui::ChildWindow::Ptr m_window;
 
 	PlayerGUI m_playerGui;
+
+	std::vector<std::function<void()>> m_gameStartCallbacks;
 };
 
 class OptionsMenu {
@@ -163,7 +166,6 @@ public:
 	Settings getSettings() { return m_settings; }
 
 private:
-	void backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
 	void onTabChange(tgui::Gui& gui);
 	void saveSettingsToFile();
 	void changeSettings(tgui::Gui& gui);
@@ -191,8 +193,6 @@ public:
 
 private:
 	void exitGame(GameState& state);
-	void toNewGameMenu(tgui::Gui& gui, Constellation& constellation, GameState& state);
-	void toOptionsMenu(tgui::Gui& gui, Constellation& constellation, GameState& state);
 
 	tgui::ChildWindow::Ptr m_window;
 	NewGameMenu m_newGameMenu;

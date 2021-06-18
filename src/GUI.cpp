@@ -273,7 +273,10 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 
 		auto newGameButton = tgui::Button::create("New Game");
 		newGameButton->setPosition("(parent.width - width) / 2", "20%");
-		newGameButton->onPress(&MainMenu::toNewGameMenu, this, std::ref(gui), std::ref(constellation), std::ref(state));
+		newGameButton->onPress([this, &gui, &constellation, &state]() {
+			close();
+			m_newGameMenu.open(gui, constellation, state, this);
+		});
 		guiWindow->add(newGameButton);
 
 		auto loadGameButton = tgui::Button::create("Load Game");
@@ -285,7 +288,10 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 
 		auto optionsButton = tgui::Button::create("Options");
 		optionsButton->setPosition("(parent.width - width) / 2", "60%");
-		optionsButton->onPress(&MainMenu::toOptionsMenu, this, std::ref(gui), std::ref(constellation), std::ref(state));
+		optionsButton->onPress([this, &gui, &constellation, &state]() {
+			close();
+			m_optionsMenu.open(gui, constellation, state, this);
+		});
 		guiWindow->add(optionsButton);
 
 		auto exitButton = tgui::Button::create("Exit");
@@ -308,16 +314,6 @@ void MainMenu::close() {
 
 void MainMenu::exitGame(GameState& state) {
 	state.exitGame();
-}
-
-void MainMenu::toNewGameMenu(tgui::Gui& gui, Constellation& constellation, GameState& state) {
-	close();
-	m_newGameMenu.open(gui, constellation, state, this);
-}
-
-void MainMenu::toOptionsMenu(tgui::Gui& gui, Constellation& constellation, GameState& state) {
-	close();
-	m_optionsMenu.open(gui, constellation, state, this);
 }
 
 void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state) {
@@ -344,7 +340,10 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 
 	auto mainMenuButton = tgui::Button::create("<- Main Menu");
 	mainMenuButton->setPosition("5%", "90%");
-	mainMenuButton->onPress(&NewGameMenu::backToMainMenu, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
+	mainMenuButton->onPress([this, &gui, &constellation, &state, mainMenu]() {
+		close();
+		mainMenu->open(gui, constellation, state);
+	});
 	guiWindow->add(mainMenuButton);
 
 	auto startGameButton = tgui::Button::create("Start Game ->");
@@ -399,11 +398,6 @@ void NewGameMenu::close() {
 		m_window->close();
 }
 
-void NewGameMenu::backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu) {
-	close();
-	mainMenu->open(gui, constellation, state);
-}
-
 void NewGameMenu::onStarsSliderChange(tgui::Gui& gui) {
 	auto slider = gui.get<tgui::Slider>("starSlider");
 	auto label = gui.get<tgui::Label>("numStars");
@@ -454,6 +448,10 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 		state.changeToWorldView();
 
 		m_playerGui.open(gui, state, true);
+	}
+
+	for (auto& func : m_gameStartCallbacks) {
+		func();
 	}
 
 	close();
@@ -529,7 +527,10 @@ void OptionsMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 
 	auto mainMenuButton = tgui::Button::create("<- Main Menu");
 	mainMenuButton->setPosition("5%", "90%");
-	mainMenuButton->onPress(&OptionsMenu::backToMainMenu, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
+	mainMenuButton->onPress([this, &gui, &constellation, &state, mainMenu]() {
+		close(gui);
+		mainMenu->open(gui, constellation, state);
+	});
 	guiWindow->add(mainMenuButton);
 
 	m_group = group;
@@ -541,11 +542,6 @@ void OptionsMenu::close(tgui::Gui& gui) {
 	changeSettings(gui);
 	saveSettingsToFile();
 	if (m_window != nullptr) m_window->close();
-}
-
-void OptionsMenu::backToMainMenu(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu) {
-	close(gui);
-	mainMenu->open(gui, constellation, state);
 }
 
 void OptionsMenu::onTabChange(tgui::Gui& gui) {
@@ -625,7 +621,11 @@ void OptionsMenu::updateGameSettings(sf::RenderWindow& window, Background& backg
 			
 			window.setFramerateLimit(60);
 			gui.setTarget(window);
+
+			float nebulaSeed = background.getNebulaSeed();
 			background = Background(background.getTexturePath(), res.x, res.y);
+			background.setNebulaSeed(nebulaSeed);
+
 			emitter.init(res);
 
 			m_displayChanged = false;

@@ -2,6 +2,8 @@
 
 #include "Background.h"
 #include "TextureCache.h"
+#include "EffectsEmitter.h"
+#include "Random.h"
 
 #include <iostream>
 
@@ -24,15 +26,11 @@ Background::Background(std::string texturePath, int w, int h) {
 	std::cout << "Scale factor y: " << h / oldHeight << std::endl;
 
 	m_texturePath = texturePath;
+	m_nebulaSeed = Random::randFloat(0.0f, 1.0f);
 }
 
-void Background::draw(sf::RenderWindow& window) {
+void Background::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 	window.setView(window.getDefaultView());
-	window.draw(m_sprite);
+	emitter.drawNebula(window, m_sprite, m_nebulaSeed);
 }
 
-void Background::draw(sf::RenderWindow& window, sf::Shader& shader) {
-	window.setView(window.getDefaultView());
-	shader.setUniform("texture", sf::Shader::CurrentTexture);
-	window.draw(m_sprite, &shader);
-}

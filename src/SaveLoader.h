@@ -6,6 +6,7 @@
 
 class Constellation;
 class GameState;
+class Background;
 
 namespace boost {
 	namespace serialization {
@@ -185,7 +186,6 @@ class SaveLoader {
 public:
 	SaveLoader() {}
 
-	void saveGame(std::string filePath, const Constellation& constellation, const GameState& state);
-
-	void loadGame(std::string filePath, Constellation& constellation, GameState& state);
+	void saveGame(std::string filePath, const Constellation& constellation, const GameState& state, const Background& background);
+	void loadGame(std::string filePath, Constellation& constellation, GameState& state, Background& background);
 };

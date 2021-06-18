@@ -40,6 +40,7 @@ int main(int argc, const char* argv[])
     DEBUG_PRINT("test debug print");
 
     MainMenu mainMenu;
+    NewGameMenu& newGameMenu = mainMenu.getNewGameMenu();
     OptionsMenu& optionsMenu = mainMenu.getOptionsMenu();
     PlayerGUI& playerGui = mainMenu.getNewGameMenu().getPlayerGUI();
 
@@ -72,6 +73,10 @@ int main(int argc, const char* argv[])
     mainMenu.open(gui, constellation, state);
     
     Background background("data/art/spacebackground1.png", resolution.x, resolution.y);
+    newGameMenu.addGameStartCallbacK([&background]() {
+        background.setNebulaSeed(Random::randFloat(0.0f, 1.0f));
+        DEBUG_PRINT("Randomized nebula seed");
+    });
 
     sf::Shader starShader;
     starShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/fragmentshader3.shader");
@@ -127,7 +132,7 @@ int main(int argc, const char* argv[])
 
         window.clear();
         
-        background.draw(window);
+        background.draw(window, emitter);
         
         state.getCamera().update(window);
 
@@ -153,7 +158,7 @@ int main(int argc, const char* argv[])
         fpsClock.restart();
 
         if (state.getMetaState() == GameState::MetaState::LOAD_GAME) {
-            saveLoader.loadGame("data/saves/game.save", constellation, state);
+            saveLoader.loadGame("data/saves/game.save", constellation, state, background);
             mainMenu.close();
             
             state.resetMetaState();
@@ -176,7 +181,7 @@ int main(int argc, const char* argv[])
     }
 
     if (state.getMetaState() == GameState::MetaState::EXIT_AND_SAVE) {
-        saveLoader.saveGame("data/saves/game.save", constellation, state);
+        saveLoader.saveGame("data/saves/game.save", constellation, state, background);
         DEBUG_PRINT("Game saved");
     }
 

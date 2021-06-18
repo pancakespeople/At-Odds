@@ -36,6 +36,9 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_planetShader.setUniform("size", sf::Glsl::Vec2(2048, 2048));
 
 	m_glowShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/glow.shader");
+
+	m_nebulaShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/nebulashader.shader");
+	m_nebulaShader.setUniform("size", sf::Glsl::Vec2(resolution.x, resolution.y));
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -131,4 +134,10 @@ void EffectsEmitter::drawHabitableZone(sf::RenderWindow& window, const sf::Vecto
 	m_habitableZone.setRadius(habitableOuterRadius);
 	m_habitableZone.setOrigin(sf::Vector2f(habitableOuterRadius, habitableOuterRadius));
 	window.draw(m_habitableZone);
+}
+
+void EffectsEmitter::drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed) {
+	m_nebulaShader.setUniform("background", sf::Shader::CurrentTexture);
+	m_nebulaShader.setUniform("seed", seed);
+	window.draw(sprite, &m_nebulaShader);
 }
