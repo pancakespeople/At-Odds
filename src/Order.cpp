@@ -17,6 +17,7 @@ BOOST_CLASS_EXPORT_GUID(AttackOrder, "AttackOrder")
 BOOST_CLASS_EXPORT_GUID(TravelOrder, "TravelOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithBuildingOrder, "InteractWithBuildingOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithPlanetOrder, "InteractWithPlanetOrder")
+BOOST_CLASS_EXPORT_GUID(DieOrder, "DieOrder");
 
 bool FlyToOrder::execute(Spaceship* ship, Star* currentStar) {
 	return ship->flyTo(m_pos);
@@ -224,4 +225,14 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 void InteractWithPlanetOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
 	if (m_planet != nullptr)
 		emitter.drawLine(window, shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
+}
+
+DieOrder::DieOrder(bool silently) {
+	m_dieSilently = silently;
+}
+
+bool DieOrder::execute(Spaceship* ship, Star* currentStar) {
+	ship->kill();
+	if (m_dieSilently) ship->setSilentDeath(true);
+	return true;
 }

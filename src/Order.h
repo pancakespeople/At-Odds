@@ -164,3 +164,20 @@ private:
 	unsigned int m_planetID = 0;
 	Planet* m_planet = nullptr;
 };
+
+class DieOrder : public Order {
+public:
+	DieOrder(bool silently = false);
+
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		boost::serialization::base_object<Order>(*this);
+		archive & m_dieSilently;
+	}
+
+	bool m_dieSilently = false;
+};

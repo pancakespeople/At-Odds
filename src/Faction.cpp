@@ -41,7 +41,6 @@ void Faction::spawnAtRandomStar() {
 	}
 
 	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
-	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::OUTPOST, m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), m_id, m_color));
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SHIP_FACTORY, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SPACE_HABITAT, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));

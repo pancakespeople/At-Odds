@@ -217,7 +217,11 @@ void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 				Spaceship* bus = currentStar->createSpaceship(
 					std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, unit->getPos(), currentStar, unit->getAllegiance(), unit->getFactionColor())
 				);
+				bus->setCanReceiveOrders(true);
 				bus->addOrder(InteractWithPlanetOrder(&targetPlanet, currentStar));
+				bus->addOrder(FlyToOrder(unit->getPos()));
+				bus->addOrder(DieOrder(true));
+				bus->setCanReceiveOrders(false);
 
 				m_population -= 1000;
 			}

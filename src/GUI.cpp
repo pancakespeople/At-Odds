@@ -193,6 +193,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 
 					// Add orders
 					for (Spaceship* s : m_selectedShips) {
+						if (!s->canReceiveOrders()) continue;
 						if (state.getLocalViewStar() == s->getCurrentStar()) {
 							s->clearOrders();
 							if (attackTarget != nullptr) {
@@ -235,6 +236,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 			// Add travel order to star
 			if (star != nullptr) {
 				for (Spaceship* s : m_selectedShips) {
+					if (!s->canReceiveOrders()) continue;
 					s->clearOrders();
 					s->addOrder(TravelOrder(star));
 				}

@@ -49,12 +49,15 @@ public:
 	void fireAt(Spaceship* target, int weaponIdx);
 	void disable() { m_disabled = true; }
 	void enable() { m_disabled = false; }
+	void setSilentDeath(bool flag) { m_diesSilently = flag; }
+	void setCanReceiveOrders(bool flag) { m_canReceiveOrders = flag; }
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
 	bool flyTo(const sf::Vector2f& pos);
 	bool isSelected() { return m_selected; }
 	bool isDisabled() { return m_disabled; }
+	bool canReceiveOrders() { return m_canReceiveOrders; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
@@ -94,6 +97,7 @@ private:
 		archive & m_canReceiveOrders;
 		archive & m_disabled;
 		archive & m_fighterAI;
+		archive & m_diesSilently;
 	}
 
 	Spaceship() {}
@@ -115,5 +119,6 @@ private:
 	bool m_canReceiveOrders = true;
 	bool m_disabled = false;
 	bool m_fighterAI = false;
+	bool m_diesSilently = false;
 };
 

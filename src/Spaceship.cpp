@@ -92,6 +92,7 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_mass = 75000.0f;
 		m_health = 50.0f;
 		m_collider.setRadius(150.0f);
+		m_canReceiveOrders = false;
 		
 		addMod(HabitatMod(1000, 1000, false));
 
@@ -199,8 +200,10 @@ void Spaceship::update(Star* currentStar) {
 	
 	if (!m_dead && m_health <= 0.0f) {
 		m_dead = true;
-		m_currentStar->addAnimation(Animation("data/art/explosion1.png", 4, 4, getPos(), 20, 16.0f));
-		Sounds::playSoundLocal("data/sound/boom1.wav", m_currentStar, 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
+		if (!m_diesSilently) {
+			m_currentStar->addAnimation(Animation("data/art/explosion1.png", 4, 4, getPos(), 20, 16.0f));
+			Sounds::playSoundLocal("data/sound/boom1.wav", m_currentStar, 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
+		}
 	}
 
 	if (!m_orders.empty()) {
