@@ -7,13 +7,19 @@
 #include "Identifiable.h"
 
 struct Colony {
+	const static int growthTicks = 1000;
+	
 	int population = 0;
+	int ticksUntilNextGrowth = growthTicks;
+
+	float getGrowthRate(float planetHabitability);
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & population;
+		archive & ticksUntilNextGrowth;
 	}
 };
 
@@ -35,6 +41,7 @@ public:
 
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time);
 	void update();
+	void updateColony();
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);
 

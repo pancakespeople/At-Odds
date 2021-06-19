@@ -1177,8 +1177,16 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 			});
 			gui.add(m_colonyInfoWindow);
 
-			auto populationLabel = tgui::Label::create("Population: " + std::to_string(planet.getColony().population));
+			Colony& colony = planet.getColony();
+
+			auto populationLabel = tgui::Label::create("Population: " + std::to_string(colony.population));
 			m_colonyInfoWindow->add(populationLabel);
+
+			if (colony.population > 0) {
+				auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
+				growthRateLabel->setPosition("0%", "10%");
+				m_colonyInfoWindow->add(growthRateLabel);
+			}
 		}
 		else {
 			gui.remove(m_colonyInfoWindow);

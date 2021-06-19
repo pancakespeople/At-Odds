@@ -52,6 +52,7 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time)
 
 void Planet::update() {
 	m_shape.setPosition(m_orbit.update());
+	updateColony();
 }
 
 void Planet::generateGasGiant(float baseTemperature) {
@@ -227,4 +228,22 @@ float Planet::getHabitability() const {
 	else {
 		return 1.0f / diff;
 	}
+}
+
+void Planet::updateColony() {
+	if (m_colony.ticksUntilNextGrowth == 0) {
+		float growthRate = m_colony.getGrowthRate(getHabitability());
+		float growth = m_colony.population * growthRate;
+		m_colony.population += growth;
+		m_colony.ticksUntilNextGrowth = Colony::growthTicks;
+	}
+	else {
+		m_colony.ticksUntilNextGrowth--;
+	}
+}
+
+float Colony::getGrowthRate(float planetHabitability) {
+	// Negative growth rate if habitability is less than 0.5
+	float growthRate = (planetHabitability - 0.5f) / 10.0f;
+	return growthRate;
 }
