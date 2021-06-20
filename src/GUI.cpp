@@ -1164,7 +1164,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	auto colonyInfoButton = tgui::Button::create();
 	colonyInfoButton->setPosition("75%", "80%");
 	colonyInfoButton->setText("Colony");
-	colonyInfoButton->onClick([this, &gui, &planet]() {
+	colonyInfoButton->onClick([this, &gui, &state, &planet]() {
 		if (m_colonyInfoWindow == nullptr) {
 			m_colonyInfoWindow = tgui::ChildWindow::create();
 			m_colonyInfoWindow->setPosition("22.5%", "61%");
@@ -1183,8 +1183,24 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 			m_colonyInfoWindow->add(populationLabel);
 
 			if (colony.population > 0) {
+				auto allegianceLabel = tgui::Label::create("Allegiance: ");
+				allegianceLabel->setPosition("0%", "10%");
+				m_colonyInfoWindow->add(allegianceLabel, "allegianceLabel");
+
+				auto allegianceText = tgui::Label::create();
+				if (state.getPlayer().getFaction() == colony.allegiance) {
+					allegianceText->setText("Friendly");
+					allegianceText->getRenderer()->setTextColor(tgui::Color::Green);
+				}
+				else {
+					allegianceText->setText("Hostile");
+					allegianceText->getRenderer()->setTextColor(tgui::Color::Red);
+				}
+				allegianceText->setPosition("allegianceLabel.right", "allegianceLabel.top");
+				m_colonyInfoWindow->add(allegianceText);
+				
 				auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
-				growthRateLabel->setPosition("0%", "10%");
+				growthRateLabel->setPosition("0%", "20%");
 				m_colonyInfoWindow->add(growthRateLabel);
 			}
 		}

@@ -239,7 +239,10 @@ std::string HabitatMod::getInfoString() {
 	return info;
 }
 
-void HabitatMod::interactWithPlanet(Planet* planet) {
+void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet) {
 	planet->getColony().population += m_population;
 	m_population = 0;
+	if (planet->getColony().allegiance == -1) {
+		planet->getColony().allegiance = unit->getAllegiance();
+	}
 }

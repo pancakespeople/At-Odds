@@ -11,6 +11,7 @@ struct Colony {
 	
 	int population = 0;
 	int ticksUntilNextGrowth = growthTicks;
+	int allegiance = -1;
 
 	float getGrowthRate(float planetHabitability);
 

@@ -11,7 +11,7 @@ public:
 
 	// Faction can be nullptr, others cant
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
-	virtual void interactWithPlanet(Planet* planet) {}
+	virtual void interactWithPlanet(Unit*, Planet* planet) {}
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
 
@@ -90,7 +90,7 @@ public:
 	HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus);
 	
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
-	virtual void interactWithPlanet(Planet* planet) override;
+	virtual void interactWithPlanet(Unit* unit, Planet* planet) override;
 
 	virtual std::string getInfoString() override;
 

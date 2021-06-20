@@ -215,7 +215,7 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 
 	if (Math::distance(ship->getPos(), m_planet->getPos()) < (m_planet->getRadius() + ship->getCollider().getRadius())) {
 		for (auto& mod : ship->getMods()) {
-			mod->interactWithPlanet(m_planet);
+			mod->interactWithPlanet(ship, m_planet);
 		}
 		return true;
 	}
