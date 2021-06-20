@@ -21,6 +21,7 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & population;
 		archive & ticksUntilNextGrowth;
+		archive & allegiance;
 	}
 };
 
@@ -58,6 +59,7 @@ public:
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 
+	PLANET_TYPE getType() const { return m_type; }
 	std::string getTypeString() const;
 
 

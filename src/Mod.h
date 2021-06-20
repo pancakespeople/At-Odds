@@ -94,6 +94,8 @@ public:
 
 	virtual std::string getInfoString() override;
 
+	int calcBusTickTimer();
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -109,10 +111,12 @@ private:
 
 	HabitatMod() {}
 	
+	const static int baseBusTickTimer = 500;
+
 	int m_population = 100000;
 	int m_ticksToNextGrowth = 1000;
 	int m_popCap = 1000000;
-	int m_ticksToNextBus = 3500;
+	int m_ticksToNextBus = baseBusTickTimer;
 
 	float m_growthRate = 0.01f;
 

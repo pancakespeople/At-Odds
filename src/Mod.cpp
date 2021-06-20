@@ -192,6 +192,7 @@ HabitatMod::HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus) {
 	m_population = population;
 	m_popCap = maxPopulation;
 	m_spawnsSpaceBus = spawnsSpaceBus;
+	m_ticksToNextBus = calcBusTickTimer();
 }
 
 void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
@@ -213,19 +214,54 @@ void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (m_spawnsSpaceBus) {
 		if (m_ticksToNextBus == 0) {
 			if (currentStar->getPlanets().size() > 0) {
-				Planet& targetPlanet = currentStar->getMostHabitablePlanet();
-				Spaceship* bus = currentStar->createSpaceship(
-					std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, unit->getPos(), currentStar, unit->getAllegiance(), unit->getFactionColor())
-				);
-				bus->setCanReceiveOrders(true);
-				bus->addOrder(InteractWithPlanetOrder(&targetPlanet, currentStar));
-				bus->addOrder(FlyToOrder(unit->getPos()));
-				bus->addOrder(DieOrder(true));
-				bus->setCanReceiveOrders(false);
+				Planet* targetPlanet = nullptr;
+				std::vector<Planet>& planets = currentStar->getPlanets();
 
-				m_population -= 1000;
+				if (Random::randBool()) {
+					// Half of the time, just head to the most habitable planet
+					targetPlanet = &currentStar->getMostHabitablePlanet();
+					DEBUG_PRINT("Colonizing most habitable planet");
+				}
+				else {
+					Planet* mostHabitable = &currentStar->getMostHabitablePlanet();
+
+					int attempts = 0;
+					while (attempts < 10) {
+						Planet* randPlanet = &planets[Random::randInt(0, planets.size() - 1)];
+						if (randPlanet != mostHabitable) {
+							if (randPlanet->getType() != Planet::PLANET_TYPE::GAS_GIANT &&
+								randPlanet->getType() != Planet::PLANET_TYPE::ICE_GIANT &&
+								Random::randFloat(0.0f, 1.0f) < 0.9f) {
+								// Colonize a terrestrial planet 90% of the time
+								targetPlanet = randPlanet;
+								DEBUG_PRINT("Colonizing random terrestial planet");
+								break;
+							}
+							else {
+								// Colonize a gas giant
+								targetPlanet = randPlanet;
+								DEBUG_PRINT("Colonizing gas giant");
+								break;
+							}
+							
+						}
+						attempts++;
+					}
+				}
+				if (targetPlanet != nullptr) {
+					Spaceship* bus = currentStar->createSpaceship(
+						std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, unit->getPos(), currentStar, unit->getAllegiance(), unit->getFactionColor())
+					);
+					bus->setCanReceiveOrders(true);
+					bus->addOrder(InteractWithPlanetOrder(targetPlanet, currentStar));
+					bus->addOrder(FlyToOrder(unit->getPos()));
+					bus->addOrder(DieOrder(true));
+					bus->setCanReceiveOrders(false);
+
+					m_population -= 1000;
+				}
 			}
-			m_ticksToNextBus = 3500;
+			m_ticksToNextBus = calcBusTickTimer();
 		}
 		else {
 			m_ticksToNextBus--;
@@ -245,4 +281,9 @@ void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet) {
 	if (planet->getColony().allegiance == -1) {
 		planet->getColony().allegiance = unit->getAllegiance();
 	}
+}
+
+int HabitatMod::calcBusTickTimer() {
+	if (m_population == 0) return 3000;
+	return 50000000 / m_population;
 }
