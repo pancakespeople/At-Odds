@@ -96,6 +96,10 @@ public:
 
 	int calcBusTickTimer();
 
+	static Star* findBusStarDestination(Star* currentStar, Faction* faction);
+	static Planet* findBusPlanetDestination(Star* targetStar);
+	static void createSpaceBus(Unit* unit, Star* currentStar, Star* targetStar, Planet* targetPlanet);
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>

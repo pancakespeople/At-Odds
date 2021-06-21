@@ -92,7 +92,7 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_mass = 75000.0f;
 		m_health = 50.0f;
 		m_collider.setRadius(150.0f);
-		m_canReceiveOrders = false;
+		m_playerCanGiveOrders = false;
 		
 		addMod(HabitatMod(1000, 1000, false));
 

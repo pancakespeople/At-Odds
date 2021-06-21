@@ -58,6 +58,7 @@ public:
 	bool isSelected() { return m_selected; }
 	bool isDisabled() { return m_disabled; }
 	bool canReceiveOrders() { return m_canReceiveOrders; }
+	bool canPlayerGiveOrders() { return m_playerCanGiveOrders; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
@@ -95,6 +96,7 @@ private:
 		archive & m_rotationSpeed;
 		archive & m_constructionSpeed;
 		archive & m_canReceiveOrders;
+		archive & m_playerCanGiveOrders;
 		archive & m_disabled;
 		archive & m_fighterAI;
 		archive & m_diesSilently;
@@ -117,6 +119,7 @@ private:
 
 	bool m_selected = false;
 	bool m_canReceiveOrders = true;
+	bool m_playerCanGiveOrders = true;
 	bool m_disabled = false;
 	bool m_fighterAI = false;
 	bool m_diesSilently = false;
