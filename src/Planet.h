@@ -6,11 +6,15 @@
 #include "ParticleSystem.h"
 #include "Identifiable.h"
 
+class Star;
+class Faction;
+
 struct Colony {
 	const static int growthTicks = 1000;
 	
 	int population = 0;
 	int ticksUntilNextGrowth = growthTicks;
+	int ticksToNextBus = 500;
 	int allegiance = -1;
 
 	float getGrowthRate(float planetHabitability);
@@ -42,10 +46,12 @@ public:
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature);
 
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time);
-	void update();
-	void updateColony();
+	void update(Star* currentStar, Faction* faction);
+	void updateColony(Star* currentStar, Faction* faction);
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);
+	void onColonization();
+	void createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet);
 
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }

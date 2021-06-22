@@ -192,7 +192,7 @@ HabitatMod::HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus) {
 	m_population = population;
 	m_popCap = maxPopulation;
 	m_spawnsSpaceBus = spawnsSpaceBus;
-	m_ticksToNextBus = calcBusTickTimer();
+	m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population);
 }
 
 void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
@@ -224,7 +224,7 @@ void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 					m_population -= 1000;
 				}
 			}
-			m_ticksToNextBus = calcBusTickTimer();
+			m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population);
 		}
 		else {
 			m_ticksToNextBus--;
@@ -239,21 +239,27 @@ std::string HabitatMod::getInfoString() {
 }
 
 void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet) {
+	bool firstTime = planet->getColony().population == 0;
 	planet->getColony().population += m_population;
-	m_population = 0;
-	if (planet->getColony().allegiance == -1) {
+	if (firstTime && m_population > 0) {
 		planet->getColony().allegiance = unit->getAllegiance();
+		planet->onColonization();
 	}
+	m_population = 0;
 }
 
-int HabitatMod::calcBusTickTimer() {
-	if (m_population == 0) return 3000;
-	return 50000000 / m_population;
+int HabitatMod::calcBusTickTimer(int population) {
+	if (population == 0) return 3000;
+	int timer = 50000000 / population;
+	
+	if (timer > 3000) return 3000;
+	if (timer < 120) return 120;
+	else return timer;
 }
 
 Star* HabitatMod::findBusStarDestination(Star* currentStar, Faction* faction) {
 	Star* targetStar = nullptr;
-	if (Random::randBool()) {
+	if (Random::randBool() && currentStar->getPlanets().size() != 0) {
 		// Half the time, use the home system
 		targetStar = currentStar;
 	}
@@ -273,14 +279,13 @@ Star* HabitatMod::findBusStarDestination(Star* currentStar, Faction* faction) {
 	return targetStar;
 }
 
-Planet* HabitatMod::findBusPlanetDestination(Star* targetStar) {
+Planet* HabitatMod::findBusPlanetDestination(Star* targetStar, Planet* avoidPlanet) {
 	Planet* targetPlanet = nullptr;
 	std::vector<Planet>& planets = targetStar->getPlanets();
 
-	if (Random::randBool()) {
+	if (Random::randBool() && &targetStar->getMostHabitablePlanet() != avoidPlanet) {
 		// Half of the time, just head to the most habitable planet
 		targetPlanet = &targetStar->getMostHabitablePlanet();
-		DEBUG_PRINT("Colonizing most habitable planet");
 	}
 	else {
 		Planet* mostHabitable = &targetStar->getMostHabitablePlanet();
@@ -288,35 +293,39 @@ Planet* HabitatMod::findBusPlanetDestination(Star* targetStar) {
 		// 10 attempts to find a planet
 		for (int i = 0; i < 10; i++) {
 			Planet* randPlanet = &planets[Random::randInt(0, planets.size() - 1)];
-			if (randPlanet != mostHabitable) {
-				if (randPlanet->getType() != Planet::PLANET_TYPE::GAS_GIANT &&
-					randPlanet->getType() != Planet::PLANET_TYPE::ICE_GIANT &&
-					Random::randFloat(0.0f, 1.0f) < 0.9f) {
-					// Colonize a terrestrial planet 90% of the time
-					targetPlanet = randPlanet;
-					DEBUG_PRINT("Colonizing random terrestial planet");
-					break;
-				}
-				else {
-					// Colonize a gas giant
-					targetPlanet = randPlanet;
-					DEBUG_PRINT("Colonizing gas giant");
-					break;
-				}
+			if (randPlanet != avoidPlanet) {
+				if (randPlanet != mostHabitable) {
+					if (randPlanet->getType() != Planet::PLANET_TYPE::GAS_GIANT &&
+						randPlanet->getType() != Planet::PLANET_TYPE::ICE_GIANT &&
+						Random::randFloat(0.0f, 1.0f) < 0.9f) {
+						// Colonize a terrestrial planet 90% of the time
+						targetPlanet = randPlanet;
+						break;
+					}
+					else {
+						// Colonize a gas giant
+						targetPlanet = randPlanet;
+						break;
+					}
 
+				}
 			}
 		}
 	}
 	return targetPlanet;
 }
 
-void HabitatMod::createSpaceBus(Unit* unit, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
+void HabitatMod::createSpaceBus(sf::Vector2f pos, int allegiance, sf::Color color, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
 	Spaceship* bus = currentStar->createSpaceship(
-		std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, unit->getPos(), currentStar, unit->getAllegiance(), unit->getFactionColor())
+		std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, pos, currentStar, allegiance, color)
 	);
 	bus->addOrder(TravelOrder(targetStar));
 	bus->addOrder(InteractWithPlanetOrder(targetPlanet, targetStar));
 	bus->addOrder(TravelOrder(currentStar));
-	bus->addOrder(FlyToOrder(unit->getPos()));
+	bus->addOrder(FlyToOrder(pos));
 	bus->addOrder(DieOrder(true));
+}
+
+void HabitatMod::createSpaceBus(Unit* unit, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
+	createSpaceBus(unit->getPos(), unit->getAllegiance(), unit->getFactionColor(), currentStar, targetStar, targetPlanet);
 }

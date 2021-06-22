@@ -94,11 +94,11 @@ public:
 
 	virtual std::string getInfoString() override;
 
-	int calcBusTickTimer();
-
+	static int calcBusTickTimer(int population);
 	static Star* findBusStarDestination(Star* currentStar, Faction* faction);
-	static Planet* findBusPlanetDestination(Star* targetStar);
+	static Planet* findBusPlanetDestination(Star* targetStar, Planet* avoidPlanet = nullptr);
 	static void createSpaceBus(Unit* unit, Star* currentStar, Star* targetStar, Planet* targetPlanet);
+	static void createSpaceBus(sf::Vector2f pos, int allegiance, sf::Color color, Star* currentStar, Star* targetStar, Planet* targetPlanet);
 
 private:
 	friend class boost::serialization::access;
@@ -115,12 +115,10 @@ private:
 
 	HabitatMod() {}
 	
-	const static int baseBusTickTimer = 500;
-
 	int m_population = 100000;
 	int m_ticksToNextGrowth = 1000;
 	int m_popCap = 1000000;
-	int m_ticksToNextBus = baseBusTickTimer;
+	int m_ticksToNextBus = 500;
 
 	float m_growthRate = 0.01f;
 

@@ -342,7 +342,7 @@ void Star::update(Constellation* constellation) {
 		a.nextFrame();
 	}
 	for (Planet& planet : m_planets) {
-		planet.update();
+		planet.update(this, constellation->getFaction(planet.getColony().allegiance));
 	}
 
 	m_particleSystem.updateParticles();

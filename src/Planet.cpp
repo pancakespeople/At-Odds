@@ -2,6 +2,9 @@
 #include "Planet.h"
 #include "Random.h"
 #include "Math.h"
+#include "Mod.h"
+#include "Star.h"
+#include "Faction.h"
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
@@ -50,9 +53,9 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time)
 	emitter.drawPlanet(window, m_shape, this, m_shaderRandomSeed, time);
 }
 
-void Planet::update() {
+void Planet::update(Star* currentStar, Faction* faction) {
 	m_shape.setPosition(m_orbit.update());
-	updateColony();
+	updateColony(currentStar, faction);
 }
 
 void Planet::generateGasGiant(float baseTemperature) {
@@ -230,7 +233,7 @@ float Planet::getHabitability() const {
 	}
 }
 
-void Planet::updateColony() {
+void Planet::updateColony(Star* currentStar, Faction* faction) {
 	if (m_colony.ticksUntilNextGrowth == 0) {
 		float growthRate = m_colony.getGrowthRate(getHabitability());
 		float growth = m_colony.population * growthRate;
@@ -240,10 +243,45 @@ void Planet::updateColony() {
 	else {
 		m_colony.ticksUntilNextGrowth--;
 	}
+
+	if (m_colony.population >= 1000 && faction != nullptr) {
+		if (m_colony.ticksToNextBus == 0) {
+			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
+
+			if (targetStar->getPlanets().size() > 0) {
+				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(targetStar, this);
+
+				if (targetPlanet != nullptr) {
+					Planet::createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
+
+					m_colony.population -= 1000;
+				}
+			}
+			m_colony.ticksToNextBus = HabitatMod::calcBusTickTimer(m_colony.population);
+		}
+		else {
+			m_colony.ticksToNextBus--;
+		}
+	}
 }
 
 float Colony::getGrowthRate(float planetHabitability) {
 	// Negative growth rate if habitability is less than 0.5
 	float growthRate = (planetHabitability - 0.5f) / 10.0f;
 	return growthRate;
+}
+
+void Planet::onColonization() {
+	m_colony.ticksToNextBus = HabitatMod::calcBusTickTimer(m_colony.population);
+}
+
+void Planet::createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
+	Spaceship* bus = currentStar->createSpaceship(
+		std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, getPos(), currentStar, m_colony.allegiance, factionColor)
+	);
+	bus->addOrder(TravelOrder(targetStar));
+	bus->addOrder(InteractWithPlanetOrder(targetPlanet, targetStar));
+	bus->addOrder(TravelOrder(currentStar));
+	bus->addOrder(InteractWithPlanetOrder(this, currentStar));
+	bus->addOrder(DieOrder(true));
 }
