@@ -94,7 +94,7 @@ int main(int argc, const char* argv[])
     float fps = 60;
 
     sf::Clock updateClock;
-    float updatesPerSecondTarget = 60.0f;
+    int updatesPerSecondTarget = 60;
     float updateStep = 1.0f;
 
     while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
@@ -113,6 +113,7 @@ int main(int argc, const char* argv[])
             playerGui.buildingGUI.onEvent(event, window, gui, state.getLocalViewStar());
             buildGui.onEvent(event, window, state.getLocalViewStar(), state.getPlayer());
             console.onEvent(event, gui, state);
+            playerGui.timescaleGUI.onEvent(event, gui, updatesPerSecondTarget);
         }
 
         optionsMenu.updateGameSettings(window, background, gui, emitter);

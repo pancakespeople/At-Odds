@@ -109,6 +109,18 @@ private:
 	tgui::ChildWindow::Ptr m_window;
 };
 
+class TimescaleGUI {
+public:
+	TimescaleGUI() {}
+
+	void open(tgui::Gui& gui);
+	void onEvent(sf::Event& ev, tgui::Gui& gui, int& updatesPerSecondTarget);
+
+private:
+	tgui::Label::Ptr m_timescaleLabel;
+	int m_timescale = 1;
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
@@ -119,6 +131,7 @@ struct PlayerGUI {
 	UnitGUI unitGUI;
 	PlanetGUI planetGUI;
 	BuildingGUI buildingGUI;
+	TimescaleGUI timescaleGUI;
 };
 
 class NewGameMenu {

@@ -824,10 +824,12 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, bool spectator) {
 		buildGUI.open(gui);
 		unitGUI.open(gui);
 		planetGUI.open(gui, state);
+		timescaleGUI.open(gui);
 	}
 	else {
 		unitGUI.open(gui);
 		planetGUI.open(gui, state);
+		timescaleGUI.open(gui);
 	}
 }
 
@@ -1252,6 +1254,43 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 
 				break;
 			}
+		}
+	}
+}
+
+void TimescaleGUI::open(tgui::Gui& gui) {
+	m_timescaleLabel = tgui::Label::create();
+	m_timescaleLabel->setPosition("40%", "10%");
+	m_timescaleLabel->setTextSize(25);
+	m_timescaleLabel->setVisible(false);
+	gui.add(m_timescaleLabel);
+}
+
+void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, int& updatesPerSecondTarget) {
+	if (m_timescaleLabel != nullptr) {
+		if (ev.type == sf::Event::KeyReleased && ((ev.key.code == sf::Keyboard::Equal && ev.key.shift) ||
+			(ev.key.code == sf::Keyboard::Dash))) {
+			// + or - pressed
+
+			gui.remove(m_timescaleLabel);
+			open(gui);
+
+			if (ev.key.code == sf::Keyboard::Dash) {
+				if (m_timescale > 1) {
+					m_timescale = m_timescale >> 1;
+				}
+			}
+			else {
+				if (m_timescale < 32) {
+					m_timescale = m_timescale << 1;
+				}
+			}
+
+			updatesPerSecondTarget = 60 * m_timescale;
+			
+			m_timescaleLabel->setText("Timescale: " + std::to_string(m_timescale) + "x");
+			m_timescaleLabel->setVisible(true);
+			m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
 		}
 	}
 }
