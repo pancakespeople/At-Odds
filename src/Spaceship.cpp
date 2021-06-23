@@ -93,6 +93,7 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_health = 50.0f;
 		m_collider.setRadius(150.0f);
 		m_playerCanGiveOrders = false;
+		m_civilian = true;
 		
 		addMod(HabitatMod(1000, 1000, false));
 
@@ -214,7 +215,7 @@ void Spaceship::update(Star* currentStar) {
 	else if (m_weapons.size() > 0) {
 		// Attack enemies in system
 		
-		std::vector<Spaceship*> enemies = findEnemyShips();
+		std::vector<Spaceship*> enemies = findEnemyCombatShips();
 		if (enemies.size() > 0) {
 			attackRandomEnemy(enemies);
 		}
@@ -341,6 +342,17 @@ std::vector<Spaceship*> Spaceship::findEnemyShips() {
 	return enemies;
 }
 
+std::vector<Spaceship*> Spaceship::findEnemyCombatShips() {
+	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
+	std::vector<Spaceship*> enemies;
+	for (auto& s : allShips) {
+		if (s->getAllegiance() != m_allegiance && !s->isCivilian()) {
+			enemies.push_back(s.get());
+		}
+	}
+	return enemies;
+}
+
 void Spaceship::fireAt(Spaceship* target, int weaponIdx) {
 	m_weapons[weaponIdx].fireAt(this, target->getPos(), m_currentStar);
 }
@@ -376,7 +388,7 @@ void Spaceship::orbit(const sf::Vector2f& pos) {
 
 void Spaceship::captureCurrentStar(Faction* faction) {
 	if (m_currentStar->getAllegiance() != m_allegiance) {
-		if (findEnemyShips().size() == 0) {
+		if (findEnemyCombatShips().size() == 0) {
 			m_currentStar->factionTakeOwnership(faction);
 			m_currentStar->createSpaceship(std::make_unique<Spaceship>(SPACESHIP_TYPE::CLAIM_SHIP, getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
 		}

@@ -59,6 +59,7 @@ public:
 	bool isDisabled() { return m_disabled; }
 	bool canReceiveOrders() { return m_canReceiveOrders; }
 	bool canPlayerGiveOrders() { return m_playerCanGiveOrders; }
+	bool isCivilian() { return m_civilian; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
@@ -81,6 +82,7 @@ public:
 
 	std::vector<Building*> findEnemyBuildings();
 	std::vector<Spaceship*> findEnemyShips();
+	std::vector<Spaceship*> findEnemyCombatShips();
 
 private:
 	friend class boost::serialization::access;
@@ -123,5 +125,6 @@ private:
 	bool m_disabled = false;
 	bool m_fighterAI = false;
 	bool m_diesSilently = false;
+	bool m_civilian = false;
 };
 

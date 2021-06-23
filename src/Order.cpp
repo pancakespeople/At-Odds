@@ -142,7 +142,7 @@ bool TravelOrder::execute(Spaceship* ship, Star* currentStar) {
 	else {
 		for (JumpPoint& j : ship->getCurrentStar()->getJumpPoints()) {
 			if (j.getConnectedOtherStar() == m_path.front()) {
-				ship->addOrderFront(JumpOrder(&j, true));
+				ship->addOrderFront(JumpOrder(&j, !ship->isCivilian()));
 				return false;
 			}
 		}
