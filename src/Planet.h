@@ -9,6 +9,27 @@
 class Star;
 class Faction;
 
+struct PlanetResource {
+	enum class RESOURCE_TYPE {
+		COMMON_ORE,
+		UNCOMMON_ORE,
+		RARE_ORE
+	};
+
+	RESOURCE_TYPE type = RESOURCE_TYPE::COMMON_ORE;
+	float abundance = 0.0f; // Value between 0 and 1
+
+	std::string getTypeString();
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & type;
+		archive & abundance;
+	}
+};
+
 struct Colony {
 	const static int growthTicks = 1000;
 	
@@ -25,6 +46,7 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & population;
 		archive & ticksUntilNextGrowth;
+		archive & ticksToNextBus;
 		archive & allegiance;
 	}
 };
@@ -52,6 +74,7 @@ public:
 	void generateTerrestrial(float baseTemperature);
 	void onColonization();
 	void createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet);
+	void generateResources();
 
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
@@ -67,6 +90,7 @@ public:
 
 	PLANET_TYPE getType() const { return m_type; }
 	std::string getTypeString() const;
+	std::vector<PlanetResource>& getResources() { return m_resources; }
 
 
 private:
@@ -83,6 +107,7 @@ private:
 		archive & m_orbit;
 		archive & m_type;
 		archive & m_colony;
+		archive & m_resources;
 	}
 	
 	Planet() {}
@@ -99,4 +124,6 @@ private:
 	Orbit m_orbit;
 	PLANET_TYPE m_type = PLANET_TYPE::UNKNOWN;
 	Colony m_colony;
+
+	std::vector<PlanetResource> m_resources;
 };

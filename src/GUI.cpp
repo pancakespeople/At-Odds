@@ -1136,6 +1136,9 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	gui.remove(m_colonyInfoWindow);
 	m_colonyInfoWindow = nullptr;
 
+	gui.remove(m_resourceInfoWindow);
+	m_resourceInfoWindow = nullptr;
+
 	Planet& planet = state.getLocalViewStar()->getPlanets()[index];
 
 	auto planetTypeLabel = tgui::Label::create();
@@ -1212,6 +1215,49 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		}
 	});
 	m_planetInfoPanel->add(colonyInfoButton);
+
+	auto resourceInfoButton = tgui::Button::create("Resources");
+	resourceInfoButton->setPosition("75%", "70%");
+	resourceInfoButton->setTextSize(10);
+	resourceInfoButton->onPress([this, &gui, &planet]() {
+		if (m_resourceInfoWindow == nullptr) {
+			m_resourceInfoWindow = tgui::ChildWindow::create("Resources");
+			m_resourceInfoWindow->setPosition("22.5%", "61%");
+			m_resourceInfoWindow->setSize("20%", "29%");
+			m_resourceInfoWindow->getRenderer()->setOpacity(0.75f);
+			m_resourceInfoWindow->setPositionLocked(true);
+			m_resourceInfoWindow->onClose([this]() {
+				m_resourceInfoWindow = nullptr;
+			});
+			gui.add(m_resourceInfoWindow);
+
+			auto abundanceLabel = tgui::Label::create();
+			abundanceLabel->setPosition("50%", "0%");
+			abundanceLabel->setText("");
+			m_resourceInfoWindow->add(abundanceLabel, "abundanceLabel");
+
+			auto resourceListBox = tgui::ListBox::create();
+			resourceListBox->setPosition("0%", "0%");
+			resourceListBox->setSize("50%", "90%");
+
+			for (auto& resource : planet.getResources()) {
+				resourceListBox->addItem(resource.getTypeString());
+			}
+
+			resourceListBox->onItemSelect([this, &planet]() {
+				auto listBox = m_resourceInfoWindow->get<tgui::ListBox>("resourceListBox");
+				auto abundanceLabel = m_resourceInfoWindow->get<tgui::Label>("abundanceLabel");
+				abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
+			});
+
+			m_resourceInfoWindow->add(resourceListBox, "resourceListBox");
+		}
+		else {
+			gui.remove(m_resourceInfoWindow);
+			m_resourceInfoWindow = nullptr;
+		}
+	});
+	m_planetInfoPanel->add(resourceInfoButton);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());

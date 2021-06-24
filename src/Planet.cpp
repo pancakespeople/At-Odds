@@ -42,6 +42,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 		}
 	}
 
+	generateResources();
 	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
 
 	m_shape.setOrigin(sf::Vector2f(m_shape.getRadius(), m_shape.getRadius()));
@@ -121,7 +122,7 @@ void Planet::generateTerrestrial(float baseTemperature) {
 		m_water = Random::randFloat(0.0f, 1.0f);
 	}
 
-	// Colors
+	// Types
 	if (m_temperature > 273.15 && m_temperature < 325.0f &&
 		m_atmosphere > 0.5f && m_atmosphere < 3.0f &&
 		m_water > 0.4f) {
@@ -284,4 +285,45 @@ void Planet::createSpaceBus(sf::Color factionColor, Star* currentStar, Star* tar
 	bus->addOrder(TravelOrder(currentStar));
 	bus->addOrder(InteractWithPlanetOrder(this, currentStar));
 	bus->addOrder(DieOrder(true));
+}
+
+void Planet::generateResources() {
+	switch (m_type) {
+	case PLANET_TYPE::GAS_GIANT:
+	case PLANET_TYPE::ICE_GIANT:
+		break;
+	default:
+		// Terrestrial planet
+		
+		PlanetResource resource;
+		if (Random::randBool()) {
+			// 50% chance
+			resource.type = PlanetResource::RESOURCE_TYPE::COMMON_ORE;
+			resource.abundance = Random::randFloat(0.0f, 1.0f);
+			m_resources.push_back(resource);
+		}
+		if (Random::randFloat(0.0f, 1.0f) < 0.25f) {
+			// 25% chance
+			resource.type = PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE;
+			resource.abundance = Random::randFloat(0.0f, 1.0f);
+			m_resources.push_back(resource);
+		}
+		if (Random::randFloat(0.0, 1.0f) < 0.1f) {
+			// 10% chance
+			resource.type = PlanetResource::RESOURCE_TYPE::RARE_ORE;
+			resource.abundance = Random::randFloat(0.0f, 1.0f);
+			m_resources.push_back(resource);
+		}
+	}
+}
+
+std::string PlanetResource::getTypeString() {
+	switch (type) {
+	case RESOURCE_TYPE::COMMON_ORE:
+		return "Common Ore";
+	case RESOURCE_TYPE::UNCOMMON_ORE:
+		return "Uncommon Ore";
+	case RESOURCE_TYPE::RARE_ORE:
+		return "Rare Ore";
+	}
 }

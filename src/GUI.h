@@ -96,6 +96,7 @@ private:
 	tgui::Panel::Ptr m_planetPanel;
 	tgui::Panel::Ptr m_planetInfoPanel;
 	tgui::ChildWindow::Ptr m_colonyInfoWindow;
+	tgui::ChildWindow::Ptr m_resourceInfoWindow;
 };
 
 // Not to be confused with BuildGUI, this one is for the popup when you click on a building
