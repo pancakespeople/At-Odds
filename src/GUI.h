@@ -91,12 +91,12 @@ public:
 
 private:
 	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, tgui::Gui& gui, int index);
+	void switchSideWindow(const std::string& name, tgui::Gui& gui);
 	
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;
 	tgui::Panel::Ptr m_planetInfoPanel;
-	tgui::ChildWindow::Ptr m_colonyInfoWindow;
-	tgui::ChildWindow::Ptr m_resourceInfoWindow;
+	tgui::ChildWindow::Ptr m_sideWindow;
 };
 
 // Not to be confused with BuildGUI, this one is for the popup when you click on a building

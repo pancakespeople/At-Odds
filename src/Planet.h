@@ -39,6 +39,8 @@ struct Colony {
 	int allegiance = -1;
 
 	float getGrowthRate(float planetHabitability);
+	bool isColonizationLegal(int allegiance);
+	void setFactionColonyLegality(int allegiance, bool legality);
 
 private:
 	friend class boost::serialization::access;
@@ -48,7 +50,10 @@ private:
 		archive & ticksUntilNextGrowth;
 		archive & ticksToNextBus;
 		archive & allegiance;
+		archive & m_factionColonyLegality;
 	}
+	
+	std::unordered_map<int, bool> m_factionColonyLegality;
 };
 
 class Planet : public Identifiable {

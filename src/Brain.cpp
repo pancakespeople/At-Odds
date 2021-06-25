@@ -21,8 +21,8 @@ void Brain::controlFaction(Faction* faction) {
 	else if (m_state == AI_STATE::FORTIFYING) {
 		considerFortifying(faction);
 	}
-	else if (m_state == AI_STATE::SHIP_BUILDING) {
-		considerShipBuilding(faction);
+	else if (m_state == AI_STATE::ECONOMY) {
+		considerEconomy(faction);
 	}
 
 	m_stateChangeTimer--;
@@ -33,8 +33,8 @@ void Brain::considerChangingState() {
 		m_state = AI_STATE::ATTACKING;
 	}
 	else {
-		if (Random::randFloat(0.0f, 1.0f) < m_personality.admiral) {
-			m_state = AI_STATE::SHIP_BUILDING;
+		if (Random::randFloat(0.0f, 1.0f) < m_personality.economizer) {
+			m_state = AI_STATE::ECONOMY;
 		}
 		else {
 			m_state = AI_STATE::FORTIFYING;
@@ -193,9 +193,14 @@ void Brain::considerAttack(Faction* faction) {
 	}
 }
 
-void Brain::considerShipBuilding(Faction* faction) {
+void Brain::considerEconomy(Faction* faction) {
 	for (Star* star : faction->getOwnedStars()) {
-		if (!star->containsBuildingType(Building::BUILDING_TYPE::SHIP_FACTORY, true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
+		
+		bool builtShipFactory = false;
+
+		// Build ship factories
+		if (!star->containsBuildingType(Building::BUILDING_TYPE::SHIP_FACTORY, true, faction->getID()) && faction->numIdleConstructionShips() > 0 &&
+			!builtShipFactory) {
 			std::unique_ptr<Building> factory = std::make_unique<Building>(
 				Building::BUILDING_TYPE::SHIP_FACTORY, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
 
@@ -203,9 +208,28 @@ void Brain::considerShipBuilding(Faction* faction) {
 			faction->orderConstructionShipsBuild(ptr, true);
 
 			AI_DEBUG_PRINT("Building ship factory");
+			builtShipFactory = true;
+		}
 
-			m_state = AI_STATE::NONE;
-			break;
+		// Set colonization of planets to be legal
+		if (star->getPlanets().size() > 0) {
+			Planet& mostHabitable = star->getMostHabitablePlanet();
+			if (!mostHabitable.getColony().isColonizationLegal(faction->getID())) {
+				mostHabitable.getColony().setFactionColonyLegality(faction->getID(), true);
+				AI_DEBUG_PRINT("Made colonization of " << mostHabitable.getTypeString() << " legal");
+			}
+
+			// 50% to set another random other planet to legal
+			if (Random::randBool()) {
+				auto planets = star->getPlanets();
+				Planet& randPlanet = planets[Random::randInt(0, planets.size() - 1)];
+
+				if (!randPlanet.getColony().isColonizationLegal(faction->getID())) {
+					randPlanet.getColony().setFactionColonyLegality(faction->getID(), true);
+					AI_DEBUG_PRINT("Made colonization of " << randPlanet.getTypeString() << " legal");
+				}
+			}
 		}
 	}
+	m_state = AI_STATE::NONE;
 }

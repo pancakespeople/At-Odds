@@ -216,7 +216,7 @@ void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
 
 			if (targetStar->getPlanets().size() > 0) {
-				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(targetStar);
+				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(unit->getAllegiance(), targetStar);
 				
 				if (targetPlanet != nullptr) {
 					HabitatMod::createSpaceBus(unit, currentStar, targetStar, targetPlanet);
@@ -279,21 +279,23 @@ Star* HabitatMod::findBusStarDestination(Star* currentStar, Faction* faction) {
 	return targetStar;
 }
 
-Planet* HabitatMod::findBusPlanetDestination(Star* targetStar, Planet* avoidPlanet) {
+Planet* HabitatMod::findBusPlanetDestination(int allegiance, Star* targetStar, Planet* avoidPlanet) {
 	Planet* targetPlanet = nullptr;
 	std::vector<Planet>& planets = targetStar->getPlanets();
 
-	if (Random::randBool() && &targetStar->getMostHabitablePlanet() != avoidPlanet) {
+	Planet* mostHabitable = &targetStar->getMostHabitablePlanet();
+
+	if (Random::randBool() && mostHabitable != avoidPlanet) {
 		// Half of the time, just head to the most habitable planet
-		targetPlanet = &targetStar->getMostHabitablePlanet();
+		if (mostHabitable->getColony().isColonizationLegal(allegiance)) {
+			targetPlanet = mostHabitable;
+		}
 	}
 	else {
-		Planet* mostHabitable = &targetStar->getMostHabitablePlanet();
-
 		// 10 attempts to find a planet
 		for (int i = 0; i < 10; i++) {
 			Planet* randPlanet = &planets[Random::randInt(0, planets.size() - 1)];
-			if (randPlanet != avoidPlanet) {
+			if (randPlanet != avoidPlanet && randPlanet->getColony().isColonizationLegal(allegiance)) {
 				if (randPlanet != mostHabitable) {
 					if (randPlanet->getType() != Planet::PLANET_TYPE::GAS_GIANT &&
 						randPlanet->getType() != Planet::PLANET_TYPE::ICE_GIANT &&

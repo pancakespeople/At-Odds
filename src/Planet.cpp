@@ -250,7 +250,7 @@ void Planet::updateColony(Star* currentStar, Faction* faction) {
 			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
 
 			if (targetStar->getPlanets().size() > 0) {
-				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(targetStar, this);
+				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_colony.allegiance, targetStar, this);
 
 				if (targetPlanet != nullptr) {
 					Planet::createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
@@ -325,5 +325,16 @@ std::string PlanetResource::getTypeString() {
 		return "Uncommon Ore";
 	case RESOURCE_TYPE::RARE_ORE:
 		return "Rare Ore";
+	default:
+		return "Unknown";
 	}
+}
+
+bool Colony::isColonizationLegal(int allegiance) {
+	if (m_factionColonyLegality.count(allegiance) == 0) return false;
+	else return m_factionColonyLegality[allegiance];
+}
+
+void Colony::setFactionColonyLegality(int allegiance, bool legality) {
+	m_factionColonyLegality[allegiance] = legality;
 }

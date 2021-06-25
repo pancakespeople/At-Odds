@@ -8,7 +8,7 @@ public:
 		NONE,
 		ATTACKING,
 		FORTIFYING,
-		SHIP_BUILDING
+		ECONOMY
 	};
 	
 	void onStart(Faction* faction);
@@ -16,7 +16,7 @@ public:
 	void controlFaction(Faction* faction);
 	void considerAttack(Faction* faction);
 	void considerFortifying(Faction* faction);
-	void considerShipBuilding(Faction* faction);
+	void considerEconomy(Faction* faction);
 	void considerChangingState();
 
 private:
@@ -26,7 +26,7 @@ private:
 		archive & m_state;
 		archive & m_stateChangeTimer;
 		archive & m_personality.aggressiveness;
-		archive & m_personality.admiral;
+		archive & m_personality.economizer;
 		archive & m_attackVars.expansionTarget;
 		archive & m_attackVars.launchingAttack;
 		archive & m_attackVars.attackTimer;
@@ -40,7 +40,7 @@ private:
 	struct Personality {
 		// All vals are percent
 		float aggressiveness = 0.5f;
-		float admiral = 0.5f;
+		float economizer = 0.5f;
 	} m_personality;
 
 	struct AttackVars {

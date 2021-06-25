@@ -40,6 +40,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/export.hpp>
+#include <boost/serialization/unordered_map.hpp>
 
 #include "Debug.h"
 #include "SimpleIni.h"

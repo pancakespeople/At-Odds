@@ -1104,9 +1104,9 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 			gui.remove(m_planetPanel);
 			m_planetPanel = nullptr;
 
-			if (m_colonyInfoWindow != nullptr) {
-				gui.remove(m_colonyInfoWindow);
-				m_colonyInfoWindow = nullptr;
+			if (m_sideWindow != nullptr) {
+				gui.remove(m_sideWindow);
+				m_sideWindow = nullptr;
 			}
 		}
 	});
@@ -1116,9 +1116,9 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 			gui.remove(m_planetPanel);
 			m_planetPanel = nullptr;
 		}
-		if (m_colonyInfoWindow != nullptr) {
-			gui.remove(m_colonyInfoWindow);
-			m_colonyInfoWindow = nullptr;
+		if (m_sideWindow != nullptr) {
+			gui.remove(m_sideWindow);
+			m_sideWindow = nullptr;
 		}
 	});
 
@@ -1133,11 +1133,8 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	planetList->setSelectedItemByIndex(index);
 	m_planetInfoPanel->removeAllWidgets();
 	
-	gui.remove(m_colonyInfoWindow);
-	m_colonyInfoWindow = nullptr;
-
-	gui.remove(m_resourceInfoWindow);
-	m_resourceInfoWindow = nullptr;
+	gui.remove(m_sideWindow);
+	m_sideWindow = nullptr;
 
 	Planet& planet = state.getLocalViewStar()->getPlanets()[index];
 
@@ -1170,48 +1167,35 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	colonyInfoButton->setPosition("75%", "80%");
 	colonyInfoButton->setText("Colony");
 	colonyInfoButton->onClick([this, &gui, &state, &planet]() {
-		if (m_colonyInfoWindow == nullptr) {
-			m_colonyInfoWindow = tgui::ChildWindow::create();
-			m_colonyInfoWindow->setPosition("22.5%", "61%");
-			m_colonyInfoWindow->setSize("20%", "29%");
-			m_colonyInfoWindow->setTitle("Colony");
-			m_colonyInfoWindow->getRenderer()->setOpacity(0.75f);
-			m_colonyInfoWindow->setPositionLocked(true);
-			m_colonyInfoWindow->onClose([this]() {
-				m_colonyInfoWindow = nullptr;
-			});
-			gui.add(m_colonyInfoWindow);
+		switchSideWindow("Colony", gui);
 
-			Colony& colony = planet.getColony();
+		if (m_sideWindow == nullptr) return;
 
-			auto populationLabel = tgui::Label::create("Population: " + std::to_string(colony.population));
-			m_colonyInfoWindow->add(populationLabel);
+		Colony& colony = planet.getColony();
 
-			if (colony.population > 0) {
-				auto allegianceLabel = tgui::Label::create("Allegiance: ");
-				allegianceLabel->setPosition("0%", "10%");
-				m_colonyInfoWindow->add(allegianceLabel, "allegianceLabel");
+		auto populationLabel = tgui::Label::create("Population: " + std::to_string(colony.population));
+		m_sideWindow->add(populationLabel);
 
-				auto allegianceText = tgui::Label::create();
-				if (state.getPlayer().getFaction() == colony.allegiance) {
-					allegianceText->setText("Friendly");
-					allegianceText->getRenderer()->setTextColor(tgui::Color::Green);
-				}
-				else {
-					allegianceText->setText("Hostile");
-					allegianceText->getRenderer()->setTextColor(tgui::Color::Red);
-				}
-				allegianceText->setPosition("allegianceLabel.right", "allegianceLabel.top");
-				m_colonyInfoWindow->add(allegianceText);
-				
-				auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
-				growthRateLabel->setPosition("0%", "20%");
-				m_colonyInfoWindow->add(growthRateLabel);
+		if (colony.population > 0) {
+			auto allegianceLabel = tgui::Label::create("Allegiance: ");
+			allegianceLabel->setPosition("0%", "10%");
+			m_sideWindow->add(allegianceLabel, "allegianceLabel");
+
+			auto allegianceText = tgui::Label::create();
+			if (state.getPlayer().getFaction() == colony.allegiance) {
+				allegianceText->setText("Friendly");
+				allegianceText->getRenderer()->setTextColor(tgui::Color::Green);
 			}
-		}
-		else {
-			gui.remove(m_colonyInfoWindow);
-			m_colonyInfoWindow = nullptr;
+			else {
+				allegianceText->setText("Hostile");
+				allegianceText->getRenderer()->setTextColor(tgui::Color::Red);
+			}
+			allegianceText->setPosition("allegianceLabel.right", "allegianceLabel.top");
+			m_sideWindow->add(allegianceText);
+				
+			auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
+			growthRateLabel->setPosition("0%", "20%");
+			m_sideWindow->add(growthRateLabel);
 		}
 	});
 	m_planetInfoPanel->add(colonyInfoButton);
@@ -1220,44 +1204,70 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	resourceInfoButton->setPosition("75%", "70%");
 	resourceInfoButton->setTextSize(10);
 	resourceInfoButton->onPress([this, &gui, &planet]() {
-		if (m_resourceInfoWindow == nullptr) {
-			m_resourceInfoWindow = tgui::ChildWindow::create("Resources");
-			m_resourceInfoWindow->setPosition("22.5%", "61%");
-			m_resourceInfoWindow->setSize("20%", "29%");
-			m_resourceInfoWindow->getRenderer()->setOpacity(0.75f);
-			m_resourceInfoWindow->setPositionLocked(true);
-			m_resourceInfoWindow->onClose([this]() {
-				m_resourceInfoWindow = nullptr;
-			});
-			gui.add(m_resourceInfoWindow);
+		switchSideWindow("Resources", gui);
 
-			auto abundanceLabel = tgui::Label::create();
-			abundanceLabel->setPosition("50%", "0%");
-			abundanceLabel->setText("");
-			m_resourceInfoWindow->add(abundanceLabel, "abundanceLabel");
+		if (m_sideWindow == nullptr) return;
 
-			auto resourceListBox = tgui::ListBox::create();
-			resourceListBox->setPosition("0%", "0%");
-			resourceListBox->setSize("50%", "90%");
+		auto abundanceLabel = tgui::Label::create();
+		abundanceLabel->setPosition("50%", "0%");
+		abundanceLabel->setText("");
+		m_sideWindow->add(abundanceLabel, "abundanceLabel");
 
-			for (auto& resource : planet.getResources()) {
-				resourceListBox->addItem(resource.getTypeString());
-			}
+		auto resourceListBox = tgui::ListBox::create();
+		resourceListBox->setPosition("0%", "0%");
+		resourceListBox->setSize("50%", "90%");
 
-			resourceListBox->onItemSelect([this, &planet]() {
-				auto listBox = m_resourceInfoWindow->get<tgui::ListBox>("resourceListBox");
-				auto abundanceLabel = m_resourceInfoWindow->get<tgui::Label>("abundanceLabel");
-				abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
-			});
-
-			m_resourceInfoWindow->add(resourceListBox, "resourceListBox");
+		for (auto& resource : planet.getResources()) {
+			resourceListBox->addItem(resource.getTypeString());
 		}
-		else {
-			gui.remove(m_resourceInfoWindow);
-			m_resourceInfoWindow = nullptr;
-		}
+
+		resourceListBox->onItemSelect([this, &planet]() {
+			auto listBox = m_sideWindow->get<tgui::ListBox>("resourceListBox");
+			auto abundanceLabel = m_sideWindow->get<tgui::Label>("abundanceLabel");
+			abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
+		});
+
+		m_sideWindow->add(resourceListBox, "resourceListBox");
 	});
 	m_planetInfoPanel->add(resourceInfoButton);
+
+	if (state.getPlayer().getFaction() != -1) {
+
+		auto lawsButton = tgui::Button::create("Laws");
+		lawsButton->setPosition("75%", "55%");
+		lawsButton->onPress([this, &gui, &state, &planet]() {
+			switchSideWindow("Laws", gui);
+
+			if (m_sideWindow == nullptr) return;
+
+			auto colonyLawLabel = tgui::Label::create("Colonization Legality: ");
+			m_sideWindow->add(colonyLawLabel, "colonyLawLabel");
+
+			auto colonyLawComboBox = tgui::ComboBox::create();
+			colonyLawComboBox->setPosition("colonyLawLabel.right", "colonyLawLabel.top");
+			colonyLawComboBox->setSize("40%", "10%");
+			colonyLawComboBox->addItem("Illegal");
+			colonyLawComboBox->addItem("Legal");
+			colonyLawComboBox->onItemSelect([this, colonyLawComboBox, &planet, &state]() {
+				if (colonyLawComboBox->getSelectedItem() == "Illegal") {
+					planet.getColony().setFactionColonyLegality(state.getPlayer().getFaction(), false);
+				}
+				else if (colonyLawComboBox->getSelectedItem() == "Legal") {
+					planet.getColony().setFactionColonyLegality(state.getPlayer().getFaction(), true);
+				}
+			});
+
+			if (planet.getColony().isColonizationLegal(state.getPlayer().getFaction())) {
+				colonyLawComboBox->setSelectedItemByIndex(1);
+			}
+			else {
+				colonyLawComboBox->setSelectedItemByIndex(0);
+			}
+
+			m_sideWindow->add(colonyLawComboBox);
+			});
+		m_planetInfoPanel->add(lawsButton);
+	}
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
@@ -1271,6 +1281,29 @@ void PlanetGUI::update(GameState& state) {
 
 			// Lock camera on planet
 			state.getCamera().setPos(planet.getPos());
+		}
+	}
+}
+
+void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
+	if (m_sideWindow == nullptr) {
+		m_sideWindow = tgui::ChildWindow::create(name);
+		m_sideWindow->setPosition("22.5%", "61%");
+		m_sideWindow->setSize("20%", "29%");
+		m_sideWindow->getRenderer()->setOpacity(0.75f);
+		m_sideWindow->setPositionLocked(true);
+		m_sideWindow->onClose([this]() {
+			m_sideWindow = nullptr;
+		});
+		gui.add(m_sideWindow);
+	}
+	else {
+		if (m_sideWindow->getTitle() != name) {
+			m_sideWindow->setTitle(name);
+			m_sideWindow->removeAllWidgets();
+		}
+		else {
+			m_sideWindow->close();
 		}
 	}
 }

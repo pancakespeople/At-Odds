@@ -96,7 +96,7 @@ public:
 
 	static int calcBusTickTimer(int population);
 	static Star* findBusStarDestination(Star* currentStar, Faction* faction);
-	static Planet* findBusPlanetDestination(Star* targetStar, Planet* avoidPlanet = nullptr);
+	static Planet* findBusPlanetDestination(int allegiance, Star* targetStar, Planet* avoidPlanet = nullptr);
 	static void createSpaceBus(Unit* unit, Star* currentStar, Star* targetStar, Planet* targetPlanet);
 	static void createSpaceBus(sf::Vector2f pos, int allegiance, sf::Color color, Star* currentStar, Star* targetStar, Planet* targetPlanet);
 
