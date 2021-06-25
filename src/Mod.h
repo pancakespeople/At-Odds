@@ -12,6 +12,8 @@ public:
 	// Faction can be nullptr, others cant
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
 	virtual void interactWithPlanet(Unit*, Planet* planet) {}
+	virtual void onUnitDeath(Star* currentStar) {}
+
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
 
@@ -60,6 +62,7 @@ public:
 	
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 	virtual std::string getInfoString() override;
+	virtual void onUnitDeath(Star* currentStar) override;
 
 	void launchFighters(Star* currentStar);
 	void recallFighters(Star* currentStar, Unit* unit);

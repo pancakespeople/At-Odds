@@ -38,6 +38,7 @@ public:
 	void fireAllWeaponsAt(Unit* target);
 	void updateMods(Star* currentStar, Faction* faction);
 	void enableAllMods();
+	void onDeath(Star* currentStar);
 	
 	int getAllegiance() const { return m_allegiance; }
 

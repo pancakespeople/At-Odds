@@ -188,6 +188,15 @@ std::string FighterBayMod::getInfoString() {
 	return "Fighters: " + std::to_string(m_fighterShipIds.size());
 }
 
+void FighterBayMod::onUnitDeath(Star* currentStar) {
+	if (!isEnabled()) {
+		killAllFighters(currentStar); // They just die if the building was never constructed, no free fighters!
+	}
+	else {
+		launchFighters(currentStar); // Pop out fighters
+	}
+}
+
 HabitatMod::HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus) {
 	m_population = population;
 	m_popCap = maxPopulation;

@@ -64,3 +64,9 @@ void Unit::enableAllMods() {
 		mod->enable();
 	}
 }
+
+void Unit::onDeath(Star* currentStar) {
+	for (auto& mod : m_mods) {
+		mod->onUnitDeath(currentStar);
+	}
+}

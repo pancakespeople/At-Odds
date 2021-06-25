@@ -310,6 +310,7 @@ void Star::update(Constellation* constellation) {
 		}
 		if (m_localShips[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_localShips[i]->getPos(), m_localShips[i]->getCollider().getOutlineColor(), 10.0f, 100);
+			m_localShips[i]->onDeath(this);
 			constellation->moveShipToPurgatory(m_localShips[i]);
 
 			m_localShips.erase(m_localShips.begin() + i);
@@ -322,7 +323,8 @@ void Star::update(Constellation* constellation) {
 		m_buildings[i]->update(this);
 		if (m_buildings[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_buildings[i]->getPos(), m_buildings[i]->getCollider().getOutlineColor(), 10.0f, 100);
-			
+			m_buildings[i]->onDeath(this);
+
 			m_buildings.erase(m_buildings.begin() + i);
 			i--;
 		}
