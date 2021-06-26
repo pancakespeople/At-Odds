@@ -825,6 +825,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, bool spectator) {
 		unitGUI.open(gui);
 		planetGUI.open(gui, state);
 		timescaleGUI.open(gui);
+		resourceGUI.open(gui);
 	}
 	else {
 		unitGUI.open(gui);
@@ -1370,6 +1371,53 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, int& updatesPerSecondT
 			m_timescaleLabel->setText("Timescale: " + std::to_string(m_timescale) + "x");
 			m_timescaleLabel->setVisible(true);
 			m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
+		}
+	}
+}
+
+void ResourceGUI::open(tgui::Gui& gui) {
+	m_resourcePanel = tgui::Panel::create();
+	m_resourcePanel->setPosition("0%", "5%");
+	m_resourcePanel->setSize("15%", "15%");
+	m_resourcePanel->getRenderer()->setBorders(1);
+	m_resourcePanel->getRenderer()->setBorderColor(tgui::Color::White);
+	m_resourcePanel->getRenderer()->setOpacity(0.75f);
+	gui.add(m_resourcePanel);
+
+	auto m_resourceLabel = tgui::Label::create("Resources");
+	m_resourceLabel->setPosition("33%", "0%");
+	m_resourcePanel->add(m_resourceLabel);
+
+	m_commonOreLabel = tgui::Label::create();
+	m_commonOreLabel->setPosition("0%", "25%");
+	m_resourcePanel->add(m_commonOreLabel);
+
+	m_uncommonOreLabel = tgui::Label::create();
+	m_uncommonOreLabel->setPosition("0%", "50%");
+	m_resourcePanel->add(m_uncommonOreLabel);
+
+	m_rareOreLabel = tgui::Label::create();
+	m_rareOreLabel->setPosition("0%", "75%");
+	m_resourcePanel->add(m_rareOreLabel);
+}
+
+void ResourceGUI::update(Constellation& constellation, Player& player) {
+	if (m_resourcePanel != nullptr) {
+		if (player.getFaction() != -1) {
+			Faction* faction = constellation.getFaction(player.getFaction());
+			auto& resources = faction->getResources();
+
+			if (resources.count(PlanetResource::RESOURCE_TYPE::COMMON_ORE) > 0) {
+				m_commonOreLabel->setText("Common Ore: " + std::to_string(resources[PlanetResource::RESOURCE_TYPE::COMMON_ORE]));
+			}
+
+			if (resources.count(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE) > 0) {
+				m_uncommonOreLabel->setText("Uncommon Ore: " + std::to_string(resources[PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE]));
+			}
+
+			if (resources.count(PlanetResource::RESOURCE_TYPE::RARE_ORE) > 0) {
+				m_rareOreLabel->setText("Rare Ore: " + std::to_string(resources[PlanetResource::RESOURCE_TYPE::RARE_ORE]));
+			}
 		}
 	}
 }

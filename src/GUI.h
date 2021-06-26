@@ -122,6 +122,18 @@ private:
 	int m_timescale = 1;
 };
 
+class ResourceGUI {
+public:
+	void open(tgui::Gui& gui);
+	void update(Constellation& constellation, Player& player);
+
+private:
+	tgui::Panel::Ptr m_resourcePanel;
+	tgui::Label::Ptr m_commonOreLabel;
+	tgui::Label::Ptr m_uncommonOreLabel;
+	tgui::Label::Ptr m_rareOreLabel;
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
@@ -133,6 +145,7 @@ struct PlayerGUI {
 	PlanetGUI planetGUI;
 	BuildingGUI buildingGUI;
 	TimescaleGUI timescaleGUI;
+	ResourceGUI resourceGUI;
 };
 
 class NewGameMenu {

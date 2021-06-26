@@ -245,6 +245,7 @@ void Planet::updateColony(Star* currentStar, Faction* faction) {
 		m_colony.ticksUntilNextGrowth--;
 	}
 
+	// Spawn space bus
 	if (m_colony.population >= 1000 && faction != nullptr) {
 		if (m_colony.ticksToNextBus == 0) {
 			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
@@ -262,6 +263,20 @@ void Planet::updateColony(Star* currentStar, Faction* faction) {
 		}
 		else {
 			m_colony.ticksToNextBus--;
+		}
+	}
+
+	// Resource exploitation
+	if (faction != nullptr) {
+		if (m_colony.ticksToNextResourceExploit == 0) {
+			for (PlanetResource& resource : m_resources) {
+				float amount = m_colony.population * resource.abundance / 1000.0f;
+				faction->addResource(resource.type, amount);
+			}
+			m_colony.ticksToNextResourceExploit = 1000;
+		}
+		else {
+			m_colony.ticksToNextResourceExploit--;
 		}
 	}
 }

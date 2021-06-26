@@ -129,3 +129,7 @@ int Faction::numUnbuiltBuildings(Star* star) {
 int Faction::numIdleConstructionShips() {
 	return getConstructionShips(true).size();
 }
+
+void Faction::addResource(PlanetResource::RESOURCE_TYPE type, float num) {
+	m_resources[type] += num;
+}

@@ -1,6 +1,7 @@
 #pragma once
 #include "Spaceship.h"
 #include "Brain.h"
+#include "Planet.h"
 
 class Constellation;
 class Player;
@@ -17,6 +18,7 @@ public:
 	void controlByPlayer(Player& player);
 	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
 	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); }
+	void addResource(PlanetResource::RESOURCE_TYPE type, float num);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -29,6 +31,7 @@ public:
 	std::vector<Spaceship*>& getShips() { return m_ships; }
 	std::vector<Spaceship*> getConstructionShips(bool onlyIdleShips = false);
 	std::vector<Star*>& getOwnedStars() { return m_ownedSystems; }
+	std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& getResources() { return m_resources; }
 
 	Star* getCapitol() { return m_capitol; }
 	Constellation* getConstellation() { return m_constellation; }
@@ -62,6 +65,7 @@ private:
 		archive & m_id;
 		archive & m_aiEnabled;
 		archive & m_dead;
+		archive & m_resources;
 	}
 	
 	Faction() {}
@@ -72,6 +76,7 @@ private:
 	sf::Color m_color;
 	std::vector<Star*> m_ownedSystems;
 	std::vector<Spaceship*> m_ships;
+	std::unordered_map<PlanetResource::RESOURCE_TYPE, float> m_resources;
 	
 	Brain m_ai;
 	
