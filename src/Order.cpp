@@ -41,7 +41,7 @@ bool JumpOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 	
 	if (m_attackEnemies) {
-		std::vector<Spaceship*> enemies = ship->findEnemyShips();
+		std::vector<Spaceship*> enemies = ship->findEnemyCombatShips();
 
 		if (enemies.size() > 0) {
 			ship->attackRandomEnemy(enemies, true);
