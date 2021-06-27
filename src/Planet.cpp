@@ -335,11 +335,11 @@ void Planet::generateResources() {
 std::string PlanetResource::getTypeString() {
 	switch (type) {
 	case RESOURCE_TYPE::COMMON_ORE:
-		return "Common Ore";
+		return "Kathium";
 	case RESOURCE_TYPE::UNCOMMON_ORE:
-		return "Uncommon Ore";
+		return "Oscillite";
 	case RESOURCE_TYPE::RARE_ORE:
-		return "Rare Ore";
+		return "Valkrosium";
 	default:
 		return "Unknown";
 	}

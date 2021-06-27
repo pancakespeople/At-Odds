@@ -129,9 +129,7 @@ public:
 
 private:
 	tgui::Panel::Ptr m_resourcePanel;
-	tgui::Label::Ptr m_commonOreLabel;
-	tgui::Label::Ptr m_uncommonOreLabel;
-	tgui::Label::Ptr m_rareOreLabel;
+	int m_updateTimer = 500;
 };
 
 struct PlayerGUI {

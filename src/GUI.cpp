@@ -1225,7 +1225,9 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		resourceListBox->onItemSelect([this, &planet]() {
 			auto listBox = m_sideWindow->get<tgui::ListBox>("resourceListBox");
 			auto abundanceLabel = m_sideWindow->get<tgui::Label>("abundanceLabel");
-			abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
+			if (listBox->getSelectedItemIndex() >= 0 && listBox->getSelectedItemIndex() < listBox->getItemCount()) {
+				abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
+			}
 		});
 
 		m_sideWindow->add(resourceListBox, "resourceListBox");
@@ -1384,39 +1386,40 @@ void ResourceGUI::open(tgui::Gui& gui) {
 	m_resourcePanel->getRenderer()->setOpacity(0.75f);
 	gui.add(m_resourcePanel);
 
-	auto m_resourceLabel = tgui::Label::create("Resources");
-	m_resourceLabel->setPosition("33%", "0%");
-	m_resourcePanel->add(m_resourceLabel);
-
-	m_commonOreLabel = tgui::Label::create();
-	m_commonOreLabel->setPosition("0%", "25%");
-	m_resourcePanel->add(m_commonOreLabel);
-
-	m_uncommonOreLabel = tgui::Label::create();
-	m_uncommonOreLabel->setPosition("0%", "50%");
-	m_resourcePanel->add(m_uncommonOreLabel);
-
-	m_rareOreLabel = tgui::Label::create();
-	m_rareOreLabel->setPosition("0%", "75%");
-	m_resourcePanel->add(m_rareOreLabel);
+	auto resourceLabel = tgui::Label::create("Resources");
+	m_resourcePanel->add(resourceLabel);
 }
 
 void ResourceGUI::update(Constellation& constellation, Player& player) {
 	if (m_resourcePanel != nullptr) {
 		if (player.getFaction() != -1) {
-			Faction* faction = constellation.getFaction(player.getFaction());
-			auto& resources = faction->getResources();
+			if (m_updateTimer == 0) {
+				Faction* faction = constellation.getFaction(player.getFaction());
+				auto& resources = faction->getResources();
 
-			if (resources.count(PlanetResource::RESOURCE_TYPE::COMMON_ORE) > 0) {
-				m_commonOreLabel->setText("Common Ore: " + std::to_string(resources[PlanetResource::RESOURCE_TYPE::COMMON_ORE]));
+				m_resourcePanel->removeAllWidgets();
+
+				auto resourceLabel = tgui::Label::create("Resources");
+				m_resourcePanel->add(resourceLabel);
+
+				int pos = 10;
+
+				for (auto& resource : resources) {
+					PlanetResource pr;
+					pr.type = resource.first;
+
+					auto label = tgui::Label::create();
+					label->setText(pr.getTypeString() + ": " + std::to_string(resource.second));
+					label->setPosition("0%", (std::to_string(pos) + "%").c_str());
+					m_resourcePanel->add(label);
+
+					pos += 10;
+				}
+
+				m_updateTimer = 500;
 			}
-
-			if (resources.count(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE) > 0) {
-				m_uncommonOreLabel->setText("Uncommon Ore: " + std::to_string(resources[PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE]));
-			}
-
-			if (resources.count(PlanetResource::RESOURCE_TYPE::RARE_ORE) > 0) {
-				m_rareOreLabel->setText("Rare Ore: " + std::to_string(resources[PlanetResource::RESOURCE_TYPE::RARE_ORE]));
+			else {
+				m_updateTimer--;
 			}
 		}
 	}
