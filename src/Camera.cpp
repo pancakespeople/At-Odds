@@ -25,10 +25,24 @@ void Camera::update(sf::RenderWindow& window) {
 
 	lastpos = sf::Mouse::getPosition();
 
+	// Use WASD or arrow keys to move camera
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		m_view.move(sf::Vector2f(-10.0f * m_camZoomFactor, 0.0f));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+		m_view.move(sf::Vector2f(0.0f, -10.0f * m_camZoomFactor));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+		m_view.move(sf::Vector2f(0.0f, 10.0f * m_camZoomFactor));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		m_view.move(sf::Vector2f(10.0f * m_camZoomFactor, 0.0f));
+	}
+
 	window.setView(m_view);
 }
 
-void Camera::zoomEvent(sf::Event ev) {
+void Camera::zoomEvent(sf::Event& ev) {
 	// Zoom with the mouse wheel
 	if (ev.type == sf::Event::MouseWheelScrolled) {
 		if (ev.mouseWheelScroll.delta >= 1) {
