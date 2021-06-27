@@ -45,7 +45,12 @@ void Brain::considerChangingState() {
 }
 
 void Brain::onSpawn(Faction* faction) {
-
+	for (Planet& planet : faction->getCapitol()->getPlanets()) {
+		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
+			planet.getColony().setFactionColonyLegality(faction->getID(), true);
+			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
+		}
+	}
 }
 
 void Brain::considerFortifying(Faction* faction) {
