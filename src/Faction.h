@@ -19,12 +19,15 @@ public:
 	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
 	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); }
 	void addResource(PlanetResource::RESOURCE_TYPE type, float num);
+	void subtractResource(PlanetResource::RESOURCE_TYPE type, float num);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
 	int numIdleConstructionShips();
 
 	bool isDead() { return m_dead; }
+	// Returns false if unsuccessful (if subtracting would lead to a negative resource amount)
+	bool canSubtractResource(PlanetResource::RESOURCE_TYPE type, float num);
 	
 	sf::Color getColor() { return m_color; }
 

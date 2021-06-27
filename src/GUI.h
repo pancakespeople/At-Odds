@@ -129,7 +129,6 @@ public:
 
 private:
 	tgui::Panel::Ptr m_resourcePanel;
-	int m_updateTimer = 500;
 };
 
 struct PlayerGUI {

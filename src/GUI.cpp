@@ -1385,41 +1385,35 @@ void ResourceGUI::open(tgui::Gui& gui) {
 	m_resourcePanel->getRenderer()->setBorderColor(tgui::Color::White);
 	m_resourcePanel->getRenderer()->setOpacity(0.75f);
 	gui.add(m_resourcePanel);
-
-	auto resourceLabel = tgui::Label::create("Resources");
-	m_resourcePanel->add(resourceLabel);
 }
 
 void ResourceGUI::update(Constellation& constellation, Player& player) {
 	if (m_resourcePanel != nullptr) {
 		if (player.getFaction() != -1) {
-			if (m_updateTimer == 0) {
-				Faction* faction = constellation.getFaction(player.getFaction());
-				auto& resources = faction->getResources();
+			Faction* faction = constellation.getFaction(player.getFaction());
+			auto& resources = faction->getResources();
 
-				m_resourcePanel->removeAllWidgets();
-
+			if (m_resourcePanel->get<tgui::Label>("resourceLabel") == nullptr) {
 				auto resourceLabel = tgui::Label::create("Resources");
-				m_resourcePanel->add(resourceLabel);
+				m_resourcePanel->add(resourceLabel, "resourceLabel");
+			}
 
-				int pos = 10;
+			int pos = 10;
 
-				for (auto& resource : resources) {
-					PlanetResource pr;
-					pr.type = resource.first;
+			for (auto& resource : resources) {
+				PlanetResource pr;
+				pr.type = resource.first;
 
-					auto label = tgui::Label::create();
-					label->setText(pr.getTypeString() + ": " + std::to_string(resource.second));
+				auto label = m_resourcePanel->get<tgui::Label>(pr.getTypeString());
+
+				if (label == nullptr) {
+					label = tgui::Label::create();
 					label->setPosition("0%", (std::to_string(pos) + "%").c_str());
-					m_resourcePanel->add(label);
-
-					pos += 10;
+					m_resourcePanel->add(label, pr.getTypeString());
 				}
 
-				m_updateTimer = 500;
-			}
-			else {
-				m_updateTimer--;
+				label->setText(pr.getTypeString() + ": " + std::to_string(resource.second));
+				pos += 10;
 			}
 		}
 	}

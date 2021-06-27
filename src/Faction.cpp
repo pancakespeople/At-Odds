@@ -45,6 +45,9 @@ void Faction::spawnAtRandomStar() {
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SHIP_FACTORY, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SPACE_HABITAT, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
 
+	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
+	addResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 10.0f);
+
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
 
@@ -132,4 +135,14 @@ int Faction::numIdleConstructionShips() {
 
 void Faction::addResource(PlanetResource::RESOURCE_TYPE type, float num) {
 	m_resources[type] += num;
+}
+
+bool Faction::canSubtractResource(PlanetResource::RESOURCE_TYPE type, float num) {
+	if (m_resources.count(type) == 0) return false;
+	if (m_resources[type] - num < 0) return false;
+	return true;
+}
+
+void Faction::subtractResource(PlanetResource::RESOURCE_TYPE type, float num) {
+	if (canSubtractResource(type, num)) m_resources[type] -= num;
 }

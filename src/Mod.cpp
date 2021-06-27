@@ -14,24 +14,41 @@ BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
 
 void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (!isEnabled()) return;
+	if (faction == nullptr) return;
 	
 	if (m_ticksToNextShip <= 0) {
 		sf::Vector2f pos = unit->getPos();
 		float radius = unit->getCollider().getRadius();
 		
 		if (m_numShips % 10 == 0 && m_numShips != 0) {
-			Spaceship* destroyer = currentStar->createSpaceship(std::make_unique<Spaceship>(
-				Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			if (faction != nullptr) faction->addSpaceship(destroyer);
+			if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 25) &&
+				faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5)) {
+				Spaceship* destroyer = currentStar->createSpaceship(std::make_unique<Spaceship>(
+					Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
+				faction->addSpaceship(destroyer);
 
-			Spaceship* constrShip = currentStar->createSpaceship(std::make_unique<Spaceship>(
-				Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			if (faction != nullptr) faction->addSpaceship(constrShip);
+				faction->subtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 25);
+				faction->subtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5);
+			}
+
+			if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33)) {
+				Spaceship* constrShip = currentStar->createSpaceship(std::make_unique<Spaceship>(
+					Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
+				faction->addSpaceship(constrShip);
+
+				faction->subtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33);
+			}
 		}
 		else {
-			Spaceship* frigate = currentStar->createSpaceship(std::make_unique<Spaceship>(
-				Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			if (faction != nullptr) faction->addSpaceship(frigate);
+			if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 10) &&
+				faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 1)) {
+				Spaceship* frigate = currentStar->createSpaceship(std::make_unique<Spaceship>(
+					Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
+				faction->addSpaceship(frigate);
+
+				faction->subtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 10);
+				faction->subtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 1);
+			}
 		}
 
 		m_numShips++;
