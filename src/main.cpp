@@ -110,7 +110,7 @@ int main(int argc, const char* argv[])
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
             emitter.onEvent(event);
-            playerGui.buildingGUI.onEvent(event, window, gui, state.getLocalViewStar());
+            playerGui.buildingGUI.onEvent(event, window, gui, state.getLocalViewStar(), state.getPlayer());
             buildGui.onEvent(event, window, state.getLocalViewStar(), state.getPlayer());
             console.onEvent(event, gui, state);
             playerGui.timescaleGUI.onEvent(event, gui, updatesPerSecondTarget);

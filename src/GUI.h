@@ -104,7 +104,7 @@ class BuildingGUI {
 public:
 	BuildingGUI() {}
 
-	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar);
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player);
 
 private:
 	tgui::ChildWindow::Ptr m_window;

@@ -70,3 +70,9 @@ void Unit::onDeath(Star* currentStar) {
 		mod->onUnitDeath(currentStar);
 	}
 }
+
+void Unit::openModGUI(tgui::ChildWindow::Ptr window) {
+	for (auto& mod : m_mods) {
+		mod->openGUI(window);
+	}
+}

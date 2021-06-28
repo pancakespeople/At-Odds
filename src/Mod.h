@@ -13,6 +13,7 @@ public:
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
 	virtual void interactWithPlanet(Unit*, Planet* planet) {}
 	virtual void onUnitDeath(Star* currentStar) {}
+	virtual void openGUI(tgui::ChildWindow::Ptr window);
 
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
@@ -36,6 +37,7 @@ public:
 
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 	virtual std::string getInfoString() override;
+	virtual void openGUI(tgui::ChildWindow::Ptr window) override;
 
 private:
 	friend class boost::serialization::access;
@@ -44,10 +46,16 @@ private:
 		boost::serialization::base_object<Mod>(*this);
 		archive & m_ticksToNextShip;
 		archive & m_numShips;
+		archive & m_buildFrigate;
+		archive & m_buildDestroyer;
+		archive & m_buildConstructor;
 	}
 	
 	int m_ticksToNextShip = 2000;
 	int m_numShips = 0;
+	bool m_buildFrigate = true;
+	bool m_buildDestroyer = true;
+	bool m_buildConstructor = true;
 };
 
 class FighterBayMod : public Mod {

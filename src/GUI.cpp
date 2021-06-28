@@ -1311,14 +1311,14 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	}
 }
 
-void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar) {
+void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player) {
 	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && currentStar != nullptr) {
 		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
 		sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseScreenPos);
 		
 		for (auto& building : currentStar->getBuildings()) {
 			float dist = Math::distance(building->getPos(), mouseWorldPos);
-			if (dist < building->getCollider().getRadius()) {
+			if (dist < building->getCollider().getRadius() && player.getFaction() == building->getAllegiance()) {
 				if (m_window != nullptr) {
 					gui.remove(m_window);
 				}
@@ -1330,9 +1330,7 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 				m_window->setTitle(building->getTypeString());
 				gui.add(m_window);
 
-				auto text = tgui::Label::create();
-				text->setText(building->getInfoString());
-				m_window->add(text);
+				building->openModGUI(m_window);
 
 				break;
 			}

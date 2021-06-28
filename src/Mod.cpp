@@ -12,6 +12,12 @@ BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
 BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
 
+void Mod::openGUI(tgui::ChildWindow::Ptr window) {
+	auto text = tgui::Label::create();
+	text->setText(getInfoString());
+	window->add(text);
+}
+
 void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
@@ -22,7 +28,8 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 		
 		if (m_numShips % 10 == 0 && m_numShips != 0) {
 			if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 25) &&
-				faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5)) {
+				faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5) &&
+				m_buildDestroyer) {
 				Spaceship* destroyer = currentStar->createSpaceship(std::make_unique<Spaceship>(
 					Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
 				faction->addSpaceship(destroyer);
@@ -31,7 +38,8 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 				faction->subtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5);
 			}
 
-			if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33)) {
+			if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33) &&
+				m_buildConstructor) {
 				Spaceship* constrShip = currentStar->createSpaceship(std::make_unique<Spaceship>(
 					Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
 				faction->addSpaceship(constrShip);
@@ -41,13 +49,12 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 		}
 		else {
 			if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 10) &&
-				faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 1)) {
+				m_buildFrigate) {
 				Spaceship* frigate = currentStar->createSpaceship(std::make_unique<Spaceship>(
 					Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
 				faction->addSpaceship(frigate);
 
 				faction->subtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 10);
-				faction->subtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 1);
 			}
 		}
 
@@ -61,6 +68,45 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 
 std::string FactoryMod::getInfoString() {
 	return "Next ship: " + std::to_string(m_ticksToNextShip / 60.0f) + "s";
+}
+
+void FactoryMod::openGUI(tgui::ChildWindow::Ptr window) {
+	window->setSize("25%", "25%");
+
+	auto frigLabel = tgui::Label::create("Frigate: ");
+	window->add(frigLabel, "frigLabel");
+
+	auto frigCheckbox = tgui::CheckBox::create();
+	frigCheckbox->setPosition("frigLabel.right", "frigLabel.top");
+	frigCheckbox->setChecked(m_buildFrigate);
+	frigCheckbox->onChange([this, frigCheckbox]() {
+		m_buildFrigate = frigCheckbox->isChecked();
+	});
+	window->add(frigCheckbox);
+
+	auto destrLabel = tgui::Label::create("Destroyer: ");
+	destrLabel->setPosition("0%", "33%");
+	window->add(destrLabel, "destrLabel");
+
+	auto destrCheckbox = tgui::CheckBox::create();
+	destrCheckbox->setPosition("destrLabel.right", "destrLabel.top");
+	destrCheckbox->setChecked(m_buildDestroyer);
+	destrCheckbox->onChange([this, destrCheckbox]() {
+		m_buildDestroyer = destrCheckbox->isChecked();
+	});
+	window->add(destrCheckbox);
+
+	auto csLabel = tgui::Label::create("Constructor: ");
+	csLabel->setPosition("0%", "66%");
+	window->add(csLabel, "csLabel");
+
+	auto csCheckbox = tgui::CheckBox::create();
+	csCheckbox->setPosition("csLabel.right", "csLabel.top");
+	csCheckbox->setChecked(m_buildConstructor);
+	csCheckbox->onChange([this, csCheckbox]() {
+		m_buildConstructor = csCheckbox->isChecked();
+		});
+	window->add(csCheckbox);
 }
 
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {

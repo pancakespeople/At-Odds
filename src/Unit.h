@@ -39,6 +39,7 @@ public:
 	void updateMods(Star* currentStar, Faction* faction);
 	void enableAllMods();
 	void onDeath(Star* currentStar);
+	void openModGUI(tgui::ChildWindow::Ptr window);
 	
 	int getAllegiance() const { return m_allegiance; }
 
