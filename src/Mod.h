@@ -39,20 +39,20 @@ public:
 	virtual std::string getInfoString() override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window) override;
 
+	void setBuild(bool frigate, bool destroyer, bool constructor);
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		boost::serialization::base_object<Mod>(*this);
 		archive & m_ticksToNextShip;
-		archive & m_numShips;
 		archive & m_buildFrigate;
 		archive & m_buildDestroyer;
 		archive & m_buildConstructor;
 	}
 	
-	int m_ticksToNextShip = 2000;
-	int m_numShips = 0;
+	int m_ticksToNextShip = 500;
 	bool m_buildFrigate = true;
 	bool m_buildDestroyer = true;
 	bool m_buildConstructor = true;

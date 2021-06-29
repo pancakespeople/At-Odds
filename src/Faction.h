@@ -2,6 +2,7 @@
 #include "Spaceship.h"
 #include "Brain.h"
 #include "Planet.h"
+#include "Building.h"
 
 class Constellation;
 class Player;
@@ -35,6 +36,8 @@ public:
 	std::vector<Spaceship*> getConstructionShips(bool onlyIdleShips = false);
 	std::vector<Star*>& getOwnedStars() { return m_ownedSystems; }
 	std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& getResources() { return m_resources; }
+	std::vector<Building*> getAllOwnedBuildings();
+	std::vector<Building*> getAllOwnedBuildingsOfType(Building::BUILDING_TYPE type);
 
 	Star* getCapitol() { return m_capitol; }
 	Constellation* getConstellation() { return m_constellation; }

@@ -48,6 +48,16 @@ public:
 		m_mods.push_back(std::make_unique<T>(mod));
 	}
 
+	template <typename T>
+	T* getMod() {
+		for (auto& mod : m_mods) {
+			if (dynamic_cast<T*>(mod.get()) != nullptr) {
+				return dynamic_cast<T*>(mod.get());
+			}
+		}
+		return nullptr;
+	}
+
 protected:
 	friend class boost::serialization::access;
 	template<class Archive>

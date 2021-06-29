@@ -46,8 +46,7 @@ void Faction::spawnAtRandomStar() {
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SPACE_HABITAT, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
 
 	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
-	addResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 10.0f);
-
+	
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
 
@@ -145,4 +144,26 @@ bool Faction::canSubtractResource(PlanetResource::RESOURCE_TYPE type, float num)
 
 void Faction::subtractResource(PlanetResource::RESOURCE_TYPE type, float num) {
 	if (canSubtractResource(type, num)) m_resources[type] -= num;
+}
+
+std::vector<Building*> Faction::getAllOwnedBuildings() {
+	std::vector<Building*> buildings;
+	for (Star* star : m_ownedSystems) {
+		for (auto& building : star->getBuildings()) {
+			if (building->getAllegiance() == m_id) {
+				buildings.push_back(building.get());
+			}
+		}
+	}
+	return buildings;
+}
+
+std::vector<Building*> Faction::getAllOwnedBuildingsOfType(Building::BUILDING_TYPE type) {
+	std::vector<Building*> buildings;
+	for (Building* building : getAllOwnedBuildings()) {
+		if (building->getType() == type) {
+			buildings.push_back(building);
+		}
+	}
+	return buildings;
 }

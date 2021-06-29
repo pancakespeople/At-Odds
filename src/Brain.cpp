@@ -236,5 +236,26 @@ void Brain::considerEconomy(Faction* faction) {
 			}
 		}
 	}
+
+	// Save up resources or spend them
+	if (Random::randBool()) {
+			
+		for (Building* factory : faction->getAllOwnedBuildingsOfType(Building::BUILDING_TYPE::SHIP_FACTORY)) {
+			FactoryMod* mod = factory->getMod<FactoryMod>();
+			mod->setBuild(true, true, true);
+		}
+
+		AI_DEBUG_PRINT("Decided to spend resources");
+	}
+	else {
+		for (Building* factory : faction->getAllOwnedBuildingsOfType(Building::BUILDING_TYPE::SHIP_FACTORY)) {
+			FactoryMod* mod = factory->getMod<FactoryMod>();
+			mod->setBuild(false, false, false);
+		}
+
+		AI_DEBUG_PRINT("Decided to save resources");
+	}
+
+
 	m_state = AI_STATE::NONE;
 }
