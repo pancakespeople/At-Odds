@@ -36,12 +36,14 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& m_cooldownPercent;
-		archive& m_cooldownRecovery;
-		archive& m_accuracy;
-		archive& m_numProjectiles;
-		archive& m_projectile;
-		archive& m_type;
+		archive & m_cooldownPercent;
+		archive & m_cooldownRecovery;
+		archive & m_accuracy;
+		archive & m_numProjectiles;
+		archive & m_soundCooldown;
+		archive & m_baseSoundCooldown;
+		archive & m_projectile;
+		archive & m_type;
 	}
 
 	Weapon() {}
@@ -51,6 +53,8 @@ private:
 	float m_accuracy = 1.0f;
 
 	int m_numProjectiles = 1;
+	int m_soundCooldown = 0;
+	int m_baseSoundCooldown = 0;
 
 	Projectile m_projectile;
 

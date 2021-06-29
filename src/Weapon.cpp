@@ -28,6 +28,7 @@ Weapon::Weapon(WEAPON_TYPE type) {
 		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LIGHT_BALLISTIC);
 		m_cooldownRecovery = 5.0f;
 		m_accuracy = 0.9f;
+		m_baseSoundCooldown = 60;
 		break;
 	case WEAPON_TYPE::LONG_RANGE_LASER_GUN:
 		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LONG_RANGE_LASER);
@@ -39,6 +40,7 @@ Weapon::Weapon(WEAPON_TYPE type) {
 		m_cooldownRecovery = 0.5f;
 		m_accuracy = 0.95f;
 		m_numProjectiles = 2;
+		m_baseSoundCooldown = 60;
 		break;
 	case WEAPON_TYPE::CONSTRUCTION_GUN:
 		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::CONSTRUCTION);
@@ -65,8 +67,9 @@ void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
 		star->addProjectile(m_projectile);
 	}
 
-	if (weaponSounds.count(m_type) > 0) {
+	if (weaponSounds.count(m_type) > 0 && m_soundCooldown == 0) {
 		Sounds::playSoundLocal(weaponSounds.at(m_type), star, 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+		m_soundCooldown = m_baseSoundCooldown;
 	}
 
 	m_cooldownPercent = 100.0f;
@@ -79,6 +82,10 @@ void Weapon::update() {
 
 	if (m_cooldownPercent < 0.0f) {
 		m_cooldownPercent = 0.0f;
+	}
+
+	if (m_soundCooldown > 0) {
+		m_soundCooldown--;
 	}
 }
 
