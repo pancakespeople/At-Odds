@@ -438,6 +438,7 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 	gui.removeAllWidgets();
 	state.clearCallbacks();
+	Sounds::clearSounds();
 
 	if (!spectate) {
 		constellation.getFactions()[0].controlByPlayer(state.getPlayer());

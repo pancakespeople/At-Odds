@@ -129,7 +129,8 @@ int main(int argc, const char* argv[])
             constellation.update();
             updateClock.restart();
         }
-        
+        Sounds::updateSounds(state.getPlayer());
+
         starShader.setUniform("time", time);
 
         window.clear();
@@ -165,6 +166,7 @@ int main(int argc, const char* argv[])
             
             state.resetMetaState();
             state.clearCallbacks();
+            Sounds::clearSounds();
 
             if (player.getFaction() != -1) {
                 playerGui.open(gui, state, false);
