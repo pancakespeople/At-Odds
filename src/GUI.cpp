@@ -1064,9 +1064,11 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 				});
 				m_planetPanel->add(planetList, "planetList");
 
-				// Add planets to dropdown list
-				for (int i = 0; i < planets.size(); i++) {
-					planetList->addItem(std::to_string(i + 1) + ": " + planets[i].getTypeString());
+				// Add planets to dropdown list if star is discovered
+				if (state.getLocalViewStar()->isDiscovered()) {
+					for (int i = 0; i < planets.size(); i++) {
+						planetList->addItem(std::to_string(i + 1) + ": " + planets[i].getTypeString());
+					}
 				}
 
 				// Set first planet as selected

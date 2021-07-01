@@ -55,6 +55,7 @@ public:
 	bool isInShapeRadius(float x, float y) const;
 	bool isLocalViewActive() const { return m_localViewActive; }
 	bool containsBuildingType(Building::BUILDING_TYPE type, bool allegianceOnly = false, int allegiance = 0) const;
+	bool isDiscovered() const { return m_discovered; }
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;
