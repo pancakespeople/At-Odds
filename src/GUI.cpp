@@ -1342,7 +1342,8 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 
 void TimescaleGUI::open(tgui::Gui& gui) {
 	m_timescaleLabel = tgui::Label::create();
-	m_timescaleLabel->setPosition("40%", "10%");
+	m_timescaleLabel->setOrigin(0.5f, 0.5f);
+	m_timescaleLabel->setPosition("50%", "10%");
 	m_timescaleLabel->setTextSize(25);
 	m_timescaleLabel->setVisible(false);
 	gui.add(m_timescaleLabel);
@@ -1363,7 +1364,7 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, int& updatesPerSecondT
 				}
 			}
 			else {
-				if (m_timescale < 32) {
+				if (m_timescale < 64) {
 					m_timescale = m_timescale << 1;
 				}
 			}
