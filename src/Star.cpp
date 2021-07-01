@@ -61,7 +61,7 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
 	sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
 	sf::Vector2f mouseCoordsWorld = window.mapPixelToCoords(mouseCoords);
 
-	if (m_multipleFactionsPresent) {
+	if (m_multipleFactionsPresent && m_discovered) {
 		shader.setUniform("flashing", true);
 	}
 	else {
@@ -81,7 +81,12 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
 
 		shader.setUniform("radius", getRadius());
 
-		window.draw(m_shape, &shader);
+		if (!m_discovered) {
+			drawUndiscovered(window, shader);
+		}
+		else {
+			window.draw(m_shape, &shader);
+		}
 		
 		setRadius(getRadius() / 2);
 		setPos(oldPos);
@@ -89,7 +94,12 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
 		shader.setUniform("radius", getRadius());
 	}
 	else {
-		window.draw(m_shape, &shader);
+		if (!m_discovered) {
+			drawUndiscovered(window, shader);
+		}
+		else {
+			window.draw(m_shape, &shader);
+		}
 	}
 }
 
@@ -110,14 +120,14 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		j.draw(window, emitter);
 	}
 
-	for (Planet& planet : m_planets) {
-		planet.draw(window, emitter, time);
-	}
-
 	//emitter.drawHabitableZone(window, getLocalViewCenter(), m_temperature);
 
 	if (drawHidden) {
 
+		for (Planet& planet : m_planets) {
+			planet.draw(window, emitter, time);
+		}
+		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {
 			s->draw(window, emitter);
 		}
@@ -286,7 +296,7 @@ void Star::cleanUpAnimations() {
 	}
 }
 
-void Star::update(Constellation* constellation) {
+void Star::update(Constellation* constellation, const Player& player) {
 	std::vector<int> factions;
 	
 	for (int i = 0; i < m_localShips.size(); i++) {
@@ -327,6 +337,14 @@ void Star::update(Constellation* constellation) {
 
 			m_buildings.erase(m_buildings.begin() + i);
 			i--;
+		}
+	}
+
+	if (factions.size() > 0) {
+		if (!m_discovered) {
+			if (std::find(factions.begin(), factions.end(), player.getFaction()) != factions.end()) {
+				m_discovered = true;
+			}
 		}
 	}
 
@@ -512,4 +530,12 @@ Planet& Star::getMostHabitablePlanet() {
 		}
 	}
 	return m_planets[index];
+}
+
+void Star::drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader) {
+	sf::Color oldColor;
+	oldColor = m_shape.getFillColor();
+	m_shape.setFillColor(sf::Color(166, 166, 166));
+	window.draw(m_shape, &shader);
+	m_shape.setFillColor(oldColor);
 }

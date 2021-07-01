@@ -449,6 +449,7 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	}
 	else {
 		state.changeToWorldView();
+		constellation.discoverAllStars();
 
 		m_playerGui.open(gui, state, true);
 	}

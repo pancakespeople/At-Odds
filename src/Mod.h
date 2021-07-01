@@ -53,9 +53,9 @@ private:
 	}
 	
 	int m_ticksToNextShip = 500;
-	bool m_buildFrigate = true;
-	bool m_buildDestroyer = true;
-	bool m_buildConstructor = true;
+	bool m_buildFrigate = false;
+	bool m_buildDestroyer = false;
+	bool m_buildConstructor = false;
 };
 
 class FighterBayMod : public Mod {

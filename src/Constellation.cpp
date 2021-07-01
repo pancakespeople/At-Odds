@@ -207,12 +207,12 @@ void Constellation::generateFactions(int numFactions) {
     }
 }
 
-void Constellation::update() {
+void Constellation::update(const Player& player) {
     for (auto& f : m_factions) {
         f.update();
     }
     for (std::unique_ptr<Star>& s : m_stars) {
-        s->update(this);
+        s->update(this, player);
     }
     cleanUpDeadShips();
 }
@@ -255,4 +255,10 @@ void Constellation::moveShipToPurgatory(std::unique_ptr<Spaceship>& ship) {
 Faction* Constellation::getFaction(int id) {
     if (id < 0 || id >= m_factions.size()) return nullptr;
     else return &m_factions[id];
+}
+
+void Constellation::discoverAllStars() {
+    for (auto& star : m_stars) {
+        star->setDiscovered(true);
+    }
 }

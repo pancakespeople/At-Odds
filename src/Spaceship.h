@@ -102,6 +102,7 @@ private:
 		archive & m_disabled;
 		archive & m_fighterAI;
 		archive & m_diesSilently;
+		archive & m_civilian;
 	}
 
 	Spaceship() {}

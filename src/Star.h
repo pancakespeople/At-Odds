@@ -34,11 +34,13 @@ public:
 	void addProjectile(Projectile proj);
 	void addAnimation(Animation&& anim);
 	void cleanUpAnimations();
-	void update(Constellation* constellation);
+	void update(Constellation* constellation, const Player& player);
 	void destroyAllShips();
 	void clearAnimations() { m_localViewAnimations.clear(); }
 	void moveShipToOtherStar(Spaceship* ship, Star* other);
 	void generatePlanets();
+	void setDiscovered(bool isDiscovered) { m_discovered = isDiscovered; }
+	void drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader);
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
@@ -97,6 +99,7 @@ private:
 		archive & m_allegiance;
 		archive & m_shaderRandomSeed;
 		archive & m_temperature;
+		archive & m_discovered;
 	}
 	
 	void handleCollisions();
@@ -122,6 +125,7 @@ private:
 
 	bool m_localViewActive = false;
 	bool m_multipleFactionsPresent = false;
+	bool m_discovered = false;
 
 	int m_allegiance = -1;
 

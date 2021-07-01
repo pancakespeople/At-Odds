@@ -126,7 +126,7 @@ int main(int argc, const char* argv[])
         // Maintain a constant update rate
         updateStep = updatesPerSecondTarget / (1.0f / updateClock.getElapsedTime().asSeconds());
         for (int i = 0; i < std::round(updateStep); i++) {
-            constellation.update();
+            constellation.update(state.getPlayer());
             updateClock.restart();
         }
         Sounds::updateSounds(state.getPlayer());

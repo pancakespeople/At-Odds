@@ -9,6 +9,7 @@
 #include "Animation.h"
 
 class GameState;
+class Player;
 
 class Constellation {
 public:
@@ -22,9 +23,10 @@ public:
 	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state);
 	void setupStars();
 	void generateFactions(int numFactions);
-	void update();
+	void update(const Player& player);
 	void generateNeutralSquatters();
 	void moveShipToPurgatory(std::unique_ptr<Spaceship>& ship);
+	void discoverAllStars();
 
 	std::vector<std::unique_ptr<Star>>& getStars() { return m_stars; }
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }
