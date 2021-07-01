@@ -131,6 +131,11 @@ void Brain::considerFortifying(Faction* faction) {
 }
 
 void Brain::considerAttack(Faction* faction) {
+	if (faction->getAllCombatShips().size() == 0) {
+		m_state = AI_STATE::NONE;
+		return;
+	}
+	
 	if (m_attackVars.expansionTarget == nullptr) {
 
 		// Secure stars connected to capitol
@@ -238,7 +243,7 @@ void Brain::considerEconomy(Faction* faction) {
 	}
 
 	// Save up resources or spend them
-	if (Random::randBool()) {
+	if (Random::randBool() || faction->getAllCombatShips().size() == 0) {
 			
 		for (Building* factory : faction->getAllOwnedBuildingsOfType(Building::BUILDING_TYPE::SHIP_FACTORY)) {
 			FactoryMod* mod = factory->getMod<FactoryMod>();

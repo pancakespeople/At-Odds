@@ -38,6 +38,7 @@ public:
 	std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& getResources() { return m_resources; }
 	std::vector<Building*> getAllOwnedBuildings();
 	std::vector<Building*> getAllOwnedBuildingsOfType(Building::BUILDING_TYPE type);
+	std::vector<Spaceship*> getAllCombatShips();
 
 	Star* getCapitol() { return m_capitol; }
 	Constellation* getConstellation() { return m_constellation; }

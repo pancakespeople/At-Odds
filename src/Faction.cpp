@@ -167,3 +167,13 @@ std::vector<Building*> Faction::getAllOwnedBuildingsOfType(Building::BUILDING_TY
 	}
 	return buildings;
 }
+
+std::vector<Spaceship*> Faction::getAllCombatShips() {
+	std::vector<Spaceship*> ships;
+	for (Spaceship* ship : m_ships) {
+		if (!ship->isCivilian() && ship->getWeapons().size() > 0 && ship->getConstructionSpeed() == 0.0f) {
+			ships.push_back(ship);
+		}
+	}
+	return ships;
+}
