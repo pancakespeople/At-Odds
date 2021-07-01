@@ -79,6 +79,7 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_health = 50.0f;
 		m_collider.setRadius(50.0f);
 		m_fighterAI = true;
+		m_playerCanGiveOrders = false;
 
 		if (Random::randBool()) {
 			addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
