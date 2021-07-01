@@ -311,11 +311,15 @@ void Star::update(Constellation* constellation, const Player& player) {
 		}
 
 		if (factions.size() == 0) {
-			factions.push_back(m_localShips[i]->getAllegiance());
+			if (!m_localShips[i]->isCivilian()) {
+				factions.push_back(m_localShips[i]->getAllegiance());
+			}
 		}
 		else {
 			if (std::find(factions.begin(), factions.end(), m_localShips[i]->getAllegiance()) == factions.end()) {
-				factions.push_back(m_localShips[i]->getAllegiance());
+				if (!m_localShips[i]->isCivilian()) {
+					factions.push_back(m_localShips[i]->getAllegiance());
+				}
 			}
 		}
 		if (m_localShips[i]->isDead()) {
