@@ -70,6 +70,10 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window) {
 	auto frigLabel = tgui::Label::create("Frigate: ");
 	window->add(frigLabel, "frigLabel");
 
+	auto frigCost = tgui::Label::create("Cost: 10 Kathium");
+	frigCost->setPosition("frigLabel.left", "frigLabel.bottom");
+	window->add(frigCost);
+
 	auto frigCheckbox = tgui::CheckBox::create();
 	frigCheckbox->setPosition("frigLabel.right", "frigLabel.top");
 	frigCheckbox->setChecked(m_buildFrigate);
@@ -82,6 +86,10 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window) {
 	destrLabel->setPosition("0%", "33%");
 	window->add(destrLabel, "destrLabel");
 
+	auto destrCost = tgui::Label::create("Cost: 25 Kathium, 5 Oscillite");
+	destrCost->setPosition("destrLabel.left", "destrLabel.bottom");
+	window->add(destrCost);
+
 	auto destrCheckbox = tgui::CheckBox::create();
 	destrCheckbox->setPosition("destrLabel.right", "destrLabel.top");
 	destrCheckbox->setChecked(m_buildDestroyer);
@@ -93,6 +101,10 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window) {
 	auto csLabel = tgui::Label::create("Constructor: ");
 	csLabel->setPosition("0%", "66%");
 	window->add(csLabel, "csLabel");
+
+	auto csCost = tgui::Label::create("Cost: 33 Kathium");
+	csCost->setPosition("csLabel.left", "csLabel.bottom");
+	window->add(csCost);
 
 	auto csCheckbox = tgui::CheckBox::create();
 	csCheckbox->setPosition("csLabel.right", "csLabel.top");
