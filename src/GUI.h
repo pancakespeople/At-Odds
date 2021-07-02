@@ -88,6 +88,7 @@ public:
 
 	void open(tgui::Gui& gui, GameState& state);
 	void update(GameState& state);
+	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar);
 
 private:
 	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, tgui::Gui& gui, int index);

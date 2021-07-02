@@ -1321,6 +1321,28 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	}
 }
 
+void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar) {
+	if (currentStar != nullptr && m_planetIconPanel != nullptr) {
+		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
+			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
+			sf::Vector2f worldPos = window.mapPixelToCoords(screenPos);
+
+			int i = 0;
+			for (Planet& planet : currentStar->getPlanets()) {
+				if (Math::distance(worldPos, planet.getPos()) < planet.getRadius()) {
+					// Open planet panel
+					if (m_planetPanel == nullptr) {
+						m_planetIconPanel->onClick.emit(m_planetIconPanel.get(), worldPos);
+					}
+					setSelectedPlanet(m_planetPanel->get<tgui::ComboBox>("planetList"), state, gui, i);
+					break;
+				}
+				i++;
+			}
+		}
+	}
+}
+
 void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player) {
 	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && currentStar != nullptr) {
 		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
