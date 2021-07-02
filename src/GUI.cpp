@@ -659,13 +659,19 @@ void HelpWindow::open(tgui::Gui& gui) {
 
 	m_window = window;
 
-	std::string helpText = "Welcome to At Odds. "
-		"Hold down the middle mouse button to move the camera. "
-		"Press tab to go to the global view, on the global view, click on stars to go to their local view. \n\n"
-		"Click and drag to select your units, right click to order them to move and right click on one of the swirly purple things to order a jump between systems. "
-		"You can also order ships to travel to a specified star by selecting them in the local view and clicking on a star in the global view. "
-		"Ships will automatically attack enemies unless ordered to move. \n\n"
-		"Your goal is to defeat all your enemies. Good luck!";
+	std::string helpText = "Welcome to At Odds.\n"
+		"Controls:\n"
+		"WASD, arrow keys or middle mouse - move camera\n"
+		"Tab - Switch to constellation view\n"
+		"Esc - Main menu\n"
+		"Click drag - select units\n"
+		"Right click - order units\n"
+		"\n"
+		"How to play:\n"
+		"Colonize other planets by going to its laws tab and setting colonization to be legal, your people will colonize the planet automatically.\n"
+		"Build more ships by clicking on your ship factory and changing its settings.\n"
+		"Your goal is to eliminate all your enemies. Good luck!"
+		;
 
 	auto text = tgui::Label::create(helpText);
 	text->setSize("100%", "100%");
