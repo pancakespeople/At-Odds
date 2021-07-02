@@ -36,7 +36,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Order>(*this);
+		archive & boost::serialization::base_object<Order>(*this);
 		archive & m_pos;
 	}
 
@@ -57,7 +57,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Order>(*this);
+		archive & boost::serialization::base_object<Order>(*this);
 		archive & m_jumpPointID;
 		archive & m_attackEnemies;
 	}
@@ -82,7 +82,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Order>(*this);
+		archive & boost::serialization::base_object<Order>(*this);
 		archive & m_targetID;
 		archive & m_frustration;
 		archive & m_lastEnemyHealth;
@@ -108,10 +108,10 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Order>(*this);
-		archive& m_pathFound;
-		archive& m_endStar;
-		archive& m_path;
+		archive & boost::serialization::base_object<Order>(*this);
+		archive & m_pathFound;
+		archive & m_endStar;
+		archive & m_path;
 	}
 
 	TravelOrder() {}
@@ -133,8 +133,8 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Order>(*this);
-		archive& m_buildingID;
+		archive & boost::serialization::base_object<Order>(*this);
+		archive & m_buildingID;
 	}
 
 	InteractWithBuildingOrder() {}
@@ -155,7 +155,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Order>(*this);
+		archive & boost::serialization::base_object<Order>(*this);
 		archive & m_planetID;
 	}
 	
@@ -175,7 +175,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Order>(*this);
+		archive & boost::serialization::base_object<Order>(*this);
 		archive & m_dieSilently;
 	}
 

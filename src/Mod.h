@@ -45,7 +45,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Mod>(*this);
+		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_ticksToNextShip;
 		archive & m_buildFrigate;
 		archive & m_buildDestroyer;
@@ -82,7 +82,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Mod>(*this);
+		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_fighterShipIds;
 		archive & m_fighterStatus;
 		archive & m_ticksToNextFighter;
@@ -115,7 +115,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		boost::serialization::base_object<Mod>(*this);
+		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_population;
 		archive & m_ticksToNextGrowth;
 		archive & m_popCap;
