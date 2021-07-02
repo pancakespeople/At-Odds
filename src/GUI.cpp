@@ -1348,6 +1348,12 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
 		sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseScreenPos);
 		
+		if (m_window != nullptr) {
+			if (m_window->isMouseOnWidget(tgui::Vector2f(mouseScreenPos.x, mouseScreenPos.y))) {
+				return;
+			}
+		}
+
 		for (auto& building : currentStar->getBuildings()) {
 			float dist = Math::distance(building->getPos(), mouseWorldPos);
 			if (dist < building->getCollider().getRadius() && player.getFaction() == building->getAllegiance()) {
@@ -1360,6 +1366,9 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 				m_window->setSize("10%", "15%");
 				m_window->setPosition(mouseScreenPos.x, mouseScreenPos.y);
 				m_window->setTitle(building->getTypeString());
+				m_window->onClose([this]() {
+					m_window = nullptr;
+				});
 				gui.add(m_window);
 
 				building->openModGUI(m_window);
