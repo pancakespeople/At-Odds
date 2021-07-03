@@ -13,6 +13,7 @@ public:
 	
 	void onStart(Faction* faction);
 	void onSpawn(Faction* faction);
+	void onStarTakeover(Faction* faction, Star* star);
 	void controlFaction(Faction* faction);
 	void considerAttack(Faction* faction);
 	void considerFortifying(Faction* faction);

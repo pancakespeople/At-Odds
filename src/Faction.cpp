@@ -52,6 +52,7 @@ void Faction::spawnAtRandomStar() {
 
 void Faction::addOwnedSystem(Star* star) {
 	m_ownedSystems.push_back(star);
+	if (m_aiEnabled) m_ai.onStarTakeover(this, star);
 }
 
 void Faction::makeCapitol(Star* star) {

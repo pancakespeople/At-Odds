@@ -28,6 +28,15 @@ void Brain::controlFaction(Faction* faction) {
 	m_stateChangeTimer--;
 }
 
+void Brain::onStarTakeover(Faction* faction, Star* star) {
+	for (Planet& planet : star->getPlanets()) {
+		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
+			planet.getColony().setFactionColonyLegality(faction->getID(), true);
+			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
+		}
+	}
+}
+
 void Brain::considerChangingState() {
 	if (Random::randFloat(0.0f, 1.0f) < m_personality.aggressiveness) {
 		m_state = AI_STATE::ATTACKING;
