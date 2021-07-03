@@ -211,7 +211,7 @@ public:
 	MainMenu() {}
 
 	void open(tgui::Gui& gui, Constellation& constellation, GameState& state);
-	void close();
+	void close(tgui::Gui& gui);
 	void onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state);
 	OptionsMenu& getOptionsMenu() { return m_optionsMenu; }
 	NewGameMenu& getNewGameMenu() { return m_newGameMenu; }
@@ -219,7 +219,8 @@ public:
 private:
 	void exitGame(GameState& state);
 
-	tgui::ChildWindow::Ptr m_window;
+	tgui::Panel::Ptr m_panel;
+	tgui::Label::Ptr m_title;
 	NewGameMenu m_newGameMenu;
 	OptionsMenu m_optionsMenu;
 	bool m_opened = false;

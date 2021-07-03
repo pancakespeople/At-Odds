@@ -163,7 +163,7 @@ int main(int argc, const char* argv[])
 
         if (state.getMetaState() == GameState::MetaState::LOAD_GAME) {
             saveLoader.loadGame("data/saves/game.save", constellation, state, background);
-            mainMenu.close();
+            mainMenu.close(gui);
             
             state.resetMetaState();
             state.clearCallbacks();

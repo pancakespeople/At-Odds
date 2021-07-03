@@ -264,53 +264,62 @@ void UnitGUI::drawStarPath(Star* begin, Star* end) {
 }
 
 void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state) {
-	try {
-		auto guiWindow = tgui::ChildWindow::create("Main Menu");
-		guiWindow->setSize("20%", "40%");
-		guiWindow->setPosition("(parent.size - size) / 2");
-		guiWindow->setInheritedOpacity(0.75f);
-		guiWindow->setTitleButtons(tgui::ChildWindow::TitleButton::None);
-		gui.add(guiWindow);
-		m_window = guiWindow;
+	auto panel = tgui::Panel::create();
+	panel->setPosition("0%", "66%");
+	panel->setSize("100%", "10%");
+	panel->setInheritedOpacity(0.75f);
+	gui.add(panel);
+	m_panel = panel;
 
-		auto newGameButton = tgui::Button::create("New Game");
-		newGameButton->setPosition("(parent.width - width) / 2", "20%");
-		newGameButton->onPress([this, &gui, &constellation, &state]() {
-			close();
-			m_newGameMenu.open(gui, constellation, state, this);
-		});
-		guiWindow->add(newGameButton);
+	m_title = tgui::Label::create();
+	m_title->setOrigin(0.5f, 0.5f);
+	m_title->setPosition("50%", "33%");
+	m_title->setText("At Odds");
+	m_title->setTextSize(250);
+	m_title->getRenderer()->setTextColor(tgui::Color::Red);
+	m_title->getRenderer()->setFont("data/fonts/segoesc.ttf");
+	gui.add(m_title);
 
-		auto loadGameButton = tgui::Button::create("Load Game");
-		loadGameButton->setPosition("(parent.width - width) / 2", "40%");
-		loadGameButton->onPress([&state] {
-			state.loadGame();
-		});
-		guiWindow->add(loadGameButton);
+	auto newGameButton = tgui::Button::create("New Game");
+	newGameButton->setPosition("20%", "50%");
+	newGameButton->setOrigin(0.5f, 0.5f);
+	newGameButton->onPress([this, &gui, &constellation, &state]() {
+		close(gui);
+		m_newGameMenu.open(gui, constellation, state, this);
+	});
+	m_panel->add(newGameButton);
 
-		auto optionsButton = tgui::Button::create("Options");
-		optionsButton->setPosition("(parent.width - width) / 2", "60%");
-		optionsButton->onPress([this, &gui, &constellation, &state]() {
-			close();
-			m_optionsMenu.open(gui, constellation, state, this);
-		});
-		guiWindow->add(optionsButton);
+	auto loadGameButton = tgui::Button::create("Load Game");
+	loadGameButton->setPosition("40%", "50%");
+	loadGameButton->setOrigin(0.5f, 0.5f);
+	loadGameButton->onPress([&state] {
+		state.loadGame();
+	});
+	m_panel->add(loadGameButton);
 
-		auto exitButton = tgui::Button::create("Exit");
-		exitButton->setPosition("(parent.width - width) / 2", "80%");
-		exitButton->onPress(&MainMenu::exitGame, this, std::ref(state));
-		guiWindow->add(exitButton);
+	auto optionsButton = tgui::Button::create("Options");
+	optionsButton->setPosition("60%", "50%");
+	optionsButton->setOrigin(0.5f, 0.5f);
+	optionsButton->onPress([this, &gui, &constellation, &state]() {
+		close(gui);
+		m_optionsMenu.open(gui, constellation, state, this);
+	});
+	m_panel->add(optionsButton);
 
-		m_opened = true;
+	auto exitButton = tgui::Button::create("Exit");
+	exitButton->setPosition("80%", "50%");
+	exitButton->setOrigin(0.5f, 0.5f);
+	exitButton->onPress(&MainMenu::exitGame, this, std::ref(state));
+	m_panel->add(exitButton);
 
-	}
-	catch (const tgui::Exception& e) {
-		DEBUG_PRINT(e.what());
-	}
+	m_opened = true;
 }
 
-void MainMenu::close() {
-	m_window->close();
+void MainMenu::close(tgui::Gui& gui) {
+	gui.remove(m_panel);
+	gui.remove(m_title);
+	m_panel = nullptr;
+	m_title = nullptr;
 	m_opened = false;
 }
 
@@ -326,7 +335,7 @@ void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellati
 			open(gui, constellation, state);
 		}
 		else if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && m_opened) {
-			close();
+			close(gui);
 		}
 	}
 }
