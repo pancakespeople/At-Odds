@@ -68,7 +68,7 @@ void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
 	}
 
 	if (weaponSounds.count(m_type) > 0 && m_soundCooldown == 0) {
-		Sounds::playSoundLocal(weaponSounds.at(m_type), star, 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+		Sounds::playSoundLocal(weaponSounds.at(m_type), star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 		m_soundCooldown = m_baseSoundCooldown;
 	}
 

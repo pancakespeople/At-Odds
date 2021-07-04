@@ -130,7 +130,6 @@ int main(int argc, const char* argv[])
             constellation.update(state.getPlayer());
             updateClock.restart();
         }
-        Sounds::updateSounds(state.getPlayer());
 
         starShader.setUniform("time", time);
 
@@ -139,6 +138,8 @@ int main(int argc, const char* argv[])
         background.draw(window, emitter);
         
         state.getCamera().update(window);
+
+        Sounds::updateSounds(state.getPlayer(), state.getCamera());
 
         if (state.getState() == GameState::State::WORLD_VIEW) {
             constellation.draw(window, starShader);

@@ -3,6 +3,7 @@
 #include "Sounds.h"
 #include "Debug.h"
 #include "Star.h"
+#include "Camera.h"
 
 std::unordered_map<std::string, sf::SoundBuffer> Sounds::m_soundBuffers;
 std::unordered_map<std::string, sf::Sound> Sounds::m_sounds;
@@ -24,7 +25,7 @@ sf::Sound& Sounds::getSound(const std::string& filePath) {
 		newSound.setBuffer(m_soundBuffers[filePath]);
 		m_sounds[filePath] = newSound;
 		
-		DEBUG_PRINT("Added sound " << filePath);
+		DEBUG_PRINT("Added sound " << filePath << " (" << newSoundBuffer.getChannelCount() << " channels)");
 		
 		return m_sounds[filePath];
 	}
@@ -33,19 +34,31 @@ sf::Sound& Sounds::getSound(const std::string& filePath) {
 	}
 }
 
-void Sounds::playSound(const std::string& filePath, float volume, float pitch, Star* star) {
+void Sounds::playSound(const std::string& filePath, const sf::Vector2f& pos, float volume, float pitch, Star* star, bool noSpatial) {
 	getSound(filePath);
 	GameSound gameSound;
 
 	gameSound.sound.setBuffer(m_soundBuffers[filePath]);
 	gameSound.sound.setVolume(volume * m_globalVolume);
 	gameSound.sound.setPitch(pitch);
+	
+	if (noSpatial) {
+		gameSound.sound.setRelativeToListener(true);
+		gameSound.sound.setPosition(sf::Vector3f(0.0f, 0.0f, 0.0f));
+	}
+	else {
+		gameSound.sound.setPosition(sf::Vector3f(pos.x, 0.0f, pos.y));
+	}
+
+	gameSound.sound.setMinDistance(1000.f);
+	gameSound.sound.setAttenuation(10.f);
 	gameSound.star = star;
 
 	m_playingSounds.push_back(gameSound);
 }
 
-void Sounds::updateSounds(const Player& player) {
+void Sounds::updateSounds(const Player& player, const Camera& camera) {
+	sf::Listener::setPosition(sf::Vector3f(camera.getPos().x, camera.getZoomFactor() * 100.0f, camera.getPos().y));
 	for (auto it = m_playingSounds.begin(); it != m_playingSounds.end();) {
 		if (!it->played) {
 			if (it->star != nullptr) {
@@ -86,8 +99,8 @@ void Sounds::updateSounds(const Player& player) {
 	}
 }
 
-void Sounds::playSoundLocal(const std::string& filePath, Star* star, float volume, float pitch) {
+void Sounds::playSoundLocal(const std::string& filePath, Star* star, const sf::Vector2f& pos, float volume, float pitch, bool noSpatial) {
 	if (star->isLocalViewActive()) {
-		playSound(filePath, volume * m_globalVolume, pitch, star);
+		playSound(filePath, pos, volume * m_globalVolume, pitch, star, noSpatial);
 	}
 }

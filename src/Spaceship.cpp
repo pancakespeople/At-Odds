@@ -204,7 +204,7 @@ void Spaceship::update(Star* currentStar) {
 		m_dead = true;
 		if (!m_diesSilently) {
 			m_currentStar->addAnimation(Animation("data/art/explosion1.png", 4, 4, getPos(), 20, 16.0f));
-			Sounds::playSoundLocal("data/sound/boom1.wav", m_currentStar, 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
+			Sounds::playSoundLocal("data/sound/boom1.wav", m_currentStar, getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
 		}
 	}
 
@@ -320,8 +320,8 @@ Spaceship::JumpState Spaceship::jump(JumpPoint* point) {
 		if (m_percentJumpDriveCharged >= 100.0f) {
 			point->jumpShipThrough(this, m_currentStar);
 			m_percentJumpDriveCharged = 0.0f;
-			Sounds::playSoundLocal("data/sound/woosh1.wav", m_currentStar, 100, 1.0f + Random::randFloat(-0.5f, 0.5f));
-			Sounds::playSoundLocal("data/sound/woosh4.wav", point->getConnectedOtherStar(), 100, 1.0f + Random::randFloat(-0.5f, 0.5f));
+			Sounds::playSoundLocal("data/sound/woosh1.wav", m_currentStar, getPos(), 100, 1.0f + Random::randFloat(-0.5f, 0.5f), true);
+			Sounds::playSoundLocal("data/sound/woosh4.wav", point->getConnectedOtherStar(), getPos(), 100, 1.0f + Random::randFloat(-0.5f, 0.5f), true);
 			m_currentStar = point->getConnectedOtherStar();
 			return Spaceship::JumpState::DONE;
 		}

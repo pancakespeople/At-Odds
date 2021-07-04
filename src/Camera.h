@@ -15,8 +15,11 @@ public:
 	void setAbsoluteZoom(float factor);
 	void resetZoom();
 
-	sf::FloatRect getInitialRect() { return m_initialRect; }
-	sf::Vector2f getInitialWidthHeight() { return sf::Vector2f(m_initialRect.width, m_initialRect.height); }
+	sf::FloatRect getInitialRect() const { return m_initialRect; }
+	sf::Vector2f getInitialWidthHeight() const { return sf::Vector2f(m_initialRect.width, m_initialRect.height); }
+	sf::Vector2f getPos() const { return m_view.getCenter(); }
+
+	float getZoomFactor() const { return m_camZoomFactor; }
 
 private:
 	friend class boost::serialization::access;
