@@ -132,6 +132,27 @@ private:
 	tgui::Panel::Ptr m_resourcePanel;
 };
 
+namespace GameWidget {
+
+	struct Icon {
+		void open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath);
+
+		tgui::Panel::Ptr panel;
+	};
+
+}
+
+class ShipDesignerGUI {
+public:
+	ShipDesignerGUI() {}
+
+	void open(tgui::Gui& gui);
+
+private:
+	GameWidget::Icon m_icon;
+	tgui::ChildWindow::Ptr m_window;
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
@@ -144,6 +165,7 @@ struct PlayerGUI {
 	BuildingGUI buildingGUI;
 	TimescaleGUI timescaleGUI;
 	ResourceGUI resourceGUI;
+	ShipDesignerGUI shipDesignerGUI;
 };
 
 class NewGameMenu {

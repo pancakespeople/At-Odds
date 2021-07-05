@@ -843,6 +843,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, bool spectator) {
 		planetGUI.open(gui, state);
 		timescaleGUI.open(gui);
 		resourceGUI.open(gui);
+		shipDesignerGUI.open(gui);
 	}
 	else {
 		unitGUI.open(gui);
@@ -1466,4 +1467,49 @@ void ResourceGUI::update(Constellation& constellation, Player& player) {
 			}
 		}
 	}
+}
+
+void GameWidget::Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath) {
+	panel = tgui::Panel::create();
+	panel->setPosition(pos);
+	panel->setSize(size);
+	panel->getRenderer()->setOpacity(0.75f);
+
+	panel->onMouseEnter([this]() {
+		panel->getRenderer()->setBackgroundColor(tgui::Color::White);
+	});
+
+	panel->onMouseLeave([this]() {
+		panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+		panel->getRenderer()->setOpacity(0.75f);
+	});
+
+	gui.add(panel);
+
+	auto picture = tgui::Picture::create(picPath.c_str());
+	picture->setSize("100%", "100%");
+	panel->add(picture);
+}
+
+void ShipDesignerGUI::open(tgui::Gui& gui) {
+	m_icon.open(gui, tgui::Layout2d("0%", "80%"), tgui::Layout2d("2.5%", "5%"), "data/art/shipicon.png");
+
+	m_icon.panel->onClick([this, &gui]() {
+		if (m_window == nullptr) {
+			m_window = tgui::ChildWindow::create("Ship Designer");
+			m_window->setOrigin(0.5f, 0.5f);
+			m_window->setPosition("50%", "50%");
+			m_window->setSize("33%", "33%");
+			m_window->getRenderer()->setOpacity(0.75f);
+			m_window->onClose([this]() {
+				m_window = nullptr;
+			});
+
+			gui.add(m_window);
+		}
+		else {
+			gui.remove(m_window);
+			m_window = nullptr;
+		}
+	});
 }
