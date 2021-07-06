@@ -1505,6 +1505,36 @@ void ShipDesignerGUI::open(tgui::Gui& gui) {
 				m_window = nullptr;
 			});
 
+			auto designLabel = tgui::Label::create("Design");
+			designLabel->setOrigin(0.5f, 0.5f);
+			designLabel->setPosition("16.5%", "2.5%");
+			m_window->add(designLabel);
+
+			auto designListBox = tgui::ListBox::create();
+			designListBox->setPosition("2.5%", "5%");
+			designListBox->setSize("30.5%", "90%");
+			m_window->add(designListBox);
+
+			auto chassisLabel = tgui::Label::create("Chassis");
+			chassisLabel->setOrigin(0.5f, 0.5f);
+			chassisLabel->setPosition("50.75%", "2.5%");
+			m_window->add(chassisLabel);
+
+			auto chassisListBox = tgui::ListBox::create();
+			chassisListBox->setPosition("35.5%", "5%");
+			chassisListBox->setSize("30.5%", "30%");
+			m_window->add(chassisListBox);
+
+			auto weaponsLabel = tgui::Label::create("Weapons");
+			weaponsLabel->setOrigin(0.5f, 0.5f);
+			weaponsLabel->setPosition("83.75%", "2.5%");
+			m_window->add(weaponsLabel);
+
+			auto weaponsListBox = tgui::ListBox::create();
+			weaponsListBox->setPosition("68.5%", "5%");
+			weaponsListBox->setSize("30.5%", "30%");
+			m_window->add(weaponsListBox);
+
 			gui.add(m_window);
 		}
 		else {
