@@ -454,13 +454,13 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 		state.changeToLocalView(constellation.getFactions()[0].getCapitol());
 		state.getCamera().setPos(constellation.getFactions()[0].getCapitol()->getLocalViewCenter());
 
-		m_playerGui.open(gui, state, false);
+		m_playerGui.open(gui, state, constellation, false);
 	}
 	else {
 		state.changeToWorldView();
 		constellation.discoverAllStars();
 
-		m_playerGui.open(gui, state, true);
+		m_playerGui.open(gui, state, constellation, true);
 	}
 
 	for (auto& func : m_gameStartCallbacks) {
@@ -835,7 +835,7 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 	}
 }
 
-void PlayerGUI::open(tgui::Gui& gui, GameState& state, bool spectator) {
+void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator) {
 	if (!spectator) {
 		helpWindow.open(gui);
 		buildGUI.open(gui);
@@ -843,7 +843,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, bool spectator) {
 		planetGUI.open(gui, state);
 		timescaleGUI.open(gui);
 		resourceGUI.open(gui);
-		shipDesignerGUI.open(gui);
+		shipDesignerGUI.open(gui, constellation.getFaction(state.getPlayer().getFaction()));
 	}
 	else {
 		unitGUI.open(gui);
@@ -1491,10 +1491,10 @@ void GameWidget::Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d s
 	panel->add(picture);
 }
 
-void ShipDesignerGUI::open(tgui::Gui& gui) {
+void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 	m_icon.open(gui, tgui::Layout2d("0%", "80%"), tgui::Layout2d("2.5%", "5%"), "data/art/shipicon.png");
 
-	m_icon.panel->onClick([this, &gui]() {
+	m_icon.panel->onClick([this, &gui, playerFaction]() {
 		if (m_window == nullptr) {
 			m_window = tgui::ChildWindow::create("Ship Designer");
 			m_window->setOrigin(0.5f, 0.5f);
@@ -1525,6 +1525,16 @@ void ShipDesignerGUI::open(tgui::Gui& gui) {
 			chassisListBox->setSize("30.5%", "30%");
 			m_window->add(chassisListBox);
 
+			// Add chassis to list box
+			for (auto& chassis : playerFaction->getChassis()) {
+				chassisListBox->addItem(chassis.name);
+			}
+
+			auto chassisAdderButton = tgui::Button::create("+");
+			chassisAdderButton->setOrigin(0.5f, 0.5f);
+			chassisAdderButton->setPosition("50.75%", "42.5%");
+			m_window->add(chassisAdderButton);
+
 			auto weaponsLabel = tgui::Label::create("Weapons");
 			weaponsLabel->setOrigin(0.5f, 0.5f);
 			weaponsLabel->setPosition("83.75%", "2.5%");
@@ -1534,6 +1544,26 @@ void ShipDesignerGUI::open(tgui::Gui& gui) {
 			weaponsListBox->setPosition("68.5%", "5%");
 			weaponsListBox->setSize("30.5%", "30%");
 			m_window->add(weaponsListBox);
+
+			// Add weapons to list box
+			for (auto& weapon : playerFaction->getWeapons()) {
+				weaponsListBox->addItem(weapon.name);
+			}
+
+			auto weaponsAdderButton = tgui::Button::create("+");
+			weaponsAdderButton->setOrigin(0.5f, 0.5f);
+			weaponsAdderButton->setPosition("83.75%", "42.5%");
+			m_window->add(weaponsAdderButton);
+
+			auto shipChassisListBox = tgui::ListBox::create();
+			shipChassisListBox->setPosition("35.5%", "50%");
+			shipChassisListBox->setSize("30.5%", "30%");
+			m_window->add(shipChassisListBox);
+
+			auto shipWeaponsListBox = tgui::ListBox::create();
+			shipWeaponsListBox->setPosition("68.5%", "50%");
+			shipWeaponsListBox->setSize("30.5%", "30%");
+			m_window->add(shipWeaponsListBox);
 
 			gui.add(m_window);
 		}

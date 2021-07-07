@@ -47,6 +47,14 @@ void Faction::spawnAtRandomStar() {
 
 	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
 	
+	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::FRIGATE_1, "Frigate" });
+	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::DESTROYER_1, "Destroyer" });
+	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, "Constructor" });
+
+	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::LASER_GUN, "Laser Gun"});
+	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::MACHINE_GUN, "Machine Gun"});
+	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::GAUSS_CANNON, "Gauss Cannon"});
+
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
 

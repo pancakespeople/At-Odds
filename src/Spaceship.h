@@ -30,6 +30,32 @@ public:
 		DONE
 	};
 
+	struct DesignerChassis {
+		SPACESHIP_TYPE type = SPACESHIP_TYPE::FRIGATE_1;
+		std::string name;
+
+	private:
+		friend class boost::serialization::access;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version) {
+			archive & type;
+			archive & name;
+		}
+	};
+
+	struct DesignerWeapon {
+		Weapon::WEAPON_TYPE type = Weapon::WEAPON_TYPE::LASER_GUN;
+		std::string name;
+
+	private:
+		friend class boost::serialization::access;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version) {
+			archive & type;
+			archive & name;
+		}
+	};
+
 	Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 	Spaceship(const Spaceship& old) = delete;
 	

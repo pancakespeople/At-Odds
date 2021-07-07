@@ -171,11 +171,11 @@ int main(int argc, const char* argv[])
             Sounds::clearSounds();
 
             if (player.getFaction() != -1) {
-                playerGui.open(gui, state, false);
+                playerGui.open(gui, state, constellation, false);
                 playerGui.helpWindow.close();
             }
             else {
-                playerGui.open(gui, state, true);
+                playerGui.open(gui, state, constellation, true);
             }
 
             DEBUG_PRINT("Loaded game");

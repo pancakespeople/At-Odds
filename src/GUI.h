@@ -146,7 +146,7 @@ class ShipDesignerGUI {
 public:
 	ShipDesignerGUI() {}
 
-	void open(tgui::Gui& gui);
+	void open(tgui::Gui& gui, Faction* playerFaction);
 
 private:
 	GameWidget::Icon m_icon;
@@ -156,7 +156,7 @@ private:
 struct PlayerGUI {
 	PlayerGUI() {}
 
-	void open(tgui::Gui& gui, GameState& state, bool spectator);
+	void open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator);
 
 	HelpWindow helpWindow;
 	BuildGUI buildGUI;
