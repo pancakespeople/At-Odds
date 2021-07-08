@@ -44,6 +44,9 @@ public:
 	std::vector<Spaceship::DesignerChassis>& getChassis() { return m_chassis; }
 	std::vector<Spaceship::DesignerWeapon>& getWeapons() { return m_weapons; }
 
+	Spaceship::DesignerChassis getChassisByName(const std::string& name);
+	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
+
 	Star* getCapitol() { return m_capitol; }
 	Constellation* getConstellation() { return m_constellation; }
 

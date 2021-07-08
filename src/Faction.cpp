@@ -47,13 +47,13 @@ void Faction::spawnAtRandomStar() {
 
 	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
 	
-	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::FRIGATE_1, "Frigate" });
-	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::DESTROYER_1, "Destroyer" });
-	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, "Constructor" });
+	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::FRIGATE_1, "Frigate", 1.0f });
+	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::DESTROYER_1, "Destroyer", 2.0f });
+	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, "Constructor", 0.0f });
 
-	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::LASER_GUN, "Laser Gun"});
-	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::MACHINE_GUN, "Machine Gun"});
-	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::GAUSS_CANNON, "Gauss Cannon"});
+	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::LASER_GUN, "Laser Gun", 1.0f});
+	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::MACHINE_GUN, "Machine Gun", 1.0f});
+	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::GAUSS_CANNON, "Gauss Cannon", 2.0f});
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -185,4 +185,24 @@ std::vector<Spaceship*> Faction::getAllCombatShips() {
 		}
 	}
 	return ships;
+}
+
+Spaceship::DesignerChassis Faction::getChassisByName(const std::string& name) {
+	for (auto& chassis : m_chassis) {
+		if (chassis.name == name) {
+			return chassis;
+		}
+	}
+	DEBUG_PRINT("Failed to get chassis");
+	return Spaceship::DesignerChassis();
+}
+
+Spaceship::DesignerWeapon Faction::getWeaponByName(const std::string& name) {
+	for (auto& weapon : m_weapons) {
+		if (weapon.name == name) {
+			return weapon;
+		}
+	}
+	DEBUG_PRINT("Failed to get weapon");
+	return Spaceship::DesignerWeapon();
 }

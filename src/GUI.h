@@ -147,6 +147,7 @@ public:
 	ShipDesignerGUI() {}
 
 	void open(tgui::Gui& gui, Faction* playerFaction);
+	void displayShipInfo(Faction* playerFaction);
 
 private:
 	GameWidget::Icon m_icon;

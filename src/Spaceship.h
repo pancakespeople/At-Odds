@@ -33,6 +33,7 @@ public:
 	struct DesignerChassis {
 		SPACESHIP_TYPE type = SPACESHIP_TYPE::FRIGATE_1;
 		std::string name;
+		float maxWeaponCapacity = 1.0f;
 
 	private:
 		friend class boost::serialization::access;
@@ -40,12 +41,14 @@ public:
 		void serialize(Archive& archive, const unsigned int version) {
 			archive & type;
 			archive & name;
+			archive & maxWeaponCapacity;
 		}
 	};
 
 	struct DesignerWeapon {
 		Weapon::WEAPON_TYPE type = Weapon::WEAPON_TYPE::LASER_GUN;
 		std::string name;
+		float weaponPoints = 1.0f;
 
 	private:
 		friend class boost::serialization::access;
@@ -53,6 +56,7 @@ public:
 		void serialize(Archive& archive, const unsigned int version) {
 			archive & type;
 			archive & name;
+			archive & weaponPoints;
 		}
 	};
 

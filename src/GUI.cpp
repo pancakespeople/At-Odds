@@ -1507,63 +1507,118 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 			auto designLabel = tgui::Label::create("Design");
 			designLabel->setOrigin(0.5f, 0.5f);
-			designLabel->setPosition("16.5%", "2.5%");
+			designLabel->setPosition("12.5%", "2.5%");
 			m_window->add(designLabel);
 
 			auto designListBox = tgui::ListBox::create();
 			designListBox->setPosition("2.5%", "5%");
-			designListBox->setSize("30.5%", "90%");
+			designListBox->setSize("22.5%", "90%");
 			m_window->add(designListBox);
 
 			auto chassisLabel = tgui::Label::create("Chassis");
 			chassisLabel->setOrigin(0.5f, 0.5f);
-			chassisLabel->setPosition("50.75%", "2.5%");
+			chassisLabel->setPosition("38.75%", "2.5%");
 			m_window->add(chassisLabel);
 
 			auto chassisListBox = tgui::ListBox::create();
-			chassisListBox->setPosition("35.5%", "5%");
-			chassisListBox->setSize("30.5%", "30%");
-			m_window->add(chassisListBox);
+			chassisListBox->setPosition("27.5%", "5%");
+			chassisListBox->setSize("22.5%", "30%");
+			m_window->add(chassisListBox, "chassisListBox");
 
 			// Add chassis to list box
 			for (auto& chassis : playerFaction->getChassis()) {
 				chassisListBox->addItem(chassis.name);
 			}
 
-			auto chassisAdderButton = tgui::Button::create("+");
-			chassisAdderButton->setOrigin(0.5f, 0.5f);
-			chassisAdderButton->setPosition("50.75%", "42.5%");
-			m_window->add(chassisAdderButton);
-
 			auto weaponsLabel = tgui::Label::create("Weapons");
 			weaponsLabel->setOrigin(0.5f, 0.5f);
-			weaponsLabel->setPosition("83.75%", "2.5%");
+			weaponsLabel->setPosition("63.75%", "2.5%");
 			m_window->add(weaponsLabel);
 
 			auto weaponsListBox = tgui::ListBox::create();
-			weaponsListBox->setPosition("68.5%", "5%");
-			weaponsListBox->setSize("30.5%", "30%");
-			m_window->add(weaponsListBox);
+			weaponsListBox->setPosition("52.5%", "5%");
+			weaponsListBox->setSize("22.5%", "30%");
+			m_window->add(weaponsListBox, "weaponsListBox");
 
 			// Add weapons to list box
 			for (auto& weapon : playerFaction->getWeapons()) {
 				weaponsListBox->addItem(weapon.name);
 			}
 
-			auto weaponsAdderButton = tgui::Button::create("+");
-			weaponsAdderButton->setOrigin(0.5f, 0.5f);
-			weaponsAdderButton->setPosition("83.75%", "42.5%");
-			m_window->add(weaponsAdderButton);
-
 			auto shipChassisListBox = tgui::ListBox::create();
-			shipChassisListBox->setPosition("35.5%", "50%");
-			shipChassisListBox->setSize("30.5%", "30%");
-			m_window->add(shipChassisListBox);
+			shipChassisListBox->setPosition("27.5%", "50%");
+			shipChassisListBox->setSize("22.5%", "30%");
+			m_window->add(shipChassisListBox, "shipChassisListBox");
 
 			auto shipWeaponsListBox = tgui::ListBox::create();
-			shipWeaponsListBox->setPosition("68.5%", "50%");
-			shipWeaponsListBox->setSize("30.5%", "30%");
-			m_window->add(shipWeaponsListBox);
+			shipWeaponsListBox->setPosition("52.5%", "50%");
+			shipWeaponsListBox->setSize("22.5%", "30%");
+			m_window->add(shipWeaponsListBox, "shipWeaponsListBox");
+
+			auto designNameLabel = tgui::Label::create("Design Name: ");
+			designNameLabel->setOrigin(0.0f, 0.5f);
+			designNameLabel->setPosition("27.5%", "90%");
+			m_window->add(designNameLabel, "designNameLabel");
+
+			auto designNameTextBox = tgui::EditBox::create();
+			designNameTextBox->setPosition("designNameLabel.right", "designNameLabel.top");
+			designNameTextBox->setSize("22.5%", "10%");
+			m_window->add(designNameTextBox);
+
+			auto designNameSaveButton = tgui::Button::create("Save Design");
+			designNameSaveButton->setOrigin(0.0f, 0.5f);
+			designNameSaveButton->setPosition("75%", "90%");
+			m_window->add(designNameSaveButton);
+
+			auto chassisAdderButton = tgui::Button::create("+");
+			chassisAdderButton->setOrigin(0.5f, 0.5f);
+			chassisAdderButton->setPosition("chassisListBox.left + chassisListBox.width * 0.25", "42.5%");
+			chassisAdderButton->onClick([this, playerFaction, chassisListBox, shipChassisListBox]() {
+				if (chassisListBox->getSelectedItemIndex() != -1) {
+					if (shipChassisListBox->getItemCount() == 0) {
+						shipChassisListBox->addItem(chassisListBox->getSelectedItem());
+						displayShipInfo(playerFaction);
+					}
+				}
+				});
+			m_window->add(chassisAdderButton, "chassisAdderButton");
+
+			auto chassisRemoverButton = tgui::Button::create("-");
+			chassisRemoverButton->setOrigin(0.5f, 0.5f);
+			chassisRemoverButton->setPosition("chassisListBox.left + chassisListBox.width * 0.75", "42.5%");
+			chassisRemoverButton->setSize("chassisAdderButton.size");
+			chassisRemoverButton->onClick([this, playerFaction, shipChassisListBox]() {
+				if (shipChassisListBox->getSelectedItemIndex() != -1) {
+					shipChassisListBox->removeItemByIndex(shipChassisListBox->getSelectedItemIndex());
+					displayShipInfo(playerFaction);
+				}
+				});
+			m_window->add(chassisRemoverButton);
+
+			auto weaponsAdderButton = tgui::Button::create("+");
+			weaponsAdderButton->setOrigin(0.5f, 0.5f);
+			weaponsAdderButton->setPosition("weaponsListBox.left + weaponsListBox.width * 0.25", "42.5%");
+			weaponsAdderButton->onClick([this, playerFaction, weaponsListBox, shipWeaponsListBox]() {
+				if (weaponsListBox->getSelectedItemIndex() != -1) {
+					if (shipWeaponsListBox->getItemCount() == 0) {
+						shipWeaponsListBox->addItem(weaponsListBox->getSelectedItem());
+						displayShipInfo(playerFaction);
+					}
+				}
+			});
+			m_window->add(weaponsAdderButton);
+
+			auto weaponsRemoverButton = tgui::Button::create("-");
+			weaponsRemoverButton->setOrigin(0.5f, 0.5f);
+			weaponsRemoverButton->setPosition("weaponsListBox.left + weaponsListBox.width * 0.75", "42.5%");
+			weaponsRemoverButton->setSize("chassisAdderButton.size");
+			weaponsRemoverButton->onClick([this, playerFaction, shipWeaponsListBox]() {
+				if (shipWeaponsListBox->getSelectedItemIndex() != -1) {
+					shipWeaponsListBox->removeItemByIndex(shipWeaponsListBox->getSelectedItemIndex());
+					displayShipInfo(playerFaction);
+				}
+				});
+			m_window->add(weaponsRemoverButton);
 
 			gui.add(m_window);
 		}
@@ -1572,4 +1627,40 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			m_window = nullptr;
 		}
 	});
+}
+
+void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
+	auto shipChassisListBox = m_window->get<tgui::ListBox>("shipChassisListBox");
+	auto shipWeaponsListBox = m_window->get<tgui::ListBox>("shipWeaponsListBox");
+
+	if (shipChassisListBox->getItemCount() > 0) {
+		tgui::String chassisName = shipChassisListBox->getItemByIndex(0);
+
+		Spaceship::DesignerChassis chassis = playerFaction->getChassisByName(chassisName.toStdString());
+		float totalWeaponPoints = 0.0f;
+
+		for (tgui::String& str : shipWeaponsListBox->getItems()) {
+			Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(str.toStdString());
+			totalWeaponPoints += weapon.weaponPoints;
+		}
+
+		auto capacityLabel = m_window->get<tgui::Label>("capacityLabel");
+
+		if (capacityLabel != nullptr) {
+			m_window->remove(capacityLabel);
+		}
+
+		// Use stringstream to set the decimals properly
+		std::stringstream ss;
+		ss << "WC: " << std::fixed << std::setprecision(1) << totalWeaponPoints << "/" << chassis.maxWeaponCapacity;
+
+		capacityLabel = tgui::Label::create(ss.str());
+		capacityLabel->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
+		m_window->add(capacityLabel, "capacityLabel");
+	}
+	else {
+		if (m_window->get<tgui::Label>("capacityLabel") != nullptr) {
+			m_window->remove(m_window->get<tgui::Label>("capacityLabel"));
+		}
+	}
 }
