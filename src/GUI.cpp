@@ -837,7 +837,9 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 
 void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator) {
 	if (!spectator) {
+#ifdef NDEBUG
 		helpWindow.open(gui);
+#endif
 		buildGUI.open(gui);
 		unitGUI.open(gui);
 		planetGUI.open(gui, state);
