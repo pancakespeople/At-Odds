@@ -1577,6 +1577,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				if (chassisListBox->getSelectedItemIndex() != -1) {
 					if (shipChassisListBox->getItemCount() == 0) {
 						shipChassisListBox->addItem(chassisListBox->getSelectedItem());
+						shipChassisListBox->setSelectedItemByIndex(0);
 						displayShipInfo(playerFaction);
 					}
 				}
@@ -1598,12 +1599,16 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			auto weaponsAdderButton = tgui::Button::create("+");
 			weaponsAdderButton->setOrigin(0.5f, 0.5f);
 			weaponsAdderButton->setPosition("weaponsListBox.left + weaponsListBox.width * 0.25", "42.5%");
-			weaponsAdderButton->onClick([this, playerFaction, weaponsListBox, shipWeaponsListBox]() {
-				if (weaponsListBox->getSelectedItemIndex() != -1) {
-					if (shipWeaponsListBox->getItemCount() == 0) {
-						shipWeaponsListBox->addItem(weaponsListBox->getSelectedItem());
-						displayShipInfo(playerFaction);
+			weaponsAdderButton->onClick([this, playerFaction, weaponsListBox, shipWeaponsListBox, shipChassisListBox]() {
+				if (weaponsListBox->getSelectedItemIndex() != -1 && shipChassisListBox->getItemCount() > 0) {
+					shipWeaponsListBox->addItem(weaponsListBox->getSelectedItem());
+					//if (!canChassisFitWeapons(playerFaction)) {
+					//	shipWeaponsListBox->removeItemByIndex(shipWeaponsListBox->getItemCount() - 1);
+					//}
+					if (shipWeaponsListBox->getItemCount() > 0) {
+						shipWeaponsListBox->setSelectedItemByIndex(shipWeaponsListBox->getItemCount() - 1);
 					}
+					displayShipInfo(playerFaction);
 				}
 			});
 			m_window->add(weaponsAdderButton);
@@ -1615,6 +1620,9 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			weaponsRemoverButton->onClick([this, playerFaction, shipWeaponsListBox]() {
 				if (shipWeaponsListBox->getSelectedItemIndex() != -1) {
 					shipWeaponsListBox->removeItemByIndex(shipWeaponsListBox->getSelectedItemIndex());
+					if (shipWeaponsListBox->getItemCount() > 0) {
+						shipWeaponsListBox->setSelectedItemByIndex(shipWeaponsListBox->getItemCount() - 1);
+					}
 					displayShipInfo(playerFaction);
 				}
 				});
@@ -1656,6 +1664,7 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 
 		capacityLabel = tgui::Label::create(ss.str());
 		capacityLabel->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
+		capacityLabel->setToolTip(tgui::Label::create("Weapon Capacity"));
 		m_window->add(capacityLabel, "capacityLabel");
 	}
 	else {
@@ -1663,4 +1672,20 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 			m_window->remove(m_window->get<tgui::Label>("capacityLabel"));
 		}
 	}
+}
+
+bool ShipDesignerGUI::canChassisFitWeapons(Faction* playerFaction) {
+	auto shipChassisListBox = m_window->get<tgui::ListBox>("shipChassisListBox");
+	auto shipWeaponsListBox = m_window->get<tgui::ListBox>("shipWeaponsListBox");
+	
+	Spaceship::DesignerChassis chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
+
+	float total = 0.0f;
+	for (tgui::String& weaponString : shipWeaponsListBox->getItems()) {
+		Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(weaponString.toStdString());
+		total += weapon.weaponPoints;
+	}
+
+	if (total <= chassis.maxWeaponCapacity) return true;
+	else return false;
 }
