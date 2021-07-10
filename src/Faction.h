@@ -23,6 +23,7 @@ public:
 	void subtractResource(PlanetResource::RESOURCE_TYPE type, float num);
 	void addChassis(const Spaceship::DesignerChassis& chassis) { m_chassis.push_back(chassis); }
 	void addWeapon(const Spaceship::DesignerWeapon& weapon) { m_weapons.push_back(weapon); }
+	void addOrReplaceDesignerShip(const Spaceship::DesignerShip& ship);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -43,9 +44,11 @@ public:
 	std::vector<Spaceship*> getAllCombatShips();
 	std::vector<Spaceship::DesignerChassis>& getChassis() { return m_chassis; }
 	std::vector<Spaceship::DesignerWeapon>& getWeapons() { return m_weapons; }
+	std::vector<Spaceship::DesignerShip>& getShipDesigns() { return m_designerShips; }
 
 	Spaceship::DesignerChassis getChassisByName(const std::string& name);
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
+	Spaceship::DesignerShip getShipDesignByName(const std::string& name);
 
 	Star* getCapitol() { return m_capitol; }
 	Constellation* getConstellation() { return m_constellation; }
@@ -82,6 +85,7 @@ private:
 		archive & m_resources;
 		archive & m_chassis;
 		archive & m_weapons;
+		archive & m_designerShips;
 	}
 	
 	Faction() {}
@@ -95,6 +99,7 @@ private:
 	std::unordered_map<PlanetResource::RESOURCE_TYPE, float> m_resources;
 	std::vector<Spaceship::DesignerChassis> m_chassis;
 	std::vector<Spaceship::DesignerWeapon> m_weapons;
+	std::vector<Spaceship::DesignerShip> m_designerShips;
 	
 	Brain m_ai;
 	

@@ -60,6 +60,21 @@ public:
 		}
 	};
 
+	struct DesignerShip {
+		DesignerChassis chassis;
+		std::vector<DesignerWeapon> weapons;
+		std::string name;
+
+	private:
+		friend class boost::serialization::access;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version) {
+			archive & chassis;
+			archive & weapons;
+			archive & name;
+		}
+	};
+
 	Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 	Spaceship(const Spaceship& old) = delete;
 	

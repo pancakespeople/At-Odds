@@ -206,3 +206,24 @@ Spaceship::DesignerWeapon Faction::getWeaponByName(const std::string& name) {
 	DEBUG_PRINT("Failed to get weapon");
 	return Spaceship::DesignerWeapon();
 }
+
+void Faction::addOrReplaceDesignerShip(const Spaceship::DesignerShip& ship) {
+	for (Spaceship::DesignerShip& designerShip : m_designerShips) {
+		if (ship.name == designerShip.name) {
+			designerShip = ship;
+			return;
+		}
+	}
+
+	m_designerShips.push_back(ship);
+}
+
+Spaceship::DesignerShip Faction::getShipDesignByName(const std::string& name) {
+	for (auto& ship : m_designerShips) {
+		if (ship.name == name) {
+			return ship;
+		}
+	}
+	DEBUG_PRINT("Failed to get ship design");
+	return Spaceship::DesignerShip();
+}
