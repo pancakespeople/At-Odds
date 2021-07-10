@@ -35,10 +35,12 @@ void UnitGUI::open(tgui::Gui& gui) {
 	}
 }
 
-void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int playerFaction) {
+void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel) {
 	static bool mouseHeld = false;
 
 	m_selectedShips.erase(std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* s) {return s->isDead(); }), m_selectedShips.end());
+
+	if (!mainPanel->isFocused()) return;
 
 	// Mouse begins to be held down - Begin selection
 	if (!mouseHeld && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -836,6 +838,11 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 }
 
 void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator) {
+	// An invisible bottom level panel to help with gui focusing
+	mainPanel = tgui::Panel::create();
+	mainPanel->getRenderer()->setOpacity(0.0f);
+	gui.add(mainPanel);
+	
 	if (!spectator) {
 #ifdef NDEBUG
 		helpWindow.open(gui);
@@ -1333,8 +1340,8 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	}
 }
 
-void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar) {
-	if (currentStar != nullptr && m_planetIconPanel != nullptr) {
+void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
+	if (currentStar != nullptr && m_planetIconPanel != nullptr && mainPanel->isFocused()) {
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
 			sf::Vector2f worldPos = window.mapPixelToCoords(screenPos);
@@ -1355,8 +1362,8 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, c
 	}
 }
 
-void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player) {
-	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && currentStar != nullptr) {
+void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player, tgui::Panel::Ptr mainPanel) {
+	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && currentStar != nullptr && mainPanel->isFocused()) {
 		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
 		sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseScreenPos);
 		

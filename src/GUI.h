@@ -24,7 +24,7 @@ public:
 	UnitGUI();
 
 	void open(tgui::Gui& gui);
-	void update(const sf::RenderWindow& window, Star* currentStar, int playerFaction);
+	void update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel);
 	void draw(sf::RenderWindow& window);
 	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars);
 	
@@ -88,7 +88,7 @@ public:
 
 	void open(tgui::Gui& gui, GameState& state);
 	void update(GameState& state);
-	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar);
+	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel);
 
 private:
 	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, tgui::Gui& gui, int index);
@@ -105,7 +105,7 @@ class BuildingGUI {
 public:
 	BuildingGUI() {}
 
-	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player);
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player, tgui::Panel::Ptr mainPanel);
 
 private:
 	tgui::ChildWindow::Ptr m_window;
@@ -160,6 +160,8 @@ struct PlayerGUI {
 	PlayerGUI() {}
 
 	void open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator);
+
+	tgui::Panel::Ptr mainPanel;
 
 	HelpWindow helpWindow;
 	BuildGUI buildGUI;

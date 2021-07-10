@@ -110,16 +110,16 @@ int main(int argc, const char* argv[])
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
             emitter.onEvent(event);
-            playerGui.buildingGUI.onEvent(event, window, gui, state.getLocalViewStar(), state.getPlayer());
+            playerGui.buildingGUI.onEvent(event, window, gui, state.getLocalViewStar(), state.getPlayer(), playerGui.mainPanel);
             buildGui.onEvent(event, window, state.getLocalViewStar(), state.getPlayer());
             console.onEvent(event, gui, state);
             playerGui.timescaleGUI.onEvent(event, gui, updatesPerSecondTarget);
-            playerGui.planetGUI.onEvent(event, gui, state, window, state.getLocalViewStar());
+            playerGui.planetGUI.onEvent(event, gui, state, window, state.getLocalViewStar(), playerGui.mainPanel);
         }
 
         optionsMenu.updateGameSettings(window, background, gui, emitter);
         if (state.getState() != GameState::State::MAIN_MENU) {
-            unitGui.update(window, state.getLocalViewStar(), state.getPlayer().getFaction());
+            unitGui.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), playerGui.mainPanel);
             playerGui.planetGUI.update(state);
             playerGui.resourceGUI.update(constellation, state.getPlayer());
         }
