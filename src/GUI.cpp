@@ -1437,42 +1437,45 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, int& updatesPerSecondT
 }
 
 void ResourceGUI::open(tgui::Gui& gui) {
-	m_resourcePanel = tgui::Panel::create();
-	m_resourcePanel->setPosition("0%", "5%");
-	m_resourcePanel->setSize("15%", "15%");
-	m_resourcePanel->getRenderer()->setBorders(1);
-	m_resourcePanel->getRenderer()->setBorderColor(tgui::Color::White);
-	m_resourcePanel->getRenderer()->setOpacity(0.75f);
-	gui.add(m_resourcePanel);
+	m_resourceGroup = tgui::Group::create();
+	m_resourceGroup->setPosition("0%", "0%");
+	m_resourceGroup->setSize("33%", "33%");
+	m_resourceGroup->setFocusable(false);
+	gui.add(m_resourceGroup);
 }
 
 void ResourceGUI::update(Constellation& constellation, Player& player) {
-	if (m_resourcePanel != nullptr) {
+	if (m_resourceGroup != nullptr) {
 		if (player.getFaction() != -1) {
 			Faction* faction = constellation.getFaction(player.getFaction());
 			auto& resources = faction->getResources();
 
-			if (m_resourcePanel->get<tgui::Label>("resourceLabel") == nullptr) {
+			if (m_resourceGroup->get<tgui::Label>("resourceLabel") == nullptr) {
 				auto resourceLabel = tgui::Label::create("Resources");
-				m_resourcePanel->add(resourceLabel, "resourceLabel");
+				resourceLabel->setTextSize(20);
+				m_resourceGroup->add(resourceLabel, "resourceLabel");
 			}
 
-			int pos = 10;
+			int pos = 15;
 
 			for (auto& resource : resources) {
 				PlanetResource pr;
 				pr.type = resource.first;
 
-				auto label = m_resourcePanel->get<tgui::Label>(pr.getTypeString());
+				auto label = m_resourceGroup->get<tgui::Label>(pr.getTypeString());
 
 				if (label == nullptr) {
 					label = tgui::Label::create();
 					label->setPosition("0%", (std::to_string(pos) + "%").c_str());
-					m_resourcePanel->add(label, pr.getTypeString());
+					label->setTextSize(20);
+					m_resourceGroup->add(label, pr.getTypeString());
 				}
 
-				label->setText(pr.getTypeString() + ": " + std::to_string(resource.second));
-				pos += 10;
+				std::stringstream ss;
+				ss << pr.getTypeString() << ": " << std::fixed << std::setprecision(1) << resource.second;
+
+				label->setText(ss.str());
+				pos += 15;
 			}
 		}
 	}

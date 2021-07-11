@@ -129,7 +129,7 @@ public:
 	void update(Constellation& constellation, Player& player);
 
 private:
-	tgui::Panel::Ptr m_resourcePanel;
+	tgui::Group::Ptr m_resourceGroup;
 };
 
 namespace GameWidget {
