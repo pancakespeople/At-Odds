@@ -137,7 +137,7 @@ int main(int argc, const char* argv[])
         
         background.draw(window, emitter);
         
-        state.getCamera().update(window);
+        state.getCamera().update(window, gui.getFocusedLeaf());
 
         Sounds::updateSounds(state.getPlayer(), state.getCamera());
 
