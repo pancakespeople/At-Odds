@@ -333,6 +333,10 @@ void Planet::generateResources() {
 }
 
 std::string PlanetResource::getTypeString() {
+	return getTypeString(type);
+}
+
+std::string PlanetResource::getTypeString(RESOURCE_TYPE type) {
 	switch (type) {
 	case RESOURCE_TYPE::COMMON_ORE:
 		return "Kathium";

@@ -6,6 +6,7 @@
 #include "Random.h"
 #include "Player.h"
 #include "Building.h"
+#include "ShipParts.h"
 
 Faction::Faction(Constellation* constellation, int id) {
 	m_constellation = constellation;
@@ -47,13 +48,13 @@ void Faction::spawnAtRandomStar() {
 
 	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
 	
-	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::FRIGATE_1, "Frigate", 1.0f });
-	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::DESTROYER_1, "Destroyer", 2.0f });
-	addChassis(Spaceship::DesignerChassis{ Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, "Constructor", 0.0f });
+	addChassis(ShipParts::frigateChassis);
+	addChassis(ShipParts::destroyerChassis);
+	addChassis(ShipParts::constructorChassis);
 
-	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::LASER_GUN, "Laser Gun", 1.0f});
-	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::MACHINE_GUN, "Machine Gun", 1.0f});
-	addWeapon(Spaceship::DesignerWeapon{ Weapon::WEAPON_TYPE::GAUSS_CANNON, "Gauss Cannon", 2.0f});
+	addWeapon(ShipParts::laserGunWeapon);
+	addWeapon(ShipParts::machineGunWeapon);
+	addWeapon(ShipParts::gaussCannonWeapon);
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }

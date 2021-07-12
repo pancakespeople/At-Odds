@@ -1459,20 +1459,17 @@ void ResourceGUI::update(Constellation& constellation, Player& player) {
 			int pos = 15;
 
 			for (auto& resource : resources) {
-				PlanetResource pr;
-				pr.type = resource.first;
-
-				auto label = m_resourceGroup->get<tgui::Label>(pr.getTypeString());
+				auto label = m_resourceGroup->get<tgui::Label>(PlanetResource::getTypeString(resource.first));
 
 				if (label == nullptr) {
 					label = tgui::Label::create();
 					label->setPosition("0%", (std::to_string(pos) + "%").c_str());
 					label->setTextSize(20);
-					m_resourceGroup->add(label, pr.getTypeString());
+					m_resourceGroup->add(label, PlanetResource::getTypeString(resource.first));
 				}
 
 				std::stringstream ss;
-				ss << pr.getTypeString() << ": " << std::fixed << std::setprecision(1) << resource.second;
+				ss << PlanetResource::getTypeString(resource.first) << ": " << std::fixed << std::setprecision(1) << resource.second;
 
 				label->setText(ss.str());
 				pos += 15;
@@ -1692,36 +1689,66 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 	auto shipChassisListBox = m_window->get<tgui::ListBox>("shipChassisListBox");
 	auto shipWeaponsListBox = m_window->get<tgui::ListBox>("shipWeaponsListBox");
+	auto shipInfoGroup = m_window->get<tgui::Group>("shipInfoGroup");
 
 	if (shipChassisListBox->getItemCount() > 0) {
 		tgui::String chassisName = shipChassisListBox->getItemByIndex(0);
+		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> totalResourceCost;
 
 		Spaceship::DesignerChassis chassis = playerFaction->getChassisByName(chassisName.toStdString());
+		for (auto& resource : chassis.resourceCost) {
+			totalResourceCost[resource.first] += resource.second;
+		}
+
 		float totalWeaponPoints = 0.0f;
 
 		for (tgui::String& str : shipWeaponsListBox->getItems()) {
 			Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(str.toStdString());
 			totalWeaponPoints += weapon.weaponPoints;
+			for (auto& resource : weapon.resourceCost) {
+				totalResourceCost[resource.first] += resource.second;
+			}
 		}
 
-		auto capacityLabel = m_window->get<tgui::Label>("capacityLabel");
-
-		if (capacityLabel != nullptr) {
-			m_window->remove(capacityLabel);
+		if (shipInfoGroup != nullptr) {
+			m_window->remove(shipInfoGroup);
 		}
+
+		shipInfoGroup = tgui::Group::create();
+		shipInfoGroup->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
+		shipInfoGroup->setSize("22.5%", "90%");
+		m_window->add(shipInfoGroup, "shipInfoGroup");
 
 		// Use stringstream to set the decimals properly
 		std::stringstream ss;
 		ss << "WC: " << std::fixed << std::setprecision(1) << totalWeaponPoints << "/" << chassis.maxWeaponCapacity;
 
-		capacityLabel = tgui::Label::create(ss.str());
-		capacityLabel->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
+		auto capacityLabel = tgui::Label::create(ss.str());
+		capacityLabel->setPosition("0%", "0%");
+		tgui::ToolTip::setInitialDelay(0);
 		capacityLabel->setToolTip(tgui::Label::create("Weapon Capacity"));
-		m_window->add(capacityLabel, "capacityLabel");
+		shipInfoGroup->add(capacityLabel, "capacityLabel");
+
+		auto resourcesLabel = tgui::Label::create("Resources: ");
+		resourcesLabel->setPosition("0%", "10%");
+		shipInfoGroup->add(resourcesLabel);
+
+		// Add resource cost labels
+		int yPercent = 20;
+		for (auto& resource : totalResourceCost) {
+			std::stringstream labelString;
+			labelString << PlanetResource::getTypeString(resource.first) << ": " << std::fixed << std::setprecision(1) << resource.second;
+
+			auto label = tgui::Label::create(labelString.str());
+			label->setPosition("0%", (std::to_string(yPercent) + "%").c_str());
+			shipInfoGroup->add(label);
+
+			yPercent += 10;
+		}
 	}
 	else {
-		if (m_window->get<tgui::Label>("capacityLabel") != nullptr) {
-			m_window->remove(m_window->get<tgui::Label>("capacityLabel"));
+		if (shipInfoGroup != nullptr) {
+			m_window->remove(shipInfoGroup);
 		}
 	}
 }

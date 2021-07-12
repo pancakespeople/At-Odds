@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "Collider.h"
 #include "Unit.h"
+#include "Planet.h"
 
 class Star;
 class JumpPoint;
@@ -34,6 +35,7 @@ public:
 		SPACESHIP_TYPE type = SPACESHIP_TYPE::FRIGATE_1;
 		std::string name;
 		float maxWeaponCapacity = 1.0f;
+		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> resourceCost;
 
 	private:
 		friend class boost::serialization::access;
@@ -42,6 +44,7 @@ public:
 			archive & type;
 			archive & name;
 			archive & maxWeaponCapacity;
+			archive & resourceCost;
 		}
 	};
 
@@ -49,6 +52,7 @@ public:
 		Weapon::WEAPON_TYPE type = Weapon::WEAPON_TYPE::LASER_GUN;
 		std::string name;
 		float weaponPoints = 1.0f;
+		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> resourceCost;
 
 	private:
 		friend class boost::serialization::access;
@@ -57,6 +61,7 @@ public:
 			archive & type;
 			archive & name;
 			archive & weaponPoints;
+			archive & resourceCost;
 		}
 	};
 

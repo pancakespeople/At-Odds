@@ -20,6 +20,7 @@ struct PlanetResource {
 	float abundance = 0.0f; // Value between 0 and 1
 
 	std::string getTypeString();
+	static std::string getTypeString(RESOURCE_TYPE type);
 
 private:
 	friend class boost::serialization::access;
