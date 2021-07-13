@@ -70,6 +70,8 @@ public:
 		std::vector<DesignerWeapon> weapons;
 		std::string name;
 
+		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> getTotalResourceCost();
+
 	private:
 		friend class boost::serialization::access;
 		template<class Archive>

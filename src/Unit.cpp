@@ -71,8 +71,8 @@ void Unit::onDeath(Star* currentStar) {
 	}
 }
 
-void Unit::openModGUI(tgui::ChildWindow::Ptr window) {
+void Unit::openModGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	for (auto& mod : m_mods) {
-		mod->openGUI(window);
+		mod->openGUI(window, faction);
 	}
 }

@@ -7,12 +7,13 @@
 #include "Order.h"
 #include "Math.h"
 #include "Planet.h"
+#include "GUI.h"
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
 BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
 
-void Mod::openGUI(tgui::ChildWindow::Ptr window) {
+void Mod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	auto text = tgui::Label::create();
 	text->setText(getInfoString());
 	window->add(text);
@@ -64,55 +65,44 @@ std::string FactoryMod::getInfoString() {
 	return "Next ship: " + std::to_string(m_ticksToNextShip / 60.0f) + "s";
 }
 
-void FactoryMod::openGUI(tgui::ChildWindow::Ptr window) {
+void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	window->setSize("25%", "25%");
 
-	auto frigLabel = tgui::Label::create("Frigate: ");
-	window->add(frigLabel, "frigLabel");
+	auto designsListBox = tgui::ListBox::create();
+	designsListBox->setPosition("2.5%", "10%");
+	designsListBox->setSize("33% - 2.5%", "90% - 2.5%");
+	designsListBox->onItemSelect([designsListBox, window, faction]() {
+		auto shipInfoGroup = window->get<tgui::Group>("shipInfoGroup");
+		
+		if (designsListBox->getSelectedItemIndex() != -1) {
+			Spaceship::DesignerShip ship = faction->getShipDesignByName(designsListBox->getSelectedItem().toStdString());
 
-	auto frigCost = tgui::Label::create("Cost: 10 Kathium");
-	frigCost->setPosition("frigLabel.left", "frigLabel.bottom");
-	window->add(frigCost);
+			if (ship.name == "") return;
 
-	auto frigCheckbox = tgui::CheckBox::create();
-	frigCheckbox->setPosition("frigLabel.right", "frigLabel.top");
-	frigCheckbox->setChecked(m_buildFrigate);
-	frigCheckbox->onChange([this, frigCheckbox]() {
-		m_buildFrigate = frigCheckbox->isChecked();
+			auto totalResourceCost = ship.getTotalResourceCost();
+			shipInfoGroup->removeAllWidgets();
+
+			ShipDesignerGUI::displayShipResourceCost(shipInfoGroup, totalResourceCost, 0);
+		}
+		else {
+			shipInfoGroup->removeAllWidgets();
+		}
 	});
-	window->add(frigCheckbox);
+	window->add(designsListBox, "designsListBox");
+	
+	auto designsLabel = tgui::Label::create("Designs");
+	designsLabel->setOrigin(0.5f, 0.0f);
+	designsLabel->setPosition("designsListBox.width / 2 + designsListBox.left", "0%");
+	window->add(designsLabel);
 
-	auto destrLabel = tgui::Label::create("Destroyer: ");
-	destrLabel->setPosition("0%", "33%");
-	window->add(destrLabel, "destrLabel");
+	for (Spaceship::DesignerShip& ship : faction->getShipDesigns()) {
+		designsListBox->addItem(ship.name);
+	}
 
-	auto destrCost = tgui::Label::create("Cost: 25 Kathium, 5 Oscillite");
-	destrCost->setPosition("destrLabel.left", "destrLabel.bottom");
-	window->add(destrCost);
-
-	auto destrCheckbox = tgui::CheckBox::create();
-	destrCheckbox->setPosition("destrLabel.right", "destrLabel.top");
-	destrCheckbox->setChecked(m_buildDestroyer);
-	destrCheckbox->onChange([this, destrCheckbox]() {
-		m_buildDestroyer = destrCheckbox->isChecked();
-	});
-	window->add(destrCheckbox);
-
-	auto csLabel = tgui::Label::create("Constructor: ");
-	csLabel->setPosition("0%", "66%");
-	window->add(csLabel, "csLabel");
-
-	auto csCost = tgui::Label::create("Cost: 33 Kathium");
-	csCost->setPosition("csLabel.left", "csLabel.bottom");
-	window->add(csCost);
-
-	auto csCheckbox = tgui::CheckBox::create();
-	csCheckbox->setPosition("csLabel.right", "csLabel.top");
-	csCheckbox->setChecked(m_buildConstructor);
-	csCheckbox->onChange([this, csCheckbox]() {
-		m_buildConstructor = csCheckbox->isChecked();
-		});
-	window->add(csCheckbox);
+	auto shipInfoGroup = tgui::Group::create();
+	shipInfoGroup->setPosition("designsListBox.right + 2.5%", "10%");
+	shipInfoGroup->setSize("33% - 2.5%", "90% - 2.5%");
+	window->add(shipInfoGroup, "shipInfoGroup");
 }
 
 void FactoryMod::setBuild(bool frigate, bool destroyer, bool constructor) {

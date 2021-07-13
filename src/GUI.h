@@ -5,6 +5,7 @@
 #include "SimpleIni.h"
 #include "Building.h"
 #include "GameState.h"
+#include "Planet.h"
 
 class Star;
 class Spaceship;
@@ -105,7 +106,7 @@ class BuildingGUI {
 public:
 	BuildingGUI() {}
 
-	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player, tgui::Panel::Ptr mainPanel);
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel);
 
 private:
 	tgui::ChildWindow::Ptr m_window;
@@ -150,6 +151,7 @@ public:
 	void displayShipInfo(Faction* playerFaction);
 	bool canChassisFitWeapons(Faction* playerFaction);
 	void displayShipDesigns(Faction* playerFaction);
+	static void displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& totalResourceCost, int yPosPercent);
 
 private:
 	GameWidget::Icon m_icon;

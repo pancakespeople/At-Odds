@@ -1362,8 +1362,8 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, c
 	}
 }
 
-void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, Star* currentStar, const Player& player, tgui::Panel::Ptr mainPanel) {
-	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && currentStar != nullptr && mainPanel->isFocused()) {
+void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel) {
+	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && state.getLocalViewStar() != nullptr && mainPanel->isFocused()) {
 		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
 		sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseScreenPos);
 		
@@ -1373,9 +1373,9 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 			}
 		}
 
-		for (auto& building : currentStar->getBuildings()) {
+		for (auto& building : state.getLocalViewStar()->getBuildings()) {
 			float dist = Math::distance(building->getPos(), mouseWorldPos);
-			if (dist < building->getCollider().getRadius() && player.getFaction() == building->getAllegiance()) {
+			if (dist < building->getCollider().getRadius() && state.getPlayer().getFaction() == building->getAllegiance()) {
 				if (m_window != nullptr) {
 					gui.remove(m_window);
 				}
@@ -1390,7 +1390,7 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 				});
 				gui.add(m_window);
 
-				building->openModGUI(m_window);
+				building->openModGUI(m_window, constellation.getFaction(state.getPlayer().getFaction()));
 
 				break;
 			}
@@ -1729,22 +1729,7 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 		capacityLabel->setToolTip(tgui::Label::create("Weapon Capacity"));
 		shipInfoGroup->add(capacityLabel, "capacityLabel");
 
-		auto resourcesLabel = tgui::Label::create("Resources: ");
-		resourcesLabel->setPosition("0%", "10%");
-		shipInfoGroup->add(resourcesLabel);
-
-		// Add resource cost labels
-		int yPercent = 20;
-		for (auto& resource : totalResourceCost) {
-			std::stringstream labelString;
-			labelString << PlanetResource::getTypeString(resource.first) << ": " << std::fixed << std::setprecision(1) << resource.second;
-
-			auto label = tgui::Label::create(labelString.str());
-			label->setPosition("0%", (std::to_string(yPercent) + "%").c_str());
-			shipInfoGroup->add(label);
-
-			yPercent += 10;
-		}
+		ShipDesignerGUI::displayShipResourceCost(shipInfoGroup, totalResourceCost, 10);
 	}
 	else {
 		if (shipInfoGroup != nullptr) {
@@ -1773,7 +1758,27 @@ void ShipDesignerGUI::displayShipDesigns(Faction* playerFaction) {
 	auto designListBox = m_window->get<tgui::ListBox>("designListBox");
 	designListBox->removeAllItems();
 
-	for (Spaceship::DesignerShip ship : playerFaction->getShipDesigns()) {
+	for (Spaceship::DesignerShip& ship : playerFaction->getShipDesigns()) {
 		designListBox->addItem(ship.name);
+	}
+}
+
+void ShipDesignerGUI::displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& totalResourceCost, int yPosPercent) {
+	auto resourcesLabel = tgui::Label::create("Resources: ");
+	resourcesLabel->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
+	group->add(resourcesLabel);
+
+	yPosPercent += 10;
+
+	// Add resource cost labels
+	for (auto& resource : totalResourceCost) {
+		std::stringstream labelString;
+		labelString << PlanetResource::getTypeString(resource.first) << ": " << std::fixed << std::setprecision(1) << resource.second;
+
+		auto label = tgui::Label::create(labelString.str());
+		label->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
+		group->add(label);
+
+		yPosPercent += 10;
 	}
 }

@@ -13,7 +13,7 @@ public:
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
 	virtual void interactWithPlanet(Unit*, Planet* planet) {}
 	virtual void onUnitDeath(Star* currentStar) {}
-	virtual void openGUI(tgui::ChildWindow::Ptr window);
+	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction);
 
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
@@ -37,7 +37,7 @@ public:
 
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 	virtual std::string getInfoString() override;
-	virtual void openGUI(tgui::ChildWindow::Ptr window) override;
+	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
 
 	void setBuild(bool frigate, bool destroyer, bool constructor);
 

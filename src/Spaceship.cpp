@@ -452,3 +452,19 @@ void Spaceship::attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings
 		addOrder(AttackOrder(enemyBuildings[randIndex]));
 	}
 }
+
+std::unordered_map<PlanetResource::RESOURCE_TYPE, float> Spaceship::DesignerShip::getTotalResourceCost() {
+	std::unordered_map<PlanetResource::RESOURCE_TYPE, float> totalResourceCost;
+	
+	for (auto& resource : chassis.resourceCost) {
+		totalResourceCost[resource.first] += resource.second;
+	}
+
+	for (DesignerWeapon& weapon : weapons) {
+		for (auto& resource : weapon.resourceCost) {
+			totalResourceCost[resource.first] += resource.second;
+		}
+	}
+
+	return totalResourceCost;
+}
