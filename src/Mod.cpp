@@ -71,8 +71,8 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	auto designsListBox = tgui::ListBox::create();
 	designsListBox->setPosition("2.5%", "10%");
 	designsListBox->setSize("33% - 2.5%", "90% - 2.5%");
-	designsListBox->onItemSelect([designsListBox, window, faction]() {
-		auto shipInfoGroup = window->get<tgui::Group>("shipInfoGroup");
+	designsListBox->onItemSelect([this ,designsListBox, window, faction]() {
+		auto shipWidgets = window->get<tgui::Group>("shipWidgets");
 		
 		if (designsListBox->getSelectedItemIndex() != -1) {
 			Spaceship::DesignerShip ship = faction->getShipDesignByName(designsListBox->getSelectedItem().toStdString());
@@ -80,12 +80,34 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			if (ship.name == "") return;
 
 			auto totalResourceCost = ship.getTotalResourceCost();
-			shipInfoGroup->removeAllWidgets();
+			shipWidgets->removeAllWidgets();
+
+			auto shipInfoGroup = tgui::Group::create();
+			shipInfoGroup->setPosition("parent.designsListBox.right + 2.5%", "10%");
+			shipInfoGroup->setSize("33% - 2.5%", "90% - 2.5%");
+			shipWidgets->add(shipInfoGroup, "shipInfoGroup");
 
 			ShipDesignerGUI::displayShipResourceCost(shipInfoGroup, totalResourceCost, 0);
+
+			auto buildCheckbox = tgui::CheckBox::create("Build");
+			buildCheckbox->setPosition("shipInfoGroup.right + 2.5%", "shipInfoGroup.top");
+			buildCheckbox->onChange([this, ship, buildCheckbox]() {
+				if (m_shipBuildData.count(ship.name) > 0) {
+					m_shipBuildData[ship.name].build = buildCheckbox->isChecked();
+				}
+			});
+			shipWidgets->add(buildCheckbox);
+
+			if (m_shipBuildData.count(ship.name) == 0) {
+				ShipBuildData data;
+				m_shipBuildData[ship.name] = data;
+			}
+			else {
+				buildCheckbox->setChecked(m_shipBuildData[ship.name].build);
+			}
 		}
 		else {
-			shipInfoGroup->removeAllWidgets();
+			shipWidgets->removeAllWidgets();
 		}
 	});
 	window->add(designsListBox, "designsListBox");
@@ -98,11 +120,9 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	for (Spaceship::DesignerShip& ship : faction->getShipDesigns()) {
 		designsListBox->addItem(ship.name);
 	}
-
-	auto shipInfoGroup = tgui::Group::create();
-	shipInfoGroup->setPosition("designsListBox.right + 2.5%", "10%");
-	shipInfoGroup->setSize("33% - 2.5%", "90% - 2.5%");
-	window->add(shipInfoGroup, "shipInfoGroup");
+	
+	auto shipWidgets = tgui::Group::create();
+	window->add(shipWidgets, "shipWidgets");
 }
 
 void FactoryMod::setBuild(bool frigate, bool destroyer, bool constructor) {

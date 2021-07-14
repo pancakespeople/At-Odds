@@ -50,12 +50,24 @@ private:
 		archive & m_buildFrigate;
 		archive & m_buildDestroyer;
 		archive & m_buildConstructor;
+		archive & m_shipBuildData;
 	}
 	
+	struct ShipBuildData {
+		bool build = false;
+
+		friend class boost::serialization::access;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version) {
+			archive & build;
+		}
+	};
+
 	int m_ticksToNextShip = 500;
 	bool m_buildFrigate = false;
 	bool m_buildDestroyer = false;
 	bool m_buildConstructor = false;
+	std::unordered_map<std::string, ShipBuildData> m_shipBuildData;
 };
 
 class FighterBayMod : public Mod {
