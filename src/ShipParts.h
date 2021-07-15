@@ -18,7 +18,7 @@ namespace ShipParts {
 	};
 
 	const Spaceship::DesignerChassis constructorChassis = {
-		Spaceship::SPACESHIP_TYPE::DESTROYER_1,
+		Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP,
 		"Constructor",
 		0.0f,
 		{{PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33.0f}}

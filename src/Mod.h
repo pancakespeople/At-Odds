@@ -39,35 +39,33 @@ public:
 	virtual std::string getInfoString() override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
 
-	void setBuild(bool frigate, bool destroyer, bool constructor);
+	void setBuild(bool frigate, bool destroyer, bool constructor) {}
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Mod>(*this);
-		archive & m_ticksToNextShip;
-		archive & m_buildFrigate;
-		archive & m_buildDestroyer;
-		archive & m_buildConstructor;
 		archive & m_shipBuildData;
 	}
 	
 	struct ShipBuildData {
+		bool selected = false;
 		bool build = false;
+		bool resourcesSubtracted = false;
+		float progressPercent = 0.0f;
 
 		friend class boost::serialization::access;
 		template<class Archive>
 		void serialize(Archive& archive, const unsigned int version) {
 			archive & build;
+			archive & resourcesSubtracted;
+			archive & progressPercent;
 		}
 	};
 
-	int m_ticksToNextShip = 500;
-	bool m_buildFrigate = false;
-	bool m_buildDestroyer = false;
-	bool m_buildConstructor = false;
 	std::unordered_map<std::string, ShipBuildData> m_shipBuildData;
+	tgui::ProgressBar::Ptr m_buildProgressBar;
 };
 
 class FighterBayMod : public Mod {

@@ -39,14 +39,6 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_mass = 50000.0f;
 		m_health = 100.0f;
 		m_collider.setRadius(100.0f);
-
-		if (Random::randBool()) {
-			addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
-		}
-		else {
-			addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
-		}
-
 		break;
 	case SPACESHIP_TYPE::DESTROYER_1:
 		m_sprite.setTexture(TextureCache::getTexture("data/art/bgspeedship.png"));
@@ -54,7 +46,6 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_mass = 100000.0f;
 		m_health = 250.0f;
 		m_collider.setRadius(125.0f);
-		addWeapon(Weapon(Weapon::WEAPON_TYPE::GAUSS_CANNON));
 		break;
 	case SPACESHIP_TYPE::CLAIM_SHIP:
 		m_sprite.setTexture(TextureCache::getTexture("data/art/flag.png"));
@@ -80,13 +71,6 @@ Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, i
 		m_collider.setRadius(50.0f);
 		m_fighterAI = true;
 		m_playerCanGiveOrders = false;
-
-		if (Random::randBool()) {
-			addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
-		}
-		else {
-			addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
-		}
 		break;
 	case SPACESHIP_TYPE::SPACE_BUS:
 		m_sprite.setTexture(TextureCache::getTexture("data/art/spacebus.png"));

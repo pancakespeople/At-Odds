@@ -943,6 +943,7 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 				sf::Color color = faction->getColor();
 
 				std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
+				ship->addWeapon(Weapon::WEAPON_TYPE::LASER_GUN);
 				faction->addSpaceship(star->createSpaceship(ship));
 
 				m_chatBox->addLine("Created spaceship at mouse cursor");

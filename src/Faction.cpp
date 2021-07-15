@@ -34,14 +34,23 @@ void Faction::spawnAtRandomStar() {
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
 		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color)));
+		if (Random::randBool()) {
+			m_ships.back()->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+		}
+		else {
+			m_ships.back()->addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+		}
 	}
 
 	for (int i = 0; i < 3; i++) {
 		sf::Vector2f pos = m_capitol->getRandomLocalPos(-10000.0f, 10000.0f);
 		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos, m_capitol, m_id, m_color)));
+		m_ships.back()->addWeapon(Weapon(Weapon::WEAPON_TYPE::CONSTRUCTION_GUN));
 	}
 
 	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
+	m_ships.back()->addWeapon(Weapon(Weapon::WEAPON_TYPE::GAUSS_CANNON));
+
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::OUTPOST, m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), m_id, m_color));
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SHIP_FACTORY, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SPACE_HABITAT, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
@@ -55,6 +64,30 @@ void Faction::spawnAtRandomStar() {
 	addWeapon(ShipParts::laserGunWeapon);
 	addWeapon(ShipParts::machineGunWeapon);
 	addWeapon(ShipParts::gaussCannonWeapon);
+
+	// Add starter ship designs
+	Spaceship::DesignerShip laserFrig;
+	laserFrig.name = "Laser Frigate";
+	laserFrig.chassis = ShipParts::frigateChassis;
+	laserFrig.weapons.push_back(ShipParts::laserGunWeapon);
+	addOrReplaceDesignerShip(laserFrig);
+
+	Spaceship::DesignerShip mgFrig;
+	mgFrig.name = "MG Frigate";
+	mgFrig.chassis = ShipParts::frigateChassis;
+	mgFrig.weapons.push_back(ShipParts::machineGunWeapon);
+	addOrReplaceDesignerShip(mgFrig);
+
+	Spaceship::DesignerShip dest;
+	dest.name = "Destroyer";
+	dest.chassis = ShipParts::destroyerChassis;
+	dest.weapons.push_back(ShipParts::gaussCannonWeapon);
+	addOrReplaceDesignerShip(dest);
+
+	Spaceship::DesignerShip constructor;
+	constructor.name = "Constructor";
+	constructor.chassis = ShipParts::constructorChassis;
+	addOrReplaceDesignerShip(constructor);
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -227,4 +260,17 @@ Spaceship::DesignerShip Faction::getShipDesignByName(const std::string& name) {
 	}
 	DEBUG_PRINT("Failed to get ship design");
 	return Spaceship::DesignerShip();
+}
+
+bool Faction::canSubtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources) {
+	for (auto& resource : resources) {
+		if (!canSubtractResource(resource.first, resource.second)) return false;
+	}
+	return true;
+}
+
+void Faction::subtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources) {
+	for (auto& resource : resources) {
+		subtractResource(resource.first, resource.second);
+	}
 }

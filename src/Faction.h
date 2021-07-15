@@ -24,6 +24,7 @@ public:
 	void addChassis(const Spaceship::DesignerChassis& chassis) { m_chassis.push_back(chassis); }
 	void addWeapon(const Spaceship::DesignerWeapon& weapon) { m_weapons.push_back(weapon); }
 	void addOrReplaceDesignerShip(const Spaceship::DesignerShip& ship);
+	void subtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -32,6 +33,7 @@ public:
 	bool isDead() { return m_dead; }
 	// Returns false if unsuccessful (if subtracting would lead to a negative resource amount)
 	bool canSubtractResource(PlanetResource::RESOURCE_TYPE type, float num);
+	bool canSubtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources);
 	
 	sf::Color getColor() { return m_color; }
 

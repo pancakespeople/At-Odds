@@ -23,46 +23,56 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
 	
-	if (m_ticksToNextShip <= 0) {
-		sf::Vector2f pos = unit->getPos();
-		float radius = unit->getCollider().getRadius();
-		if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 25) &&
-			faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5) &&
-			m_buildDestroyer) {
-			Spaceship* destroyer = currentStar->createSpaceship(std::make_unique<Spaceship>(
-				Spaceship::SPACESHIP_TYPE::DESTROYER_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			faction->addSpaceship(destroyer);
+	for (auto& build : m_shipBuildData) {
+		if (build.second.build) {
+			if (!build.second.resourcesSubtracted) {
+				// Check resources
+				
+				Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.first);
+				auto cost = shipDesign.getTotalResourceCost();
+				
+				if (!faction->canSubtractResources(cost)) {
+					continue;
+				}
+				else {
+					faction->subtractResources(cost);
+					build.second.resourcesSubtracted = true;
+				}
+			}
+			
+			if (build.second.progressPercent >= 100.0f) {
+				// Spawn the ship
+				
+				Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.first);
+				auto shipPtr = std::make_unique<Spaceship>(shipDesign.chassis.type, unit->getPos(), currentStar, faction->getID(), faction->getColor());
+				
+				// Add weapons
+				for (Spaceship::DesignerWeapon& weapon : shipDesign.weapons) {
+					shipPtr->addWeapon(weapon.type);
+				}
 
-			faction->subtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 25);
-			faction->subtractResource(PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5);
+				currentStar->createSpaceship(shipPtr);
+
+				DEBUG_PRINT("Created spaceship");
+				
+				if (m_buildProgressBar != nullptr && build.second.selected) m_buildProgressBar->setValue(0);
+				
+				build.second.progressPercent = 0.0f;
+				build.second.resourcesSubtracted = false;
+			}
+			else {
+				build.second.progressPercent += 0.05;
+
+				if (m_buildProgressBar != nullptr && build.second.selected) {
+					m_buildProgressBar->setValue(build.second.progressPercent);
+				}
+			}
 		}
-
-		if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33) &&
-			m_buildConstructor) {
-			Spaceship* constrShip = currentStar->createSpaceship(std::make_unique<Spaceship>(
-				Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			faction->addSpaceship(constrShip);
-
-			faction->subtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33);
-		}
-		if (faction->canSubtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 10) &&
-			m_buildFrigate) {
-			Spaceship* frigate = currentStar->createSpaceship(std::make_unique<Spaceship>(
-				Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getCollider().getOutlineColor()));
-			faction->addSpaceship(frigate);
-
-			faction->subtractResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 10);
-		}
-
-		m_ticksToNextShip = 500;
-	}
-	else {
-		m_ticksToNextShip -= 1;
 	}
 }
 
 std::string FactoryMod::getInfoString() {
-	return "Next ship: " + std::to_string(m_ticksToNextShip / 60.0f) + "s";
+	return "";
 }
 
 void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
@@ -105,9 +115,25 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			else {
 				buildCheckbox->setChecked(m_shipBuildData[ship.name].build);
 			}
+
+			for (auto& data : m_shipBuildData) {
+				if (data.first == ship.name) {
+					data.second.selected = true;
+				}
+				else {
+					data.second.selected = false;
+				}
+			}
+
+			m_buildProgressBar = tgui::ProgressBar::create();
+			m_buildProgressBar->setPosition("parent.designsListBox.right + 2.5%", "80%");
+			m_buildProgressBar->setSize("66% - 5%", "10%");
+			m_buildProgressBar->setValue(m_shipBuildData[ship.name].progressPercent);
+			shipWidgets->add(m_buildProgressBar);
 		}
 		else {
 			shipWidgets->removeAllWidgets();
+			m_buildProgressBar = nullptr;
 		}
 	});
 	window->add(designsListBox, "designsListBox");
@@ -125,18 +151,19 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	window->add(shipWidgets, "shipWidgets");
 }
 
-void FactoryMod::setBuild(bool frigate, bool destroyer, bool constructor) {
-	m_buildFrigate = frigate;
-	m_buildDestroyer = destroyer;
-	m_buildConstructor = constructor;
-}
-
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {
 	for (int i = 0; i < 4; i++) {
 		float radius = unit->getCollider().getRadius();
 		auto ship = std::make_unique<Spaceship>(
 			Spaceship::SPACESHIP_TYPE::FIGHTER, unit->getPos() + Random::randVec(-radius, radius), star, allegiance, color);
 		
+		if (Random::randBool()) {
+			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+		}
+		else {
+			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+		}
+
 		Spaceship* shipPtr = star->createSpaceship(ship);
 		shipPtr->disable();
 		
@@ -240,6 +267,13 @@ void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit) {
 		float radius = unit->getCollider().getRadius();
 		auto ship = std::make_unique<Spaceship>(
 			Spaceship::SPACESHIP_TYPE::FIGHTER, unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
+
+		if (Random::randBool()) {
+			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+		}
+		else {
+			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+		}
 
 		Spaceship* shipPtr = currentStar->createSpaceship(ship);
 		
