@@ -51,7 +51,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 					shipPtr->addWeapon(weapon.type);
 				}
 
-				currentStar->createSpaceship(shipPtr);
+				faction->addSpaceship(currentStar->createSpaceship(shipPtr));
 
 				DEBUG_PRINT("Created spaceship");
 				
@@ -149,6 +149,21 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	
 	auto shipWidgets = tgui::Group::create();
 	window->add(shipWidgets, "shipWidgets");
+}
+
+void FactoryMod::updateDesigns(Faction* faction) {
+	for (Spaceship::DesignerShip ship : faction->getShipDesigns()) {
+		if (m_shipBuildData.count(ship.name) == 0) {
+			ShipBuildData data;
+			m_shipBuildData[ship.name] = data;
+		}
+	}
+}
+
+void FactoryMod::setBuildAll(bool build) {
+	for (auto& data : m_shipBuildData) {
+		data.second.build = build;
+	}
 }
 
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {

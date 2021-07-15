@@ -256,7 +256,8 @@ void Brain::considerEconomy(Faction* faction) {
 			
 		for (Building* factory : faction->getAllOwnedBuildingsOfType(Building::BUILDING_TYPE::SHIP_FACTORY)) {
 			FactoryMod* mod = factory->getMod<FactoryMod>();
-			mod->setBuild(true, true, true);
+			mod->updateDesigns(faction);
+			mod->setBuildAll(true);
 		}
 
 		AI_DEBUG_PRINT("Decided to spend resources");
@@ -264,7 +265,8 @@ void Brain::considerEconomy(Faction* faction) {
 	else {
 		for (Building* factory : faction->getAllOwnedBuildingsOfType(Building::BUILDING_TYPE::SHIP_FACTORY)) {
 			FactoryMod* mod = factory->getMod<FactoryMod>();
-			mod->setBuild(false, false, false);
+			mod->updateDesigns(faction);
+			mod->setBuildAll(false);
 		}
 
 		AI_DEBUG_PRINT("Decided to save resources");

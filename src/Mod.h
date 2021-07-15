@@ -39,7 +39,8 @@ public:
 	virtual std::string getInfoString() override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
 
-	void setBuild(bool frigate, bool destroyer, bool constructor) {}
+	void updateDesigns(Faction* faction);
+	void setBuildAll(bool build);
 
 private:
 	friend class boost::serialization::access;
