@@ -53,7 +53,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 
 				faction->addSpaceship(currentStar->createSpaceship(shipPtr));
 
-				DEBUG_PRINT("Created spaceship");
+				DEBUG_PRINT("Created spaceship " + shipDesign.chassis.type);
 				
 				if (m_buildProgressBar != nullptr && build.second.selected) m_buildProgressBar->setValue(0);
 				
@@ -170,7 +170,7 @@ FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::C
 	for (int i = 0; i < 4; i++) {
 		float radius = unit->getCollider().getRadius();
 		auto ship = std::make_unique<Spaceship>(
-			Spaceship::SPACESHIP_TYPE::FIGHTER, unit->getPos() + Random::randVec(-radius, radius), star, allegiance, color);
+			"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), star, allegiance, color);
 		
 		if (Random::randBool()) {
 			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
@@ -281,7 +281,7 @@ void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit) {
 	if (m_ticksToNextFighter == 0) {
 		float radius = unit->getCollider().getRadius();
 		auto ship = std::make_unique<Spaceship>(
-			Spaceship::SPACESHIP_TYPE::FIGHTER, unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
+			"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
 
 		if (Random::randBool()) {
 			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
@@ -462,8 +462,9 @@ Planet* HabitatMod::findBusPlanetDestination(int allegiance, Star* targetStar, P
 
 void HabitatMod::createSpaceBus(sf::Vector2f pos, int allegiance, sf::Color color, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
 	Spaceship* bus = currentStar->createSpaceship(
-		std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, pos, currentStar, allegiance, color)
+		std::make_unique<Spaceship>("SPACE_BUS", pos, currentStar, allegiance, color)
 	);
+	bus->addMod(HabitatMod(1000, 1000, false));
 	bus->addOrder(TravelOrder(targetStar));
 	bus->addOrder(InteractWithPlanetOrder(targetPlanet, targetStar));
 	bus->addOrder(TravelOrder(currentStar));

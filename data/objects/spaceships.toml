@@ -1,0 +1,43 @@
+
+[FRIGATE_1]
+texturePath = "data/art/SpaceShipNormal.png"
+mass = 50000.0
+health = 100.0
+colliderRadius = 100.0
+
+[DESTROYER_1]
+texturePath = "data/art/bgspeedship.png"
+scale = 2.0
+mass = 100000.0
+health = 250.0
+colliderRadius = 125.0
+
+[CLAIM_SHIP]
+texturePath = "data/art/flag.png"
+spriteTakesFactionColor = true
+mass = 1000.0
+health = 50.0
+colliderRadius = 300.0
+canReceiveOrders = false
+
+[CONSTRUCTION_SHIP]
+texturePath = "data/art/constructionship.png"
+mass = 150000.0
+health = 50.0
+colliderRadius = 350.0
+constructionSpeed = 10.0
+
+[FIGHTER]
+texturePath = "data/art/SpaceShipNormal.png"
+mass = 25000.0
+health = 50.0
+colliderRadius = 50.0
+fighterAI = true
+playerCanGiveOrders = false
+
+[SPACE_BUS]
+texturePath = "data/art/spacebus.png"
+mass = 75000.0
+health = 50.0
+colliderRadius = 150.0
+civilian = true

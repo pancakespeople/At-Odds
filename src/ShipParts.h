@@ -4,21 +4,21 @@
 // Ready made ship parts
 namespace ShipParts {
 	const Spaceship::DesignerChassis frigateChassis = {
-		Spaceship::SPACESHIP_TYPE::FRIGATE_1, // Type
+		"FRIGATE_1", // Type
 		"Frigate", // Name
 		1.0f, // Max weapon capacity
 		{{PlanetResource::RESOURCE_TYPE::COMMON_ORE, 7.5f} } // Resource costs
 	};
 
 	const Spaceship::DesignerChassis destroyerChassis = {
-		Spaceship::SPACESHIP_TYPE::DESTROYER_1,
+		"DESTROYER_1",
 		"Destroyer",
 		2.0f,
 		{{PlanetResource::RESOURCE_TYPE::COMMON_ORE, 15.0f}}
 	};
 
 	const Spaceship::DesignerChassis constructorChassis = {
-		Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP,
+		"CONSTRUCTION_SHIP",
 		"Constructor",
 		0.0f,
 		{{PlanetResource::RESOURCE_TYPE::COMMON_ORE, 33.0f}}

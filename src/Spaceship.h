@@ -32,7 +32,7 @@ public:
 	};
 
 	struct DesignerChassis {
-		SPACESHIP_TYPE type = SPACESHIP_TYPE::FRIGATE_1;
+		std::string type = "FRIGATE_1";
 		std::string name;
 		float maxWeaponCapacity = 1.0f;
 		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> resourceCost;
@@ -82,7 +82,7 @@ public:
 		}
 	};
 
-	Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
+	Spaceship(const std::string& type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 	Spaceship(const Spaceship& old) = delete;
 	
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);

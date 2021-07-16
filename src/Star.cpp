@@ -191,7 +191,7 @@ void Star::factionTakeOwnership(Faction* faction, bool spawnClaimUnit) {
 	faction->addOwnedSystem(this);
 
 	if (spawnClaimUnit) {
-		createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CLAIM_SHIP, getRandomLocalPos(-10000.0f, 10000.0f), this, faction->getID(), faction->getColor()));
+		createSpaceship(std::make_unique<Spaceship>("CLAIM_SHIP", getRandomLocalPos(-10000.0f, 10000.0f), this, faction->getID(), faction->getColor()));
 	}
 }
 

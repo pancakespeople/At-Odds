@@ -3,12 +3,13 @@ workspace "at_odds"
 
 project "at_odds"
    language "C++"
+   cppdialect "C++17"
    targetdir "bin/%{cfg.buildcfg}"
    
    pchheader "src/gamepch.h"
    pchsource "src/gamepch.cpp"
 
-   files { "src/**.h", "src/**.cpp" }
+   files { "src/**.h", "src/**.hpp", "src/**.cpp" }
    
    filter "system:Windows"
       pchheader "gamepch.h"
@@ -23,7 +24,6 @@ project "at_odds"
          "boost_serialization",
          "tgui"
       }
-      linkoptions { "-Wl,-rpath='.'" }
    
    filter "configurations:Debug"
       kind "ConsoleApp"

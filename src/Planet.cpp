@@ -293,8 +293,9 @@ void Planet::onColonization() {
 
 void Planet::createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
 	Spaceship* bus = currentStar->createSpaceship(
-		std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::SPACE_BUS, getPos(), currentStar, m_colony.allegiance, factionColor)
+		std::make_unique<Spaceship>("SPACE_BUS", getPos(), currentStar, m_colony.allegiance, factionColor)
 	);
+	bus->addMod(HabitatMod(1000, 1000, false));
 	bus->addOrder(TravelOrder(targetStar));
 	bus->addOrder(InteractWithPlanetOrder(targetPlanet, targetStar));
 	bus->addOrder(TravelOrder(currentStar));

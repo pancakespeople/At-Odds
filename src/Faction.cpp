@@ -33,7 +33,7 @@ void Faction::spawnAtRandomStar() {
 
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::FRIGATE_1, pos, m_capitol, m_id, m_color)));
+		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", pos, m_capitol, m_id, m_color)));
 		if (Random::randBool()) {
 			m_ships.back()->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
 		}
@@ -44,11 +44,11 @@ void Faction::spawnAtRandomStar() {
 
 	for (int i = 0; i < 3; i++) {
 		sf::Vector2f pos = m_capitol->getRandomLocalPos(-10000.0f, 10000.0f);
-		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::CONSTRUCTION_SHIP, pos, m_capitol, m_id, m_color)));
+		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("CONSTRUCTION_SHIP", pos, m_capitol, m_id, m_color)));
 		m_ships.back()->addWeapon(Weapon(Weapon::WEAPON_TYPE::CONSTRUCTION_GUN));
 	}
 
-	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>(Spaceship::SPACESHIP_TYPE::DESTROYER_1, Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
+	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("DESTROYER_1", Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
 	m_ships.back()->addWeapon(Weapon(Weapon::WEAPON_TYPE::GAUSS_CANNON));
 
 	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::OUTPOST, m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), m_id, m_color));

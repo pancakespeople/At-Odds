@@ -935,7 +935,7 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 
 		if (command.command == "spawnship") {
 			if (validateArgs(command, 2) && validateState(command, state, GameState::State::LOCAL_VIEW)) {
-				Spaceship::SPACESHIP_TYPE type = static_cast<Spaceship::SPACESHIP_TYPE>(std::atoi(command.args[0].c_str()));
+				std::string type = command.args[0];
 				int allegiance = std::atoi(command.args[1].c_str());
 				sf::Vector2f pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 				Star* star = state.getLocalViewStar();

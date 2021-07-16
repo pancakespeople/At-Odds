@@ -14,6 +14,7 @@
 #include "Animation.h"
 #include "Building.h"
 #include "Mod.h"
+#include "toml.hpp"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -32,63 +33,36 @@ void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Co
 	enableAllMods();
 }
 
-Spaceship::Spaceship(SPACESHIP_TYPE type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
-	switch (type) {
-	case SPACESHIP_TYPE::FRIGATE_1:
-		m_sprite.setTexture(TextureCache::getTexture("data/art/SpaceShipNormal.png"));
-		m_mass = 50000.0f;
-		m_health = 100.0f;
-		m_collider.setRadius(100.0f);
-		break;
-	case SPACESHIP_TYPE::DESTROYER_1:
-		m_sprite.setTexture(TextureCache::getTexture("data/art/bgspeedship.png"));
-		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
-		m_mass = 100000.0f;
-		m_health = 250.0f;
-		m_collider.setRadius(125.0f);
-		break;
-	case SPACESHIP_TYPE::CLAIM_SHIP:
-		m_sprite.setTexture(TextureCache::getTexture("data/art/flag.png"));
-		m_sprite.setColor(color);
-		m_mass = 1000.0f;
-		m_health = 50.0f;
-		m_collider.setRadius(300.0f);
-		m_canReceiveOrders = false;
-		break;
-	case SPACESHIP_TYPE::CONSTRUCTION_SHIP:
-		m_sprite.setTexture(TextureCache::getTexture("data/art/constructionship.png"));
-		m_mass = 150000.0f;
-		m_health = 50.0f;
-		m_collider.setRadius(350.0f);
-		m_constructionSpeed = 10.0f;
-		addWeapon(Weapon(Weapon::WEAPON_TYPE::CONSTRUCTION_GUN));
-		break;
-	case SPACESHIP_TYPE::FIGHTER:
-		m_sprite.setTexture(TextureCache::getTexture("data/art/SpaceShipNormal.png"));
-		m_sprite.setScale(sf::Vector2f(0.5f, 0.5f));
-		m_mass = 25000.0f;
-		m_health = 50.0f;
-		m_collider.setRadius(50.0f);
-		m_fighterAI = true;
-		m_playerCanGiveOrders = false;
-		break;
-	case SPACESHIP_TYPE::SPACE_BUS:
-		m_sprite.setTexture(TextureCache::getTexture("data/art/spacebus.png"));
-		m_mass = 75000.0f;
-		m_health = 50.0f;
-		m_collider.setRadius(150.0f);
-		m_playerCanGiveOrders = false;
-		m_civilian = true;
-		
-		addMod(HabitatMod(1000, 1000, false));
-
-		break;
-	default:
-		m_mass = 50000.0f;
-		m_health = 100.0f;
-		DEBUG_PRINT("Invalid spaceship type");
-	}
+Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
+	toml::table table = toml::parse_file("data/objects/spaceships.toml");
 	
+	std::string texturePath = table[type]["texturePath"].value_or("");
+	
+	float scale = table[type]["scale"].value_or(1.0f);
+	float mass = table[type]["mass"].value_or(50000.0f);
+	float health = table[type]["health"].value_or(100.0f);
+	float colliderRadius = table[type]["colliderRadius"].value_or(100.0f);
+	float constructionSpeed = table[type]["constructionSpeed"].value_or(0.0f);
+	
+	bool spriteTakesFactionColor = table[type]["spriteTakesFactionColor"].value_or(false);
+	bool canReceiveOrders = table[type]["canReceiveOrders"].value_or(true);
+	bool fighterAI = table[type]["fighterAI"].value_or(false);
+	bool playerCanGiveOrders = table[type]["playerCanGiveOrders"].value_or(true);
+	bool civilian = table[type]["civilian"].value_or(false);
+
+	m_sprite.setTexture(TextureCache::getTexture(texturePath));
+	m_sprite.setScale(scale, scale);
+	m_mass = mass;
+	m_health = health;
+	m_collider.setRadius(colliderRadius);
+	m_constructionSpeed = constructionSpeed;
+	m_canReceiveOrders = canReceiveOrders;
+	m_fighterAI = fighterAI;
+	m_playerCanGiveOrders = playerCanGiveOrders;
+	m_civilian = civilian;
+
+	if (spriteTakesFactionColor) m_sprite.setColor(color);
+
 	init(pos, star, allegiance, color);
 }
 
@@ -375,7 +349,7 @@ void Spaceship::captureCurrentStar(Faction* faction) {
 	if (m_currentStar->getAllegiance() != m_allegiance) {
 		if (findEnemyCombatShips().size() == 0) {
 			m_currentStar->factionTakeOwnership(faction);
-			m_currentStar->createSpaceship(std::make_unique<Spaceship>(SPACESHIP_TYPE::CLAIM_SHIP, getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
+			m_currentStar->createSpaceship(std::make_unique<Spaceship>("CLAIM_SHIP", getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
 		}
 	}
 }
