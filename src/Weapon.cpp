@@ -19,31 +19,31 @@ const std::unordered_map<Weapon::WEAPON_TYPE, std::string> Weapon::weaponSounds 
 Weapon::Weapon(WEAPON_TYPE type) {
 	switch (type) {
 	case WEAPON_TYPE::LASER_GUN:
-		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LASER);
+		m_projectile = Projectile("LASER");
 		break;
 	case WEAPON_TYPE::GAUSS_CANNON:
-		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::GAUSS);
+		m_projectile = Projectile("GAUSS");
 		break;
 	case WEAPON_TYPE::MACHINE_GUN:
-		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LIGHT_BALLISTIC);
+		m_projectile = Projectile("LIGHT_BALLISTIC");
 		m_cooldownRecovery = 5.0f;
 		m_accuracy = 0.9f;
 		m_baseSoundCooldown = 60;
 		break;
 	case WEAPON_TYPE::LONG_RANGE_LASER_GUN:
-		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LONG_RANGE_LASER);
+		m_projectile = Projectile("LONG_RANGE_LASER");
 		m_cooldownRecovery = 0.5f;
 		m_accuracy = 0.95f;
 		break;
 	case WEAPON_TYPE::LONG_RANGE_MACHINE_GUN:
-		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::LONG_RANGE_LIGHT_BALLISTIC);
+		m_projectile = Projectile("LONG_RANGE_LIGHT_BALLISTIC");
 		m_cooldownRecovery = 0.5f;
 		m_accuracy = 0.95f;
 		m_numProjectiles = 2;
 		m_baseSoundCooldown = 60;
 		break;
 	case WEAPON_TYPE::CONSTRUCTION_GUN:
-		m_projectile = Projectile(Projectile::PROJECTILE_TYPE::CONSTRUCTION);
+		m_projectile = Projectile("CONSTRUCTION");
 		m_cooldownRecovery = 5.0f;
 		break;
 	default:

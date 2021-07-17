@@ -4,58 +4,24 @@
 #include "Math.h"
 #include "Debug.h"
 #include "TextureCache.h"
+#include "TOMLCache.h"
 
-Projectile::Projectile(PROJECTILE_TYPE type) {
-	switch (type) {
-	case PROJECTILE_TYPE::LASER:
-		m_shape.setFillColor(sf::Color(255.0f, 0.0f, 0.0f));
+Projectile::Projectile(const std::string& type) {
+	const toml::table& table = TOMLCache::getTable("data/objects/projectiles.toml");
 
-		m_damage = 10.0f;
-		m_life = 100.0f;
-		m_speed = 10.0f;
-		break;
-	case PROJECTILE_TYPE::GAUSS:
-		m_usesSprite = true;
-		m_sprite.setTexture(TextureCache::getTexture("data/art/gaussproj.png"));
-		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
+	m_damage = table[type]["damage"].value_or(10.0f);
+	m_life = table[type]["life"].value_or(100.0f);
+	m_speed = table[type]["speed"].value_or(10.0f);
 
-		m_life = 500.0f;
-		m_damage = 25.0f;
-		m_speed = 10.0f;
-		break;
-	case PROJECTILE_TYPE::LIGHT_BALLISTIC:
-		m_shape.setFillColor(sf::Color::Yellow);
-
-		m_damage = 1.0f;
-		m_life = 100.0f;
-		m_speed = 15.0f;
-		break;
-	case PROJECTILE_TYPE::LONG_RANGE_LASER:
-		m_shape.setFillColor(sf::Color(255.0f, 0.0f, 0.0f));
-
-		m_damage = 10.0f;
-		m_life = 1000.0f;
-		m_speed = 10.0f;
-		break;
-	case PROJECTILE_TYPE::LONG_RANGE_LIGHT_BALLISTIC:
-		m_shape.setFillColor(sf::Color::Yellow);
-
-		m_damage = 1.0f;
-		m_life = 1000.0f;
-		m_speed = 15.0f;
-		break;
-	case PROJECTILE_TYPE::CONSTRUCTION:
-		m_shape.setFillColor(sf::Color(100, 100, 255));
-		m_shape.setScale(sf::Vector2f(1.0f, 4.0f));
-
-		m_damage = 0.0f;
-		m_life = 100.0f;
-		m_speed = 15.0f;
-		break;
-	default:
-		DEBUG_PRINT("Invalid projectile type");
+	if (table[type]["usesSprite"].value_or(false)) {
+		m_sprite.setTexture(TextureCache::getTexture(table[type]["texturePath"].value_or("")));
+		m_sprite.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));
 	}
-	
+	else {
+		m_shape.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));
+		m_shape.setFillColor(sf::Color(table[type]["color"][0].value_or(255.0f), table[type]["color"][1].value_or(255.0f), table[type]["color"][2].value_or(255.0f)));
+	}
+
 	init(sf::Vector2f(0.0f, 0.0f), 90.0f, -1);
 }
 

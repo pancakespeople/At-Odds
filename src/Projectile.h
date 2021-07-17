@@ -16,7 +16,7 @@ public:
 		CONSTRUCTION
 	};
 	
-	Projectile(PROJECTILE_TYPE type);
+	Projectile(const std::string& type);
 
 	Projectile();
 	
