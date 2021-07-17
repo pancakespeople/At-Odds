@@ -49,7 +49,7 @@ public:
 	};
 
 	struct DesignerWeapon {
-		Weapon::WEAPON_TYPE type = Weapon::WEAPON_TYPE::LASER_GUN;
+		std::string type;
 		std::string name;
 		float weaponPoints = 1.0f;
 		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> resourceCost;

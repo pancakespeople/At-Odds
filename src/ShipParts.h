@@ -25,21 +25,21 @@ namespace ShipParts {
 	};
 
 	const Spaceship::DesignerWeapon laserGunWeapon = {
-		Weapon::WEAPON_TYPE::LASER_GUN,
+		"LASER_GUN",
 		"Laser Gun",
 		1.0f,
 		{{PlanetResource::RESOURCE_TYPE::COMMON_ORE, 2.5f}}
 	};
 
 	const Spaceship::DesignerWeapon machineGunWeapon = {
-		Weapon::WEAPON_TYPE::MACHINE_GUN,
+		"MACHINE_GUN",
 		"Machine Gun",
 		1.0f,
 		{{PlanetResource::RESOURCE_TYPE::COMMON_ORE, 2.5f}}
 	};
 
 	const Spaceship::DesignerWeapon gaussCannonWeapon = {
-		Weapon::WEAPON_TYPE::GAUSS_CANNON,
+		"GAUSS_CANNON",
 		"Gauss Cannon",
 		2.0f,
 		{{PlanetResource::RESOURCE_TYPE::COMMON_ORE, 10.0f}, {PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE, 5.0f}}

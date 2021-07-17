@@ -16,6 +16,7 @@ Projectile::Projectile(const std::string& type) {
 	if (table[type]["usesSprite"].value_or(false)) {
 		m_sprite.setTexture(TextureCache::getTexture(table[type]["texturePath"].value_or("")));
 		m_sprite.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));
+		m_usesSprite = true;
 	}
 	else {
 		m_shape.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));

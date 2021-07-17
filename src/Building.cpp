@@ -26,12 +26,12 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 
 		if (Random::randBool()) {
 			for (int i = 0; i < 4; i++) {
-				addWeapon(Weapon(Weapon::WEAPON_TYPE::LONG_RANGE_LASER_GUN));
+				addWeapon(Weapon("LONG_RANGE_LASER_GUN"));
 			}
 		}
 		else {
 			for (int i = 0; i < 4; i++) {
-				addWeapon(Weapon(Weapon::WEAPON_TYPE::LONG_RANGE_MACHINE_GUN));
+				addWeapon(Weapon("LONG_RANGE_MACHINE_GUN"));
 			}
 		}
 
@@ -44,21 +44,21 @@ Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegia
 	case BUILDING_TYPE::LASER_TURRET:
 		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::LASER_TURRET)));
 
-		addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+		addWeapon(Weapon("LASER_GUN"));
 
 		m_health = 150.0f;
 		break;
 	case BUILDING_TYPE::MACHINE_GUN_TURRET:
 		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::MACHINE_GUN_TURRET)));
 
-		addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+		addWeapon(Weapon("MACHINE_GUN"));
 
 		m_health = 150.0f;
 		break;
 	case BUILDING_TYPE::GAUSS_TURRET:
 		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::GAUSS_TURRET)));
 
-		addWeapon(Weapon(Weapon::WEAPON_TYPE::GAUSS_CANNON));
+		addWeapon(Weapon("GAUSS_CANNON"));
 
 		m_health = 350.0f;
 		m_constructionSpeedMultiplier = 0.5f;

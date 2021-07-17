@@ -1,0 +1,32 @@
+[LASER_GUN]
+projectile = "LASER"
+sound = "data/sound/pew1.wav"
+
+[GAUSS_CANNON]
+projectile = "GAUSS"
+sound = "data/sound/pew2.wav"
+
+[MACHINE_GUN]
+projectile = "LIGHT_BALLISTIC"
+sound = "data/sound/pew1.wav"
+cooldownRecovery = 5.0
+accuracy = 0.9
+baseSoundCooldown = 60
+
+[LONG_RANGE_LASER_GUN]
+projectile = "LONG_RANGE_LASER"
+sound = "data/sound/pew1.wav"
+cooldownRecovery = 0.5
+accuracy = 0.95
+
+[LONG_RANGE_MACHINE_GUN]
+projectile = "LONG_RANGE_LIGHT_BALLISTIC"
+sound = "data/sound/gunshot3.wav"
+cooldownRecovery = 0.5
+accuracy = 0.95
+numProjectiles = 2
+baseSoundCooldown = 60
+
+[CONSTRUCTION_GUN]
+projectile = "CONSTRUCTION"
+cooldownRecovery = 5.0

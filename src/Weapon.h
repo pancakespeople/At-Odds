@@ -19,9 +19,9 @@ public:
 		CONSTRUCTION_GUN
 	};
 	
-	static const std::unordered_map<WEAPON_TYPE, std::string> weaponSounds;
+	static const std::vector<std::string> weaponSounds;
 
-	Weapon(WEAPON_TYPE type);
+	Weapon(const std::string& type);
 
 	void fireAtAngle(const Unit* source, float angleDegrees, Star* star);
 
@@ -42,8 +42,8 @@ private:
 		archive & m_numProjectiles;
 		archive & m_soundCooldown;
 		archive & m_baseSoundCooldown;
+		archive & m_soundID;
 		archive & m_projectile;
-		archive & m_type;
 	}
 
 	Weapon() {}
@@ -55,9 +55,8 @@ private:
 	int m_numProjectiles = 1;
 	int m_soundCooldown = 0;
 	int m_baseSoundCooldown = 0;
+	int m_soundID = -1;
 
 	Projectile m_projectile;
-
-	WEAPON_TYPE m_type;
 };
 

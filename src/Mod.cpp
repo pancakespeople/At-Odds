@@ -173,10 +173,10 @@ FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::C
 			"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), star, allegiance, color);
 		
 		if (Random::randBool()) {
-			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+			ship->addWeapon(Weapon("LASER_GUN"));
 		}
 		else {
-			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+			ship->addWeapon(Weapon("MACHINE_GUN"));
 		}
 
 		Spaceship* shipPtr = star->createSpaceship(ship);
@@ -284,10 +284,10 @@ void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit) {
 			"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
 
 		if (Random::randBool()) {
-			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::LASER_GUN));
+			ship->addWeapon(Weapon("LASER_GUN"));
 		}
 		else {
-			ship->addWeapon(Weapon(Weapon::WEAPON_TYPE::MACHINE_GUN));
+			ship->addWeapon(Weapon("MACHINE_GUN"));
 		}
 
 		Spaceship* shipPtr = currentStar->createSpaceship(ship);

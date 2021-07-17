@@ -7,50 +7,31 @@
 #include "Math.h"
 #include "Sounds.h"
 #include "Random.h"
+#include "TOMLCache.h"
 
-const std::unordered_map<Weapon::WEAPON_TYPE, std::string> Weapon::weaponSounds = {
-	{WEAPON_TYPE::LASER_GUN, "data/sound/pew1.wav"},
-	{WEAPON_TYPE::GAUSS_CANNON, "data/sound/pew2.wav" },
-	{WEAPON_TYPE::MACHINE_GUN, "data/sound/gunshot3.wav"},
-	{WEAPON_TYPE::LONG_RANGE_LASER_GUN, "data/sound/pew1.wav"},
-	{WEAPON_TYPE::LONG_RANGE_MACHINE_GUN, "data/sound/gunshot3.wav"},
+const std::vector<std::string> Weapon::weaponSounds = {
+	"data/sound/pew1.wav",
+	"data/sound/pew2.wav",
+	"data/sound/gunshot3.wav",
 };
 
-Weapon::Weapon(WEAPON_TYPE type) {
-	switch (type) {
-	case WEAPON_TYPE::LASER_GUN:
-		m_projectile = Projectile("LASER");
-		break;
-	case WEAPON_TYPE::GAUSS_CANNON:
-		m_projectile = Projectile("GAUSS");
-		break;
-	case WEAPON_TYPE::MACHINE_GUN:
-		m_projectile = Projectile("LIGHT_BALLISTIC");
-		m_cooldownRecovery = 5.0f;
-		m_accuracy = 0.9f;
-		m_baseSoundCooldown = 60;
-		break;
-	case WEAPON_TYPE::LONG_RANGE_LASER_GUN:
-		m_projectile = Projectile("LONG_RANGE_LASER");
-		m_cooldownRecovery = 0.5f;
-		m_accuracy = 0.95f;
-		break;
-	case WEAPON_TYPE::LONG_RANGE_MACHINE_GUN:
-		m_projectile = Projectile("LONG_RANGE_LIGHT_BALLISTIC");
-		m_cooldownRecovery = 0.5f;
-		m_accuracy = 0.95f;
-		m_numProjectiles = 2;
-		m_baseSoundCooldown = 60;
-		break;
-	case WEAPON_TYPE::CONSTRUCTION_GUN:
-		m_projectile = Projectile("CONSTRUCTION");
-		m_cooldownRecovery = 5.0f;
-		break;
-	default:
-		DEBUG_PRINT("Invalid weapon type");
+Weapon::Weapon(const std::string& type) {
+	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
+
+	m_projectile = Projectile(table[type]["projectile"].value_or(""));
+
+	std::string soundPath = table[type]["sound"].value_or("");
+	for (int i = 0; i < weaponSounds.size(); i++) {
+		if (weaponSounds[i] == soundPath) {
+			m_soundID = i;
+			break;
+		}
 	}
 
-	m_type = type;
+	m_cooldownRecovery = table[type]["cooldownRecovery"].value_or(1.0f);
+	m_accuracy = table[type]["accuracy"].value_or(1.0f);
+	m_baseSoundCooldown = table[type]["baseSoundCooldown"].value_or(0);
+	m_numProjectiles = table[type]["numProjectiles"].value_or(1);
 }
 
 void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
@@ -67,8 +48,8 @@ void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
 		star->addProjectile(m_projectile);
 	}
 
-	if (weaponSounds.count(m_type) > 0 && m_soundCooldown == 0) {
-		Sounds::playSoundLocal(weaponSounds.at(m_type), star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+	if (m_soundID != -1 && m_soundCooldown == 0) {
+		Sounds::playSoundLocal(weaponSounds[m_soundID], star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 		m_soundCooldown = m_baseSoundCooldown;
 	}
 
