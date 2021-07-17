@@ -29,6 +29,7 @@ constructionSpeed = 10.0
 
 [FIGHTER]
 texturePath = "data/art/SpaceShipNormal.png"
+scale = 0.5
 mass = 25000.0
 health = 50.0
 colliderRadius = 50.0

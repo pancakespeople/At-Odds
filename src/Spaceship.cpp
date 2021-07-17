@@ -15,6 +15,7 @@
 #include "Building.h"
 #include "Mod.h"
 #include "toml.hpp"
+#include "TOMLCache.h"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -34,7 +35,7 @@ void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Co
 }
 
 Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
-	toml::table table = toml::parse_file("data/objects/spaceships.toml");
+	const toml::table& table = TOMLCache::getTable("data/objects/spaceships.toml");
 	
 	std::string texturePath = table[type]["texturePath"].value_or("");
 	

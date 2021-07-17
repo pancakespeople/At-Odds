@@ -44,3 +44,4 @@
 
 #include "Debug.h"
 #include "SimpleIni.h"
+#include "toml.hpp"
