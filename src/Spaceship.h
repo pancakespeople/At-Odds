@@ -32,7 +32,10 @@ public:
 	};
 
 	struct DesignerChassis {
-		std::string type = "FRIGATE_1";
+		DesignerChassis() {}
+		DesignerChassis(const std::string& typeStr);
+		
+		std::string type;
 		std::string name;
 		float maxWeaponCapacity = 1.0f;
 		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> resourceCost;
@@ -49,6 +52,9 @@ public:
 	};
 
 	struct DesignerWeapon {
+		DesignerWeapon() {}
+		DesignerWeapon(const std::string& typeStr);
+		
 		std::string type;
 		std::string name;
 		float weaponPoints = 1.0f;

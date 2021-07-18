@@ -427,3 +427,29 @@ std::unordered_map<PlanetResource::RESOURCE_TYPE, float> Spaceship::DesignerShip
 
 	return totalResourceCost;
 }
+
+Spaceship::DesignerChassis::DesignerChassis(const std::string& typeStr) {
+	const toml::table& table = TOMLCache::getTable("data/objects/chassis.toml");
+
+	type = table[typeStr]["type"].value_or("");
+	name = table[typeStr]["name"].value_or("");
+	maxWeaponCapacity = table[typeStr]["maxWeaponCapacity"].value_or(1.0f);
+
+	for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
+		PlanetResource::RESOURCE_TYPE resourceType = static_cast<PlanetResource::RESOURCE_TYPE>(table[typeStr]["cost"][i][0].value_or(0));
+		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
+	}
+}
+
+Spaceship::DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
+	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
+
+	type = table[typeStr]["type"].value_or("");
+	name = table[typeStr]["name"].value_or("");
+	weaponPoints = table[typeStr]["weaponPoints"].value_or(1.0f);
+
+	for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
+		PlanetResource::RESOURCE_TYPE resourceType = static_cast<PlanetResource::RESOURCE_TYPE>(table[typeStr]["cost"][i][0].value_or(0));
+		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
+	}
+}

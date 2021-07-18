@@ -6,7 +6,6 @@
 #include "Random.h"
 #include "Player.h"
 #include "Building.h"
-#include "ShipParts.h"
 
 Faction::Faction(Constellation* constellation, int id) {
 	m_constellation = constellation;
@@ -57,36 +56,36 @@ void Faction::spawnAtRandomStar() {
 
 	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
 	
-	addChassis(ShipParts::frigateChassis);
-	addChassis(ShipParts::destroyerChassis);
-	addChassis(ShipParts::constructorChassis);
+	addChassis(Spaceship::DesignerChassis("FRIGATE"));
+	addChassis(Spaceship::DesignerChassis("DESTROYER"));
+	addChassis(Spaceship::DesignerChassis("CONSTRUCTOR"));
 
-	addWeapon(ShipParts::laserGunWeapon);
-	addWeapon(ShipParts::machineGunWeapon);
-	addWeapon(ShipParts::gaussCannonWeapon);
+	addWeapon(Spaceship::DesignerWeapon("LASER_GUN"));
+	addWeapon(Spaceship::DesignerWeapon("MACHINE_GUN"));
+	addWeapon(Spaceship::DesignerWeapon("GAUSS_CANNON"));
 
 	// Add starter ship designs
 	Spaceship::DesignerShip laserFrig;
 	laserFrig.name = "Laser Frigate";
-	laserFrig.chassis = ShipParts::frigateChassis;
-	laserFrig.weapons.push_back(ShipParts::laserGunWeapon);
+	laserFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
+	laserFrig.weapons.push_back(Spaceship::DesignerWeapon("LASER_GUN"));
 	addOrReplaceDesignerShip(laserFrig);
 
 	Spaceship::DesignerShip mgFrig;
 	mgFrig.name = "MG Frigate";
-	mgFrig.chassis = ShipParts::frigateChassis;
-	mgFrig.weapons.push_back(ShipParts::machineGunWeapon);
+	mgFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
+	mgFrig.weapons.push_back(Spaceship::DesignerWeapon("MACHINE_GUN"));
 	addOrReplaceDesignerShip(mgFrig);
 
 	Spaceship::DesignerShip dest;
 	dest.name = "Destroyer";
-	dest.chassis = ShipParts::destroyerChassis;
-	dest.weapons.push_back(ShipParts::gaussCannonWeapon);
+	dest.chassis = Spaceship::DesignerChassis("DESTROYER");
+	dest.weapons.push_back(Spaceship::DesignerWeapon("GAUSS_CANNON"));
 	addOrReplaceDesignerShip(dest);
 
 	Spaceship::DesignerShip constructor;
 	constructor.name = "Constructor";
-	constructor.chassis = ShipParts::constructorChassis;
+	constructor.chassis = Spaceship::DesignerChassis("CONSTRUCTOR");
 	addOrReplaceDesignerShip(constructor);
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
