@@ -51,6 +51,11 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 					shipPtr->addWeapon(weapon.type);
 				}
 
+				// Add construction gun
+				if (shipPtr->getConstructionSpeed() > 0.0f) {
+					shipPtr->addWeapon(Weapon("CONSTRUCTION_GUN"));
+				}
+
 				faction->addSpaceship(currentStar->createSpaceship(shipPtr));
 
 				DEBUG_PRINT("Created spaceship " + shipDesign.chassis.type);
