@@ -8,7 +8,7 @@ sound = "data/sound/pew2.wav"
 
 [MACHINE_GUN]
 projectile = "LIGHT_BALLISTIC"
-sound = "data/sound/pew1.wav"
+sound = "data/sound/gunshot3.wav"
 cooldownRecovery = 5.0
 accuracy = 0.9
 baseSoundCooldown = 60

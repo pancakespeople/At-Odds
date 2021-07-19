@@ -52,6 +52,20 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time)
 	m_orbit.draw(window);
 	emitter.drawGlow(window, m_shape.getPosition(), m_shape.getRadius() * 3.0f, m_shape.getFillColor());
 	emitter.drawPlanet(window, m_shape, this, m_shaderRandomSeed, time);
+
+	if (m_colony.allegiance != -1) {
+		// Draw faction indicator circle
+
+		sf::CircleShape circle;
+		circle.setRadius(m_shape.getRadius() + 100.0f);
+		circle.setFillColor(sf::Color::Transparent);
+		circle.setOutlineColor(m_colony.factionColor);
+		circle.setOutlineThickness(50.0f);
+		circle.setOrigin(sf::Vector2f(circle.getRadius(), circle.getRadius()));
+		circle.setPosition(m_shape.getPosition());
+
+		window.draw(circle);
+	}
 }
 
 void Planet::update(Star* currentStar, Faction* faction) {

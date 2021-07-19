@@ -40,6 +40,8 @@ struct Colony {
 	int ticksToNextResourceExploit = 1000;
 	int allegiance = -1;
 
+	sf::Color factionColor = sf::Color(175, 175, 175);
+
 	float getGrowthRate(float planetHabitability);
 	bool isColonizationLegal(int allegiance);
 	void setFactionColonyLegality(int allegiance, bool legality);
@@ -52,6 +54,7 @@ private:
 		archive & ticksUntilNextGrowth;
 		archive & ticksToNextBus;
 		archive & allegiance;
+		archive & factionColor;
 		archive & m_factionColonyLegality;
 	}
 	

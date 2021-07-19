@@ -382,10 +382,13 @@ std::string HabitatMod::getInfoString() {
 }
 
 void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet) {
+	// Transfer passengers to planet
+	
 	bool firstTime = planet->getColony().population == 0;
 	planet->getColony().population += m_population;
 	if (firstTime && m_population > 0) {
 		planet->getColony().allegiance = unit->getAllegiance();
+		planet->getColony().factionColor = unit->getFactionColor();
 		planet->onColonization();
 	}
 	m_population = 0;
