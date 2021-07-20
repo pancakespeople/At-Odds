@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Collider.h"
+#include "Animation.h"
 
 class Star;
 
@@ -20,12 +21,13 @@ public:
 
 	Projectile();
 	
-	void update();
+	void update(Star* star);
 	void draw(sf::RenderWindow& window);
 	void kill() { m_life = 0.0f; }
 	void setPos(const sf::Vector2f& pos);
 	void setRotation(float angleDegrees);
 	void setAllegiance(int allegiance);
+	void onDeath(Star* star);
 
 	float getDamage() { return m_damage; }
 	float getRange() { return m_life * m_speed; }
@@ -42,14 +44,15 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& m_angle;
-		archive& m_shape;
-		archive& m_sprite;
-		archive& m_life;
-		archive& m_speed;
-		archive& m_allegiance;
-		archive& m_damage;
-		archive& m_usesSprite;
+		archive & m_angle;
+		archive & m_shape;
+		archive & m_sprite;
+		archive & m_life;
+		archive & m_speed;
+		archive & m_allegiance;
+		archive & m_damage;
+		archive & m_usesSprite;
+		archive & m_deathAnimationType;
 	}
 	
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
@@ -62,5 +65,6 @@ private:
 	int m_allegiance;
 	float m_damage;
 	bool m_usesSprite = false;
+	std::string m_deathAnimationType;
 };
 

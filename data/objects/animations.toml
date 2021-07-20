@@ -1,0 +1,14 @@
+
+[EXPLOSION]
+filePath = "data/art/explosion1.png"
+frameWidth = 4
+frameHeight = 4
+frameDelay = 20
+scale = 16.0
+
+[SMALL_EXPLOSION]
+filePath = "data/art/explosion1.png"
+frameWidth = 4
+frameHeight = 4
+frameDelay = 20
+scale = 4.0

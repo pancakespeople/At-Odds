@@ -123,7 +123,7 @@ void Building::update(Star* currentStar) {
 	
 	if (!m_dead && m_health <= 0.0f) {
 		m_dead = true;
-		m_currentStar->addAnimation(Animation(Animation::ANIMATION_TYPE::EXPLOSION, getPos()));
+		m_currentStar->addAnimation(Animation("EXPLOSION", getPos()));
 		Sounds::playSoundLocal("data/sound/boom1.wav", m_currentStar, getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
 	

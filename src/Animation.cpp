@@ -2,24 +2,17 @@
 
 #include "Animation.h"
 #include "TextureCache.h"
+#include "TOMLCache.h"
 
-Animation::Animation(ANIMATION_TYPE type, sf::Vector2f pos) {
-	std::string filePath;
-	int frameWidth = 0;
-	int frameHeight = 0;
-	int frameDelay = 0;
-	float scale = 1.0f;
+Animation::Animation(const std::string& type, sf::Vector2f pos) {
+	const toml::table& table = TOMLCache::getTable("data/objects/animations.toml");
 	
-	switch (type) {
-	case ANIMATION_TYPE::EXPLOSION:
-		filePath = "data/art/explosion1.png";
-		frameWidth = 4;
-		frameHeight = 4;
-		frameDelay = 20;
-		scale = 16.0f;
-		break;
-	}
-
+	std::string filePath = table[type]["filePath"].value_or("");
+	int frameWidth = table[type]["frameWidth"].value_or(0);
+	int frameHeight = table[type]["frameHeight"].value_or(0);
+	int frameDelay = table[type]["frameDelay"].value_or(0);
+	float scale = table[type]["scale"].value_or(1.0f);
+	
 	init(filePath, frameWidth, frameHeight, pos, frameDelay, scale);
 }
 

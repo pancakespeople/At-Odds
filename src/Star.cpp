@@ -281,7 +281,7 @@ void Star::handleCollisions() {
 	}
 }
 
-void Star::addAnimation(Animation&& anim) {
+void Star::addAnimation(const Animation& anim) {
 	if (m_localViewActive) {
 		m_localViewAnimations.push_back(anim);
 	}
@@ -360,7 +360,7 @@ void Star::update(Constellation* constellation, const Player& player) {
 	}
 
 	for (Projectile& p : m_projectiles) {
-		p.update();
+		p.update(this);
 	}
 	for (Animation& a : m_localViewAnimations) {
 		a.nextFrame();
@@ -372,7 +372,14 @@ void Star::update(Constellation* constellation, const Player& player) {
 	m_particleSystem.updateParticles();
 
 	handleCollisions();
-	m_projectiles.erase(std::remove_if(m_projectiles.begin(), m_projectiles.end(), [](Projectile& p) {return p.isDead(); }), m_projectiles.end());
+	m_projectiles.erase(std::remove_if(m_projectiles.begin(), m_projectiles.end(), [this](Projectile& p) {
+		if (p.isDead()) {
+			p.onDeath(this);
+			return true;
+		}
+		else return false;
+	}), m_projectiles.end());
+	
 	cleanUpAnimations();
 }
 

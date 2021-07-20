@@ -13,6 +13,7 @@ const std::vector<std::string> Weapon::weaponSounds = {
 	"data/sound/pew1.wav",
 	"data/sound/pew2.wav",
 	"data/sound/gunshot3.wav",
+	"data/sound/rocket1.wav"
 };
 
 Weapon::Weapon(const std::string& type) {

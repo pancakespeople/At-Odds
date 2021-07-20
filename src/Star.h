@@ -32,7 +32,7 @@ public:
 	void clicked(sf::Event ev, GameState& state);
 	void setupJumpPoints();
 	void addProjectile(Projectile proj);
-	void addAnimation(Animation&& anim);
+	void addAnimation(const Animation& anim);
 	void cleanUpAnimations();
 	void update(Constellation* constellation, const Player& player);
 	void destroyAllShips();

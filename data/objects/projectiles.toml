@@ -38,3 +38,10 @@ scaleY = 4.0
 damage = 0.0
 life = 100.0
 speed = 15.0
+
+[ROCKET]
+usesSprite = true
+texturePath = "data/art/rocket.png"
+deathAnimation = "SMALL_EXPLOSION"
+life = 400.0
+damage = 15.0

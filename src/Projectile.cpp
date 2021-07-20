@@ -5,6 +5,7 @@
 #include "Debug.h"
 #include "TextureCache.h"
 #include "TOMLCache.h"
+#include "Star.h"
 
 Projectile::Projectile(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/projectiles.toml");
@@ -22,6 +23,8 @@ Projectile::Projectile(const std::string& type) {
 		m_shape.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));
 		m_shape.setFillColor(sf::Color(table[type]["color"][0].value_or(255.0f), table[type]["color"][1].value_or(255.0f), table[type]["color"][2].value_or(255.0f)));
 	}
+
+	m_deathAnimationType = table[type]["deathAnimation"].value_or("");
 
 	init(sf::Vector2f(0.0f, 0.0f), 90.0f, -1);
 }
@@ -46,7 +49,7 @@ void Projectile::init(const sf::Vector2f& pos, float angleDegrees, int allegianc
 	m_allegiance = allegiance;
 }
 
-void Projectile::update() {
+void Projectile::update(Star* star) {
 	if (m_usesSprite) {
 		m_sprite.move(sf::Vector2f(std::cos(m_angle * Math::toRadians) * m_speed, -std::sin(m_angle * Math::toRadians) * m_speed));
 	}
@@ -108,4 +111,10 @@ void Projectile::setRotation(float angleDegrees) {
 
 void Projectile::setAllegiance(int allegiance) { 
 	m_allegiance = allegiance; 
+}
+
+void Projectile::onDeath(Star* star) {
+	if (m_deathAnimationType != "") {
+		star->addAnimation(Animation(m_deathAnimationType, getPos()));
+	}
 }

@@ -8,7 +8,7 @@ public:
 		EXPLOSION
 	};
 	
-	Animation(ANIMATION_TYPE type, sf::Vector2f pos);
+	Animation(const std::string& type, sf::Vector2f pos);
 
 	Animation(const std::string& filePath, int frameWidth, int frameHeight, sf::Vector2f pos, int frameDelay = 0, float scale = 1.0f);
 

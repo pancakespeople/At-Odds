@@ -30,3 +30,7 @@ baseSoundCooldown = 60
 [CONSTRUCTION_GUN]
 projectile = "CONSTRUCTION"
 cooldownRecovery = 5.0
+
+[ROCKET_LAUNCHER]
+projectile = "ROCKET"
+sound = "data/sound/rocket1.wav"

@@ -37,7 +37,7 @@ void Faction::spawnAtRandomStar() {
 			m_ships.back()->addWeapon(Weapon("LASER_GUN"));
 		}
 		else {
-			m_ships.back()->addWeapon(Weapon("MACHINE_GUN"));
+			m_ships.back()->addWeapon(Weapon("ROCKET_LAUNCHER"));
 		}
 	}
 
@@ -76,6 +76,12 @@ void Faction::spawnAtRandomStar() {
 	mgFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
 	mgFrig.weapons.push_back(Spaceship::DesignerWeapon("MACHINE_GUN"));
 	addOrReplaceDesignerShip(mgFrig);
+
+	Spaceship::DesignerShip rocketFrig;
+	rocketFrig.name = "Rocket Frigate";
+	rocketFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
+	rocketFrig.weapons.push_back(Spaceship::DesignerWeapon("ROCKET_LAUNCHER"));
+	addOrReplaceDesignerShip(rocketFrig);
 
 	Spaceship::DesignerShip dest;
 	dest.name = "Destroyer";
