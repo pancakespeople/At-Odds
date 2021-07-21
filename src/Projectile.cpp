@@ -6,6 +6,8 @@
 #include "TextureCache.h"
 #include "TOMLCache.h"
 #include "Star.h"
+#include "Sounds.h"
+#include "Random.h"
 
 Projectile::Projectile(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/projectiles.toml");
@@ -25,6 +27,7 @@ Projectile::Projectile(const std::string& type) {
 	}
 
 	m_deathAnimationType = table[type]["deathAnimation"].value_or("");
+	m_deathSoundPath = table[type]["deathSoundPath"].value_or("");
 
 	init(sf::Vector2f(0.0f, 0.0f), 90.0f, -1);
 }
@@ -116,5 +119,6 @@ void Projectile::setAllegiance(int allegiance) {
 void Projectile::onDeath(Star* star) {
 	if (m_deathAnimationType != "") {
 		star->addAnimation(Animation(m_deathAnimationType, getPos()));
+		Sounds::playSoundLocal(m_deathSoundPath, star, getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
 }

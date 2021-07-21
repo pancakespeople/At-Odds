@@ -53,6 +53,7 @@ private:
 		archive & m_damage;
 		archive & m_usesSprite;
 		archive & m_deathAnimationType;
+		archive & m_deathSoundPath;
 	}
 	
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
@@ -66,5 +67,6 @@ private:
 	float m_damage;
 	bool m_usesSprite = false;
 	std::string m_deathAnimationType;
+	std::string m_deathSoundPath;
 };
 

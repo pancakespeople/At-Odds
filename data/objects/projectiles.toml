@@ -43,5 +43,6 @@ speed = 15.0
 usesSprite = true
 texturePath = "data/art/rocket.png"
 deathAnimation = "SMALL_EXPLOSION"
+deathSoundPath = "data/sound/boom2.wav"
 life = 400.0
 damage = 15.0
