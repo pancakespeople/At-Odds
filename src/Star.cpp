@@ -51,6 +51,7 @@ void Star::init(const sf::Vector2f& pos) {
 	}
 
 	generatePlanets();
+	generateDerelicts();
 }
 
 void Star::draw(sf::RenderWindow& window) {
@@ -133,6 +134,9 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		}
 		for (std::unique_ptr<Building>& b : m_buildings) {
 			b->draw(window);
+		}
+		for (Derelict& d : m_derelicts) {
+			d.draw(window);
 		}
 		for (Projectile& p : m_projectiles) {
 			p.draw(window);
@@ -549,4 +553,12 @@ void Star::drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader) {
 	m_shape.setFillColor(sf::Color(166, 166, 166));
 	window.draw(m_shape, &shader);
 	m_shape.setFillColor(oldColor);
+}
+
+void Star::generateDerelicts() {
+	if (Random::randBool()) {
+		sf::Vector2f pos = Random::randVec(-10000.0f, 10000.0f);
+		Derelict d(pos);
+		m_derelicts.push_back(d);
+	}
 }

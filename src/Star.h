@@ -9,6 +9,7 @@
 #include "Building.h"
 #include "ParticleSystem.h"
 #include "Planet.h"
+#include "Derelict.h"
 
 class Hyperlane;
 class Faction;
@@ -41,6 +42,7 @@ public:
 	void generatePlanets();
 	void setDiscovered(bool isDiscovered) { m_discovered = isDiscovered; }
 	void drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader);
+	void generateDerelicts();
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
@@ -101,6 +103,7 @@ private:
 		archive & m_shaderRandomSeed;
 		archive & m_temperature;
 		archive & m_discovered;
+		archive & m_derelicts;
 	}
 	
 	void handleCollisions();
@@ -123,6 +126,7 @@ private:
 	std::vector<std::unique_ptr<Building>> m_buildings;
 	std::vector<Animation> m_localViewAnimations;	
 	std::vector<Planet> m_planets;
+	std::vector<Derelict> m_derelicts;
 
 	bool m_localViewActive = false;
 	bool m_multipleFactionsPresent = false;
