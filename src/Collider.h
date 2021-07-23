@@ -8,8 +8,9 @@ public:
 	Collider(const sf::Vector2f& pos, const sf::Color& color, float radius);
 
 	void setRadius(float radius);
-
 	void update(const sf::Vector2f& pos);
+
+	bool isCollidingWith(const Collider& other);
 
 private:
 	friend class boost::serialization::access;

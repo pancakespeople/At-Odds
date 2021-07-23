@@ -272,6 +272,5 @@ void Brain::considerEconomy(Faction* faction) {
 		AI_DEBUG_PRINT("Decided to save resources");
 	}
 
-
 	m_state = AI_STATE::NONE;
 }

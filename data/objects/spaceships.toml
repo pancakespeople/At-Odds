@@ -42,3 +42,4 @@ mass = 75000.0
 health = 50.0
 colliderRadius = 150.0
 civilian = true
+playerCanGiveOrders = false

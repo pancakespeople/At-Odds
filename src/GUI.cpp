@@ -853,6 +853,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		timescaleGUI.open(gui);
 		resourceGUI.open(gui);
 		shipDesignerGUI.open(gui, constellation.getFaction(state.getPlayer().getFaction()));
+		announcerGUI.open(gui);
 	}
 	else {
 		unitGUI.open(gui);
@@ -1781,5 +1782,30 @@ void ShipDesignerGUI::displayShipResourceCost(tgui::Group::Ptr group, const std:
 		group->add(label);
 
 		yPosPercent += 10;
+	}
+}
+
+void AnnouncerGUI::open(tgui::Gui& gui) {
+	m_label = tgui::Label::create();
+	m_label->setOrigin(0.5f, 0.5f);
+	m_label->setPosition("50%", "25%");
+	m_label->setTextSize(25);
+	m_label->setVisible(false);
+	gui.add(m_label);
+}
+
+void AnnouncerGUI::update(tgui::Gui& gui, Faction* playerFaction) {
+	if (playerFaction != nullptr) {
+		std::deque<std::string>& announcements = playerFaction->getAnnouncementEvents();
+		if (announcements.size() > 0) {
+			gui.remove(m_label);
+			open(gui);
+
+			m_label->setText(announcements.front());
+			announcements.pop_front();
+			
+			m_label->setVisible(true);
+			m_label->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
+		}
 	}
 }

@@ -1,5 +1,6 @@
 #include "gamepch.h"
 #include "Collider.h"
+#include "Math.h"
 
 Collider::Collider() {
 	setOutlineThickness(10.0f);
@@ -21,4 +22,10 @@ void Collider::update(const sf::Vector2f& pos) {
 void Collider::setRadius(float radius) {
 	setOrigin(sf::Vector2f(radius, radius));
 	sf::CircleShape::setRadius(radius);
+}
+
+bool Collider::isCollidingWith(const Collider& other) {
+	float totalRadius = getRadius() + other.getRadius();
+	if (Math::distance(getPosition(), other.getPosition()) < totalRadius) return true;
+	else return false;
 }

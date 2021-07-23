@@ -122,6 +122,7 @@ int main(int argc, const char* argv[])
             unitGui.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), playerGui.mainPanel);
             playerGui.planetGUI.update(state);
             playerGui.resourceGUI.update(constellation, state.getPlayer());
+            playerGui.announcerGUI.update(gui, constellation.getFaction(state.getPlayer().getFaction()));
         }
         
         // Maintain a constant update rate

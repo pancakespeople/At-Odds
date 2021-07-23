@@ -158,6 +158,17 @@ private:
 	tgui::ChildWindow::Ptr m_window;
 };
 
+class AnnouncerGUI {
+public:
+	AnnouncerGUI() {}
+
+	void open(tgui::Gui& gui);
+	void update(tgui::Gui& gui, Faction* playerFaction);
+
+private:
+	tgui::Label::Ptr m_label;
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
@@ -173,6 +184,7 @@ struct PlayerGUI {
 	TimescaleGUI timescaleGUI;
 	ResourceGUI resourceGUI;
 	ShipDesignerGUI shipDesignerGUI;
+	AnnouncerGUI announcerGUI;
 };
 
 class NewGameMenu {

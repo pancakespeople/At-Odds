@@ -279,3 +279,9 @@ void Faction::subtractResources(const std::unordered_map<PlanetResource::RESOURC
 		subtractResource(resource.first, resource.second);
 	}
 }
+
+void Faction::addAnnouncementEvent(const std::string& text) {
+	if (!m_aiEnabled) {
+		m_announcementEvents.push_back(text);
+	}
+}

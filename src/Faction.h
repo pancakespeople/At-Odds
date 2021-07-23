@@ -25,6 +25,8 @@ public:
 	void addWeapon(const Spaceship::DesignerWeapon& weapon) { m_weapons.push_back(weapon); }
 	void addOrReplaceDesignerShip(const Spaceship::DesignerShip& ship);
 	void subtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources);
+	void addAnnouncementEvent(const std::string& text);
+	void clearAnnouncementEvents() { m_announcementEvents.clear(); }
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -47,6 +49,7 @@ public:
 	std::vector<Spaceship::DesignerChassis>& getChassis() { return m_chassis; }
 	std::vector<Spaceship::DesignerWeapon>& getWeapons() { return m_weapons; }
 	std::vector<Spaceship::DesignerShip>& getShipDesigns() { return m_designerShips; }
+	std::deque<std::string>& getAnnouncementEvents() { return m_announcementEvents; }
 
 	Spaceship::DesignerChassis getChassisByName(const std::string& name);
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
@@ -88,6 +91,7 @@ private:
 		archive & m_chassis;
 		archive & m_weapons;
 		archive & m_designerShips;
+		archive & m_announcementEvents;
 	}
 	
 	Faction() {}
@@ -102,6 +106,7 @@ private:
 	std::vector<Spaceship::DesignerChassis> m_chassis;
 	std::vector<Spaceship::DesignerWeapon> m_weapons;
 	std::vector<Spaceship::DesignerShip> m_designerShips;
+	std::deque<std::string> m_announcementEvents;
 	
 	Brain m_ai;
 	

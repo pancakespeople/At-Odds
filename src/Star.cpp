@@ -303,6 +303,7 @@ void Star::cleanUpAnimations() {
 void Star::update(Constellation* constellation, const Player& player) {
 	std::vector<int> factions;
 	
+	// Update spaceships
 	for (int i = 0; i < m_localShips.size(); i++) {
 		m_localShips[i]->updateMods(this, constellation->getFaction(m_localShips[i]->getAllegiance()));
 		m_localShips[i]->update(this);
@@ -336,6 +337,7 @@ void Star::update(Constellation* constellation, const Player& player) {
 		}
 	}
 	
+	// Update buildings
 	for (int i = 0; i < m_buildings.size(); i++) {
 		m_buildings[i]->updateMods(this, constellation->getFaction(m_buildings[i]->getAllegiance()));
 		m_buildings[i]->update(this);
@@ -348,6 +350,7 @@ void Star::update(Constellation* constellation, const Player& player) {
 		}
 	}
 
+	// Discover system for player
 	if (factions.size() > 0) {
 		if (!m_discovered) {
 			if (std::find(factions.begin(), factions.end(), player.getFaction()) != factions.end()) {
@@ -356,6 +359,7 @@ void Star::update(Constellation* constellation, const Player& player) {
 		}
 	}
 
+	// For the flashy thing
 	if (factions.size() > 1) {
 		m_multipleFactionsPresent = true;
 	}
@@ -363,8 +367,15 @@ void Star::update(Constellation* constellation, const Player& player) {
 		m_multipleFactionsPresent = false;
 	}
 
-	for (Projectile& p : m_projectiles) {
-		p.update(this);
+	// Update projectiles
+	for (int i = 0; i < m_projectiles.size(); i++) {
+		m_projectiles[i].update(this);
+
+		if (m_projectiles[i].isDead()) {
+			m_projectiles[i].onDeath(this);
+			m_projectiles.erase(m_projectiles.begin() + i);
+			i--;
+		}
 	}
 	for (Animation& a : m_localViewAnimations) {
 		a.nextFrame();
@@ -372,18 +383,18 @@ void Star::update(Constellation* constellation, const Player& player) {
 	for (Planet& planet : m_planets) {
 		planet.update(this, constellation->getFaction(planet.getColony().allegiance));
 	}
+	for (int i = 0; i < m_derelicts.size(); i++) {
+		m_derelicts[i].update(this, constellation->getFactions());
+
+		if (m_derelicts[i].isDead()) {
+			m_derelicts.erase(m_derelicts.begin() + i);
+			i--;
+		}
+	}
 
 	m_particleSystem.updateParticles();
 
 	handleCollisions();
-	m_projectiles.erase(std::remove_if(m_projectiles.begin(), m_projectiles.end(), [this](Projectile& p) {
-		if (p.isDead()) {
-			p.onDeath(this);
-			return true;
-		}
-		else return false;
-	}), m_projectiles.end());
-	
 	cleanUpAnimations();
 }
 
