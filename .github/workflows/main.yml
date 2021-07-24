@@ -46,7 +46,7 @@ jobs:
         uses: lukka/run-vcpkg@v7.3
         with:
           setupOnly: true
-          vcpkgGitCommitId: '31993541c33bf8d3ffe6d664a36c846c63286c09'
+          vcpkgGitCommitId: 'f7c83acf486c572d7b1ebe5894dc83bca4f5faef'
 
       - name: Build
         run: ./win_build.ps1
