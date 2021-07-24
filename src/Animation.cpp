@@ -7,6 +7,8 @@
 Animation::Animation(const std::string& type, sf::Vector2f pos) {
 	const toml::table& table = TOMLCache::getTable("data/objects/animations.toml");
 	
+	assert(table.contains(type));
+
 	std::string filePath = table[type]["filePath"].value_or("");
 	int frameWidth = table[type]["frameWidth"].value_or(0);
 	int frameHeight = table[type]["frameHeight"].value_or(0);

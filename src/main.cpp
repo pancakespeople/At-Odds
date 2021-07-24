@@ -170,6 +170,7 @@ int main(int argc, const char* argv[])
             state.resetMetaState();
             state.clearCallbacks();
             Sounds::clearSounds();
+            gui.removeAllWidgets();
 
             if (player.getFaction() != -1) {
                 playerGui.open(gui, state, constellation, false);

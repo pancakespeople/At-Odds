@@ -12,6 +12,8 @@
 Projectile::Projectile(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/projectiles.toml");
 
+	assert(table.contains(type));
+
 	m_damage = table[type]["damage"].value_or(10.0f);
 	m_life = table[type]["life"].value_or(100.0f);
 	m_speed = table[type]["speed"].value_or(10.0f);

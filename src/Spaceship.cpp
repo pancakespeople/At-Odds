@@ -37,6 +37,8 @@ void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Co
 Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	const toml::table& table = TOMLCache::getTable("data/objects/spaceships.toml");
 	
+	assert(table.contains(type));
+
 	std::string texturePath = table[type]["texturePath"].value_or("");
 	
 	float scale = table[type]["scale"].value_or(1.0f);
@@ -431,6 +433,8 @@ std::unordered_map<PlanetResource::RESOURCE_TYPE, float> Spaceship::DesignerShip
 Spaceship::DesignerChassis::DesignerChassis(const std::string& typeStr) {
 	const toml::table& table = TOMLCache::getTable("data/objects/chassis.toml");
 
+	assert(table.contains(typeStr));
+
 	type = table[typeStr]["type"].value_or("");
 	name = table[typeStr]["name"].value_or("");
 	maxWeaponCapacity = table[typeStr]["maxWeaponCapacity"].value_or(1.0f);
@@ -443,6 +447,8 @@ Spaceship::DesignerChassis::DesignerChassis(const std::string& typeStr) {
 
 Spaceship::DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
+
+	assert(table.contains(typeStr));
 
 	type = table[typeStr]["type"].value_or("");
 	name = table[typeStr]["name"].value_or("");

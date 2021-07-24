@@ -20,6 +20,8 @@ const std::vector<std::string> Weapon::weaponSounds = {
 Weapon::Weapon(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
+	assert(table.contains(type));
+
 	m_projectile = Projectile(table[type]["projectile"].value_or(""));
 
 	std::string soundPath = table[type]["sound"].value_or("");
