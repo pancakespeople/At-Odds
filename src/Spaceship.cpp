@@ -459,3 +459,11 @@ Spaceship::DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
 	}
 }
+
+std::string Spaceship::DesignerShip::generateName() {
+	std::string weaponName;
+	if (weapons.size() > 0) {
+		weaponName = weapons[0].name;
+	}
+	return weaponName + " " + chassis.name;
+}

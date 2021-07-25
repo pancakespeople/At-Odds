@@ -30,15 +30,22 @@ void Faction::spawnAtRandomStar() {
 	makeCapitol(randStar);
 	randStar->factionTakeOwnership(this, true);
 
+	// Add a random starter weapon
+	int rnd = Random::randInt(1, 3);
+	if (rnd == 1) {
+		addWeapon(Spaceship::DesignerWeapon("LASER_GUN"));
+	}
+	else if (rnd == 2) {
+		addWeapon(Spaceship::DesignerWeapon("MACHINE_GUN"));
+	}
+	else if (rnd == 3) {
+		addWeapon(Spaceship::DesignerWeapon("ROCKET_LAUNCHER"));
+	}
+
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
 		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", pos, m_capitol, m_id, m_color)));
-		if (Random::randBool()) {
-			m_ships.back()->addWeapon(Weapon("LASER_GUN"));
-		}
-		else {
-			m_ships.back()->addWeapon(Weapon("ROCKET_LAUNCHER"));
-		}
+		m_ships.back()->addWeapon(Weapon(m_weapons.back().type));
 	}
 
 	for (int i = 0; i < 3; i++) {
@@ -60,34 +67,11 @@ void Faction::spawnAtRandomStar() {
 	addChassis(Spaceship::DesignerChassis("DESTROYER"));
 	addChassis(Spaceship::DesignerChassis("CONSTRUCTOR"));
 
-	addWeapon(Spaceship::DesignerWeapon("LASER_GUN"));
-	addWeapon(Spaceship::DesignerWeapon("MACHINE_GUN"));
-	addWeapon(Spaceship::DesignerWeapon("GAUSS_CANNON"));
-
-	// Add starter ship designs
-	Spaceship::DesignerShip laserFrig;
-	laserFrig.name = "Laser Frigate";
-	laserFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
-	laserFrig.weapons.push_back(Spaceship::DesignerWeapon("LASER_GUN"));
-	addOrReplaceDesignerShip(laserFrig);
-
-	Spaceship::DesignerShip mgFrig;
-	mgFrig.name = "MG Frigate";
-	mgFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
-	mgFrig.weapons.push_back(Spaceship::DesignerWeapon("MACHINE_GUN"));
-	addOrReplaceDesignerShip(mgFrig);
-
-	Spaceship::DesignerShip rocketFrig;
-	rocketFrig.name = "Rocket Frigate";
-	rocketFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
-	rocketFrig.weapons.push_back(Spaceship::DesignerWeapon("ROCKET_LAUNCHER"));
-	addOrReplaceDesignerShip(rocketFrig);
-
-	Spaceship::DesignerShip dest;
-	dest.name = "Destroyer";
-	dest.chassis = Spaceship::DesignerChassis("DESTROYER");
-	dest.weapons.push_back(Spaceship::DesignerWeapon("GAUSS_CANNON"));
-	addOrReplaceDesignerShip(dest);
+	Spaceship::DesignerShip starterFrig;
+	starterFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
+	starterFrig.weapons.push_back(Spaceship::DesignerWeapon(m_weapons.back().type));
+	starterFrig.name = starterFrig.generateName();
+	addOrReplaceDesignerShip(starterFrig);
 
 	Spaceship::DesignerShip constructor;
 	constructor.name = "Constructor";
