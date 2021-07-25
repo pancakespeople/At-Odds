@@ -78,6 +78,7 @@ public:
 
 		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> getTotalResourceCost();
 		std::string generateName();
+		float getTotalWeaponPoints();
 
 	private:
 		friend class boost::serialization::access;

@@ -467,3 +467,11 @@ std::string Spaceship::DesignerShip::generateName() {
 	}
 	return weaponName + " " + chassis.name;
 }
+
+float Spaceship::DesignerShip::getTotalWeaponPoints() {
+	float total = 0.0f;
+	for (auto& weapon : weapons) {
+		total += weapon.weaponPoints;
+	}
+	return total;
+}

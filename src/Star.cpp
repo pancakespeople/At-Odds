@@ -573,3 +573,13 @@ void Star::generateDerelicts() {
 		m_derelicts.push_back(d);
 	}
 }
+
+std::vector<Spaceship*> Star::getAllShipsOfAllegiance(int allegiance) {
+	std::vector<Spaceship*> ships;
+	for (auto& ship : m_localShips) {
+		if (ship->getAllegiance() == allegiance) {
+			ships.push_back(ship.get());
+		}
+	}
+	return ships;
+}

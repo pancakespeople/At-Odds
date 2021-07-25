@@ -6,6 +6,7 @@
 #include "Constellation.h"
 #include "Random.h"
 #include "Building.h"
+#include "Derelict.h"
 
 void Brain::onStart(Faction* faction) {
 	
@@ -33,6 +34,30 @@ void Brain::onStarTakeover(Faction* faction, Star* star) {
 		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
 			planet.getColony().setFactionColonyLegality(faction->getID(), true);
 			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
+		}
+	}
+
+	// Send a ship to plunder each derelict
+	if (star->getDerelicts().size() > 0) {
+		std::vector<Spaceship*> ships = star->getAllShipsOfAllegiance(faction->getID());
+		ships.erase(std::remove_if(ships.begin(), ships.end(), [](Spaceship* s) {
+			if (s->isCivilian() || s->isDead() || s->isDisabled() || !s->canReceiveOrders() ||
+				!s->canPlayerGiveOrders()) {
+				return true;
+			}
+			return false;
+			}), ships.end());
+
+		if (ships.size() > 0) {
+			int rndShip = Random::randInt(0, ships.size() - 1);
+			Spaceship* ship = ships[rndShip];
+			ship->clearOrders();
+
+			AI_DEBUG_PRINT("Sending a ship to plunder a derelict");
+
+			for (Derelict& derelict : star->getDerelicts()) {
+				ship->addOrder(FlyToOrder(derelict.getPos()));
+			}
 		}
 	}
 }
@@ -270,6 +295,51 @@ void Brain::considerEconomy(Faction* faction) {
 		}
 
 		AI_DEBUG_PRINT("Decided to save resources");
+	}
+
+	// Handle ship designs
+	for (auto& weapon : faction->getWeapons()) {
+		bool notUsed = true;
+		for (auto& design : faction->getShipDesigns()) {
+			for (auto& w : design.weapons) {
+				if (w.type == weapon.type) {
+					notUsed = false;
+				}
+			}
+		}
+
+		// If there doesn't exist a design that uses this weapon, create a new design
+		if (notUsed) {
+			Spaceship::DesignerShip newDesign;
+			std::vector<Spaceship::DesignerChassis> usableChassis;
+
+			for (auto& chassis : faction->getChassis()) {
+				if (chassis.maxWeaponCapacity > 0.0f) {
+					usableChassis.push_back(chassis);
+				}
+			}
+
+			// Select random combat chassis
+			int rndChassis = Random::randInt(0, usableChassis.size() - 1);
+			newDesign.chassis = usableChassis[rndChassis];
+
+			// Add weapons
+			int i = 0;
+			const int maxIter = 10;
+			while (newDesign.getTotalWeaponPoints() < newDesign.chassis.maxWeaponCapacity && i < maxIter) {
+				newDesign.weapons.push_back(weapon);
+				i++;
+			}
+
+			if (newDesign.getTotalWeaponPoints() > newDesign.chassis.maxWeaponCapacity) {
+				newDesign.weapons.pop_back();
+			}
+
+			newDesign.name = newDesign.generateName();
+			faction->addOrReplaceDesignerShip(newDesign);
+
+			AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
+		}
 	}
 
 	m_state = AI_STATE::NONE;

@@ -75,6 +75,8 @@ public:
 	std::vector<Star*> getConnectedStars();
 	std::vector<std::unique_ptr<Building>>& getBuildings() { return m_buildings; }
 	std::vector<Planet>& getPlanets() { return m_planets; }
+	std::vector<Derelict>& getDerelicts() { return m_derelicts; }
+	std::vector<Spaceship*> getAllShipsOfAllegiance(int allegiance);
 
 	Unit* getUnitByID(unsigned int id);
 	Spaceship* getShipByID(unsigned int id);

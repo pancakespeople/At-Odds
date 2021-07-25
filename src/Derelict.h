@@ -15,6 +15,8 @@ public:
 
 	bool isDead() { return m_dead; }
 
+	sf::Vector2f getPos() { return m_sprite.getPosition(); }
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
