@@ -280,7 +280,7 @@ public:
 	void close(tgui::Gui& gui);
 	void onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state);
 	void processCommand(std::string rawCommand);
-	void runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window);
+	void runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window, tgui::Gui& gui, PlayerGUI& playerGUI);
 
 	bool isOpen() { return m_console != nullptr; }
 	bool validateArgs(const Command& command, int numArgs);

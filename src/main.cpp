@@ -149,7 +149,7 @@ int main(int argc, const char* argv[])
             state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
         }
         
-        console.runCommands(constellation, state, window);
+        console.runCommands(constellation, state, window, gui, playerGui);
 
         buildGui.draw(window, state.getLocalViewStar(), player);
         unitGui.draw(window);

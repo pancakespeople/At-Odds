@@ -927,7 +927,7 @@ void DebugConsole::processCommand(std::string rawCommand) {
 	m_commandQueue.push(c);
 }
 
-void DebugConsole::runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window) {
+void DebugConsole::runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window, tgui::Gui& gui, PlayerGUI& playerGUI) {
 	while (m_commandQueue.size() > 0) {
 		Command command = m_commandQueue.front();
 		m_commandQueue.pop();
@@ -1008,6 +1008,54 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 
 			}
 		}
+		else if (command.command == "listfactions") {
+			if (validateArgs(command, 0) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
+				int i = 0;
+				for (Faction& faction : constellation.getFactions()) {
+					m_chatBox->addLine(std::to_string(i) + ": " + faction.getName());
+					i++;
+				}
+			}
+		}
+		else if (command.command == "possess") {
+			if (validateArgs(command, 1) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
+				Faction* faction = constellation.getFaction(std::atoi(command.args[0].c_str()));
+				if (faction != nullptr) {
+					state.getPlayer().setFaction(faction->getID(), faction->getColor());
+					state.getPlayer().enableFogOfWar();
+
+					close(gui);
+
+					gui.removeAllWidgets();
+					playerGUI.open(gui, state, constellation, false);
+
+					for (auto& star : constellation.getStars()) {
+						if (star->getAllShipsOfAllegiance(faction->getID()).size() > 0) {
+							star->setDiscovered(true);
+						}
+						else {
+							star->setDiscovered(false);
+						}
+					}
+				}
+				else {
+					m_chatBox->addLine("Invalid faction");
+				}
+			}
+		}
+		else if (command.command == "spectate") {
+			if (validateArgs(command, 0) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
+				state.getPlayer().setFaction(-1, sf::Color(175, 175, 175));
+				state.getPlayer().disableFogOfWar();
+
+				close(gui);
+
+				gui.removeAllWidgets();
+				playerGUI.open(gui, state, constellation, true);
+
+				constellation.discoverAllStars();
+			}
+		}		
 		else {
 			m_chatBox->addLine("Invalid command " + command.command);
 		}
