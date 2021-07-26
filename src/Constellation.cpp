@@ -6,6 +6,27 @@
 #include "Faction.h"
 #include "Random.h"
 
+Constellation::Constellation() {
+    m_availableFactionColors = {
+        {sf::Color(255, 0, 0), "Red"},
+        {sf::Color(0, 255, 0), "Lime"},
+        {sf::Color(0, 0, 255), "Blue"},
+        {sf::Color(255, 255, 0), "Yellow"},
+        {sf::Color(0, 255, 255), "Cyan"},
+        {sf::Color(255, 0, 255), "Magenta"},
+        {sf::Color(128, 0, 0), "Maroon"},
+        {sf::Color(128,128,0), "Olive"},
+        {sf::Color(0,128,0), "Green"},
+        {sf::Color(128,0,128), "Purple"},
+        {sf::Color(0,128,128), "Teal"},
+        {sf::Color(0,0,128), "Navy"},
+        {sf::Color(255,128,0), "Orange"},
+        {sf::Color(102,51,0), "Brown"},
+        {sf::Color(102,178,255), "Light Blue"},
+        {sf::Color(153,255,51), "Light Green"},
+    };
+}
+
 void Constellation::recursiveConstellation(std::unique_ptr<Star>& root, int maxSize) {
     const int maxDistStar = 500;
     const int minDistStar = 100;
@@ -202,6 +223,15 @@ void Constellation::setupStars() {
 void Constellation::generateFactions(int numFactions) {
     for (int i = 0; i < numFactions; i++) {
         Faction newFaction(this, i);
+
+        if (m_availableFactionColors.size() > 0) {
+            int rndIndex = Random::randInt(0, m_availableFactionColors.size() - 1);
+            std::pair<sf::Color, std::string>& color = m_availableFactionColors[rndIndex];
+            newFaction.setColor(color.first);
+            newFaction.setName(color.second);
+            m_availableFactionColors.erase(m_availableFactionColors.begin() + rndIndex);
+        }
+
         newFaction.spawnAtRandomStar();
         m_factions.push_back(std::move(newFaction));
     }

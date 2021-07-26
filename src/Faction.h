@@ -27,6 +27,8 @@ public:
 	void subtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources);
 	void addAnnouncementEvent(const std::string& text);
 	void clearAnnouncementEvents() { m_announcementEvents.clear(); }
+	void setColor(sf::Color color) { m_color = color; }
+	void setName(const std::string& name) { m_name = name; }
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -50,6 +52,7 @@ public:
 	std::vector<Spaceship::DesignerWeapon>& getWeapons() { return m_weapons; }
 	std::vector<Spaceship::DesignerShip>& getShipDesigns() { return m_designerShips; }
 	std::deque<std::string>& getAnnouncementEvents() { return m_announcementEvents; }
+	std::string getName() { return m_name; }
 
 	Spaceship::DesignerChassis getChassisByName(const std::string& name);
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
@@ -107,6 +110,7 @@ private:
 	std::vector<Spaceship::DesignerWeapon> m_weapons;
 	std::vector<Spaceship::DesignerShip> m_designerShips;
 	std::deque<std::string> m_announcementEvents;
+	std::string m_name = "Unnamed";
 	
 	Brain m_ai;
 	

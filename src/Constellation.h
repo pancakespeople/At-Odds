@@ -13,7 +13,7 @@ class Player;
 
 class Constellation {
 public:
-	Constellation() {}
+	Constellation();
 
 	void generateRecursiveConstellation(int sizeWidth, int sizeHeight, int numStars);
 	void generateRandomHyperlanes(int size, int numStars);
@@ -43,6 +43,7 @@ private:
 		archive & m_hyperlanes;
 		archive & m_factions;
 		archive & m_shipPurgatory;
+		archive & m_availableFactionColors;
 	}
 	
 	template <typename T>
@@ -67,5 +68,6 @@ private:
 	std::vector<std::unique_ptr<Hyperlane>> m_hyperlanes;
 	std::vector<PurgatoryItem<Spaceship>> m_shipPurgatory;
 	std::vector<Faction> m_factions;
+	std::vector<std::pair<sf::Color, std::string>> m_availableFactionColors;
 };
 
