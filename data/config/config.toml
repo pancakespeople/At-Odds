@@ -1,0 +1,6 @@
+[audio]
+volume = 100.0
+
+[video]
+fullscreen = false
+resolution = '1366x768'

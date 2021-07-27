@@ -7,13 +7,13 @@
 #include "Hyperlane.h"
 #include "Constellation.h"
 #include "GameState.h"
-#include "SimpleIni.h"
 #include "Background.h"
 #include "EffectsEmitter.h"
 #include "Sounds.h"
 #include "TextureCache.h"
 #include "SaveLoader.h"
 #include "Math.h"
+#include "toml.hpp"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -473,49 +473,36 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 }
 
 OptionsMenu::OptionsMenu() {
-	CSimpleIniA ini;
-	SI_Error rc = ini.LoadFile("data/config/config.ini");
-	
-	if (rc < 0) {
-		DEBUG_PRINT("Error opening config file");
+	toml::table table;
+	try {
+		table = toml::parse_file("data/config/config.toml");
+	}
+	catch (const toml::parse_error& err) {
+		DEBUG_PRINT("Failed to open config file: " << err);
 	}
 
-	m_settings.resolution = getKeyIni(ini, "video", "resolution", "1920x1080");
-	m_settings.fullscreen = std::stoi(getKeyIni(ini, "video", "fullscreen", "0"));
-	m_settings.audioVolume = std::stof(getKeyIni(ini, "audio", "volume", "100").c_str());
+	m_settings.resolution = table["video"]["resolution"].value_or("1920x1080");
+	m_settings.fullscreen = table["video"]["fullscreen"].value_or(true);
+	m_settings.audioVolume = table["audio"]["volume"].value_or(100.0f);
 
-	rc = ini.SaveFile("data/config/config.ini");
-
-	if (rc < 0) {
-		DEBUG_PRINT("Failed to save config file");
-	}
+	saveSettingsToFile();
 }
 
 void OptionsMenu::saveSettingsToFile() {
-	CSimpleIniA ini;
+	toml::table config;
+
+	toml::table video;
+	video.insert("resolution", m_settings.resolution);
+	video.insert("fullscreen", m_settings.fullscreen);
+
+	toml::table audio;
+	audio.insert("volume", m_settings.audioVolume);
 	
-	ini.SetValue("video", "resolution", m_settings.resolution.c_str());
-	ini.SetValue("video", "fullscreen", std::to_string(m_settings.fullscreen).c_str());
-	ini.SetValue("audio", "volume", std::to_string(m_settings.audioVolume).c_str());
+	config.insert("video", video);
+	config.insert("audio", audio);
 
-	SI_Error rc = ini.SaveFile("data/config/config.ini");
-
-	if (rc < 0) {
-		DEBUG_PRINT("Failed to save config file");
-	}
-}
-
-std::string OptionsMenu::getKeyIni(CSimpleIniA& ini, const char* section, const char* key, const char* defaultValue) {
-	const char* resolutionWidth;
-	resolutionWidth = ini.GetValue(section, key);
-	if (resolutionWidth == nullptr) {
-		ini.SetValue(section, key, defaultValue);
-		DEBUG_PRINT("Set new default config value: " << section << " " << key << " " << defaultValue);
-		return std::string(defaultValue);
-	}
-	else {
-		return std::string(resolutionWidth);
-	}
+	std::ofstream file("data/config/config.toml");
+	file << config;
 }
 
 void OptionsMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu) {

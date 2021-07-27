@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 
-#include "SimpleIni.h"
 #include "Building.h"
 #include "GameState.h"
 #include "Planet.h"
@@ -235,8 +234,6 @@ private:
 	void onTabChange(tgui::Gui& gui);
 	void saveSettingsToFile();
 	void changeSettings(tgui::Gui& gui);
-
-	std::string getKeyIni(CSimpleIniA& ini, const char* section, const char* key, const char* defaultValue);
 
 	tgui::ChildWindow::Ptr m_window;
 	tgui::Group::Ptr m_group;
