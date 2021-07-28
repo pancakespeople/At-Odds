@@ -1,0 +1,43 @@
+[OUTPOST]
+name = "Outpost"
+texturePath = "data/art/outpost.png"
+scale = 2.0
+health = 1000.0
+mods = ["FighterBay"]
+onePerStar = true
+weapons = ["$RAND_WEAPON", "$RAND_WEAPON", "$RAND_WEAPON"]
+
+[LASER_TURRET]
+name = "Laser Turret"
+texturePath = "data/art/laserturret.png"
+health = 150.0
+weapons = ["LASER_GUN"]
+
+[MACHINE_GUN_TURRET]
+name = "Machine Gun"
+texturePath = "data/art/machinegunturret.png"
+health = 150.0
+weapons = ["MACHINE_GUN"]
+
+[GAUSS_TURRET]
+name = "Gauss Turret"
+texturePath = "data/art/gaussturret.png"
+health = 150.0
+constructionSpeedMultiplier = 0.5
+weapons = ["GAUSS_CANNON"]
+
+[SHIP_FACTORY]
+name = "Ship Factory"
+texturePath = "data/art/factory.png"
+scale = 2.0
+health = 2500.0
+constructionSpeedMultiplier = 1.5
+mods = ["Factory"]
+onePerStar = true
+
+[SPACE_HABITAT]
+name = "Space Habitat"
+texturePath = "data/art/spacehabitat.png"
+scale = 2.0
+health = 1000.0
+mods = ["Habitat"]

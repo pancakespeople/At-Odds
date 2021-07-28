@@ -91,11 +91,11 @@ void Brain::considerFortifying(Faction* faction) {
 	if (m_fortifyingVars.fortifyingTimer == 0) {
 		for (Star* star : faction->getOwnedStars()) {
 			if (Random::randBool()) {
-				if (!star->containsBuildingType(Building::BUILDING_TYPE::OUTPOST, true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
+				if (!star->containsBuildingName("Outpost", true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
 					// Build outpost
 
 					std::unique_ptr<Building> building = std::make_unique<Building>(
-						Building::BUILDING_TYPE::OUTPOST, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
+						"OUTPOST", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
 					Building* realBuilding = star->createBuilding(building);
 
 					// Give idle construction ships order to build it
@@ -131,23 +131,23 @@ void Brain::considerFortifying(Faction* faction) {
 						int rnd = Random::randInt(0, 4);
 
 						Building* turret = nullptr;
-						Building::BUILDING_TYPE type = Building::BUILDING_TYPE::LASER_TURRET;
+						std::string type = "LASER_TURRET";
 
 						// Choose type
 						if (rnd < 4) {
 							if (Random::randBool()) {
-								type = Building::BUILDING_TYPE::LASER_TURRET;
+								type = "LASER_TURRET";
 							}
 							else {
-								type = Building::BUILDING_TYPE::MACHINE_GUN_TURRET;
+								type = "MACHINE_GUN_TURRET";
 							}
 						}
 						else {
-							type = Building::BUILDING_TYPE::GAUSS_TURRET;
+							type = "GAUSS_TURRET";
 						}
 
 						// Create turret
-						std::unique_ptr<Building> building = std::make_unique<Building>(type, star, pos, faction->getID(), faction->getColor(), false);
+						std::unique_ptr<Building> building = std::make_unique<Building>(type, star, pos, faction, false);
 						turret = star->createBuilding(building);
 
 						// Order turret to be built
@@ -243,10 +243,10 @@ void Brain::considerEconomy(Faction* faction) {
 		bool builtShipFactory = false;
 
 		// Build ship factories
-		if (!star->containsBuildingType(Building::BUILDING_TYPE::SHIP_FACTORY, true, faction->getID()) && faction->numIdleConstructionShips() > 0 &&
+		if (!star->containsBuildingName("Ship Factory", true, faction->getID()) && faction->numIdleConstructionShips() > 0 &&
 			!builtShipFactory) {
 			std::unique_ptr<Building> factory = std::make_unique<Building>(
-				Building::BUILDING_TYPE::SHIP_FACTORY, star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor(), false);
+				"SHIP_FACTORY", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
 
 			Building* ptr = star->createBuilding(factory);
 			faction->orderConstructionShipsBuild(ptr, true);
@@ -279,7 +279,7 @@ void Brain::considerEconomy(Faction* faction) {
 	// Save up resources or spend them
 	if (Random::randBool() || faction->getAllCombatShips().size() == 0) {
 			
-		for (Building* factory : faction->getAllOwnedBuildingsOfType(Building::BUILDING_TYPE::SHIP_FACTORY)) {
+		for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
 			FactoryMod* mod = factory->getMod<FactoryMod>();
 			mod->updateDesigns(faction);
 			mod->setBuildAll(true);
@@ -288,7 +288,7 @@ void Brain::considerEconomy(Faction* faction) {
 		AI_DEBUG_PRINT("Decided to spend resources");
 	}
 	else {
-		for (Building* factory : faction->getAllOwnedBuildingsOfType(Building::BUILDING_TYPE::SHIP_FACTORY)) {
+		for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
 			FactoryMod* mod = factory->getMod<FactoryMod>();
 			mod->updateDesigns(faction);
 			mod->setBuildAll(false);

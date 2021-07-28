@@ -56,7 +56,7 @@ public:
 	bool isStarInRadius(Star& s, float radius) const;
 	bool isInShapeRadius(float x, float y) const;
 	bool isLocalViewActive() const { return m_localViewActive; }
-	bool containsBuildingType(Building::BUILDING_TYPE type, bool allegianceOnly = false, int allegiance = 0) const;
+	bool containsBuildingName(const std::string& name, bool allegianceOnly = false, int allegiance = 0) const;
 	bool isDiscovered() const { return m_discovered; }
 
 	int getAllegiance() const { return m_allegiance; }

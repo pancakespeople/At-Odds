@@ -62,13 +62,13 @@ public:
 
 	void open(tgui::Gui& gui);
 	void draw(sf::RenderWindow& window, const Star* currentStar, const Player& player);
-	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, const Player& player);
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction);
 
 private:
 	void onBuildIconMouseEnter();
 	void onBuildIconMouseExit();
 	void onBuildIconClick(tgui::Gui& gui);
-	void addBuildingSelector(Building::BUILDING_TYPE type, const std::string& name);
+	void addBuildingSelector(const std::string& type);
 	void onBuildingSelectorMouseEnter(int selectorIdx);
 	void onBuildingSelectorMouseExit(int selectorIdx);
 	void onBuildingSelectorClick(int selectorIdx);

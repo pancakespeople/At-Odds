@@ -14,6 +14,7 @@
 #include "SaveLoader.h"
 #include "Math.h"
 #include "toml.hpp"
+#include "TOMLCache.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -717,11 +718,11 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 		m_buildPanel->setSize("20%", "29%");
 		gui.add(m_buildPanel);
 
-		addBuildingSelector(Building::BUILDING_TYPE::OUTPOST, "Outpost");
-		addBuildingSelector(Building::BUILDING_TYPE::LASER_TURRET, "Laser Turret");
-		addBuildingSelector(Building::BUILDING_TYPE::MACHINE_GUN_TURRET, "Machine Gun Turret");
-		addBuildingSelector(Building::BUILDING_TYPE::GAUSS_TURRET, "Gauss Turret");
-		addBuildingSelector(Building::BUILDING_TYPE::SHIP_FACTORY, "Ship Factory");
+		addBuildingSelector("OUTPOST");
+		addBuildingSelector("SHIP_FACTORY");
+		addBuildingSelector("LASER_TURRET");
+		addBuildingSelector("MACHINE_GUN_TURRET");
+		addBuildingSelector("GAUSS_TURRET");
 		
 		m_selectedBuildingIdx = -1;
 	}
@@ -732,7 +733,7 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 	}
 }
 
-void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type, const std::string& name) {
+void BuildGUI::addBuildingSelector(const std::string& type) {
 	std::string xPosPercent;
 	std::string yPosPercent;
 	if (m_buildingSelectors.size() > 0) {
@@ -757,13 +758,17 @@ void BuildGUI::addBuildingSelector(Building::BUILDING_TYPE type, const std::stri
 	selector.panel->getRenderer()->setOpacity(0.75f);
 	m_buildPanel->add(selector.panel);
 
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+
+	assert(table.contains(type));
+
 	selector.prototype = BuildingPrototype(type);
 
-	selector.icon = tgui::Picture::create(Building::texturePaths.at(type).c_str());
+	selector.icon = tgui::Picture::create(table[type]["texturePath"].value_or(""));
 	selector.icon->setSize("100%", "100%");
 	selector.panel->add(selector.icon);
 
-	auto tooltip = tgui::Label::create(name);
+	auto tooltip = tgui::Label::create(table[type]["name"].value_or(""));
 	tgui::ToolTip::setInitialDelay(0);
 	selector.panel->setToolTip(tooltip);
 
@@ -800,7 +805,7 @@ void BuildGUI::draw(sf::RenderWindow& window, const Star* currentStar, const Pla
 	}
 }
 
-void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, const Player& player) {
+void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction) {
 	if (m_canReceiveEvents) {
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
@@ -810,8 +815,8 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 				// Create new building
 				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
 
-				if (Building::checkBuildCondition(selector.prototype.getType(), currentLocalStar, player.getFaction(), true)) {
-					std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, player.getFaction(), player.getColor(), false);
+				if (Building::checkBuildCondition(selector.prototype.getType(), currentLocalStar, playerFaction->getID(), true)) {
+					std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, playerFaction, false);
 
 					currentLocalStar->createBuilding(building);
 
@@ -1421,7 +1426,7 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 				m_window->getRenderer()->setOpacity(0.75f);
 				m_window->setSize("10%", "15%");
 				m_window->setPosition(mouseScreenPos.x, mouseScreenPos.y);
-				m_window->setTitle(building->getTypeString());
+				m_window->setTitle(building->getName());
 				m_window->onClose([this]() {
 					m_window = nullptr;
 				});

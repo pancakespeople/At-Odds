@@ -506,15 +506,15 @@ int Star::numAllies(int allegiance) const {
 	return numAlliedShips(allegiance) + numAlliedBuildings(allegiance);
 }
 
-bool Star::containsBuildingType(Building::BUILDING_TYPE type, bool allegianceOnly, int allegiance) const {
+bool Star::containsBuildingName(const std::string& name, bool allegianceOnly, int allegiance) const {
 	for (auto& building : m_buildings) {
 		if (allegianceOnly) {
-			if (building->getType() == type && building->getAllegiance() == allegiance) {
+			if (building->getName() == name && building->getAllegiance() == allegiance) {
 				return true;
 			}
 		}
 		else {
-			if (building->getType() == type) {
+			if (building->getName() == name) {
 				return true;
 			}
 		}

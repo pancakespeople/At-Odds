@@ -57,9 +57,9 @@ void Faction::spawnAtRandomStar() {
 	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("DESTROYER_1", Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
 	m_ships.back()->addWeapon(Weapon("GAUSS_CANNON"));
 
-	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::OUTPOST, m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), m_id, m_color));
-	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SHIP_FACTORY, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
-	m_capitol->createBuilding(std::make_unique<Building>(Building::BUILDING_TYPE::SPACE_HABITAT, m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), m_id, m_color));
+	m_capitol->createBuilding(std::make_unique<Building>("OUTPOST", m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), this));
+	m_capitol->createBuilding(std::make_unique<Building>("SHIP_FACTORY", m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), this));
+	m_capitol->createBuilding(std::make_unique<Building>("SPACE_HABITAT", m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), this));
 
 	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
 	
@@ -190,10 +190,10 @@ std::vector<Building*> Faction::getAllOwnedBuildings() {
 	return buildings;
 }
 
-std::vector<Building*> Faction::getAllOwnedBuildingsOfType(Building::BUILDING_TYPE type) {
+std::vector<Building*> Faction::getAllOwnedBuildingsOfName(const std::string& name) {
 	std::vector<Building*> buildings;
 	for (Building* building : getAllOwnedBuildings()) {
-		if (building->getType() == type) {
+		if (building->getName() == name) {
 			buildings.push_back(building);
 		}
 	}

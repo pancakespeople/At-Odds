@@ -8,88 +8,59 @@
 #include "Math.h"
 #include "Mod.h"
 #include "Player.h"
+#include "TOMLCache.h"
 
-const std::unordered_map<Building::BUILDING_TYPE, std::string> Building::texturePaths = {
-	{BUILDING_TYPE::OUTPOST, "data/art/outpost.png"},
-	{BUILDING_TYPE::LASER_TURRET, "data/art/laserturret.png"},
-	{BUILDING_TYPE::MACHINE_GUN_TURRET, "data/art/machinegunturret.png"},
-	{BUILDING_TYPE::GAUSS_TURRET, "data/art/gaussturret.png"},
-	{BUILDING_TYPE::SHIP_FACTORY, "data/art/factory.png"},
-	{BUILDING_TYPE::SPACE_HABITAT, "data/art/spacehabitat.png"}
-};
+Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built) {
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
 
-Building::Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built) {
-	switch (type) {
-	case BUILDING_TYPE::OUTPOST:
-		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::OUTPOST)));
-		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
+	assert(table.contains(type));
 
-		if (Random::randBool()) {
-			for (int i = 0; i < 4; i++) {
-				addWeapon(Weapon("LONG_RANGE_LASER_GUN"));
+	m_sprite.setTexture(TextureCache::getTexture(table[type]["texturePath"].value_or("")));
+	m_sprite.setScale(table[type]["scale"].value_or(1.0f), table[type]["scale"].value_or(1.0f));
+	m_health = table[type]["health"].value_or(100.0f);
+	m_constructionSpeedMultiplier = table[type]["constructionSpeedMultiplier"].value_or(1.0f);
+	m_name = table[type]["name"].value_or("");
+	m_collider = Collider(pos, faction->getColor(), m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
+
+	if (table[type].as_table()->contains("weapons")) {
+		for (auto& weapon : *table[type]["weapons"].as_array()) {
+			auto& val = weapon.value<std::string>();
+			if (val) {
+				if (val.value() == "$RAND_WEAPON") {
+					auto& weapons = faction->getWeapons();
+					if (weapons.size() > 0) {
+						int rndIndex = Random::randInt(0, weapons.size() - 1);
+						addWeapon(Weapon(weapons[rndIndex].type));
+					}
+				}
+				else {
+					addWeapon(Weapon(val.value()));
+				}
 			}
 		}
-		else {
-			for (int i = 0; i < 4; i++) {
-				addWeapon(Weapon("LONG_RANGE_MACHINE_GUN"));
-			}
-		}
-
-		m_collider = Collider(pos, color, m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
-		addMod(FighterBayMod(this, star, allegiance, color));
-
-		m_health = 1000.0f;
-
-		break;
-	case BUILDING_TYPE::LASER_TURRET:
-		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::LASER_TURRET)));
-
-		addWeapon(Weapon("LASER_GUN"));
-
-		m_health = 150.0f;
-		break;
-	case BUILDING_TYPE::MACHINE_GUN_TURRET:
-		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::MACHINE_GUN_TURRET)));
-
-		addWeapon(Weapon("MACHINE_GUN"));
-
-		m_health = 150.0f;
-		break;
-	case BUILDING_TYPE::GAUSS_TURRET:
-		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::GAUSS_TURRET)));
-
-		addWeapon(Weapon("GAUSS_CANNON"));
-
-		m_health = 350.0f;
-		m_constructionSpeedMultiplier = 0.5f;
-		break;
-	case BUILDING_TYPE::SHIP_FACTORY:
-		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::SHIP_FACTORY)));
-		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
-
-		addMod(FactoryMod());
-
-		m_health = 2500.0f;
-		m_constructionSpeedMultiplier = 1.5f;
-		break;
-	case BUILDING_TYPE::SPACE_HABITAT:
-		m_sprite.setTexture(TextureCache::getTexture(texturePaths.at(BUILDING_TYPE::SPACE_HABITAT)));
-		m_sprite.setScale(sf::Vector2f(2.0f, 2.0f));
-
-		addMod(HabitatMod(100000, 1000000, true));
-
-		m_health = 1000.0f;
-		break;
 	}
 
-	m_collider = Collider(pos, color, m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
+	if (table[type].as_table()->contains("mods")) {
+		for (auto& mod : *table[type]["mods"].as_array()) {
+			std::string val = mod.value_or("");
+			
+			if (val == "FighterBay") {
+				addMod(FighterBayMod(this, star, faction->getID(), faction->getColor()));
+			}
+			else if (val == "Factory") {
+				addMod(FactoryMod());
+			}
+			else if (val == "Habitat") {
+				addMod(HabitatMod(100000, 1000000, true));
+			}
+		}
+	}
 
 	m_sprite.setPosition(pos);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
 	m_sprite.setRotation(Random::randFloat(0.0f, 360.0f));
 	
-	m_allegiance = allegiance;
-	m_type = type;
+	m_allegiance = faction->getID();
 	m_currentStar = star;
 
 	if (built) {
@@ -182,7 +153,7 @@ void Building::construct(const Spaceship* constructor) {
 	m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
 }
 
-bool Building::checkBuildCondition(BUILDING_TYPE type, const Star* star, int allegiance, bool player) {
+bool Building::checkBuildCondition(const std::string& type, const Star* star, int allegiance, bool player) {
 	if (star == nullptr) {
 		return false;
 	}
@@ -192,35 +163,13 @@ bool Building::checkBuildCondition(BUILDING_TYPE type, const Star* star, int all
 		}
 	}
 	
-	switch (type) {
-	case BUILDING_TYPE::OUTPOST: // Only one allowed per star, per faction
-		return !star->containsBuildingType(type, true, allegiance);
-		break;
-	case BUILDING_TYPE::SHIP_FACTORY: // Only one allowed per star, per faction
-		return !star->containsBuildingType(type, true, allegiance);
-		break;
-	default:
-		return true;
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+	
+	if (table[type]["onePerStar"].value_or(false)) {
+		return !star->containsBuildingName(table[type]["name"].value_or(""), true, allegiance);
 	}
-}
 
-std::string Building::getTypeString() {
-	switch (m_type) {
-	case BUILDING_TYPE::GAUSS_TURRET:
-		return "Gauss Turret";
-	case BUILDING_TYPE::LASER_TURRET:
-		return "Laser Turret";
-	case BUILDING_TYPE::MACHINE_GUN_TURRET:
-		return "Machine Gun Turret";
-	case BUILDING_TYPE::OUTPOST:
-		return "Outpost";
-	case BUILDING_TYPE::SHIP_FACTORY:
-		return "Ship Factory";
-	case BUILDING_TYPE::SPACE_HABITAT:
-		return "Space Habitat";
-	default:
-		return "Building";
-	}
+	return true;
 }
 
 std::string Building::getInfoString() {
@@ -232,9 +181,13 @@ std::string Building::getInfoString() {
 	return info;
 }
 
-BuildingPrototype::BuildingPrototype(Building::BUILDING_TYPE type) {
+BuildingPrototype::BuildingPrototype(const std::string& type) {
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+
+	assert(table.contains(type));
+
 	m_type = type;
-	sf::Texture& texture = TextureCache::getTexture(Building::texturePaths.at(type));
+	sf::Texture& texture = TextureCache::getTexture(table[type]["texturePath"].value_or(""));
 	m_sprite.setTexture(texture);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
 }

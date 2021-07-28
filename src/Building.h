@@ -22,21 +22,17 @@ public:
 		SPACE_HABITAT
 	};
 
-	static const std::unordered_map<Building::BUILDING_TYPE, std::string> texturePaths;
-
-	Building(BUILDING_TYPE type, Star* star, sf::Vector2f pos, int allegiance, sf::Color color, bool built = true);
+	Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built = true);
 
 	void draw(sf::RenderWindow& window);
 	void update(Star* currentStar);
 	void construct(const Spaceship* constructor);
 
-	static bool checkBuildCondition(BUILDING_TYPE type, const Star* star, int allegiance, bool player = false);
+	static bool checkBuildCondition(const std::string& type, const Star* star, int allegiance, bool player = false);
 
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }
 
-	BUILDING_TYPE getType() { return m_type; }
-	
-	std::string getTypeString();
+	std::string getName() { return m_name; }
 	std::string getInfoString();
 
 private:
@@ -48,7 +44,7 @@ private:
 		archive & m_attackTarget;
 		archive & m_constructionPercent;
 		archive & m_constructionSpeedMultiplier;
-		archive & m_type;
+		archive & m_name;
 	}
 
 	Building() {}
@@ -61,23 +57,23 @@ private:
 	float m_constructionPercent = 0.0f;
 	float m_constructionSpeedMultiplier = 1.0f;
 
-	BUILDING_TYPE m_type = BUILDING_TYPE::NONE;
+	std::string m_name;
 };
 
 class BuildingPrototype {
 public:
 	BuildingPrototype() {}
-	BuildingPrototype(Building::BUILDING_TYPE type);
+	BuildingPrototype(const std::string& type);
 	
 	const sf::Texture* getTexture() { return m_sprite.getTexture(); }
 
-	Building::BUILDING_TYPE getType() const { return m_type; }
+	std::string getType() const { return m_type; }
 
 	void draw(sf::RenderWindow& window, const Star* currentStar, const Player& player);
 	void setPos(const sf::Vector2f& pos) { m_sprite.setPosition(pos); }
 
 private:
-	Building::BUILDING_TYPE m_type = Building::BUILDING_TYPE::OUTPOST;
+	std::string m_type;
 	sf::Sprite m_sprite;
 };
 
