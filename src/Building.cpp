@@ -24,7 +24,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 
 	if (table[type].as_table()->contains("weapons")) {
 		for (auto& weapon : *table[type]["weapons"].as_array()) {
-			auto& val = weapon.value<std::string>();
+			auto val = weapon.value<std::string>();
 			if (val) {
 				if (val.value() == "$RAND_WEAPON") {
 					auto& weapons = faction->getWeapons();
