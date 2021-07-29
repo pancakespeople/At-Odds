@@ -86,7 +86,7 @@ public:
 	void launchFighters(Star* currentStar);
 	void recallFighters(Star* currentStar, Unit* unit);
 	void dockReturningFighters(Star* currentStar, Unit* unit);
-	void constructNewFighter(Star* currentStar, Unit* unit);
+	void constructNewFighter(Star* currentStar, Unit* unit, Faction* faction);
 	void killAllFighters(Star* currentStar);
 
 private:

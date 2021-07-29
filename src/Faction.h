@@ -53,6 +53,7 @@ public:
 	std::vector<Spaceship::DesignerShip>& getShipDesigns() { return m_designerShips; }
 	std::deque<std::string>& getAnnouncementEvents() { return m_announcementEvents; }
 	std::string getName() { return m_name; }
+	std::vector<Spaceship::DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
 
 	Spaceship::DesignerChassis getChassisByName(const std::string& name);
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);

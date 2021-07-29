@@ -233,7 +233,7 @@ void FighterBayMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	}
 
 	if (m_fighterShipIds.size() < m_maxFighters) {
-		constructNewFighter(currentStar, unit);
+		constructNewFighter(currentStar, unit, faction);
 	}
 }
 
@@ -282,30 +282,30 @@ void FighterBayMod::dockReturningFighters(Star* currentStar, Unit* unit) {
 	}
 }
 
-void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit) {
+void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit, Faction* faction) {
 	if (m_ticksToNextFighter == 0) {
 		float radius = unit->getCollider().getRadius();
-		auto ship = std::make_unique<Spaceship>(
-			"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
-
-		if (Random::randBool()) {
-			ship->addWeapon(Weapon("LASER_GUN"));
-		}
-		else {
-			ship->addWeapon(Weapon("MACHINE_GUN"));
-		}
-
-		Spaceship* shipPtr = currentStar->createSpaceship(ship);
+		auto weapons = faction->getWeaponsBelowOrEqualWeaponPoints(1.0);
 		
-		if (m_fighterStatus != FIGHTER_STATUS::FIGHTING) {
-			shipPtr->disable();
+		if (weapons.size() > 0) {
+			auto ship = std::make_unique<Spaceship>(
+				"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
+
+			int rndIndex = Random::randInt(0, weapons.size() - 1);
+			ship->addWeapon(weapons[rndIndex].type);
+
+			Spaceship* shipPtr = currentStar->createSpaceship(ship);
+
+			if (m_fighterStatus != FIGHTER_STATUS::FIGHTING) {
+				shipPtr->disable();
+			}
+
+			m_fighterShipIds.push_back(shipPtr->getID());
+
+			m_ticksToNextFighter = 1000;
+
+			DEBUG_PRINT("constructed new fighter");
 		}
-
-		m_fighterShipIds.push_back(shipPtr->getID());
-
-		m_ticksToNextFighter = 1000;
-
-		DEBUG_PRINT("constructed new fighter");
 	}
 	else {
 		m_ticksToNextFighter--;

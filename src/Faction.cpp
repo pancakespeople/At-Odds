@@ -269,3 +269,13 @@ void Faction::addAnnouncementEvent(const std::string& text) {
 		m_announcementEvents.push_back(text);
 	}
 }
+
+std::vector<Spaceship::DesignerWeapon> Faction::getWeaponsBelowOrEqualWeaponPoints(float wp) {
+	std::vector<Spaceship::DesignerWeapon> weapons;
+	for (auto& weapon : m_weapons) {
+		if (weapon.weaponPoints <= wp) {
+			weapons.push_back(weapon);
+		}
+	}
+	return weapons;
+}
