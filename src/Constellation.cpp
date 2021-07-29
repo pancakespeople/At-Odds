@@ -187,15 +187,21 @@ void Constellation::generateRandomHyperlanes(int size, int numStars) {
 //}
 //
 void Constellation::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state) {
+    static sf::Vector2f lastMousePressPos;
+
     if (ev.type == sf::Event::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
         sf::Vector2f mouseCoordsWorld = window.mapPixelToCoords(mouseCoords);
 
         for (auto& star : m_stars) {
-            if (star->isInShapeRadius(mouseCoordsWorld.x, mouseCoordsWorld.y)) {
+            if (star->isInShapeRadius(mouseCoordsWorld.x, mouseCoordsWorld.y) &&
+                star->isInShapeRadius(lastMousePressPos.x, lastMousePressPos.y)) {
                 star->clicked(ev, state);
             }
         }
+    }
+    else if (ev.type == sf::Event::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
+        lastMousePressPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
     }
 }
 

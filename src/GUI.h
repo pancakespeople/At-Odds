@@ -109,6 +109,7 @@ public:
 
 private:
 	tgui::ChildWindow::Ptr m_window;
+	sf::Vector2f m_lastMouseDownPos;
 };
 
 class TimescaleGUI {

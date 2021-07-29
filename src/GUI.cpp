@@ -1384,13 +1384,16 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 
 void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
 	if (currentStar != nullptr && m_planetIconPanel != nullptr && mainPanel->isFocused()) {
+		static sf::Vector2f lastMousePressPos;
+
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
 			sf::Vector2f worldPos = window.mapPixelToCoords(screenPos);
 
 			int i = 0;
 			for (Planet& planet : currentStar->getPlanets()) {
-				if (Math::distance(worldPos, planet.getPos()) < planet.getRadius()) {
+				if (Math::distance(worldPos, planet.getPos()) < planet.getRadius() &&
+					Math::distance(lastMousePressPos, planet.getPos()) < planet.getRadius()) {
 					// Open planet panel
 					if (m_planetPanel == nullptr) {
 						m_planetIconPanel->onClick.emit(m_planetIconPanel.get(), worldPos);
@@ -1401,11 +1404,16 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, c
 				i++;
 			}
 		}
+		else if (ev.type == sf::Event::EventType::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
+			lastMousePressPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+		}
 	}
 }
 
 void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel) {
-	if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left && state.getLocalViewStar() != nullptr && mainPanel->isFocused()) {
+	bool valid = ev.mouseButton.button == sf::Mouse::Left && state.getLocalViewStar() != nullptr && mainPanel->isFocused();
+	
+	if (ev.type == sf::Event::EventType::MouseButtonReleased && valid) {
 		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
 		sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseScreenPos);
 		
@@ -1417,7 +1425,9 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 
 		for (auto& building : state.getLocalViewStar()->getBuildings()) {
 			float dist = Math::distance(building->getPos(), mouseWorldPos);
-			if (dist < building->getCollider().getRadius() && state.getPlayer().getFaction() == building->getAllegiance()) {
+			float downDist = Math::distance(building->getPos(), m_lastMouseDownPos);
+			if (dist < building->getCollider().getRadius() && state.getPlayer().getFaction() == building->getAllegiance() &&
+				downDist < building->getCollider().getRadius()) {
 				if (m_window != nullptr) {
 					gui.remove(m_window);
 				}
@@ -1437,6 +1447,9 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 				break;
 			}
 		}
+	}
+	else if (ev.type == sf::Event::EventType::MouseButtonPressed && valid) {
+		m_lastMouseDownPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 	}
 }
 
