@@ -12,12 +12,14 @@ name = "Laser Turret"
 texturePath = "data/art/laserturret.png"
 health = 150.0
 weapons = ["LASER_GUN"]
+weaponRequirements = ["LASER_GUN"]
 
 [MACHINE_GUN_TURRET]
 name = "Machine Gun"
 texturePath = "data/art/machinegunturret.png"
 health = 150.0
 weapons = ["MACHINE_GUN"]
+weaponRequirements = ["MACHINE_GUN"]
 
 [GAUSS_TURRET]
 name = "Gauss Turret"
@@ -25,6 +27,7 @@ texturePath = "data/art/gaussturret.png"
 health = 150.0
 constructionSpeedMultiplier = 0.5
 weapons = ["GAUSS_CANNON"]
+weaponRequirements = ["GAUSS_CANNON"]
 
 [SHIP_FACTORY]
 name = "Ship Factory"

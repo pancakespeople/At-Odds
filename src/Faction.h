@@ -38,6 +38,7 @@ public:
 	// Returns false if unsuccessful (if subtracting would lead to a negative resource amount)
 	bool canSubtractResource(PlanetResource::RESOURCE_TYPE type, float num);
 	bool canSubtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources);
+	bool hasWeapon(const std::string& type);
 	
 	sf::Color getColor() { return m_color; }
 

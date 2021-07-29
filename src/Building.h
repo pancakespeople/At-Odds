@@ -72,6 +72,8 @@ public:
 	void draw(sf::RenderWindow& window, const Star* currentStar, const Player& player);
 	void setPos(const sf::Vector2f& pos) { m_sprite.setPosition(pos); }
 
+	static bool meetsDisplayRequirements(const std::string& type, Faction* faction);
+
 private:
 	std::string m_type;
 	sf::Sprite m_sprite;

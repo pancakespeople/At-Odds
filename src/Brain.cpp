@@ -131,27 +131,31 @@ void Brain::considerFortifying(Faction* faction) {
 						int rnd = Random::randInt(0, 4);
 
 						Building* turret = nullptr;
-						std::string type = "LASER_TURRET";
 
-						// Choose type
-						if (rnd < 4) {
-							if (Random::randBool()) {
-								type = "LASER_TURRET";
-							}
-							else {
-								type = "MACHINE_GUN_TURRET";
+						const std::vector<std::string> turrets = {
+							"LASER_TURRET",
+							"MACHINE_GUN_TURRET",
+							"GAUSS_TURRET"
+						};
+
+						std::vector<std::string> allowedTurrets;
+
+						for (const std::string& turr : turrets) {
+							if (BuildingPrototype::meetsDisplayRequirements(turr, faction)) {
+								allowedTurrets.push_back(turr);
 							}
 						}
-						else {
-							type = "GAUSS_TURRET";
+
+						if (allowedTurrets.size() > 0) {
+							int rndIndex = Random::randInt(0, allowedTurrets.size() - 1);
+
+							// Create turret
+							std::unique_ptr<Building> building = std::make_unique<Building>(allowedTurrets[rndIndex], star, pos, faction, false);
+							turret = star->createBuilding(building);
+
+							// Order turret to be built
+							conShip->addOrder(InteractWithBuildingOrder(turret));
 						}
-
-						// Create turret
-						std::unique_ptr<Building> building = std::make_unique<Building>(type, star, pos, faction, false);
-						turret = star->createBuilding(building);
-
-						// Order turret to be built
-						conShip->addOrder(InteractWithBuildingOrder(turret));
 					}
 
 					AI_DEBUG_PRINT("Building " << numTurrets << " turrets");

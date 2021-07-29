@@ -683,13 +683,13 @@ void HelpWindow::close() {
 	}
 }
 
-void BuildGUI::open(tgui::Gui& gui) {
+void BuildGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 	auto panel = tgui::Panel::create();
 	panel->setPosition("0%", "90%");
 	panel->setSize("2.5%", "5%");
 	panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 	panel->getRenderer()->setOpacity(0.75f);
-	panel->onClick(&BuildGUI::onBuildIconClick, this, std::ref(gui));
+	panel->onClick(&BuildGUI::onBuildIconClick, this, std::ref(gui), playerFaction);
 	panel->onMouseEnter(&BuildGUI::onBuildIconMouseEnter, this);
 	panel->onMouseLeave(&BuildGUI::onBuildIconMouseExit, this);
 	m_buildIconPanel = panel;
@@ -710,7 +710,9 @@ void BuildGUI::onBuildIconMouseExit() {
 	m_buildIconPanel->getRenderer()->setOpacity(0.75f);
 }
 
-void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
+#define addBuildingSelectorIfChecked(X) if (BuildingPrototype::meetsDisplayRequirements(X, playerFaction)) addBuildingSelector(X);
+
+void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 	if (m_buildPanel == nullptr) {
 		m_buildPanel = tgui::Panel::create();
 		m_buildPanel->setInheritedOpacity(0.75);
@@ -718,11 +720,11 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui) {
 		m_buildPanel->setSize("20%", "29%");
 		gui.add(m_buildPanel);
 
-		addBuildingSelector("OUTPOST");
-		addBuildingSelector("SHIP_FACTORY");
-		addBuildingSelector("LASER_TURRET");
-		addBuildingSelector("MACHINE_GUN_TURRET");
-		addBuildingSelector("GAUSS_TURRET");
+		addBuildingSelectorIfChecked("OUTPOST");
+		addBuildingSelectorIfChecked("SHIP_FACTORY");
+		addBuildingSelectorIfChecked("LASER_TURRET");
+		addBuildingSelectorIfChecked("MACHINE_GUN_TURRET");
+		addBuildingSelectorIfChecked("GAUSS_TURRET");
 		
 		m_selectedBuildingIdx = -1;
 	}
@@ -839,7 +841,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 #ifdef NDEBUG
 		helpWindow.open(gui);
 #endif
-		buildGUI.open(gui);
+		buildGUI.open(gui, constellation.getFaction(state.getPlayer().getFaction()));
 		unitGUI.open(gui);
 		planetGUI.open(gui, state);
 		timescaleGUI.open(gui);

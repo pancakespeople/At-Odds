@@ -279,3 +279,12 @@ std::vector<Spaceship::DesignerWeapon> Faction::getWeaponsBelowOrEqualWeaponPoin
 	}
 	return weapons;
 }
+
+bool Faction::hasWeapon(const std::string& type) {
+	for (auto& weapon : m_weapons) {
+		if (weapon.type == type) {
+			return true;
+		}
+	}
+	return false;
+}

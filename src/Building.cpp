@@ -202,3 +202,19 @@ void BuildingPrototype::draw(sf::RenderWindow& window, const Star* currentStar, 
 		window.draw(m_sprite);
 	}
 }
+
+bool BuildingPrototype::meetsDisplayRequirements(const std::string& type, Faction* faction) {
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+
+	assert(table.contains(type));
+
+	if (table[type].as_table()->contains("weaponRequirements")) {
+		for (auto& weapon : *table[type]["weaponRequirements"].as_array()) {
+			if (!faction->hasWeapon(weapon.value_or(""))) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
