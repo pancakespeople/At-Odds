@@ -1238,7 +1238,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	auto colonyInfoButton = tgui::Button::create();
 	colonyInfoButton->setPosition("75%", "80%");
 	colonyInfoButton->setText("Colony");
-	colonyInfoButton->onClick([this, &gui, &state, &planet]() {
+	auto openColonyInfo = [this, &gui, &state, &planet]() {
 		switchSideWindow("Colony", gui);
 
 		if (m_sideWindow == nullptr) return;
@@ -1264,13 +1264,18 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 			}
 			allegianceText->setPosition("allegianceLabel.right", "allegianceLabel.top");
 			m_sideWindow->add(allegianceText);
-				
+
 			auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
 			growthRateLabel->setPosition("0%", "20%");
 			m_sideWindow->add(growthRateLabel);
 		}
-	});
+	};
+	colonyInfoButton->onClick(openColonyInfo);
 	m_planetInfoPanel->add(colonyInfoButton);
+
+	if (planet.getColony().population > 0) {
+		openColonyInfo();
+	}
 
 	auto resourceInfoButton = tgui::Button::create("Resources");
 	resourceInfoButton->setPosition("75%", "70%");
