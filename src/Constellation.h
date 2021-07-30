@@ -27,12 +27,16 @@ public:
 	void generateNeutralSquatters();
 	void moveShipToPurgatory(std::unique_ptr<Spaceship>& ship);
 	void discoverAllStars();
+	void reinitAfterLoad();
 
 	std::vector<std::unique_ptr<Star>>& getStars() { return m_stars; }
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }
 	std::vector<Faction>& getFactions() { return m_factions; }
 
 	Faction* getFaction(int id);
+	Star* getStarByID(uint32_t id);
+	Hyperlane* getHyperlaneByID(uint32_t id);
+	Spaceship* getShipByID(uint32_t id);
 
 private:
 	friend class boost::serialization::access;

@@ -10,15 +10,15 @@ class Building;
 
 class Faction {
 public:
-	Faction(Constellation* constellation, int id);
+	Faction(int id);
 
-	void spawnAtRandomStar();
+	void spawnAtRandomStar(Constellation* constellation);
 	void addOwnedSystem(Star* star);
 	void makeCapitol(Star* star);
 	void update();
 	void controlByPlayer(Player& player);
 	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
-	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); }
+	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); m_shipIDs.push_back(ship->getID()); }
 	void addResource(PlanetResource::RESOURCE_TYPE type, float num);
 	void subtractResource(PlanetResource::RESOURCE_TYPE type, float num);
 	void addChassis(const Spaceship::DesignerChassis& chassis) { m_chassis.push_back(chassis); }
@@ -29,6 +29,7 @@ public:
 	void clearAnnouncementEvents() { m_announcementEvents.clear(); }
 	void setColor(sf::Color color) { m_color = color; }
 	void setName(const std::string& name) { m_name = name; }
+	void reinitAfterLoad(Constellation* constellation);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -61,7 +62,6 @@ public:
 	Spaceship::DesignerShip getShipDesignByName(const std::string& name);
 
 	Star* getCapitol() { return m_capitol; }
-	Constellation* getConstellation() { return m_constellation; }
 
 	template <typename T>
 	void giveAllShipsOrder(const T order) {
@@ -83,11 +83,10 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_constellation;
-		archive & m_capitol;
+		archive & m_capitolID;
 		archive & m_color;
-		archive & m_ownedSystems;
-		archive & m_ships;
+		archive & m_ownedSystemIDs;
+		archive & m_shipIDs;
 		archive & m_ai;
 		archive & m_id;
 		archive & m_aiEnabled;
@@ -97,16 +96,22 @@ private:
 		archive & m_weapons;
 		archive & m_designerShips;
 		archive & m_announcementEvents;
+		archive & m_name;
 	}
 	
 	Faction() {}
 
-	Constellation* m_constellation;
 	Star* m_capitol = nullptr;
+	uint32_t m_capitolID;
 	
 	sf::Color m_color;
+	
 	std::vector<Star*> m_ownedSystems;
+	std::vector<uint32_t> m_ownedSystemIDs;
+
 	std::vector<Spaceship*> m_ships;
+	std::vector<uint32_t> m_shipIDs;
+
 	std::unordered_map<PlanetResource::RESOURCE_TYPE, float> m_resources;
 	std::vector<Spaceship::DesignerChassis> m_chassis;
 	std::vector<Spaceship::DesignerWeapon> m_weapons;

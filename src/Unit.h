@@ -40,6 +40,7 @@ public:
 	void enableAllMods();
 	void onDeath(Star* currentStar);
 	void openModGUI(tgui::ChildWindow::Ptr window, Faction* faction);
+	void reinitAfterLoad(Star* star) { m_currentStar = star; }
 	
 	int getAllegiance() const { return m_allegiance; }
 
@@ -63,7 +64,6 @@ protected:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Identifiable>(*this);
-		archive & m_currentStar;
 		archive & m_collider;
 		archive & m_velocity;
 		archive & m_weapons;

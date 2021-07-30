@@ -10,6 +10,7 @@
 #include "SaveLoader.h"
 #include "Hyperlane.h"
 #include "Planet.h"
+#include "Constellation.h"
 
 BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
 BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
@@ -124,11 +125,17 @@ void AttackOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const 
 
 TravelOrder::TravelOrder(Star* star) {
 	m_endStar = star;
+	m_endStarID = star->getID();
 }
 
 bool TravelOrder::execute(Spaceship* ship, Star* currentStar) {
 	if (!m_pathFound) {
 		m_path = Pathfinder::findPath(ship->getCurrentStar(), m_endStar);
+
+		for (Star* star : m_path) {
+			m_pathIDs.push_back(star->getID());
+		}
+
 		m_pathFound = true;
 		return false;
 	}
@@ -137,6 +144,7 @@ bool TravelOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 	else if (ship->getCurrentStar() == m_path.front()) {
 		m_path.pop_front();
+		m_pathIDs.pop_front();
 		return false;
 	}
 	else {
@@ -148,6 +156,13 @@ bool TravelOrder::execute(Spaceship* ship, Star* currentStar) {
 		}
 	}
 	return false;
+}
+
+void TravelOrder::reinitAfterLoad(Constellation* constellation) {
+	m_endStar = constellation->getStarByID(m_endStarID);
+	for (uint32_t id : m_pathIDs) {
+		m_path.push_back(constellation->getStarByID(id));
+	}
 }
 
 InteractWithBuildingOrder::InteractWithBuildingOrder(Building* building) {

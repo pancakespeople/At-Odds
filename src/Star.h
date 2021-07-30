@@ -10,6 +10,7 @@
 #include "ParticleSystem.h"
 #include "Planet.h"
 #include "Derelict.h"
+#include "Identifiable.h"
 
 class Hyperlane;
 class Faction;
@@ -18,7 +19,7 @@ class EffectsEmitter;
 class Player;
 class Constellation;
 
-class Star {
+class Star : public Identifiable {
 public:
 	Star(sf::Vector2f pos);
 
@@ -43,6 +44,7 @@ public:
 	void setDiscovered(bool isDiscovered) { m_discovered = isDiscovered; }
 	void drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader);
 	void generateDerelicts();
+	void reinitAfterLoad(Constellation* constellation);
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
@@ -83,6 +85,7 @@ public:
 	Building* getBuildingByID(unsigned int id);
 	JumpPoint* getJumpPointByID(unsigned int id);
 	Planet* getPlanetByID(unsigned int id);
+	Hyperlane* getHyperlaneByID(uint32_t id);
 
 	Planet& getMostHabitablePlanet();
 
@@ -90,9 +93,10 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Identifiable>(*this);
 		archive & m_shape;
 		archive & m_localViewSprite;
-		archive & m_hyperlanes;
+		archive & m_hyperlaneIDs;
 		archive & m_jumpPoints;
 		archive & m_localShips;
 		archive & m_projectiles;
@@ -122,6 +126,7 @@ private:
 	sf::Sprite m_localViewSprite;
 
 	std::vector<Hyperlane*> m_hyperlanes;
+	std::vector<uint32_t> m_hyperlaneIDs;
 	std::vector<JumpPoint> m_jumpPoints;
 	std::vector<std::unique_ptr<Spaceship>> m_localShips;
 	std::vector<Projectile> m_projectiles;

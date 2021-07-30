@@ -13,24 +13,20 @@ public:
 	JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing);
 
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
+	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
+	void jumpShipThrough(Spaceship* ship, Star* currentStar);
+	void reinitAfterLoad(Star* star);
 
-	sf::Vector2f getPos() { return m_sprite.getPosition(); }
+	bool isOutgoing() { return m_isOutgoing; }
+	bool isPointInRadius(sf::Vector2f point);
 
 	float getRadius() { return m_sprite.getTextureRect().width / 2.0f; }
 
-	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
+	sf::Vector2f getPos() { return m_sprite.getPosition(); }
 
 	Hyperlane* getHyperlane() { return m_hyperlane; }
-
-	bool isOutgoing() { return m_isOutgoing; }
-
 	JumpPoint* getConnectedJumpPoint();
-
-	void jumpShipThrough(Spaceship* ship, Star* currentStar);
-
 	Star* getConnectedOtherStar();
-
-	bool isPointInRadius(sf::Vector2f point);
 
 private:
 	friend class boost::serialization::access;
@@ -39,7 +35,7 @@ private:
 		archive & boost::serialization::base_object<Identifiable>(*this);
 		archive & m_sprite;
 		archive & m_trail;
-		archive & m_hyperlane;
+		archive & m_hyperlaneID;
 		archive & m_isOutgoing;
 	}
 
@@ -50,5 +46,6 @@ private:
 	Hyperlane* m_hyperlane;
 	bool m_isOutgoing;
 	sf::Clock m_rotationClock;
+	uint32_t m_hyperlaneID = 0;
 };
 

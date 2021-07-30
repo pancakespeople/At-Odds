@@ -187,6 +187,7 @@ bool Star::isInShapeRadius(float x, float y) const {
 
 void Star::connectHyperlane(Hyperlane* lane) {
 	m_hyperlanes.push_back(lane);
+	m_hyperlaneIDs.push_back(lane->getID());
 }
 
 void Star::factionTakeOwnership(Faction* faction, bool spawnClaimUnit) {
@@ -582,4 +583,32 @@ std::vector<Spaceship*> Star::getAllShipsOfAllegiance(int allegiance) {
 		}
 	}
 	return ships;
+}
+
+Hyperlane* Star::getHyperlaneByID(uint32_t id) {
+	for (Hyperlane* hyperlane : m_hyperlanes) {
+		if (hyperlane->getID() == id) {
+			return hyperlane;
+		}
+	}
+	return nullptr;
+}
+
+void Star::reinitAfterLoad(Constellation* constellation) {
+	for (uint32_t id : m_hyperlaneIDs) {
+		m_hyperlanes.push_back(constellation->getHyperlaneByID(id));
+	}
+
+	for (JumpPoint& jp : m_jumpPoints) {
+		jp.reinitAfterLoad(this);
+	}
+
+	for (auto& spaceship : m_localShips) {
+		spaceship->reinitAfterLoad(this);
+		spaceship->reinitOrdersAfterLoad(constellation);
+	}
+
+	for (auto& building : m_buildings) {
+		building->reinitAfterLoad(this);
+	}
 }

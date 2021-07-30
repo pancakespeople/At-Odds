@@ -7,8 +7,7 @@
 #include "Player.h"
 #include "Building.h"
 
-Faction::Faction(Constellation* constellation, int id) {
-	m_constellation = constellation;
+Faction::Faction(int id) {
 	m_color = sf::Color(rand() % 255, rand() % 255, rand() % 255);
 
 	m_id = id;
@@ -16,12 +15,12 @@ Faction::Faction(Constellation* constellation, int id) {
 	if (m_aiEnabled) m_ai.onStart(this);
 }
 
-void Faction::spawnAtRandomStar() {
-	Star* randStar = m_constellation->getStars()[Random::randInt(0, m_constellation->getStars().size() - 1)].get();
+void Faction::spawnAtRandomStar(Constellation* constellation) {
+	Star* randStar = constellation->getStars()[Random::randInt(0, constellation->getStars().size() - 1)].get();
 
 	int iterations = 0;
 	while (randStar->getAllegiance() != -1 && iterations < 50) {
-		randStar = m_constellation->getStars()[Random::randInt(0, m_constellation->getStars().size() - 1)].get();
+		randStar = constellation->getStars()[Random::randInt(0, constellation->getStars().size() - 1)].get();
 		iterations++;
 	}
 
@@ -44,17 +43,17 @@ void Faction::spawnAtRandomStar() {
 
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", pos, m_capitol, m_id, m_color)));
+		addSpaceship(m_capitol->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", pos, m_capitol, m_id, m_color)));
 		m_ships.back()->addWeapon(Weapon(m_weapons.back().type));
 	}
 
 	for (int i = 0; i < 3; i++) {
 		sf::Vector2f pos = m_capitol->getRandomLocalPos(-10000.0f, 10000.0f);
-		m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("CONSTRUCTION_SHIP", pos, m_capitol, m_id, m_color)));
+		addSpaceship(m_capitol->createSpaceship(std::make_unique<Spaceship>("CONSTRUCTION_SHIP", pos, m_capitol, m_id, m_color)));
 		m_ships.back()->addWeapon(Weapon("CONSTRUCTION_GUN"));
 	}
 
-	m_ships.push_back(m_capitol->createSpaceship(std::make_unique<Spaceship>("DESTROYER_1", Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
+	addSpaceship(m_capitol->createSpaceship(std::make_unique<Spaceship>("DESTROYER_1", Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
 	m_ships.back()->addWeapon(Weapon("GAUSS_CANNON"));
 
 	m_capitol->createBuilding(std::make_unique<Building>("OUTPOST", m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), this));
@@ -83,17 +82,19 @@ void Faction::spawnAtRandomStar() {
 
 void Faction::addOwnedSystem(Star* star) {
 	m_ownedSystems.push_back(star);
+	m_ownedSystemIDs.push_back(star->getID());
 	if (m_aiEnabled) m_ai.onStarTakeover(this, star);
 }
 
 void Faction::makeCapitol(Star* star) {
 	m_capitol = star;
+	m_capitolID = star->getID();
 }
 
 void Faction::update() {
 	if (m_capitol->getAllegiance() != m_id) {
 		if (m_ownedSystems.size() > 0) {
-			m_capitol = m_ownedSystems[0];
+			makeCapitol(m_ownedSystems[0]);
 		}
 		else {
 			if (m_ships.size() == 0) {
@@ -110,10 +111,22 @@ void Faction::update() {
 	if (m_aiEnabled) m_ai.controlFaction(this);
 	
 	// Delete unowned systems from list
-	m_ownedSystems.erase(std::remove_if(m_ownedSystems.begin(), m_ownedSystems.end(), [&](Star* s) {return s->getAllegiance() != m_id; }), m_ownedSystems.end());
+	for (int i = 0; i < m_ownedSystems.size(); i++) {
+		if (m_ownedSystems[i]->getAllegiance() != m_id) {
+			m_ownedSystems.erase(m_ownedSystems.begin() + i);
+			m_ownedSystemIDs.erase(m_ownedSystemIDs.begin() + i);
+			i--;
+		}
+	}
 
 	// Delete dead ships
-	m_ships.erase(std::remove_if(m_ships.begin(), m_ships.end(), [](Spaceship* s) {return s->isDead(); }), m_ships.end());
+	for (int i = 0; i < m_ships.size(); i++) {
+		if (m_ships[i]->isDead()) {
+			m_ships.erase(m_ships.begin() + i);
+			m_shipIDs.erase(m_shipIDs.begin() + i);
+			i--;
+		}
+	}
 }
 
 void Faction::controlByPlayer(Player& player) {
@@ -287,4 +300,16 @@ bool Faction::hasWeapon(const std::string& type) {
 		}
 	}
 	return false;
+}
+
+void Faction::reinitAfterLoad(Constellation* constellation) {
+	m_capitol = constellation->getStarByID(m_capitolID);
+	
+	for (uint32_t id : m_ownedSystemIDs) {
+		m_ownedSystems.push_back(constellation->getStarByID(id));
+	}
+
+	for (uint32_t id : m_shipIDs) {
+		m_ships.push_back(constellation->getShipByID(id));
+	}
 }

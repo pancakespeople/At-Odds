@@ -27,6 +27,7 @@ public:
 	void draw(sf::RenderWindow& window);
 	void update(Star* currentStar);
 	void construct(const Spaceship* constructor);
+	void reinitAfterLoad(Star* star);
 
 	static bool checkBuildCondition(const std::string& type, const Star* star, int allegiance, bool player = false);
 
@@ -41,7 +42,7 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Unit>(*this);
 		archive & m_sprite;
-		archive & m_attackTarget;
+		archive & m_attackTargetID;
 		archive & m_constructionPercent;
 		archive & m_constructionSpeedMultiplier;
 		archive & m_name;
@@ -52,7 +53,9 @@ private:
 	void attackEnemies();
 
 	sf::Sprite m_sprite;
+	
 	Unit* m_attackTarget = nullptr;
+	uint32_t m_attackTargetID = 0;
 
 	float m_constructionPercent = 0.0f;
 	float m_constructionSpeedMultiplier = 1.0f;

@@ -115,6 +115,7 @@ void Building::attackEnemies() {
 	if (m_attackTarget != nullptr) {
 		if (m_attackTarget->isDead()) {
 			m_attackTarget = nullptr;
+			m_attackTargetID = 0;
 		}
 		else {
 			float weaponRange = getLongestWeaponRange();
@@ -126,6 +127,7 @@ void Building::attackEnemies() {
 			}
 			else {
 				m_attackTarget = nullptr;
+				m_attackTargetID = 0;
 			}
 		}
 	}
@@ -137,6 +139,7 @@ void Building::attackEnemies() {
 			for (Unit* unit : enemyUnits) {
 				if (Math::distance(getPos(), unit->getPos()) < range) {
 					m_attackTarget = unit;
+					m_attackTargetID = unit->getID();
 					break;
 				}
 			}
@@ -179,6 +182,11 @@ std::string Building::getInfoString() {
 		info += "\n";
 	}
 	return info;
+}
+
+void Building::reinitAfterLoad(Star* star) {
+	m_currentStar = star;
+	m_attackTarget = star->getUnitByID(m_attackTargetID);
 }
 
 BuildingPrototype::BuildingPrototype(const std::string& type) {

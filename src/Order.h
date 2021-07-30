@@ -8,6 +8,7 @@ class Unit;
 class Building;
 class EffectsEmitter;
 class Planet;
+class Constellation;
 
 class Order {
 public:
@@ -15,6 +16,7 @@ public:
 	virtual bool execute(Spaceship* ship, Star* currentStar) { return true; }
 
 	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {}
+	virtual void reinitAfterLoad(Constellation* constellation) {}
 
 	Order() {}
 private:
@@ -103,6 +105,7 @@ public:
 	TravelOrder(Star* star);
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
+	virtual void reinitAfterLoad(Constellation* constellation) override;
 
 private:
 	friend class boost::serialization::access;
@@ -110,15 +113,19 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Order>(*this);
 		archive & m_pathFound;
-		archive & m_endStar;
-		archive & m_path;
+		archive & m_endStarID;
+		archive & m_pathIDs;
 	}
 
 	TravelOrder() {}
 
 	bool m_pathFound = false;
+	
 	Star* m_endStar = nullptr;
+	uint32_t m_endStarID = 0;
+
 	std::list<Star*> m_path;
+	std::list<uint32_t> m_pathIDs;
 };
 
 class InteractWithBuildingOrder : public Order {

@@ -111,6 +111,7 @@ public:
 	void enable() { m_disabled = false; }
 	void setSilentDeath(bool flag) { m_diesSilently = flag; }
 	void setCanReceiveOrders(bool flag) { m_canReceiveOrders = flag; }
+	void reinitOrdersAfterLoad(Constellation* constellation);
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);

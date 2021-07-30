@@ -16,6 +16,7 @@
 #include "Mod.h"
 #include "toml.hpp"
 #include "TOMLCache.h"
+#include "Constellation.h"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -474,4 +475,10 @@ float Spaceship::DesignerShip::getTotalWeaponPoints() {
 		total += weapon.weaponPoints;
 	}
 	return total;
+}
+
+void Spaceship::reinitOrdersAfterLoad(Constellation* constellation) {
+	for (auto& order : m_orders) {
+		order->reinitAfterLoad(constellation);
+	}
 }

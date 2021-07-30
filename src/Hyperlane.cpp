@@ -2,6 +2,7 @@
 
 #include "Hyperlane.h"
 #include "Debug.h"
+#include "Constellation.h"
 
 Hyperlane::Hyperlane(Star* begin, Star* end) : m_beginStar(begin), m_endStar(end) {
 	setColor(sf::Color(255, 255, 255, 100));
@@ -40,6 +41,9 @@ Hyperlane::Hyperlane(Star* begin, Star* end) : m_beginStar(begin), m_endStar(end
 
 	begin->connectHyperlane(this);
 	end->connectHyperlane(this);
+
+	m_beginStarID = begin->getID();
+	m_endStarID = end->getID();
 }
 
 void Hyperlane::draw(sf::RenderWindow& window) {
@@ -68,4 +72,9 @@ void Hyperlane::enablePathEffect() {
 	m_pathEffectShape = m_shape;
 	m_pathEffectShape.setFillColor(sf::Color::Yellow);
 	m_pathEffectClock.restart();
+}
+
+void Hyperlane::reinitAfterLoad(Constellation* constellation) {
+	m_beginStar = constellation->getStarByID(m_beginStarID);
+	m_endStar = constellation->getStarByID(m_endStarID);
 }

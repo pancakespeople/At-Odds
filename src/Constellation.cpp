@@ -228,7 +228,7 @@ void Constellation::setupStars() {
 
 void Constellation::generateFactions(int numFactions) {
     for (int i = 0; i < numFactions; i++) {
-        Faction newFaction(this, i);
+        Faction newFaction(i);
 
         if (m_availableFactionColors.size() > 0) {
             int rndIndex = Random::randInt(0, m_availableFactionColors.size() - 1);
@@ -238,7 +238,7 @@ void Constellation::generateFactions(int numFactions) {
             m_availableFactionColors.erase(m_availableFactionColors.begin() + rndIndex);
         }
 
-        newFaction.spawnAtRandomStar();
+        newFaction.spawnAtRandomStar(this);
         m_factions.push_back(std::move(newFaction));
     }
 }
@@ -303,4 +303,44 @@ void Constellation::discoverAllStars() {
     for (auto& star : m_stars) {
         star->setDiscovered(true);
     }
+}
+
+void Constellation::reinitAfterLoad() {
+    for (auto& star : m_stars) {
+        star->reinitAfterLoad(this);
+    }
+    for (auto& hyperlane : m_hyperlanes) {
+        hyperlane->reinitAfterLoad(this);
+    }
+
+    for (Faction& faction : m_factions) {
+        faction.reinitAfterLoad(this);
+    }
+}
+
+Star* Constellation::getStarByID(uint32_t id) {
+    for (auto& star : m_stars) {
+        if (star->getID() == id) {
+            return star.get();
+        }
+    }
+    return nullptr;
+}
+
+Hyperlane* Constellation::getHyperlaneByID(uint32_t id) {
+    for (auto& hyperlane : m_hyperlanes) {
+        if (hyperlane->getID() == id) {
+            return hyperlane.get();
+        }
+    }
+    return nullptr;
+}
+
+Spaceship* Constellation::getShipByID(uint32_t id) {
+    for (auto& star : m_stars) {
+        for (auto& ship : star->getSpaceships()) {
+            if (ship->getID() == id) return ship.get();
+        }
+    }
+    return nullptr;
 }

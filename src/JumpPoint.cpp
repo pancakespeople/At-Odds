@@ -22,6 +22,7 @@ JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane,
 	m_trail.rotate(angleRadians * (180 / 3.14159));
 
 	m_hyperlane = hyperlane;
+	m_hyperlaneID = hyperlane->getID();
 	m_isOutgoing = isOutgoing;
 }
 
@@ -84,4 +85,8 @@ bool JumpPoint::isPointInRadius(sf::Vector2f point) {
 		return true;
 	}
 	else return false;
+}
+
+void JumpPoint::reinitAfterLoad(Star* star) {
+	m_hyperlane = star->getHyperlaneByID(m_hyperlaneID);
 }
