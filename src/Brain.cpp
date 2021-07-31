@@ -135,7 +135,8 @@ void Brain::considerFortifying(Faction* faction) {
 						const std::vector<std::string> turrets = {
 							"LASER_TURRET",
 							"MACHINE_GUN_TURRET",
-							"GAUSS_TURRET"
+							"GAUSS_TURRET",
+							"ROCKET_TURRET"
 						};
 
 						std::vector<std::string> allowedTurrets;

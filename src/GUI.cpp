@@ -720,11 +720,12 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 		m_buildPanel->setSize("20%", "29%");
 		gui.add(m_buildPanel);
 
-		addBuildingSelectorIfChecked("OUTPOST");
-		addBuildingSelectorIfChecked("SHIP_FACTORY");
-		addBuildingSelectorIfChecked("LASER_TURRET");
-		addBuildingSelectorIfChecked("MACHINE_GUN_TURRET");
-		addBuildingSelectorIfChecked("GAUSS_TURRET");
+		addBuildingSelectorIfChecked("OUTPOST")
+		addBuildingSelectorIfChecked("SHIP_FACTORY")
+		addBuildingSelectorIfChecked("LASER_TURRET")
+		addBuildingSelectorIfChecked("MACHINE_GUN_TURRET")
+		addBuildingSelectorIfChecked("GAUSS_TURRET")
+		addBuildingSelectorIfChecked("ROCKET_TURRET")
 		
 		m_selectedBuildingIdx = -1;
 	}

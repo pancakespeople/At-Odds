@@ -7,6 +7,8 @@ mods = ["FighterBay"]
 onePerStar = true
 weapons = ["$RAND_WEAPON", "$RAND_WEAPON", "$RAND_WEAPON"]
 
+# Turrets
+
 [LASER_TURRET]
 name = "Laser Turret"
 texturePath = "data/art/laserturret.png"
@@ -28,6 +30,13 @@ health = 150.0
 constructionSpeedMultiplier = 0.5
 weapons = ["GAUSS_CANNON"]
 weaponRequirements = ["GAUSS_CANNON"]
+
+[ROCKET_TURRET]
+name = "Rocket Turret"
+texturePath = "data/art/rocketturret.png"
+health = 150.0
+weapons = ["ROCKET_LAUNCHER"]
+weaponRequirements = ["ROCKET_LAUNCHER"]
 
 [SHIP_FACTORY]
 name = "Ship Factory"
