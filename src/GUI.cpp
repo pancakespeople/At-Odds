@@ -21,19 +21,17 @@ UnitGUI::UnitGUI() {
 }
 
 void UnitGUI::open(tgui::Gui& gui) {
-	if (m_panel == nullptr) {
-		m_panel = tgui::Panel::create();
-		m_panel->setPosition("90%", "90%");
-		m_panel->setSize("7.5%", "5%");
-		m_panel->getRenderer()->setOpacity(0.75f);
-		m_panel->setVisible(false);
-		gui.add(m_panel);
+	m_panel = tgui::Panel::create();
+	m_panel->setPosition("90%", "90%");
+	m_panel->setSize("7.5%", "5%");
+	m_panel->getRenderer()->setOpacity(0.75f);
+	m_panel->setVisible(false);
+	gui.add(m_panel);
 
-		m_label = tgui::Label::create();
-		m_label->setSize("100%", "100%");
-		m_label->setText(std::to_string(m_selectedShips.size()) + "x " + "selected");
-		m_panel->add(m_label);
-	}
+	m_label = tgui::Label::create();
+	m_label->setSize("100%", "100%");
+	m_label->setText(std::to_string(m_selectedShips.size()) + "x " + "selected");
+	m_panel->add(m_label);
 }
 
 void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel) {
