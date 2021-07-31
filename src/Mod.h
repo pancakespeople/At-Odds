@@ -54,7 +54,9 @@ private:
 		bool selected = false;
 		bool build = false;
 		bool resourcesSubtracted = false;
+		bool continuous = false;
 		float progressPercent = 0.0f;
+		int amount = 1;
 
 		friend class boost::serialization::access;
 		template<class Archive>
@@ -62,11 +64,14 @@ private:
 			archive & build;
 			archive & resourcesSubtracted;
 			archive & progressPercent;
+			archive & continuous;
+			archive & amount;
 		}
 	};
 
 	std::unordered_map<std::string, ShipBuildData> m_shipBuildData;
 	tgui::ProgressBar::Ptr m_buildProgressBar;
+	tgui::Group::Ptr m_shipWidgets;
 };
 
 class FighterBayMod : public Mod {

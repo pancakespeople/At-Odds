@@ -25,6 +25,20 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	
 	for (auto& build : m_shipBuildData) {
 		if (build.second.build) {
+			
+			// Stop production if amount equals 0
+			if (build.second.amount == 0 && !build.second.continuous) {
+				build.second.build = false;
+
+				// Update gui
+				if (m_shipWidgets != nullptr && build.second.selected) {
+					auto buildCheckbox = m_shipWidgets->get<tgui::CheckBox>("buildCheckbox");
+					buildCheckbox->setChecked(false);
+				}
+
+				break;
+			}
+			
 			if (!build.second.resourcesSubtracted) {
 				// Check resources
 				
@@ -64,6 +78,16 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 				
 				build.second.progressPercent = 0.0f;
 				build.second.resourcesSubtracted = false;
+
+				if (!build.second.continuous) {
+					build.second.amount--;
+					
+					// Update gui
+					if (m_shipWidgets != nullptr && build.second.selected) {
+						auto amountEditBox = m_shipWidgets->get<tgui::EditBox>("amountEditBox");
+						amountEditBox->setText(std::to_string(build.second.amount));
+					}
+				}
 			}
 			else {
 				build.second.progressPercent += 0.05;
@@ -111,16 +135,48 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 					m_shipBuildData[ship.name].build = buildCheckbox->isChecked();
 				}
 			});
-			shipWidgets->add(buildCheckbox);
+			shipWidgets->add(buildCheckbox, "buildCheckbox");
+			
+			auto continuousCheckbox = tgui::CheckBox::create("Continuous");
+			continuousCheckbox->setPosition("shipInfoGroup.right + 2.5%", "shipInfoGroup.top + 15%");
+			continuousCheckbox->onChange([this, ship, continuousCheckbox]() {
+				if (m_shipBuildData.count(ship.name) > 0) {
+					m_shipBuildData[ship.name].continuous = continuousCheckbox->isChecked();
+				}
+			});
+			shipWidgets->add(continuousCheckbox);
 
+			auto amountEditBox = tgui::EditBox::create();
+			amountEditBox->setPosition("shipInfoGroup.right + 2.5%", "shipInfoGroup.top + 30%");
+			amountEditBox->setInputValidator("[0-9]+");
+			amountEditBox->setSize("10%", "10%");
+			amountEditBox->setMaximumCharacters(2);
+			amountEditBox->setText("1");
+			amountEditBox->onUnfocus([this, ship, amountEditBox]() {
+				if (m_shipBuildData.count(ship.name) > 0) {
+					if (amountEditBox->getText().size() > 0) {
+						m_shipBuildData[ship.name].amount = amountEditBox->getText().toInt();
+					}
+				}
+			});
+			shipWidgets->add(amountEditBox, "amountEditBox");
+
+			auto amountLabel = tgui::Label::create("Amount");
+			amountLabel->setPosition("amountEditBox.right + 1%", "amountEditBox.top");
+			shipWidgets->add(amountLabel);
+
+			// Create ship build data if it doesnt exist or init the widget values with the data if it does
 			if (m_shipBuildData.count(ship.name) == 0) {
 				ShipBuildData data;
 				m_shipBuildData[ship.name] = data;
 			}
 			else {
 				buildCheckbox->setChecked(m_shipBuildData[ship.name].build);
+				continuousCheckbox->setChecked(m_shipBuildData[ship.name].continuous);
+				amountEditBox->setText(std::to_string(m_shipBuildData[ship.name].amount));
 			}
 
+			// Set selected design
 			for (auto& data : m_shipBuildData) {
 				if (data.first == ship.name) {
 					data.second.selected = true;
@@ -139,6 +195,7 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 		else {
 			shipWidgets->removeAllWidgets();
 			m_buildProgressBar = nullptr;
+			m_shipWidgets = nullptr;
 		}
 	});
 	window->add(designsListBox, "designsListBox");
@@ -152,8 +209,8 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 		designsListBox->addItem(ship.name);
 	}
 	
-	auto shipWidgets = tgui::Group::create();
-	window->add(shipWidgets, "shipWidgets");
+	m_shipWidgets = tgui::Group::create();
+	window->add(m_shipWidgets, "shipWidgets");
 }
 
 void FactoryMod::updateDesigns(Faction* faction) {
