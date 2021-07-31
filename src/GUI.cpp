@@ -1664,7 +1664,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			designNameSaveButton->setPosition("75%", "90%");
 			designNameSaveButton->onClick([this, designNameTextBox, shipChassisListBox, shipWeaponsListBox, playerFaction]() {
 				if (shipChassisListBox->getItemCount() > 0) {
-					if (designNameTextBox->getText().length() > 0) {
+					if (designNameTextBox->getText().length() > 0 && canChassisFitWeapons(playerFaction)) {
 						Spaceship::DesignerShip ship;
 						ship.chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
 						for (tgui::String& weapon : shipWeaponsListBox->getItems()) {
