@@ -9,14 +9,6 @@
 #include "Random.h"
 #include "TOMLCache.h"
 
-const std::vector<std::string> Weapon::weaponSounds = {
-	"data/sound/pew1.wav",
-	"data/sound/pew2.wav",
-	"data/sound/gunshot3.wav",
-	"data/sound/rocket1.wav",
-	"data/sound/gunshot4.wav"
-};
-
 Weapon::Weapon(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
@@ -24,13 +16,7 @@ Weapon::Weapon(const std::string& type) {
 
 	m_projectile = Projectile(table[type]["projectile"].value_or(""));
 
-	std::string soundPath = table[type]["sound"].value_or("");
-	for (int i = 0; i < weaponSounds.size(); i++) {
-		if (weaponSounds[i] == soundPath) {
-			m_soundID = i;
-			break;
-		}
-	}
+	m_soundPath = table[type]["sound"].value_or("");
 
 	m_cooldownRecovery = table[type]["cooldownRecovery"].value_or(1.0f);
 	m_accuracy = table[type]["accuracy"].value_or(1.0f);
@@ -52,8 +38,8 @@ void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
 		star->addProjectile(m_projectile);
 	}
 
-	if (m_soundID != -1 && m_soundCooldown == 0) {
-		Sounds::playSoundLocal(weaponSounds[m_soundID], star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+	if (m_soundPath != "" && m_soundCooldown == 0) {
+		Sounds::playSoundLocal(m_soundPath, star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 		m_soundCooldown = m_baseSoundCooldown;
 	}
 

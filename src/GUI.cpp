@@ -1049,6 +1049,14 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 				constellation.discoverAllStars();
 			}
 		}		
+		else if (command.command == "giveweapon") {
+			if (validateArgs(command, 1) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
+				Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
+				if (playerFaction != nullptr) {
+					playerFaction->addWeapon(command.args[0]);
+				}
+			}
+		}
 		else {
 			m_chatBox->addLine("Invalid command " + command.command);
 		}
@@ -1274,14 +1282,10 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	colonyInfoButton->onClick(openColonyInfo);
 	m_planetInfoPanel->add(colonyInfoButton);
 
-	if (planet.getColony().population > 0) {
-		openColonyInfo();
-	}
-
 	auto resourceInfoButton = tgui::Button::create("Resources");
 	resourceInfoButton->setPosition("75%", "70%");
 	resourceInfoButton->setTextSize(10);
-	resourceInfoButton->onPress([this, &gui, &planet]() {
+	auto openResourceInfo = [this, &gui, &planet]() {
 		switchSideWindow("Resources", gui);
 
 		if (m_sideWindow == nullptr) return;
@@ -1305,10 +1309,19 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 			if (listBox->getSelectedItemIndex() >= 0 && listBox->getSelectedItemIndex() < listBox->getItemCount()) {
 				abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
 			}
-		});
+			});
 
 		m_sideWindow->add(resourceListBox, "resourceListBox");
-	});
+	};
+
+	if (planet.getColony().population > 0) {
+		openColonyInfo();
+	}
+	else {
+		openResourceInfo();
+	}
+
+	resourceInfoButton->onClick(openResourceInfo);
 	m_planetInfoPanel->add(resourceInfoButton);
 
 	if (state.getPlayer().getFaction() != -1) {

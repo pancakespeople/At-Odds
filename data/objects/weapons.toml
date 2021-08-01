@@ -34,3 +34,9 @@ cooldownRecovery = 5.0
 [ROCKET_LAUNCHER]
 projectile = "ROCKET"
 sound = "data/sound/rocket1.wav"
+
+[FLAK_CANNON]
+projectile = "FLAK"
+sound = "data/sound/gunshot1.wav"
+accuracy = 0.6
+numProjectiles = 6

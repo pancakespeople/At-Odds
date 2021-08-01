@@ -42,7 +42,7 @@ private:
 		archive & m_numProjectiles;
 		archive & m_soundCooldown;
 		archive & m_baseSoundCooldown;
-		archive & m_soundID;
+		archive & m_soundPath;
 		archive & m_projectile;
 	}
 
@@ -55,7 +55,8 @@ private:
 	int m_numProjectiles = 1;
 	int m_soundCooldown = 0;
 	int m_baseSoundCooldown = 0;
-	int m_soundID = -1;
+
+	std::string m_soundPath;
 
 	Projectile m_projectile;
 };
