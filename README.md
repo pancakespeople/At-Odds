@@ -1,20 +1,32 @@
 # At-Odds
 Space 4x/rts game
 
-![game 3](img/game3.png)
+![gui](img/gui.png)
 
-![game 2](img/game2.png)
+![battle 4](img/battle4.png)
 
-![constellation](img/constellation.png)
+![derelict](img/derelict.png)
 
-![bigbattle](img/bigbattle.png)
+![battle](img/battle.png)
 
 # Building
 
-You should use a package manager or something to install the following dependencies:
+Linux (Debian-based distros):
+
+Run linux_build.sh
+
+Windows:
+
+Clone the vcpkg repo
+
+	git clone https://github.com/microsoft/vcpkg
+
+In the vcpkg folder, run bootstrap-vcpkg.bat
+
+Run win_build.ps1 and then open the generated Visual Studio solution.
+
+Dependencies:
 
 	sfml:x64 2.5.1
 	tgui:x64 0.9.1
 	boost-serialization:x64 1.75.0
-
-Then, use premake to generate project files
