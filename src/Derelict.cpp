@@ -24,7 +24,7 @@ void Derelict::draw(sf::RenderWindow& window) {
 void Derelict::update(Star* star, std::vector<Faction>& factions) {
 	for (auto& ship : star->getSpaceships()) {
 		if (ship->getAllegiance() != -1) {
-			if (m_collider.isCollidingWith(ship->getCollider())) {
+			if (m_collider.isCollidingWith(ship->getCollider()) && !m_dead) {
 				
 				for (Faction& faction : factions) {
 					if (faction.getID() == ship->getAllegiance()) {
