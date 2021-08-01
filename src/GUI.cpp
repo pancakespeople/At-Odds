@@ -724,6 +724,7 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 		addBuildingSelectorIfChecked("MACHINE_GUN_TURRET")
 		addBuildingSelectorIfChecked("GAUSS_TURRET")
 		addBuildingSelectorIfChecked("ROCKET_TURRET")
+		addBuildingSelectorIfChecked("FLAK_TURRET")
 		
 		m_selectedBuildingIdx = -1;
 	}

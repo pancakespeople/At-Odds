@@ -38,6 +38,14 @@ health = 150.0
 weapons = ["ROCKET_LAUNCHER"]
 weaponRequirements = ["ROCKET_LAUNCHER"]
 
+[FLAK_TURRET]
+name = "Flak Turret"
+texturePath = "data/art/flakturret.png"
+health = 150.0
+constructionSpeedMultiplier = 0.5
+weapons = ["FLAK_CANNON"]
+weaponRequirements = ["FLAK_CANNON"]
+
 [SHIP_FACTORY]
 name = "Ship Factory"
 texturePath = "data/art/factory.png"
