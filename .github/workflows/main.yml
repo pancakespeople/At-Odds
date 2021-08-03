@@ -27,10 +27,13 @@ jobs:
       - name: Test
         run: ./at_odds/at_odds --exit
         
+      - name: Delete data folder
+        run: rm -rf ./at_odds/data
+
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: linux-build
+          name: at_odds-linux
           path: |
             ./at_odds
   win-build:
@@ -61,10 +64,13 @@ jobs:
       - name: Test
         run: ./at_odds/at_odds.exe --exit
 
+      - name: Delete data folder
+        run: Remove-Item ./at_odds/data -Recurse
+
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: win-build
+          name: at_odds-win
           path: |
             ./at_odds
 
