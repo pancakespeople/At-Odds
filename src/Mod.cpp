@@ -225,6 +225,7 @@ void FactoryMod::updateDesigns(Faction* faction) {
 void FactoryMod::setBuildAll(bool build) {
 	for (auto& data : m_shipBuildData) {
 		data.second.build = build;
+		data.second.continuous = build;
 	}
 }
 

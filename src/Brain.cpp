@@ -118,17 +118,16 @@ void Brain::considerFortifying(Faction* faction) {
 
 					std::vector<JumpPoint>& jumpPoints = star->getJumpPoints();
 
-					int numTurrets = Random::randInt(0, 4);
+					int numTurrets = Random::randInt(0, faction->numIdleConstructionShips() - 1);
 					int randJumpPointIndex = Random::randInt(0, jumpPoints.size() - 1);
 
 					JumpPoint& point = jumpPoints[randJumpPointIndex];
 
-					// Pick the first idle construction ship found to build the turrets
-					Spaceship* conShip = faction->getConstructionShips(true)[0];
+					// Get idle construction ships
+					std::vector<Spaceship*> conShips = faction->getConstructionShips(true);
 
 					for (int i = 0; i < numTurrets; i++) {
 						sf::Vector2f pos = point.getPos() + Random::randVec(-2500.0f, 2500.0f);
-						int rnd = Random::randInt(0, 4);
 
 						Building* turret = nullptr;
 
@@ -156,7 +155,7 @@ void Brain::considerFortifying(Faction* faction) {
 							turret = star->createBuilding(building);
 
 							// Order turret to be built
-							conShip->addOrder(InteractWithBuildingOrder(turret));
+							conShips[i]->addOrder(InteractWithBuildingOrder(turret));
 						}
 					}
 
@@ -282,28 +281,16 @@ void Brain::considerEconomy(Faction* faction) {
 		}
 	}
 
-	// Save up resources or spend them
-	if (Random::randBool() || faction->getAllCombatShips().size() == 0) {
-			
-		for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
-			FactoryMod* mod = factory->getMod<FactoryMod>();
-			mod->updateDesigns(faction);
-			mod->setBuildAll(true);
-		}
-
-		AI_DEBUG_PRINT("Decided to spend resources");
-	}
-	else {
-		for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
-			FactoryMod* mod = factory->getMod<FactoryMod>();
-			mod->updateDesigns(faction);
-			mod->setBuildAll(false);
-		}
-
-		AI_DEBUG_PRINT("Decided to save resources");
+	bool useResources = Random::randBool();
+	for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
+		FactoryMod* mod = factory->getMod<FactoryMod>();
+		mod->updateDesigns(faction);
+		mod->setBuildAll(useResources);
 	}
 
 	// Handle ship designs
+	
+	// Weapons
 	for (auto& weapon : faction->getWeapons()) {
 		bool notUsed = true;
 		for (auto& design : faction->getShipDesigns()) {
@@ -341,10 +328,50 @@ void Brain::considerEconomy(Faction* faction) {
 				newDesign.weapons.pop_back();
 			}
 
-			newDesign.name = newDesign.generateName();
-			faction->addOrReplaceDesignerShip(newDesign);
+			if (newDesign.weapons.size() > 0) {
+				newDesign.name = newDesign.generateName();
+				faction->addOrReplaceDesignerShip(newDesign);
 
-			AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
+				AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
+			}
+		}
+	}
+
+	// Chassis
+	for (auto& chassis : faction->getChassis()) {
+		bool notUsed = true;
+		for (auto& design : faction->getShipDesigns()) {
+			if (design.chassis.name == chassis.name) {
+				notUsed = false;
+			}
+		}
+
+		if (notUsed) {
+			Spaceship::DesignerShip newDesign;
+			newDesign.chassis = chassis;
+
+			std::vector<Spaceship::DesignerWeapon> usableWeapons = faction->getWeaponsBelowOrEqualWeaponPoints(chassis.maxWeaponCapacity);
+
+			if (usableWeapons.size() > 0) {
+				int i = 0;
+				const int maxIter = 10;
+				while (newDesign.getTotalWeaponPoints() < newDesign.chassis.maxWeaponCapacity && i < maxIter) {
+					int rndIndex = Random::randInt(0, usableWeapons.size() - 1);
+
+					if (newDesign.getTotalWeaponPoints() + usableWeapons[rndIndex].weaponPoints <= chassis.maxWeaponCapacity) {
+						newDesign.weapons.push_back(usableWeapons[rndIndex]);
+					}
+
+					i++;
+				}
+
+				if (newDesign.weapons.size() > 0) {
+					newDesign.name = newDesign.generateName();
+					faction->addOrReplaceDesignerShip(newDesign);
+
+					AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
+				}
+			}
 		}
 	}
 
