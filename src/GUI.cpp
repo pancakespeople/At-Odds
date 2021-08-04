@@ -807,7 +807,7 @@ void BuildGUI::draw(sf::RenderWindow& window, const Star* currentStar, const Pla
 	}
 }
 
-void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction) {
+void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction, UnitGUI& unitGUI, tgui::Panel::Ptr mainPanel) {
 	if (m_canReceiveEvents) {
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
@@ -817,15 +817,38 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 				// Create new building
 				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];
 
+				Building* buildingPtr = nullptr;
+
 				if (Building::checkBuildCondition(selector.prototype.getType(), currentLocalStar, playerFaction->getID(), true)) {
 					std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, playerFaction, false);
 
-					currentLocalStar->createBuilding(building);
+					buildingPtr = currentLocalStar->createBuilding(building);
 
 					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
 						m_selectedBuildingIdx = -1;
 					}
 				}
+
+				// Order any selected construction ships to build
+				if (buildingPtr != nullptr) {
+					for (Spaceship* ship : unitGUI.getSelectedShips()) {
+						if (ship->isConstructor()) {
+							if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+								ship->addOrder(InteractWithBuildingOrder(buildingPtr));
+								mainPanel->setFocused(false);
+							}
+							else {
+								ship->clearOrders();
+								ship->addOrder(InteractWithBuildingOrder(buildingPtr));
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (ev.type == sf::Event::EventType::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
+			if (mainPanel != nullptr && m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
+				mainPanel->setFocused(false);
 			}
 		}
 	}

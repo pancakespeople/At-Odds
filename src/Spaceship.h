@@ -121,6 +121,7 @@ public:
 	bool canReceiveOrders() { return m_canReceiveOrders; }
 	bool canPlayerGiveOrders() { return m_playerCanGiveOrders; }
 	bool isCivilian() { return m_civilian; }
+	bool isConstructor() { return m_constructionSpeed > 0.0f; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
