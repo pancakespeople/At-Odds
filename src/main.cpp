@@ -106,7 +106,7 @@ int main(int argc, const char* argv[])
             state.getCamera().zoomEvent(event);
             constellation.onEvent(event, window, state);
             state.onEvent(event);
-            unitGui.onEvent(event, window, state, constellation.getStars());
+            unitGui.onEvent(event, window, state, constellation.getStars(), playerGui.mainPanel);
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
             emitter.onEvent(event);

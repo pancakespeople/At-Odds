@@ -93,8 +93,23 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 		window.draw(selectionIndicator);
 
 		// Visualizes orders when selected
-		if (m_orders.size() > 0) {
-			m_orders.front()->draw(window, emitter, getPos());
+		for (int i = 0; i < m_orders.size(); i++) {
+			if (i == 0) {
+				m_orders.front()->draw(window, emitter, getPos(), m_currentStar);
+			}
+			else {
+				int j = i - 1;
+				std::pair<bool, sf::Vector2f> destPos = m_orders[j]->getDestinationPos(m_currentStar);
+
+				while (!destPos.first && j != 0) {
+					j--;
+					destPos = m_orders[j]->getDestinationPos(m_currentStar);
+				}
+
+				if (destPos.first) {
+					m_orders[i]->draw(window, emitter, destPos.second, m_currentStar);
+				}
+			}
 		}
 	}
 }

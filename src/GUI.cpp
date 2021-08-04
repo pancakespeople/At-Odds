@@ -154,7 +154,11 @@ void UnitGUI::draw(sf::RenderWindow& window) {
 	window.setView(oldView);
 }
 
-void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars) {
+void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel) {
+	if (mainPanel != nullptr) {
+		if (!mainPanel->isFocused()) return;
+	}
+
 	if (state.getState() == GameState::State::LOCAL_VIEW) {
 		if (ev.type == sf::Event::MouseButtonPressed) {
 			if (ev.mouseButton.button == sf::Mouse::Right) {
@@ -196,7 +200,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 					for (Spaceship* s : m_selectedShips) {
 						if (!s->canPlayerGiveOrders()) continue;
 						if (state.getLocalViewStar() == s->getCurrentStar()) {
-							s->clearOrders();
+							if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) s->clearOrders();
 							if (attackTarget != nullptr) {
 								s->addOrder(AttackOrder(attackTarget));
 							}
@@ -238,7 +242,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 			if (star != nullptr) {
 				for (Spaceship* s : m_selectedShips) {
 					if (!s->canPlayerGiveOrders()) continue;
-					s->clearOrders();
+					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) s->clearOrders();
 					s->addOrder(TravelOrder(star));
 				}
 				if (m_selectedShips.size() > 0) {
@@ -849,6 +853,15 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 		else if (ev.type == sf::Event::EventType::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
 			if (mainPanel != nullptr && m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
 				mainPanel->setFocused(false);
+			}
+		}
+		else if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Right) {
+			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
+				m_selectedBuildingIdx = -1;
+
+				if (mainPanel != nullptr) {
+					mainPanel->setFocused(false);
+				}
 			}
 		}
 	}

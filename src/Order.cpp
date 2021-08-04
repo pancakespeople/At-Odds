@@ -24,7 +24,7 @@ bool FlyToOrder::execute(Spaceship* ship, Star* currentStar) {
 	return ship->flyTo(m_pos);
 }
 
-void FlyToOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+void FlyToOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
 	emitter.drawLine(window, shipPos, m_pos, sf::Color::Green);
 }
 
@@ -58,7 +58,8 @@ bool JumpOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 }
 
-void JumpOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+void JumpOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+	m_jumpPoint = currentStar->getJumpPointByID(m_jumpPointID);
 	if (m_jumpPoint != nullptr)
 		emitter.drawLine(window, shipPos, m_jumpPoint->getPos(), sf::Color::Yellow);
 }
@@ -117,9 +118,20 @@ bool AttackOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 }
 
-void AttackOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+void AttackOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+	m_target = currentStar->getUnitByID(m_targetID);
 	if (m_target != nullptr) {
 		emitter.drawLine(window, shipPos, m_target->getPos(), sf::Color::Red);
+	}
+}
+
+std::pair<bool, sf::Vector2f> AttackOrder::getDestinationPos(Star* currentStar) {
+	m_target = currentStar->getUnitByID(m_targetID);
+	if (m_target != nullptr) {
+		return std::pair<bool, sf::Vector2f>(true, m_target->getPos());
+	}
+	else {
+		return std::pair<bool, sf::Vector2f>(false, sf::Vector2f());
 	}
 }
 
@@ -209,9 +221,20 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 }
 
-void InteractWithBuildingOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+void InteractWithBuildingOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+	m_building = currentStar->getBuildingByID(m_buildingID);
 	if (m_building != nullptr)
 		emitter.drawLine(window, shipPos, m_building->getPos(), sf::Color(100, 100, 255));
+}
+
+std::pair<bool, sf::Vector2f> InteractWithBuildingOrder::getDestinationPos(Star* currentStar) {
+	m_building = currentStar->getBuildingByID(m_buildingID);
+	if (m_building != nullptr) {
+		return std::pair<bool, sf::Vector2f>(true, m_building->getPos());
+	}
+	else {
+		return std::pair<bool, sf::Vector2f>(false, sf::Vector2f());
+	}
 }
 
 InteractWithPlanetOrder::InteractWithPlanetOrder(Planet* planet, Star* star) {
@@ -237,9 +260,20 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 	return false;
 }
 
-void InteractWithPlanetOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos) {
+void InteractWithPlanetOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+	m_planet = currentStar->getPlanetByID(m_planetID);
 	if (m_planet != nullptr)
 		emitter.drawLine(window, shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
+}
+
+std::pair<bool, sf::Vector2f> InteractWithPlanetOrder::getDestinationPos(Star* currentStar) {
+	m_planet = currentStar->getPlanetByID(m_planetID);
+	if (m_planet != nullptr) {
+		return std::pair<bool, sf::Vector2f>(true, m_planet->getPos());
+	}
+	else {
+		return std::pair<bool, sf::Vector2f>(false, sf::Vector2f());
+	}
 }
 
 DieOrder::DieOrder(bool silently) {

@@ -26,7 +26,7 @@ public:
 	void open(tgui::Gui& gui);
 	void update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel);
 	void draw(sf::RenderWindow& window);
-	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars);
+	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel);
 	
 	std::vector<Spaceship*>& getSelectedShips() { return m_selectedShips; }
 	
