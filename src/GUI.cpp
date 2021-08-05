@@ -1256,6 +1256,8 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	Planet& planet = state.getLocalViewStar()->getPlanets()[index];
 
+	// Labels
+
 	auto planetTypeLabel = tgui::Label::create();
 	planetTypeLabel->setText("Type: " + planet.getTypeString());
 	planetTypeLabel->setPosition("0%", "5%");
@@ -1281,9 +1283,13 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	planetHabitabilityLabel->setPosition("0%", "45%");
 	m_planetInfoPanel->add(planetHabitabilityLabel);
 
+	// Buttons
+
+	// Colony button
 	auto colonyInfoButton = tgui::Button::create();
 	colonyInfoButton->setPosition("75%", "80%");
 	colonyInfoButton->setText("Colony");
+	colonyInfoButton->setSize("25%", "10%");
 	auto openColonyInfo = [this, &gui, &state, &planet]() {
 		switchSideWindow("Colony", gui);
 
@@ -1317,11 +1323,13 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		}
 	};
 	colonyInfoButton->onClick(openColonyInfo);
-	m_planetInfoPanel->add(colonyInfoButton);
+	m_planetInfoPanel->add(colonyInfoButton, "colonyInfoButton");
 
+	// Resources button
 	auto resourceInfoButton = tgui::Button::create("Resources");
-	resourceInfoButton->setPosition("75%", "70%");
+	resourceInfoButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 10.0%");
 	resourceInfoButton->setTextSize(10);
+	resourceInfoButton->setSize("25%", "10%");
 	auto openResourceInfo = [this, &gui, &planet]() {
 		switchSideWindow("Resources", gui);
 
@@ -1333,8 +1341,8 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		m_sideWindow->add(abundanceLabel, "abundanceLabel");
 
 		auto resourceListBox = tgui::ListBox::create();
-		resourceListBox->setPosition("0%", "0%");
-		resourceListBox->setSize("50%", "90%");
+		resourceListBox->setPosition("0%", "10%");
+		resourceListBox->setSize("50%", "80%");
 
 		for (auto& resource : planet.getResources()) {
 			resourceListBox->addItem(resource.getTypeString());
@@ -1364,7 +1372,8 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	if (state.getPlayer().getFaction() != -1) {
 
 		auto lawsButton = tgui::Button::create("Laws");
-		lawsButton->setPosition("75%", "55%");
+		lawsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 20.0%");
+		lawsButton->setSize("25%", "10%");
 		lawsButton->onPress([this, &gui, &state, &planet]() {
 			switchSideWindow("Laws", gui);
 
@@ -1396,8 +1405,18 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 			m_sideWindow->add(colonyLawComboBox);
 			});
-		m_planetInfoPanel->add(lawsButton);
+		m_planetInfoPanel->add(lawsButton, "lawsButton");
 	}
+
+	auto buildingsButton = tgui::Button::create("Buildings");
+	buildingsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 30.0%");
+	buildingsButton->setSize("25%", "10%");
+	buildingsButton->onPress([this, &gui]() {
+		switchSideWindow("Buildings", gui);
+
+		if (m_sideWindow == nullptr) return;
+	});
+	m_planetInfoPanel->add(buildingsButton);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
