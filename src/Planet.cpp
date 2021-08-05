@@ -53,13 +53,13 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time)
 	emitter.drawGlow(window, m_shape.getPosition(), m_shape.getRadius() * 3.0f, m_shape.getFillColor());
 	emitter.drawPlanet(window, m_shape, this, m_shaderRandomSeed, time);
 
-	if (m_colony.allegiance != -1) {
+	if (m_colony.getAllegiance() != -1) {
 		// Draw faction indicator circle
 
 		sf::CircleShape circle;
 		circle.setRadius(m_shape.getRadius() + 100.0f);
 		circle.setFillColor(sf::Color::Transparent);
-		circle.setOutlineColor(m_colony.factionColor);
+		circle.setOutlineColor(m_colony.getFactionColor());
 		circle.setOutlineThickness(50.0f);
 		circle.setOrigin(sf::Vector2f(circle.getRadius(), circle.getRadius()));
 		circle.setPosition(m_shape.getPosition());
@@ -70,7 +70,7 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time)
 
 void Planet::update(Star* currentStar, Faction* faction) {
 	m_shape.setPosition(m_orbit.update());
-	updateColony(currentStar, faction);
+	m_colony.update(currentStar, faction, this);
 }
 
 void Planet::generateGasGiant(float baseTemperature) {
@@ -248,53 +248,6 @@ float Planet::getHabitability() const {
 	}
 }
 
-void Planet::updateColony(Star* currentStar, Faction* faction) {
-	if (m_colony.ticksUntilNextGrowth == 0) {
-		float growthRate = m_colony.getGrowthRate(getHabitability());
-		float growth = m_colony.population * growthRate;
-		m_colony.population += growth;
-		m_colony.ticksUntilNextGrowth = Colony::growthTicks;
-	}
-	else {
-		m_colony.ticksUntilNextGrowth--;
-	}
-
-	// Spawn space bus
-	if (m_colony.population >= 1000 && faction != nullptr) {
-		if (m_colony.ticksToNextBus == 0) {
-			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
-
-			if (targetStar->getPlanets().size() > 0) {
-				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_colony.allegiance, targetStar, this);
-
-				if (targetPlanet != nullptr) {
-					Planet::createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
-
-					m_colony.population -= 1000;
-				}
-			}
-			m_colony.ticksToNextBus = HabitatMod::calcBusTickTimer(m_colony.population);
-		}
-		else {
-			m_colony.ticksToNextBus--;
-		}
-	}
-
-	// Resource exploitation
-	if (faction != nullptr) {
-		if (m_colony.ticksToNextResourceExploit == 0) {
-			for (PlanetResource& resource : m_resources) {
-				float amount = m_colony.population * resource.abundance / 1000.0f;
-				faction->addResource(resource.type, amount);
-			}
-			m_colony.ticksToNextResourceExploit = 1000;
-		}
-		else {
-			m_colony.ticksToNextResourceExploit--;
-		}
-	}
-}
-
 float Colony::getGrowthRate(float planetHabitability) {
 	// Negative growth rate if habitability is less than 0.5
 	float growthRate = (planetHabitability - 0.5f) / 10.0f;
@@ -302,12 +255,12 @@ float Colony::getGrowthRate(float planetHabitability) {
 }
 
 void Planet::onColonization() {
-	m_colony.ticksToNextBus = HabitatMod::calcBusTickTimer(m_colony.population);
+	m_colony.setTicksToNextBus(HabitatMod::calcBusTickTimer(m_colony.getPopulation()));
 }
 
 void Planet::createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
 	Spaceship* bus = currentStar->createSpaceship(
-		std::make_unique<Spaceship>("SPACE_BUS", getPos(), currentStar, m_colony.allegiance, factionColor)
+		std::make_unique<Spaceship>("SPACE_BUS", getPos(), currentStar, m_colony.getAllegiance(), factionColor)
 	);
 	bus->addMod(HabitatMod(1000, 1000, false));
 	bus->addOrder(TravelOrder(targetStar));
@@ -362,13 +315,4 @@ std::string PlanetResource::getTypeString(RESOURCE_TYPE type) {
 	default:
 		return "Unknown";
 	}
-}
-
-bool Colony::isColonizationLegal(int allegiance) {
-	if (m_factionColonyLegality.count(allegiance) == 0) return false;
-	else return m_factionColonyLegality[allegiance];
-}
-
-void Colony::setFactionColonyLegality(int allegiance, bool legality) {
-	m_factionColonyLegality[allegiance] = legality;
 }

@@ -102,7 +102,7 @@ private:
 	Faction() {}
 
 	Star* m_capitol = nullptr;
-	uint32_t m_capitolID;
+	uint32_t m_capitolID = 0;
 	
 	sf::Color m_color;
 	
@@ -121,7 +121,7 @@ private:
 	
 	Brain m_ai;
 	
-	int m_id;
+	int m_id = 0;
 	
 	bool m_aiEnabled = true;
 	bool m_dead = false;

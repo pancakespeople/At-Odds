@@ -35,7 +35,7 @@ private:
 
 	std::vector<sf::Sprite> m_frames;
 	int m_frameIndex = 0;
-	int m_frameDelay;
+	int m_frameDelay = 0;
 	int m_ticksToNextFrame = 0;
 	bool m_done = false;
 };

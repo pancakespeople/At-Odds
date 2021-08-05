@@ -382,7 +382,7 @@ void Star::update(Constellation* constellation, const Player& player) {
 		a.nextFrame();
 	}
 	for (Planet& planet : m_planets) {
-		planet.update(this, constellation->getFaction(planet.getColony().allegiance));
+		planet.update(this, constellation->getFaction(planet.getColony().getAllegiance()));
 	}
 	for (int i = 0; i < m_derelicts.size(); i++) {
 		m_derelicts[i].update(this, constellation->getFactions());

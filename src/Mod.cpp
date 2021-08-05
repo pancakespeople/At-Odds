@@ -90,7 +90,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 				}
 			}
 			else {
-				build.second.progressPercent += 0.05;
+				build.second.progressPercent += 0.05f;
 
 				if (m_buildProgressBar != nullptr && build.second.selected) {
 					m_buildProgressBar->setValue(build.second.progressPercent);
@@ -447,11 +447,11 @@ std::string HabitatMod::getInfoString() {
 void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet) {
 	// Transfer passengers to planet
 	
-	bool firstTime = planet->getColony().population == 0;
-	planet->getColony().population += m_population;
+	bool firstTime = planet->getColony().getPopulation() == 0;
+	planet->getColony().addPopulation(m_population);
 	if (firstTime && m_population > 0) {
-		planet->getColony().allegiance = unit->getAllegiance();
-		planet->getColony().factionColor = unit->getFactionColor();
+		planet->getColony().setAllegiance(unit->getAllegiance());
+		planet->getColony().setFactionColor(unit->getFactionColor());
 		planet->onColonization();
 	}
 	m_population = 0;

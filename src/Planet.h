@@ -5,6 +5,7 @@
 #include "Orbit.h"
 #include "ParticleSystem.h"
 #include "Identifiable.h"
+#include "Colony.h"
 
 class Star;
 class Faction;
@@ -31,36 +32,6 @@ private:
 	}
 };
 
-struct Colony {
-	const static int growthTicks = 1000;
-	
-	int population = 0;
-	int ticksUntilNextGrowth = growthTicks;
-	int ticksToNextBus = 500;
-	int ticksToNextResourceExploit = 1000;
-	int allegiance = -1;
-
-	sf::Color factionColor = sf::Color(175, 175, 175);
-
-	float getGrowthRate(float planetHabitability);
-	bool isColonizationLegal(int allegiance);
-	void setFactionColonyLegality(int allegiance, bool legality);
-
-private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {
-		archive & population;
-		archive & ticksUntilNextGrowth;
-		archive & ticksToNextBus;
-		archive & allegiance;
-		archive & factionColor;
-		archive & m_factionColonyLegality;
-	}
-	
-	std::unordered_map<int, bool> m_factionColonyLegality;
-};
-
 class Planet : public Identifiable {
 public:
 	enum class PLANET_TYPE {
@@ -79,7 +50,6 @@ public:
 
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time);
 	void update(Star* currentStar, Faction* faction);
-	void updateColony(Star* currentStar, Faction* faction);
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);
 	void onColonization();

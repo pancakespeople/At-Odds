@@ -43,8 +43,8 @@ private:
 	
 	sf::Sprite m_sprite;
 	sf::RectangleShape m_trail;
-	Hyperlane* m_hyperlane;
-	bool m_isOutgoing;
+	Hyperlane* m_hyperlane = nullptr;
+	bool m_isOutgoing = false;
 	sf::Clock m_rotationClock;
 	uint32_t m_hyperlaneID = 0;
 };

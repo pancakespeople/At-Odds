@@ -41,13 +41,13 @@ private:
 	sf::RectangleShape m_shape;
 	sf::RectangleShape m_pathEffectShape;
 	
-	Star* m_beginStar;
-	Star* m_endStar;
+	Star* m_beginStar = nullptr;
+	Star* m_endStar = nullptr;
 
-	uint32_t m_beginStarID;
-	uint32_t m_endStarID;
+	uint32_t m_beginStarID = 0;
+	uint32_t m_endStarID = 0;
 
-	float m_angleDegrees;
+	float m_angleDegrees = 0;
 	bool m_pathEffectEnabled = false;
 	sf::Clock m_pathEffectClock;
 };

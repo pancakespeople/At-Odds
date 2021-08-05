@@ -1291,16 +1291,16 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 		Colony& colony = planet.getColony();
 
-		auto populationLabel = tgui::Label::create("Population: " + std::to_string(colony.population));
+		auto populationLabel = tgui::Label::create("Population: " + std::to_string(colony.getPopulation()));
 		m_sideWindow->add(populationLabel);
 
-		if (colony.population > 0) {
+		if (colony.getPopulation() > 0) {
 			auto allegianceLabel = tgui::Label::create("Allegiance: ");
 			allegianceLabel->setPosition("0%", "10%");
 			m_sideWindow->add(allegianceLabel, "allegianceLabel");
 
 			auto allegianceText = tgui::Label::create();
-			if (state.getPlayer().getFaction() == colony.allegiance) {
+			if (state.getPlayer().getFaction() == colony.getAllegiance()) {
 				allegianceText->setText("Friendly");
 				allegianceText->getRenderer()->setTextColor(tgui::Color::Green);
 			}
@@ -1351,7 +1351,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		m_sideWindow->add(resourceListBox, "resourceListBox");
 	};
 
-	if (planet.getColony().population > 0) {
+	if (planet.getColony().getPopulation() > 0) {
 		openColonyInfo();
 	}
 	else {

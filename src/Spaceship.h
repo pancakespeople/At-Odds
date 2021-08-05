@@ -175,11 +175,11 @@ private:
 	
 	std::deque<std::unique_ptr<Order>> m_orders;
 	
-	float m_mass; // kg
-	float m_maxAcceleration;
+	float m_mass = 100.0; // kg
+	float m_maxAcceleration = 10.0;
 	float m_percentJumpDriveCharged = 0.0f;
 	float m_facingAngle = 90.0f;
-	float m_rotationSpeed;
+	float m_rotationSpeed = 1.0;
 	float m_constructionSpeed = 0.0f;
 
 	bool m_selected = false;
