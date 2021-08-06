@@ -171,6 +171,13 @@ private:
 	tgui::Label::Ptr m_label;
 };
 
+class MinimapGUI {
+public:
+	MinimapGUI() {}
+
+	void draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance);
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
@@ -187,6 +194,7 @@ struct PlayerGUI {
 	ResourceGUI resourceGUI;
 	ShipDesignerGUI shipDesignerGUI;
 	AnnouncerGUI announcerGUI;
+	MinimapGUI minimapGUI;
 };
 
 class NewGameMenu {

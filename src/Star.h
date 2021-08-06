@@ -60,6 +60,7 @@ public:
 	bool isLocalViewActive() const { return m_localViewActive; }
 	bool containsBuildingName(const std::string& name, bool allegianceOnly = false, int allegiance = 0) const;
 	bool isDiscovered() const { return m_discovered; }
+	bool isDrawingHidden() const { return m_drawHidden; }
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;
@@ -110,6 +111,7 @@ private:
 		archive & m_temperature;
 		archive & m_discovered;
 		archive & m_derelicts;
+		archive & m_drawHidden;
 	}
 	
 	void handleCollisions();
@@ -138,6 +140,7 @@ private:
 	bool m_localViewActive = false;
 	bool m_multipleFactionsPresent = false;
 	bool m_discovered = false;
+	bool m_drawHidden = true;
 
 	int m_allegiance = -1;
 

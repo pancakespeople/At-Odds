@@ -105,11 +105,11 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
 }
 
 void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time) {
-	bool drawHidden = true;
+	m_drawHidden = true;
 
 	if (player.hasFogOfWar()) {
 		if (numAllies(player.getFaction()) == 0) {
-			drawHidden = false;
+			m_drawHidden = false;
 			emitter.drawFogOfWar(window);
 		}
 	}
@@ -123,7 +123,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 
 	//emitter.drawHabitableZone(window, getLocalViewCenter(), m_temperature);
 
-	if (drawHidden) {
+	if (m_drawHidden) {
 
 		for (Planet& planet : m_planets) {
 			planet.draw(window, emitter, time);

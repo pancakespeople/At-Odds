@@ -153,6 +153,7 @@ int main(int argc, const char* argv[])
 
         buildGui.draw(window, state.getLocalViewStar(), player);
         unitGui.draw(window);
+        playerGui.minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction());
         gui.draw();
 
         window.display();
