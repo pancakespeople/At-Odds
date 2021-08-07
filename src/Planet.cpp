@@ -256,6 +256,7 @@ float Colony::getGrowthRate(float planetHabitability) {
 
 void Planet::onColonization() {
 	m_colony.setTicksToNextBus(HabitatMod::calcBusTickTimer(m_colony.getPopulation()));
+	m_colony.addBuilding("INFRASTRUCTURE");
 }
 
 void Planet::createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet) {

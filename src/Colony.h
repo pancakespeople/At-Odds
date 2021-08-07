@@ -6,6 +6,24 @@ class Star;
 class Faction;
 class Planet;
 
+class ColonyBuilding {
+public:
+	ColonyBuilding(const char* type);
+
+	std::string getName();
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_type;
+	}
+	
+	ColonyBuilding() {}
+
+	std::string m_type;
+};
+
 class Colony {
 public:
 	const static int growthTicks = 1000;
@@ -24,8 +42,11 @@ public:
 	void addPopulation(int pop);
 	void setAllegiance(int id) { m_allegiance = id; }
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
+	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }
 
 	sf::Color getFactionColor() { return m_factionColor; }
+
+	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
 
 private:
 	friend class boost::serialization::access;
@@ -37,6 +58,7 @@ private:
 		archive & m_allegiance;
 		archive & m_factionColor;
 		archive & m_factionColonyLegality;
+		archive & m_buildings;
 	}
 
 	int m_population = 0;
@@ -48,4 +70,5 @@ private:
 	sf::Color m_factionColor = sf::Color(175, 175, 175);
 
 	std::unordered_map<int, bool> m_factionColonyLegality;
+	std::vector<ColonyBuilding> m_buildings;
 };

@@ -1342,8 +1342,8 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		m_sideWindow->add(abundanceLabel, "abundanceLabel");
 
 		auto resourceListBox = tgui::ListBox::create();
-		resourceListBox->setPosition("0%", "10%");
-		resourceListBox->setSize("50%", "80%");
+		resourceListBox->setPosition("0%", "5%");
+		resourceListBox->setSize("50%", "90%");
 
 		for (auto& resource : planet.getResources()) {
 			resourceListBox->addItem(resource.getTypeString());
@@ -1412,10 +1412,21 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	auto buildingsButton = tgui::Button::create("Buildings");
 	buildingsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 30.0%");
 	buildingsButton->setSize("25%", "10%");
-	buildingsButton->onPress([this, &gui]() {
+	buildingsButton->onPress([this, &gui, &planet]() {
 		switchSideWindow("Buildings", gui);
 
 		if (m_sideWindow == nullptr) return;
+
+		auto buildingsBox = tgui::ListBox::create();
+		buildingsBox->setPosition("0%", "5%");
+		buildingsBox->setSize("50%", "90%");
+		m_sideWindow->add(buildingsBox);
+
+		auto& buildings = planet.getColony().getBuildings();
+
+		for (ColonyBuilding& building : buildings) {
+			buildingsBox->addItem(building.getName());
+		}
 	});
 	m_planetInfoPanel->add(buildingsButton);
 

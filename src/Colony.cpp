@@ -3,6 +3,7 @@
 #include "Planet.h"
 #include "Star.h"
 #include "Faction.h"
+#include "TOMLCache.h"
 
 bool Colony::isColonizationLegal(int allegiance) {
 	if (m_factionColonyLegality.count(allegiance) == 0) return false;
@@ -17,7 +18,7 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	if (m_ticksUntilNextGrowth == 0) {
 		float growthRate = getGrowthRate(planet->getHabitability());
 		float growth = m_population * growthRate;
-		m_population += growth;
+		addPopulation(growth);
 		m_ticksUntilNextGrowth = Colony::growthTicks;
 	}
 	else {
@@ -68,4 +69,17 @@ void Colony::addPopulation(int pop) {
 	else {
 		m_population += pop;
 	}
+}
+
+ColonyBuilding::ColonyBuilding(const char* type) {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+
+	assert(table.contains(type));
+
+	m_type = type;
+}
+
+std::string ColonyBuilding::getName() {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["name"].value_or("Unnamed");
 }
