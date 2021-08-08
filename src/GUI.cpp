@@ -1288,6 +1288,84 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	// Buttons
 
+	createColonyAndResourcesButtons(gui, state, planet);
+
+	if (state.getPlayer().getFaction() != -1) {
+		createLawsButton(gui, state, planet);
+	}
+
+	if (playerFaction != nullptr) {
+		createBuildingsButton(gui, planet, playerFaction);
+	}
+
+	// Focus camera
+	state.getCamera().setPos(planet.getPos());
+}
+
+void PlanetGUI::update(GameState& state) {
+	if (m_planetPanel != nullptr) {
+		auto planetList = m_planetPanel->get<tgui::ComboBox>("planetList");
+		if (planetList->getItemCount() > 0) {
+			Planet& planet = state.getLocalViewStar()->getPlanets()[planetList->getSelectedItemIndex()];
+
+			// Lock camera on planet
+			state.getCamera().setPos(planet.getPos());
+		}
+	}
+}
+
+void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
+	if (m_sideWindow == nullptr) {
+		m_sideWindow = tgui::ChildWindow::create(name);
+		m_sideWindow->setPosition("22.5%", "61%");
+		m_sideWindow->setSize("20%", "29%");
+		m_sideWindow->getRenderer()->setOpacity(0.75f);
+		m_sideWindow->setPositionLocked(true);
+		m_sideWindow->onClose([this]() {
+			m_sideWindow = nullptr;
+		});
+		gui.add(m_sideWindow);
+	}
+	else {
+		if (m_sideWindow->getTitle() != name) {
+			m_sideWindow->setTitle(name);
+			m_sideWindow->removeAllWidgets();
+		}
+		else {
+			m_sideWindow->close();
+		}
+	}
+}
+
+void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
+	if (currentStar != nullptr && m_planetIconPanel != nullptr && mainPanel->isFocused()) {
+		static sf::Vector2f lastMousePressPos;
+
+		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
+			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
+			sf::Vector2f worldPos = window.mapPixelToCoords(screenPos);
+
+			int i = 0;
+			for (Planet& planet : currentStar->getPlanets()) {
+				if (Math::distance(worldPos, planet.getPos()) < planet.getRadius() &&
+					Math::distance(lastMousePressPos, planet.getPos()) < planet.getRadius()) {
+					// Open planet panel
+					if (m_planetPanel == nullptr) {
+						m_planetIconPanel->onClick.emit(m_planetIconPanel.get(), worldPos);
+					}
+					setSelectedPlanet(m_planetPanel->get<tgui::ComboBox>("planetList"), state, playerFaction, gui, i);
+					break;
+				}
+				i++;
+			}
+		}
+		else if (ev.type == sf::Event::EventType::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
+			lastMousePressPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+		}
+	}
+}
+
+void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet) {
 	// Colony button
 	auto colonyInfoButton = tgui::Button::create();
 	colonyInfoButton->setPosition("75%", "80%");
@@ -1372,79 +1450,6 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	resourceInfoButton->onClick(openResourceInfo);
 	m_planetInfoPanel->add(resourceInfoButton);
 
-	if (state.getPlayer().getFaction() != -1) {
-		createLawsButton(gui, state, planet);
-	}
-
-	if (playerFaction != nullptr) {
-		createBuildingsButton(gui, planet, playerFaction);
-	}
-
-	// Focus camera
-	state.getCamera().setPos(planet.getPos());
-}
-
-void PlanetGUI::update(GameState& state) {
-	if (m_planetPanel != nullptr) {
-		auto planetList = m_planetPanel->get<tgui::ComboBox>("planetList");
-		if (planetList->getItemCount() > 0) {
-			Planet& planet = state.getLocalViewStar()->getPlanets()[planetList->getSelectedItemIndex()];
-
-			// Lock camera on planet
-			state.getCamera().setPos(planet.getPos());
-		}
-	}
-}
-
-void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
-	if (m_sideWindow == nullptr) {
-		m_sideWindow = tgui::ChildWindow::create(name);
-		m_sideWindow->setPosition("22.5%", "61%");
-		m_sideWindow->setSize("20%", "29%");
-		m_sideWindow->getRenderer()->setOpacity(0.75f);
-		m_sideWindow->setPositionLocked(true);
-		m_sideWindow->onClose([this]() {
-			m_sideWindow = nullptr;
-		});
-		gui.add(m_sideWindow);
-	}
-	else {
-		if (m_sideWindow->getTitle() != name) {
-			m_sideWindow->setTitle(name);
-			m_sideWindow->removeAllWidgets();
-		}
-		else {
-			m_sideWindow->close();
-		}
-	}
-}
-
-void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
-	if (currentStar != nullptr && m_planetIconPanel != nullptr && mainPanel->isFocused()) {
-		static sf::Vector2f lastMousePressPos;
-
-		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
-			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-			sf::Vector2f worldPos = window.mapPixelToCoords(screenPos);
-
-			int i = 0;
-			for (Planet& planet : currentStar->getPlanets()) {
-				if (Math::distance(worldPos, planet.getPos()) < planet.getRadius() &&
-					Math::distance(lastMousePressPos, planet.getPos()) < planet.getRadius()) {
-					// Open planet panel
-					if (m_planetPanel == nullptr) {
-						m_planetIconPanel->onClick.emit(m_planetIconPanel.get(), worldPos);
-					}
-					setSelectedPlanet(m_planetPanel->get<tgui::ComboBox>("planetList"), state, playerFaction, gui, i);
-					break;
-				}
-				i++;
-			}
-		}
-		else if (ev.type == sf::Event::EventType::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
-			lastMousePressPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-		}
-	}
 }
 
 void PlanetGUI::createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet) {

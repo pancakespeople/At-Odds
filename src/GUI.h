@@ -97,6 +97,7 @@ private:
 	void switchSideWindow(const std::string& name, tgui::Gui& gui);
 	void createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
 	void createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet);
+	void createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet);
 	void displayBuildingInfo(ColonyBuilding& building);
 	
 	tgui::Panel::Ptr m_planetIconPanel;
