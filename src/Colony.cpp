@@ -71,7 +71,7 @@ void Colony::addPopulation(int pop) {
 	}
 }
 
-ColonyBuilding::ColonyBuilding(const char* type) {
+ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
 	assert(table.contains(type));
@@ -79,7 +79,12 @@ ColonyBuilding::ColonyBuilding(const char* type) {
 	m_type = type;
 }
 
-std::string ColonyBuilding::getName() {
+std::string ColonyBuilding::getName() const {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	return table[m_type]["name"].value_or("Unnamed");
+}
+
+std::string ColonyBuilding::getDescription() const {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["description"].value_or("");
 }

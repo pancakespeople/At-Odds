@@ -8,9 +8,11 @@ class Planet;
 
 class ColonyBuilding {
 public:
-	ColonyBuilding(const char* type);
+	ColonyBuilding(const std::string& type);
 
-	std::string getName();
+	std::string getName() const;
+	std::string getDescription() const;
+	std::string getType() const { return m_type; }
 
 private:
 	friend class boost::serialization::access;

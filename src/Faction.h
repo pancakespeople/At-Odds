@@ -30,6 +30,7 @@ public:
 	void setColor(sf::Color color) { m_color = color; }
 	void setName(const std::string& name) { m_name = name; }
 	void reinitAfterLoad(Constellation* constellation);
+	void addColonyBuilding(const std::string& type);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -56,6 +57,7 @@ public:
 	std::deque<std::string>& getAnnouncementEvents() { return m_announcementEvents; }
 	std::string getName() { return m_name; }
 	std::vector<Spaceship::DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
+	std::vector<ColonyBuilding> getColonyBuildings();
 
 	Spaceship::DesignerChassis getChassisByName(const std::string& name);
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
@@ -97,6 +99,7 @@ private:
 		archive & m_designerShips;
 		archive & m_announcementEvents;
 		archive & m_name;
+		archive & m_availableColonyBuildings;
 	}
 	
 	Faction() {}
@@ -118,6 +121,7 @@ private:
 	std::vector<Spaceship::DesignerShip> m_designerShips;
 	std::deque<std::string> m_announcementEvents;
 	std::string m_name = "Unnamed";
+	std::vector<std::string> m_availableColonyBuildings;
 	
 	Brain m_ai;
 	

@@ -114,7 +114,7 @@ int main(int argc, const char* argv[])
             buildGui.onEvent(event, window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
             console.onEvent(event, gui, state);
             playerGui.timescaleGUI.onEvent(event, gui, updatesPerSecondTarget);
-            playerGui.planetGUI.onEvent(event, gui, state, window, state.getLocalViewStar(), playerGui.mainPanel);
+            playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, state.getLocalViewStar(), playerGui.mainPanel);
         }
 
         optionsMenu.updateGameSettings(window, background, gui, emitter);

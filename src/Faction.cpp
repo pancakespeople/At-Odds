@@ -6,6 +6,7 @@
 #include "Random.h"
 #include "Player.h"
 #include "Building.h"
+#include "TOMLCache.h"
 
 Faction::Faction(int id) {
 	m_color = sf::Color(rand() % 255, rand() % 255, rand() % 255);
@@ -76,6 +77,11 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	constructor.name = "Constructor";
 	constructor.chassis = Spaceship::DesignerChassis("CONSTRUCTOR");
 	addOrReplaceDesignerShip(constructor);
+
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	for (auto& val : table) {
+		addColonyBuilding(val.first);
+	}
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -312,4 +318,18 @@ void Faction::reinitAfterLoad(Constellation* constellation) {
 	for (uint32_t id : m_shipIDs) {
 		m_ships.push_back(constellation->getShipByID(id));
 	}
+}
+
+void Faction::addColonyBuilding(const std::string& type) {
+	if (std::find(m_availableColonyBuildings.begin(), m_availableColonyBuildings.end(), type) == m_availableColonyBuildings.end()) {
+		m_availableColonyBuildings.push_back(type);
+	}
+}
+
+std::vector<ColonyBuilding> Faction::getColonyBuildings() {
+	std::vector<ColonyBuilding> buildings;
+	for (std::string& type : m_availableColonyBuildings) {
+		buildings.push_back(ColonyBuilding(type));
+	}
+	return buildings;
 }

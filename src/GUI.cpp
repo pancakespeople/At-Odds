@@ -874,21 +874,23 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 	mainPanel->getRenderer()->setOpacity(0.0f);
 	gui.add(mainPanel);
 	
+	Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
+
 	if (!spectator) {
 #ifdef NDEBUG
 		helpWindow.open(gui);
 #endif
-		buildGUI.open(gui, constellation.getFaction(state.getPlayer().getFaction()));
+		buildGUI.open(gui, playerFaction);
 		unitGUI.open(gui);
-		planetGUI.open(gui, state);
+		planetGUI.open(gui, state, playerFaction);
 		timescaleGUI.open(gui);
 		resourceGUI.open(gui);
-		shipDesignerGUI.open(gui, constellation.getFaction(state.getPlayer().getFaction()));
+		shipDesignerGUI.open(gui, playerFaction);
 		announcerGUI.open(gui);
 	}
 	else {
 		unitGUI.open(gui);
-		planetGUI.open(gui, state);
+		planetGUI.open(gui, state, playerFaction);
 		timescaleGUI.open(gui);
 	}
 }
@@ -1131,7 +1133,7 @@ bool DebugConsole::validateNotState(const Command& command, const GameState& sta
 	}
 }
 
-void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
+void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 	if (m_planetPanel != nullptr) {
 		gui.remove(m_planetPanel);
 		m_planetPanel = nullptr;
@@ -1151,7 +1153,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 		m_planetIconPanel->getRenderer()->setOpacity(0.75f);
 	});
 
-	m_planetIconPanel->onClick([this, &gui, &state]() {
+	m_planetIconPanel->onClick([this, &gui, &state, playerFaction]() {
 		if (m_planetPanel == nullptr) {
 			if (state.getLocalViewStar() != nullptr) {
 				m_planetPanel = tgui::Panel::create();
@@ -1173,8 +1175,8 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 				auto planetList = tgui::ComboBox::create();
 				planetList->setPosition("25%", "5%");
 				planetList->setSize("50%", "10%");
-				planetList->onItemSelect([this, planetList, &state, &gui]() {
-					setSelectedPlanet(planetList, state, gui, planetList->getSelectedItemIndex());
+				planetList->onItemSelect([this, planetList, &state, &gui, playerFaction]() {
+					setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex());
 				});
 				m_planetPanel->add(planetList, "planetList");
 
@@ -1187,18 +1189,18 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 
 				// Set first planet as selected
 				if (planetList->getItemCount() > 0) {
-					setSelectedPlanet(planetList, state, gui, 0);
+					setSelectedPlanet(planetList, state, playerFaction, gui, 0);
 				}
 				
 				auto backButton = tgui::Button::create("<-");
 				backButton->setPosition("5%", "5%");
-				backButton->onClick([this, planetList, &state, &gui]() {
+				backButton->onClick([this, planetList, &state, &gui, playerFaction]() {
 					if (planetList->getItemCount() > 1) {
 						if (planetList->getSelectedItemIndex() == 0) {
-							setSelectedPlanet(planetList, state, gui, planetList->getItemCount() - 1);
+							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getItemCount() - 1);
 						}
 						else {
-							setSelectedPlanet(planetList, state, gui, planetList->getSelectedItemIndex() - 1);
+							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex() - 1);
 						}
 					}
 				});
@@ -1206,13 +1208,13 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 
 				auto forwardButton = tgui::Button::create("->");
 				forwardButton->setPosition("84%", "5%");
-				forwardButton->onClick([this, planetList, &state, &gui]() {
+				forwardButton->onClick([this, planetList, &state, &gui, playerFaction]() {
 					if (planetList->getItemCount() > 1) {
 						if (planetList->getSelectedItemIndex() == planetList->getItemCount() - 1) {
-							setSelectedPlanet(planetList, state, gui, 0);
+							setSelectedPlanet(planetList, state, playerFaction, gui, 0);
 						}
 						else {
-							setSelectedPlanet(planetList, state, gui, planetList->getSelectedItemIndex() + 1);
+							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex() + 1);
 						}
 					}
 				});
@@ -1248,7 +1250,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state) {
 	m_planetIconPanel->add(picture);
 }
 
-void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, tgui::Gui& gui, int index) {
+void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, Faction* playerFaction, tgui::Gui& gui, int index) {
 	planetList->setSelectedItemByIndex(index);
 	m_planetInfoPanel->removeAllWidgets();
 	
@@ -1342,8 +1344,8 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		m_sideWindow->add(abundanceLabel, "abundanceLabel");
 
 		auto resourceListBox = tgui::ListBox::create();
-		resourceListBox->setPosition("0%", "5%");
-		resourceListBox->setSize("50%", "90%");
+		resourceListBox->setPosition("2.5%", "5%");
+		resourceListBox->setSize("47.5%", "90%");
 
 		for (auto& resource : planet.getResources()) {
 			resourceListBox->addItem(resource.getTypeString());
@@ -1371,64 +1373,12 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	m_planetInfoPanel->add(resourceInfoButton);
 
 	if (state.getPlayer().getFaction() != -1) {
-
-		auto lawsButton = tgui::Button::create("Laws");
-		lawsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 20.0%");
-		lawsButton->setSize("25%", "10%");
-		lawsButton->onPress([this, &gui, &state, &planet]() {
-			switchSideWindow("Laws", gui);
-
-			if (m_sideWindow == nullptr) return;
-
-			auto colonyLawLabel = tgui::Label::create("Colonization Legality: ");
-			m_sideWindow->add(colonyLawLabel, "colonyLawLabel");
-
-			auto colonyLawComboBox = tgui::ComboBox::create();
-			colonyLawComboBox->setPosition("colonyLawLabel.right", "colonyLawLabel.top");
-			colonyLawComboBox->setSize("40%", "10%");
-			colonyLawComboBox->addItem("Illegal");
-			colonyLawComboBox->addItem("Legal");
-			colonyLawComboBox->onItemSelect([this, colonyLawComboBox, &planet, &state]() {
-				if (colonyLawComboBox->getSelectedItem() == "Illegal") {
-					planet.getColony().setFactionColonyLegality(state.getPlayer().getFaction(), false);
-				}
-				else if (colonyLawComboBox->getSelectedItem() == "Legal") {
-					planet.getColony().setFactionColonyLegality(state.getPlayer().getFaction(), true);
-				}
-			});
-
-			if (planet.getColony().isColonizationLegal(state.getPlayer().getFaction())) {
-				colonyLawComboBox->setSelectedItemByIndex(1);
-			}
-			else {
-				colonyLawComboBox->setSelectedItemByIndex(0);
-			}
-
-			m_sideWindow->add(colonyLawComboBox);
-			});
-		m_planetInfoPanel->add(lawsButton, "lawsButton");
+		createLawsButton(gui, state, planet);
 	}
 
-	auto buildingsButton = tgui::Button::create("Buildings");
-	buildingsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 30.0%");
-	buildingsButton->setSize("25%", "10%");
-	buildingsButton->onPress([this, &gui, &planet]() {
-		switchSideWindow("Buildings", gui);
-
-		if (m_sideWindow == nullptr) return;
-
-		auto buildingsBox = tgui::ListBox::create();
-		buildingsBox->setPosition("0%", "5%");
-		buildingsBox->setSize("50%", "90%");
-		m_sideWindow->add(buildingsBox);
-
-		auto& buildings = planet.getColony().getBuildings();
-
-		for (ColonyBuilding& building : buildings) {
-			buildingsBox->addItem(building.getName());
-		}
-	});
-	m_planetInfoPanel->add(buildingsButton);
+	if (playerFaction != nullptr) {
+		createBuildingsButton(gui, planet, playerFaction);
+	}
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
@@ -1469,7 +1419,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	}
 }
 
-void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
+void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
 	if (currentStar != nullptr && m_planetIconPanel != nullptr && mainPanel->isFocused()) {
 		static sf::Vector2f lastMousePressPos;
 
@@ -1485,7 +1435,7 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, c
 					if (m_planetPanel == nullptr) {
 						m_planetIconPanel->onClick.emit(m_planetIconPanel.get(), worldPos);
 					}
-					setSelectedPlanet(m_planetPanel->get<tgui::ComboBox>("planetList"), state, gui, i);
+					setSelectedPlanet(m_planetPanel->get<tgui::ComboBox>("planetList"), state, playerFaction, gui, i);
 					break;
 				}
 				i++;
@@ -1495,6 +1445,142 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, c
 			lastMousePressPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 		}
 	}
+}
+
+void PlanetGUI::createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet) {
+	auto lawsButton = tgui::Button::create("Laws");
+	lawsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 20.0%");
+	lawsButton->setSize("25%", "10%");
+	lawsButton->onPress([this, &gui, &state, &planet]() {
+		switchSideWindow("Laws", gui);
+
+		if (m_sideWindow == nullptr) return;
+
+		auto colonyLawLabel = tgui::Label::create("Colonization Legality: ");
+		m_sideWindow->add(colonyLawLabel, "colonyLawLabel");
+
+		auto colonyLawComboBox = tgui::ComboBox::create();
+		colonyLawComboBox->setPosition("colonyLawLabel.right", "colonyLawLabel.top");
+		colonyLawComboBox->setSize("40%", "10%");
+		colonyLawComboBox->addItem("Illegal");
+		colonyLawComboBox->addItem("Legal");
+		colonyLawComboBox->onItemSelect([this, colonyLawComboBox, &planet, &state]() {
+			if (colonyLawComboBox->getSelectedItem() == "Illegal") {
+				planet.getColony().setFactionColonyLegality(state.getPlayer().getFaction(), false);
+			}
+			else if (colonyLawComboBox->getSelectedItem() == "Legal") {
+				planet.getColony().setFactionColonyLegality(state.getPlayer().getFaction(), true);
+			}
+			});
+
+		if (planet.getColony().isColonizationLegal(state.getPlayer().getFaction())) {
+			colonyLawComboBox->setSelectedItemByIndex(1);
+		}
+		else {
+			colonyLawComboBox->setSelectedItemByIndex(0);
+		}
+
+		m_sideWindow->add(colonyLawComboBox);
+		});
+	m_planetInfoPanel->add(lawsButton, "lawsButton");
+}
+
+void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* playerFaction) {
+	auto buildingsButton = tgui::Button::create("Buildings");
+	buildingsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 30.0%");
+	buildingsButton->setSize("25%", "10%");
+	buildingsButton->onPress([this, &gui, &planet, playerFaction]() {
+		switchSideWindow("Buildings", gui);
+
+		if (m_sideWindow == nullptr) return;
+
+		auto buildingsBox = tgui::ListBox::create();
+		buildingsBox->setPosition("2.5%", "5%");
+		buildingsBox->setSize("47.5%", "90%");
+		m_sideWindow->add(buildingsBox);
+
+		auto buildings = planet.getColony().getBuildings();
+
+		for (ColonyBuilding& building : buildings) {
+			buildingsBox->addItem(building.getName());
+		}
+
+		buildingsBox->onItemSelect([this, buildingsBox, &planet]() {
+			auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
+			if (infoGroup != nullptr) {
+				m_sideWindow->remove(infoGroup);
+			}
+
+			if (buildingsBox->getSelectedItemIndex() != -1) {
+				auto& allBuildings = planet.getColony().getBuildings();
+				for (ColonyBuilding& building : allBuildings) {
+					if (building.getName() == buildingsBox->getSelectedItem()) {
+						displayBuildingInfo(building);
+						break;
+					}
+				}
+			}
+		});
+
+		auto buildButton = tgui::Button::create("Build");
+		buildButton->setPosition("80%", "85%");
+		buildButton->onPress([this, &gui, playerFaction]() {
+			switchSideWindow("Build Colony Buildings", gui);
+
+			if (m_sideWindow == nullptr) return;
+
+			auto listBox = tgui::ListBox::create();
+			listBox->setPosition("2.5%", "5%");
+			listBox->setSize("47.5%", "90%");
+			m_sideWindow->add(listBox);
+
+			auto buildings = playerFaction->getColonyBuildings();
+
+			// Add buildable buildings to listbox
+			for (const ColonyBuilding& building : buildings) {
+				listBox->addItem(building.getName());
+			}
+
+			listBox->onItemSelect([this, listBox, playerFaction]() {
+				auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
+				if (infoGroup != nullptr) {
+					m_sideWindow->remove(infoGroup);
+				}
+
+				if (listBox->getSelectedItemIndex() != -1) {
+					auto allBuildings = playerFaction->getColonyBuildings();
+					for (ColonyBuilding& building : allBuildings) {
+						if (building.getName() == listBox->getSelectedItem()) {
+							displayBuildingInfo(building);
+							break;
+						}
+					}
+				}
+			});
+		});
+		m_sideWindow->add(buildButton);
+		});
+	m_planetInfoPanel->add(buildingsButton);
+}
+
+void PlanetGUI::displayBuildingInfo(ColonyBuilding& building) {
+	auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
+	if (infoGroup != nullptr) {
+		m_sideWindow->remove(infoGroup);
+	}
+
+	infoGroup = tgui::Group::create();
+	infoGroup->setPosition("50%", "0%");
+	infoGroup->setSize("50%", "100%");
+	m_sideWindow->add(infoGroup, "infoGroup");
+
+	auto nameLabel = tgui::Label::create(building.getName());
+	infoGroup->add(nameLabel);
+
+	auto descriptionLabel = tgui::Label::create(building.getDescription());
+	descriptionLabel->setPosition("0%", "10%");
+	descriptionLabel->setSize("100%", "50%");
+	infoGroup->add(descriptionLabel);
 }
 
 void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel) {

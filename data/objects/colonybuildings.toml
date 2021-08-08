@@ -1,2 +1,27 @@
 [INFRASTRUCTURE]
 name = "Infrastructure"
+description = "The general mechanisms that keep a colony alive and running."
+
+[FARMING]
+name = "Farms"
+
+[MILITARY_BASE]
+name = "Military Bases"
+
+[SPACEPORT]
+name = "Spaceport"
+
+[MINING]
+name = "Mining Operations"
+
+[ORBITAL_DEFENSE]
+name = "Orbital Defense"
+
+[CONSUMER_GOODS_FACTORIES]
+name = "Consumer Goods Factories"
+
+[WEAPONS_FACTORIES]
+name = "Weapons Factories"
+
+[EXPLORING]
+name = "Exploration Operations"
