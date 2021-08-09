@@ -1520,55 +1520,68 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 				auto& allBuildings = planet.getColony().getBuildings();
 				for (ColonyBuilding& building : allBuildings) {
 					if (building.getName() == buildingsBox->getSelectedItem()) {
-						displayBuildingInfo(building);
+						displayBuildingInfo(building, true);
 						break;
 					}
 				}
 			}
 		});
 
-		auto buildButton = tgui::Button::create("Build");
-		buildButton->setPosition("80%", "85%");
-		buildButton->onPress([this, &gui, playerFaction]() {
-			switchSideWindow("Build Colony Buildings", gui);
+		if (planet.getColony().getAllegiance() == playerFaction->getID()) {
+			auto buildButton = tgui::Button::create("Build");
+			buildButton->setPosition("80%", "85%");
+			buildButton->onPress([this, &gui, &planet, playerFaction]() {
+				switchSideWindow("Build Colony Buildings", gui);
 
-			if (m_sideWindow == nullptr) return;
+				if (m_sideWindow == nullptr) return;
 
-			auto listBox = tgui::ListBox::create();
-			listBox->setPosition("2.5%", "5%");
-			listBox->setSize("47.5%", "90%");
-			m_sideWindow->add(listBox);
+				auto listBox = tgui::ListBox::create();
+				listBox->setPosition("2.5%", "5%");
+				listBox->setSize("47.5%", "90%");
+				m_sideWindow->add(listBox);
 
-			auto buildings = playerFaction->getColonyBuildings();
+				auto buildings = playerFaction->getColonyBuildings();
 
-			// Add buildable buildings to listbox
-			for (const ColonyBuilding& building : buildings) {
-				listBox->addItem(building.getName());
-			}
-
-			listBox->onItemSelect([this, listBox, playerFaction]() {
-				auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
-				if (infoGroup != nullptr) {
-					m_sideWindow->remove(infoGroup);
+				// Add buildable buildings to listbox
+				for (const ColonyBuilding& building : buildings) {
+					listBox->addItem(building.getName());
 				}
 
-				if (listBox->getSelectedItemIndex() != -1) {
-					auto allBuildings = playerFaction->getColonyBuildings();
-					for (ColonyBuilding& building : allBuildings) {
-						if (building.getName() == listBox->getSelectedItem()) {
-							displayBuildingInfo(building);
-							break;
+				listBox->onItemSelect([this, listBox, &planet, playerFaction]() {
+					auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
+					if (infoGroup != nullptr) {
+						m_sideWindow->remove(infoGroup);
+					}
+
+					if (listBox->getSelectedItemIndex() != -1) {
+						auto allBuildings = playerFaction->getColonyBuildings();
+						for (ColonyBuilding& building : allBuildings) {
+							if (building.getName() == listBox->getSelectedItem()) {
+								displayBuildingInfo(building, false);
+
+								auto buildButton = tgui::Button::create("Build");
+								buildButton->setPosition("2.5%", "85%");
+								m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
+
+								buildButton->onPress([building, &planet]() {
+									if (!planet.getColony().hasBuildingOfType(building.getType())) {
+										planet.getColony().addBuilding(building);
+									}
+									});
+
+								break;
+							}
 						}
 					}
-				}
-			});
-		});
-		m_sideWindow->add(buildButton);
-		});
+					});
+				});
+			m_sideWindow->add(buildButton);
+		}
+	});
 	m_planetInfoPanel->add(buildingsButton);
 }
 
-void PlanetGUI::displayBuildingInfo(ColonyBuilding& building) {
+void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool status) {
 	auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
 	if (infoGroup != nullptr) {
 		m_sideWindow->remove(infoGroup);
@@ -1585,7 +1598,20 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building) {
 	auto descriptionLabel = tgui::Label::create(building.getDescription());
 	descriptionLabel->setPosition("0%", "10%");
 	descriptionLabel->setSize("100%", "50%");
-	infoGroup->add(descriptionLabel);
+	infoGroup->add(descriptionLabel, "descriptionLabel");
+
+	if (status) {
+		auto statusLabel = tgui::Label::create();
+		if (!building.isBuilt()) {
+			statusLabel->setText("Status: Under Construction");
+		}
+		else {
+			statusLabel->setText("Status: Operational");
+		}
+		statusLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
+		statusLabel->setSize("100%", "25%");
+		infoGroup->add(statusLabel);
+	}
 }
 
 void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel) {

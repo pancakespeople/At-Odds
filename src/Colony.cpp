@@ -71,6 +71,15 @@ void Colony::addPopulation(int pop) {
 	}
 }
 
+bool Colony::hasBuildingOfType(const std::string& string) {
+	for (ColonyBuilding& building : m_buildings) {
+		if (building.getType() == string) {
+			return true;
+		}
+	}
+	return false;
+}
+
 ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 

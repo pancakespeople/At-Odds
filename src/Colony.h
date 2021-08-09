@@ -14,16 +14,20 @@ public:
 	std::string getDescription() const;
 	std::string getType() const { return m_type; }
 
+	bool isBuilt() { return m_percentBuilt >= 100.0f; }
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & m_type;
+		archive & m_percentBuilt;
 	}
 	
 	ColonyBuilding() {}
 
 	std::string m_type;
+	float m_percentBuilt = 0.0f;
 };
 
 class Colony {
@@ -37,7 +41,9 @@ public:
 	int getAllegiance() { return m_allegiance; }
 
 	float getGrowthRate(float planetHabitability);
+	
 	bool isColonizationLegal(int allegiance);
+	bool hasBuildingOfType(const std::string& string);
 
 	void setFactionColonyLegality(int allegiance, bool legality);
 	void setTicksToNextBus(int ticks) { m_ticksToNextBus = ticks; }
