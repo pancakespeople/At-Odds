@@ -29,17 +29,16 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Identifiable>(*this);
 		archive & m_shape;
-		archive & m_pathEffectShape;
 		archive & m_beginStarID;
 		archive & m_endStarID;
 		archive & m_angleDegrees;
 		archive & m_pathEffectEnabled;
+		archive & m_vertices;
 	}
 
 	Hyperlane() {}
 	
 	sf::RectangleShape m_shape;
-	sf::RectangleShape m_pathEffectShape;
 	
 	Star* m_beginStar = nullptr;
 	Star* m_endStar = nullptr;
@@ -50,5 +49,7 @@ private:
 	float m_angleDegrees = 0;
 	bool m_pathEffectEnabled = false;
 	sf::Clock m_pathEffectClock;
+
+	std::vector<sf::Vertex> m_vertices;
 };
 

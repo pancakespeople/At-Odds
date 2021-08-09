@@ -172,6 +172,12 @@ namespace boost {
 			archive& vec.x;
 			archive& vec.y;
 		}
+
+		// sf::Vertex
+		template<class Archive>
+		void serialize(Archive& archive, sf::Vertex& vertex, const unsigned int version) {
+			archive & vertex.position;
+		}
 	}
 }
 

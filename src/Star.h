@@ -71,6 +71,7 @@ public:
 	sf::Vector2f getCenter() const;
 	sf::Vector2f getLocalViewCenter() const;
 	sf::Vector2f getRandomLocalPos(float min, float max) const;
+	sf::Color getColor() const { return m_shape.getFillColor(); }
 
 	std::vector<Hyperlane*> getHyperlanes() { return m_hyperlanes; }
 	std::vector<std::unique_ptr<Spaceship>>& getSpaceships() { return m_localShips; }
