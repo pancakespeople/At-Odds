@@ -430,8 +430,8 @@ void Spaceship::attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings
 	}
 }
 
-std::unordered_map<PlanetResource::RESOURCE_TYPE, float> Spaceship::DesignerShip::getTotalResourceCost() {
-	std::unordered_map<PlanetResource::RESOURCE_TYPE, float> totalResourceCost;
+std::unordered_map<std::string, float> Spaceship::DesignerShip::getTotalResourceCost() {
+	std::unordered_map<std::string, float> totalResourceCost;
 	
 	for (auto& resource : chassis.resourceCost) {
 		totalResourceCost[resource.first] += resource.second;
@@ -456,7 +456,7 @@ Spaceship::DesignerChassis::DesignerChassis(const std::string& typeStr) {
 	maxWeaponCapacity = table[typeStr]["maxWeaponCapacity"].value_or(1.0f);
 
 	for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
-		PlanetResource::RESOURCE_TYPE resourceType = static_cast<PlanetResource::RESOURCE_TYPE>(table[typeStr]["cost"][i][0].value_or(0));
+		std::string resourceType = table[typeStr]["cost"][i][0].value_or("");
 		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
 	}
 }
@@ -471,7 +471,7 @@ Spaceship::DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 	weaponPoints = table[typeStr]["weaponPoints"].value_or(1.0f);
 
 	for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
-		PlanetResource::RESOURCE_TYPE resourceType = static_cast<PlanetResource::RESOURCE_TYPE>(table[typeStr]["cost"][i][0].value_or(0));
+		std::string resourceType = table[typeStr]["cost"][i][0].value_or("");
 		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
 	}
 }

@@ -2,16 +2,16 @@
 type = "FRIGATE_1"
 name = "Frigate"
 maxWeaponCapacity = 1.0
-cost = [[0, 7.5]]
+cost = [["COMMON_ORE", 7.5]]
 
 [DESTROYER]
 type = "DESTROYER_1"
 name = "Destroyer"
 maxWeaponCapacity = 2.0
-cost = [[0, 15.0]]
+cost = [["COMMON_ORE", 15.0]]
 
 [CONSTRUCTOR]
 type = "CONSTRUCTION_SHIP"
 name = "Constructor"
 maxWeaponCapacity = 0.0
-cost = [[0, 33.0]]
+cost = [["COMMON_ORE", 33.0]]

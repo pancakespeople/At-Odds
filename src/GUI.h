@@ -98,7 +98,7 @@ private:
 	void createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
 	void createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet);
 	void createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet);
-	void displayBuildingInfo(ColonyBuilding& building, bool status);
+	void displayBuildingInfo(ColonyBuilding& building, bool buildInfo);
 	
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;
@@ -157,7 +157,7 @@ public:
 	void displayShipInfo(Faction* playerFaction);
 	bool canChassisFitWeapons(Faction* playerFaction);
 	void displayShipDesigns(Faction* playerFaction);
-	static void displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& totalResourceCost, int yPosPercent);
+	static void displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<std::string, float>& totalResourceCost, int yPosPercent);
 
 private:
 	GameWidget::Icon m_icon;

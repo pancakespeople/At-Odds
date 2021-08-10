@@ -38,7 +38,7 @@ public:
 		std::string type;
 		std::string name;
 		float maxWeaponCapacity = 1.0f;
-		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> resourceCost;
+		std::unordered_map<std::string, float> resourceCost;
 
 	private:
 		friend class boost::serialization::access;
@@ -58,7 +58,7 @@ public:
 		std::string type;
 		std::string name;
 		float weaponPoints = 1.0f;
-		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> resourceCost;
+		std::unordered_map<std::string, float> resourceCost;
 
 	private:
 		friend class boost::serialization::access;
@@ -76,7 +76,7 @@ public:
 		std::vector<DesignerWeapon> weapons;
 		std::string name;
 
-		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> getTotalResourceCost();
+		std::unordered_map<std::string, float> getTotalResourceCost();
 		std::string generateName();
 		float getTotalWeaponPoints();
 

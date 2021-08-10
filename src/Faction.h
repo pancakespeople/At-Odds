@@ -19,12 +19,12 @@ public:
 	void controlByPlayer(Player& player);
 	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
 	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); m_shipIDs.push_back(ship->getID()); }
-	void addResource(PlanetResource::RESOURCE_TYPE type, float num);
-	void subtractResource(PlanetResource::RESOURCE_TYPE type, float num);
+	void addResource(const std::string& type, float num);
+	void subtractResource(const std::string& type, float num);
 	void addChassis(const Spaceship::DesignerChassis& chassis) { m_chassis.push_back(chassis); }
 	void addWeapon(const Spaceship::DesignerWeapon& weapon) { m_weapons.push_back(weapon); }
 	void addOrReplaceDesignerShip(const Spaceship::DesignerShip& ship);
-	void subtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources);
+	void subtractResources(const std::unordered_map<std::string, float>& resources);
 	void addAnnouncementEvent(const std::string& text);
 	void clearAnnouncementEvents() { m_announcementEvents.clear(); }
 	void setColor(sf::Color color) { m_color = color; }
@@ -38,8 +38,8 @@ public:
 
 	bool isDead() { return m_dead; }
 	// Returns false if unsuccessful (if subtracting would lead to a negative resource amount)
-	bool canSubtractResource(PlanetResource::RESOURCE_TYPE type, float num);
-	bool canSubtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources);
+	bool canSubtractResource(const std::string& type, float num);
+	bool canSubtractResources(const std::unordered_map<std::string, float>& resources);
 	bool hasWeapon(const std::string& type);
 	
 	sf::Color getColor() { return m_color; }
@@ -47,7 +47,7 @@ public:
 	std::vector<Spaceship*>& getShips() { return m_ships; }
 	std::vector<Spaceship*> getConstructionShips(bool onlyIdleShips = false);
 	std::vector<Star*>& getOwnedStars() { return m_ownedSystems; }
-	std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& getResources() { return m_resources; }
+	std::unordered_map<std::string, float>& getResources() { return m_resources; }
 	std::vector<Building*> getAllOwnedBuildings();
 	std::vector<Building*> getAllOwnedBuildingsOfName(const std::string& name);
 	std::vector<Spaceship*> getAllCombatShips();
@@ -115,7 +115,7 @@ private:
 	std::vector<Spaceship*> m_ships;
 	std::vector<uint32_t> m_shipIDs;
 
-	std::unordered_map<PlanetResource::RESOURCE_TYPE, float> m_resources;
+	std::unordered_map<std::string, float> m_resources;
 	std::vector<Spaceship::DesignerChassis> m_chassis;
 	std::vector<Spaceship::DesignerWeapon> m_weapons;
 	std::vector<Spaceship::DesignerShip> m_designerShips;

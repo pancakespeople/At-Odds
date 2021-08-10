@@ -279,41 +279,25 @@ void Planet::generateResources() {
 	default:
 		// Terrestrial planet
 		
-		PlanetResource resource;
+		Resource resource;
 		if (Random::randBool()) {
 			// 50% chance
-			resource.type = PlanetResource::RESOURCE_TYPE::COMMON_ORE;
+			resource.type = "COMMON_ORE";
 			resource.abundance = Random::randFloat(0.0f, 1.0f);
 			m_resources.push_back(resource);
 		}
 		if (Random::randFloat(0.0f, 1.0f) < 0.25f) {
 			// 25% chance
-			resource.type = PlanetResource::RESOURCE_TYPE::UNCOMMON_ORE;
+			resource.type = "UNCOMMON_ORE";
 			resource.abundance = Random::randFloat(0.0f, 1.0f);
 			m_resources.push_back(resource);
 		}
 		if (Random::randFloat(0.0, 1.0f) < 0.1f) {
 			// 10% chance
-			resource.type = PlanetResource::RESOURCE_TYPE::RARE_ORE;
+			resource.type = "RARE_ORE";
 			resource.abundance = Random::randFloat(0.0f, 1.0f);
 			m_resources.push_back(resource);
 		}
 	}
 }
 
-std::string PlanetResource::getTypeString() {
-	return getTypeString(type);
-}
-
-std::string PlanetResource::getTypeString(RESOURCE_TYPE type) {
-	switch (type) {
-	case RESOURCE_TYPE::COMMON_ORE:
-		return "Kathium";
-	case RESOURCE_TYPE::UNCOMMON_ORE:
-		return "Oscillite";
-	case RESOURCE_TYPE::RARE_ORE:
-		return "Valkrosium";
-	default:
-		return "Unknown";
-	}
-}

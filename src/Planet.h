@@ -6,31 +6,10 @@
 #include "ParticleSystem.h"
 #include "Identifiable.h"
 #include "Colony.h"
+#include "Resource.h"
 
 class Star;
 class Faction;
-
-struct PlanetResource {
-	enum class RESOURCE_TYPE {
-		COMMON_ORE,
-		UNCOMMON_ORE,
-		RARE_ORE
-	};
-
-	RESOURCE_TYPE type = RESOURCE_TYPE::COMMON_ORE;
-	float abundance = 0.0f; // Value between 0 and 1
-
-	std::string getTypeString();
-	static std::string getTypeString(RESOURCE_TYPE type);
-
-private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {
-		archive & type;
-		archive & abundance;
-	}
-};
 
 class Planet : public Identifiable {
 public:
@@ -70,7 +49,7 @@ public:
 
 	PLANET_TYPE getType() const { return m_type; }
 	std::string getTypeString() const;
-	std::vector<PlanetResource>& getResources() { return m_resources; }
+	std::vector<Resource>& getResources() { return m_resources; }
 
 
 private:
@@ -105,5 +84,5 @@ private:
 	PLANET_TYPE m_type = PLANET_TYPE::UNKNOWN;
 	Colony m_colony;
 
-	std::vector<PlanetResource> m_resources;
+	std::vector<Resource> m_resources;
 };

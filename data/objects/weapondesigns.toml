@@ -2,28 +2,28 @@
 type = "LASER_GUN"
 name = "Laser Gun"
 weaponPoints = 1.0
-cost = [[0, 2.5]]
+cost = [["COMMON_ORE", 2.5]]
 
 [MACHINE_GUN]
 type = "MACHINE_GUN"
 name = "Machine Gun"
 weaponPoints = 1.0
-cost = [[0, 2.5]]
+cost = [["COMMON_ORE", 2.5]]
 
 [GAUSS_CANNON]
 type = "GAUSS_CANNON"
 name = "Gauss Cannon"
 weaponPoints = 2.0
-cost = [[0, 10.0], [1, 5.0]]
+cost = [["COMMON_ORE", 10.0], ["UNCOMMON_ORE", 5.0]]
 
 [ROCKET_LAUNCHER]
 type = "ROCKET_LAUNCHER"
 name = "Rocket Launcher"
 weaponPoints = 1.0
-cost = [[0, 2.5]]
+cost = [["COMMON_ORE", 2.5]]
 
 [FLAK_CANNON]
 type = "FLAK_CANNON"
 name = "Flak Cannon"
 weaponPoints = 1.5
-cost = [[0, 5.0], [1, 2.0]]
+cost = [["COMMON_ORE", 5.0], ["UNCOMMON_ORE", 2.0]]

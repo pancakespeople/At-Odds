@@ -61,7 +61,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	m_capitol->createBuilding(std::make_unique<Building>("SHIP_FACTORY", m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), this));
 	m_capitol->createBuilding(std::make_unique<Building>("SPACE_HABITAT", m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), this));
 
-	addResource(PlanetResource::RESOURCE_TYPE::COMMON_ORE, 100.0f);
+	addResource("COMMON_ORE", 100.0f);
 	
 	addChassis(Spaceship::DesignerChassis("FRIGATE"));
 	addChassis(Spaceship::DesignerChassis("DESTROYER"));
@@ -183,17 +183,17 @@ int Faction::numIdleConstructionShips() {
 	return getConstructionShips(true).size();
 }
 
-void Faction::addResource(PlanetResource::RESOURCE_TYPE type, float num) {
+void Faction::addResource(const std::string& type, float num) {
 	m_resources[type] += num;
 }
 
-bool Faction::canSubtractResource(PlanetResource::RESOURCE_TYPE type, float num) {
+bool Faction::canSubtractResource(const std::string& type, float num) {
 	if (m_resources.count(type) == 0) return false;
 	if (m_resources[type] - num < 0) return false;
 	return true;
 }
 
-void Faction::subtractResource(PlanetResource::RESOURCE_TYPE type, float num) {
+void Faction::subtractResource(const std::string& type, float num) {
 	if (canSubtractResource(type, num)) m_resources[type] -= num;
 }
 
@@ -270,14 +270,14 @@ Spaceship::DesignerShip Faction::getShipDesignByName(const std::string& name) {
 	return Spaceship::DesignerShip();
 }
 
-bool Faction::canSubtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources) {
+bool Faction::canSubtractResources(const std::unordered_map<std::string, float>& resources) {
 	for (auto& resource : resources) {
 		if (!canSubtractResource(resource.first, resource.second)) return false;
 	}
 	return true;
 }
 
-void Faction::subtractResources(const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& resources) {
+void Faction::subtractResources(const std::unordered_map<std::string, float>& resources) {
 	for (auto& resource : resources) {
 		subtractResource(resource.first, resource.second);
 	}

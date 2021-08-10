@@ -1,12 +1,13 @@
 [INFRASTRUCTURE]
 name = "Infrastructure"
-description = "The general mechanisms that keep a colony alive and running."
+description = "The vital systems needed to keep a society functioning."
 
 [FARMING]
 name = "Farms"
+baseCost = [["COMMON_ORE", 25]]
 
 [MILITARY_BASE]
-name = "Military Bases"
+name = "Military Base"
 
 [SPACEPORT]
 name = "Spaceport"
@@ -18,10 +19,10 @@ name = "Mining Operations"
 name = "Orbital Defense"
 
 [CONSUMER_GOODS_FACTORIES]
-name = "Consumer Goods Factories"
+name = "Consumer Goods Factory"
 
 [WEAPONS_FACTORIES]
-name = "Weapons Factories"
+name = "Weapons Factory"
 
 [EXPLORING]
 name = "Exploration Operations"

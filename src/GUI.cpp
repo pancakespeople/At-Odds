@@ -1160,7 +1160,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 				m_planetPanel->setInheritedOpacity(0.75);
 				m_planetPanel->setPosition("2.5%", "61%");
 				m_planetPanel->setSize("20%", "29%");
-				gui.add(m_planetPanel);
+				gui.add(m_planetPanel, "planetPanel");
 
 				m_planetInfoPanel = tgui::Panel::create();
 				m_planetInfoPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
@@ -1317,7 +1317,8 @@ void PlanetGUI::update(GameState& state) {
 void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	if (m_sideWindow == nullptr) {
 		m_sideWindow = tgui::ChildWindow::create(name);
-		m_sideWindow->setPosition("22.5%", "61%");
+		m_sideWindow->setOrigin(0.0f, 1.0f);
+		m_sideWindow->setPosition("planetPanel.right", "planetPanel.bottom");
 		m_sideWindow->setSize("20%", "29%");
 		m_sideWindow->getRenderer()->setOpacity(0.75f);
 		m_sideWindow->setPositionLocked(true);
@@ -1329,6 +1330,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	else {
 		if (m_sideWindow->getTitle() != name) {
 			m_sideWindow->setTitle(name);
+			m_sideWindow->setSize("20%", "29%");
 			m_sideWindow->removeAllWidgets();
 		}
 		else {
@@ -1426,7 +1428,7 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 		resourceListBox->setSize("47.5%", "90%");
 
 		for (auto& resource : planet.getResources()) {
-			resourceListBox->addItem(resource.getTypeString());
+			resourceListBox->addItem(resource.getName());
 		}
 
 		resourceListBox->onItemSelect([this, &planet]() {
@@ -1499,10 +1501,12 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 
 		if (m_sideWindow == nullptr) return;
 
+		m_sideWindow->setSize(m_sideWindow->getSize() * 2.0f);
+
 		auto buildingsBox = tgui::ListBox::create();
 		buildingsBox->setPosition("2.5%", "5%");
 		buildingsBox->setSize("47.5%", "90%");
-		m_sideWindow->add(buildingsBox);
+		m_sideWindow->add(buildingsBox, "buildingsBox");
 
 		auto buildings = planet.getColony().getBuildings();
 
@@ -1520,7 +1524,7 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 				auto& allBuildings = planet.getColony().getBuildings();
 				for (ColonyBuilding& building : allBuildings) {
 					if (building.getName() == buildingsBox->getSelectedItem()) {
-						displayBuildingInfo(building, true);
+						displayBuildingInfo(building, false);
 						break;
 					}
 				}
@@ -1529,11 +1533,13 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 
 		if (planet.getColony().getAllegiance() == playerFaction->getID()) {
 			auto buildButton = tgui::Button::create("Build");
-			buildButton->setPosition("80%", "85%");
+			buildButton->setPosition("buildingsBox.right + 2.5%", "85%");
 			buildButton->onPress([this, &gui, &planet, playerFaction]() {
 				switchSideWindow("Build Colony Buildings", gui);
 
 				if (m_sideWindow == nullptr) return;
+
+				m_sideWindow->setSize(m_sideWindow->getSize() * 2.0f);
 
 				auto listBox = tgui::ListBox::create();
 				listBox->setPosition("2.5%", "5%");
@@ -1557,7 +1563,7 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 						auto allBuildings = playerFaction->getColonyBuildings();
 						for (ColonyBuilding& building : allBuildings) {
 							if (building.getName() == listBox->getSelectedItem()) {
-								displayBuildingInfo(building, false);
+								displayBuildingInfo(building, true);
 
 								auto buildButton = tgui::Button::create("Build");
 								buildButton->setPosition("2.5%", "85%");
@@ -1581,7 +1587,7 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 	m_planetInfoPanel->add(buildingsButton);
 }
 
-void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool status) {
+void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool buildInfo) {
 	auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
 	if (infoGroup != nullptr) {
 		m_sideWindow->remove(infoGroup);
@@ -1593,14 +1599,15 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool status) {
 	m_sideWindow->add(infoGroup, "infoGroup");
 
 	auto nameLabel = tgui::Label::create(building.getName());
-	infoGroup->add(nameLabel);
+	nameLabel->setAutoSize(true);
+	infoGroup->add(nameLabel, "nameLabel");
 
 	auto descriptionLabel = tgui::Label::create(building.getDescription());
-	descriptionLabel->setPosition("0%", "10%");
-	descriptionLabel->setSize("100%", "50%");
+	descriptionLabel->setPosition("0%", "nameLabel.bottom");
+	descriptionLabel->setSize("100%", "20%");
 	infoGroup->add(descriptionLabel, "descriptionLabel");
 
-	if (status) {
+	if (!buildInfo) {
 		auto statusLabel = tgui::Label::create();
 		if (!building.isBuilt()) {
 			statusLabel->setText("Status: Under Construction");
@@ -1611,6 +1618,21 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool status) {
 		statusLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
 		statusLabel->setSize("100%", "25%");
 		infoGroup->add(statusLabel);
+	}
+	else {
+		auto cost = building.getResourceCost();
+		std::stringstream resourceStr;
+		resourceStr << "Build Cost: \n";
+		resourceStr << std::fixed << std::setprecision(1);
+		for (auto& pair : cost) {
+			Resource resource(pair.first);
+			resourceStr << resource.getName() << ": " << pair.second << "\n";
+		}
+
+		auto costLabel = tgui::Label::create(resourceStr.str());
+		costLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
+		costLabel->setSize("100%", "10%");
+		infoGroup->add(costLabel);
 	}
 }
 
@@ -1718,17 +1740,20 @@ void ResourceGUI::update(Constellation& constellation, Player& player) {
 			int pos = 15;
 
 			for (auto& resource : resources) {
-				auto label = m_resourceGroup->get<tgui::Label>(PlanetResource::getTypeString(resource.first));
+				Resource r;
+				r.type = resource.first;
+				
+				auto label = m_resourceGroup->get<tgui::Label>(r.getName());
 
 				if (label == nullptr) {
 					label = tgui::Label::create();
 					label->setPosition("0%", (std::to_string(pos) + "%").c_str());
 					label->setTextSize(20);
-					m_resourceGroup->add(label, PlanetResource::getTypeString(resource.first));
+					m_resourceGroup->add(label, r.getName());
 				}
 
 				std::stringstream ss;
-				ss << PlanetResource::getTypeString(resource.first) << ": " << std::fixed << std::setprecision(1) << resource.second;
+				ss << r.getName() << ": " << std::fixed << std::setprecision(1) << resource.second;
 
 				label->setText(ss.str());
 				pos += 15;
@@ -1952,7 +1977,7 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 
 	if (shipChassisListBox->getItemCount() > 0) {
 		tgui::String chassisName = shipChassisListBox->getItemByIndex(0);
-		std::unordered_map<PlanetResource::RESOURCE_TYPE, float> totalResourceCost;
+		std::unordered_map<std::string, float> totalResourceCost;
 
 		Spaceship::DesignerChassis chassis = playerFaction->getChassisByName(chassisName.toStdString());
 		for (auto& resource : chassis.resourceCost) {
@@ -2022,7 +2047,7 @@ void ShipDesignerGUI::displayShipDesigns(Faction* playerFaction) {
 	}
 }
 
-void ShipDesignerGUI::displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<PlanetResource::RESOURCE_TYPE, float>& totalResourceCost, int yPosPercent) {
+void ShipDesignerGUI::displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<std::string, float>& totalResourceCost, int yPosPercent) {
 	auto resourcesLabel = tgui::Label::create("Resources: ");
 	resourcesLabel->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
 	group->add(resourcesLabel);
@@ -2031,8 +2056,11 @@ void ShipDesignerGUI::displayShipResourceCost(tgui::Group::Ptr group, const std:
 
 	// Add resource cost labels
 	for (auto& resource : totalResourceCost) {
+		Resource r;
+		r.type = resource.first;
+
 		std::stringstream labelString;
-		labelString << PlanetResource::getTypeString(resource.first) << ": " << std::fixed << std::setprecision(1) << resource.second;
+		labelString << r.getName() << ": " << std::fixed << std::setprecision(1) << resource.second;
 
 		auto label = tgui::Label::create(labelString.str());
 		label->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
