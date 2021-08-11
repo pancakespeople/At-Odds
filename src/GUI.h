@@ -99,6 +99,7 @@ private:
 	void createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet);
 	void createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet);
 	void displayBuildingInfo(ColonyBuilding& building, bool buildInfo);
+	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
 	
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;

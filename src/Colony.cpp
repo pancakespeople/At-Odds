@@ -80,6 +80,27 @@ bool Colony::hasBuildingOfType(const std::string& string) {
 	return false;
 }
 
+float Colony::getGrowthRate(float planetHabitability) {
+	// Apply building modifiers
+	for (ColonyBuilding& building : m_buildings) {
+		planetHabitability *= building.getHabitabilityModifier();
+	}
+	
+	// Negative growth rate if habitability is less than 1.0
+	float growthRate = (planetHabitability - 1.0f) / 10.0f;
+
+	return growthRate;
+}
+
+ColonyBuilding* Colony::getBuildingOfType(const std::string& type) {
+	for (ColonyBuilding& building : m_buildings) {
+		if (building.getType() == type) {
+			return &building;
+		}
+	}
+	return nullptr;
+}
+
 ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
@@ -98,7 +119,7 @@ std::string ColonyBuilding::getDescription() const {
 	return table[m_type]["description"].value_or("");
 }
 
-std::unordered_map<std::string, float> ColonyBuilding::getResourceCost() {
+std::unordered_map<std::string, float> ColonyBuilding::getResourceCost() const {
 	std::unordered_map<std::string, float> cost;
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
@@ -110,4 +131,9 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost() {
 	}
 
 	return cost;
+}
+
+float ColonyBuilding::getHabitabilityModifier() {
+	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["habitabilityModifier"].value_or(1.0f);
 }

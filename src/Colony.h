@@ -13,9 +13,11 @@ public:
 	std::string getName() const;
 	std::string getDescription() const;
 	std::string getType() const { return m_type; }
-	std::unordered_map<std::string, float> getResourceCost();
+	std::unordered_map<std::string, float> getResourceCost() const;
 
 	bool isBuilt() { return m_percentBuilt >= 100.0f; }
+
+	float getHabitabilityModifier();
 
 private:
 	friend class boost::serialization::access;
@@ -56,6 +58,7 @@ public:
 	sf::Color getFactionColor() { return m_factionColor; }
 
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
+	ColonyBuilding* getBuildingOfType(const std::string& type);
 
 private:
 	friend class boost::serialization::access;

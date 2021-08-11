@@ -1164,7 +1164,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 
 				m_planetInfoPanel = tgui::Panel::create();
 				m_planetInfoPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
-				m_planetInfoPanel->getRenderer()->setBorderColor(tgui::Color::White);
+				m_planetInfoPanel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 				m_planetInfoPanel->getRenderer()->setBorders(1.0f);
 				m_planetInfoPanel->setPosition("0%", "20%");
 				m_planetInfoPanel->setSize("100%", "80%");
@@ -1565,15 +1565,25 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 							if (building.getName() == listBox->getSelectedItem()) {
 								displayBuildingInfo(building, true);
 
-								auto buildButton = tgui::Button::create("Build");
-								buildButton->setPosition("2.5%", "85%");
-								m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
+								if (!planet.getColony().hasBuildingOfType(building.getType())) {
+									auto buildButton = tgui::Button::create("Build");
+									buildButton->setPosition("2.5%", "85%");
+									m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
 
-								buildButton->onPress([building, &planet]() {
-									if (!planet.getColony().hasBuildingOfType(building.getType())) {
-										planet.getColony().addBuilding(building);
-									}
+									buildButton->onPress([this, buildButton, building, &planet, playerFaction]() {
+										if (!planet.getColony().hasBuildingOfType(building.getType()) &&
+											playerFaction->canSubtractResources(building.getResourceCost())) {
+											planet.getColony().addBuilding(building);
+											playerFaction->subtractResources(building.getResourceCost());
+											
+											m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
+											createBuildStatusLabel(planet, building);
+										}
 									});
+								}
+								else {
+									createBuildStatusLabel(planet, building);
+								}
 
 								break;
 							}
@@ -1600,11 +1610,15 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool buildInfo) {
 
 	auto nameLabel = tgui::Label::create(building.getName());
 	nameLabel->setAutoSize(true);
+	nameLabel->getRenderer()->setBorders(1);
+	nameLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 	infoGroup->add(nameLabel, "nameLabel");
 
 	auto descriptionLabel = tgui::Label::create(building.getDescription());
 	descriptionLabel->setPosition("0%", "nameLabel.bottom");
 	descriptionLabel->setSize("100%", "20%");
+	descriptionLabel->getRenderer()->setBorders(1);
+	descriptionLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 	infoGroup->add(descriptionLabel, "descriptionLabel");
 
 	if (!buildInfo) {
@@ -1617,6 +1631,8 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool buildInfo) {
 		}
 		statusLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
 		statusLabel->setSize("100%", "25%");
+		statusLabel->getRenderer()->setBorders(1);
+		statusLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 		infoGroup->add(statusLabel);
 	}
 	else {
@@ -1632,8 +1648,22 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool buildInfo) {
 		auto costLabel = tgui::Label::create(resourceStr.str());
 		costLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
 		costLabel->setSize("100%", "10%");
+		costLabel->getRenderer()->setBorders(1);
+		costLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 		infoGroup->add(costLabel);
 	}
+}
+
+void PlanetGUI::createBuildStatusLabel(Planet& planet, const ColonyBuilding& building) {
+	auto statusLabel = tgui::Label::create();
+	statusLabel->setPosition("2.5%", "85%");
+	if (planet.getColony().getBuildingOfType(building.getType())->isBuilt()) {
+		statusLabel->setText("Built");
+	}
+	else {
+		statusLabel->setText("Under Construction");
+	}
+	m_sideWindow->get<tgui::Group>("infoGroup")->add(statusLabel);
 }
 
 void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel) {

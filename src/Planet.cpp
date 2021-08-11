@@ -248,12 +248,6 @@ float Planet::getHabitability() const {
 	}
 }
 
-float Colony::getGrowthRate(float planetHabitability) {
-	// Negative growth rate if habitability is less than 0.5
-	float growthRate = (planetHabitability - 0.5f) / 10.0f;
-	return growthRate;
-}
-
 void Planet::onColonization() {
 	m_colony.setTicksToNextBus(HabitatMod::calcBusTickTimer(m_colony.getPopulation()));
 	m_colony.addBuilding(ColonyBuilding("INFRASTRUCTURE"));

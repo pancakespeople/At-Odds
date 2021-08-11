@@ -5,6 +5,7 @@ description = "The vital systems needed to keep a society functioning."
 [FARMING]
 name = "Farms"
 baseCost = [["COMMON_ORE", 25]]
+habitabilityModifier = 1.2
 
 [MILITARY_BASE]
 name = "Military Base"
