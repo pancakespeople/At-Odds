@@ -18,7 +18,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_orbit = Orbit(pos, starPos, orbitSpeed);
 
 	if (baseTemperature < 273.15f) {
-		if (Random::randFloat(0.0f, 1.0f) < 0.75f) {
+		if (Random::randFloat(0.0f, 1.0f) < 0.5f) {
 			// Gas giant
 
 			generateGasGiant(baseTemperature);
@@ -30,7 +30,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 		}
 	}
 	else {
-		if (Random::randFloat(0.0f, 1.0f) < 0.8f) {
+		if (Random::randFloat(0.0f, 1.0f) < 0.9f) {
 			// Rocky planet
 
 			generateTerrestrial(baseTemperature);
@@ -179,6 +179,13 @@ void Planet::generateTerrestrial(float baseTemperature) {
 			m_shape.setFillColor(sf::Color::White);
 			m_type = PLANET_TYPE::TUNDRA;
 		}
+		else if (m_water > 0.6f) {
+			// Ocean
+
+			int rgb = Random::randInt(50, 150);
+			m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+			m_type = PLANET_TYPE::OCEAN;
+		}
 		else {
 			// Desert/Martian
 
@@ -225,6 +232,8 @@ std::string Planet::getTypeString() const {
 		return "Tundra";
 	case PLANET_TYPE::LAVA:
 		return "Lava";
+	case PLANET_TYPE::OCEAN:
+		return "Ocean";
 	default:
 		return "Unknown";
 	}

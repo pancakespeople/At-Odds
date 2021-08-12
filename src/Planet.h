@@ -22,7 +22,8 @@ public:
 		GAS_GIANT,
 		ICE_GIANT,
 		TOXIC,
-		LAVA
+		LAVA,
+		OCEAN
 	};
 	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature);

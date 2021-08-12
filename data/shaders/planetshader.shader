@@ -64,14 +64,24 @@ void main() {
 		noisePos.y += angleVector.y * time;
 	}
 
-	float noiseVal = fbm(noisePos * 0.5 + 0.5);
+	float noiseVal = fbm(noisePos * 0.5 + 0.5) * 2.0;
 	vec4 noiseVec = vec4(vec3(noiseVal) + 0.5 * 2.0, 1.0);
 
 	if (max(0.0f, noiseVal + 0.75f) < water && !gasGiant) {
-		if (frozen) gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-		else gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+		if (radius / 2.0 <= size.x - 10.0) {
+			if (frozen) gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+			else gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+		}
+		else {
+			gl_FragColor = vec4(0.0);
+		}
 	}
 	else {
-		gl_FragColor = color * noiseVec;
+		if (radius / 2.0 <= size.x - 10.0) {
+			gl_FragColor = color * noiseVec;
+		}
+		else {
+			gl_FragColor = vec4(0.0);
+		}
 	}
 }
