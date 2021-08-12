@@ -6,6 +6,7 @@
 #include "Player.h"
 
 class Star;
+class Constellation;
 
 class GameState {
 public:
@@ -38,15 +39,16 @@ public:
 	void resetMetaState() { m_metaState = MetaState::NONE; }
 	void addOnChangeStateCallback(std::function<void()> func) { m_changeStateCallbacks.push_back(func); }
 	void clearCallbacks() { m_changeStateCallbacks.clear(); }
+	void reinitAfterLoad(Constellation& constellation);
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive& m_state;
-		archive& m_localViewStar;
-		archive& m_camera;
-		archive& m_player;
+		archive & m_state;
+		archive & m_localViewStarID;
+		archive & m_camera;
+		archive & m_player;
 	}
 	
 	void callOnChangeStateCallbacks();
@@ -58,5 +60,7 @@ private:
 	Player m_player;
 
 	std::vector<std::function<void()>> m_changeStateCallbacks;
+
+	int m_localViewStarID = 0;
 };
 

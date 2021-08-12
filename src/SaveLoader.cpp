@@ -28,4 +28,5 @@ void SaveLoader::loadGame(std::string filePath, Constellation& constellation, Ga
 
 	background.setNebulaSeed(nebulaSeed);
 	constellation.reinitAfterLoad();
+	state.reinitAfterLoad(constellation);
 }

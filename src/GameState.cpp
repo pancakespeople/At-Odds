@@ -4,6 +4,7 @@
 #include "Star.h"
 #include "Debug.h"
 #include "Camera.h"
+#include "Constellation.h"
 
 void GameState::changeToLocalView(Star* star) {
 	if (m_state == GameState::State::LOCAL_VIEW) return;
@@ -13,6 +14,7 @@ void GameState::changeToLocalView(Star* star) {
 
 	star->m_localViewActive = true;
 	m_localViewStar = star;
+	m_localViewStarID = star->getID();
 	m_state = GameState::State::LOCAL_VIEW;
 
 	callOnChangeStateCallbacks();
@@ -32,6 +34,7 @@ void GameState::changeToWorldView() {
 	m_localViewStar->m_localViewActive = false;
 	m_localViewStar->clearAnimations();
 	m_localViewStar = nullptr;
+	m_localViewStarID = 0;
 	m_state = GameState::State::WORLD_VIEW;
 
 	callOnChangeStateCallbacks();
@@ -61,5 +64,14 @@ void GameState::exitGame() {
 void GameState::callOnChangeStateCallbacks() {
 	for (auto& func : m_changeStateCallbacks) {
 		func();
+	}
+}
+
+void GameState::reinitAfterLoad(Constellation& constellation) {
+	if (m_localViewStarID == 0) {
+		m_localViewStar = nullptr;
+	}
+	else {
+		m_localViewStar = constellation.getStarByID(m_localViewStarID);
 	}
 }
