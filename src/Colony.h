@@ -13,7 +13,7 @@ public:
 	std::string getName() const;
 	std::string getDescription() const;
 	std::string getType() const { return m_type; }
-	std::unordered_map<std::string, float> getResourceCost() const;
+	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
 
 	bool isBuilt() { return m_percentBuilt >= 100.0f; }
 

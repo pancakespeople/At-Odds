@@ -1,29 +1,38 @@
 [INFRASTRUCTURE]
 name = "Infrastructure"
 description = "The vital systems needed to keep a society functioning."
+habitabilityModifier = 1.2
 
 [FARMING]
 name = "Farms"
+description = "Produces food."
 baseCost = [["COMMON_ORE", 25]]
-habitabilityModifier = 1.2
+habitabilityModifier = 1.5
 
 [MILITARY_BASE]
 name = "Military Base"
+description = "Necessary for civil control if the populace gets a little bit unruly. Oh and for protecting against invasions from other empires."
 
 [SPACEPORT]
 name = "Spaceport"
+description = "Having a proper spaceport will greatly increase the commercial activity of the colony."
 
 [MINING]
-name = "Mining Operations"
+name = "Mine"
+description = "All your ores will be mine."
 
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"
+description = "Massive cannons that can be used to shoot any illegal aliens out of the sky."
 
 [CONSUMER_GOODS_FACTORIES]
 name = "Consumer Goods Factory"
+description = "Produces goods for consumers to consume. Also produces pollution."
 
 [WEAPONS_FACTORIES]
 name = "Weapons Factory"
+description = "The profitable military industrial complex."
 
 [EXPLORING]
-name = "Exploration Operations"
+name = "Exploration HQ"
+description = "An organized planet exploration effort. They will surely discover useful things and not eldrich abominations."

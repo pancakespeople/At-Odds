@@ -119,7 +119,7 @@ std::string ColonyBuilding::getDescription() const {
 	return table[m_type]["description"].value_or("");
 }
 
-std::unordered_map<std::string, float> ColonyBuilding::getResourceCost() const {
+std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& planet) const {
 	std::unordered_map<std::string, float> cost;
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
@@ -127,6 +127,10 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost() const {
 		for (int i = 0; i < table[m_type]["baseCost"].as_array()->size(); i++) {
 			std::string resourceType = table[m_type]["baseCost"][i][0].value_or("");
 			cost[resourceType] = table[m_type]["baseCost"][i][1].value_or(0.0f);
+
+			// Lower habitability planets have higher costs
+			float mod = 1.0f / planet.getHabitability();
+			cost[resourceType] *= mod;
 		}
 	}
 

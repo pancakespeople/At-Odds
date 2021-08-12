@@ -98,7 +98,7 @@ private:
 	void createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
 	void createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet);
 	void createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet);
-	void displayBuildingInfo(ColonyBuilding& building, bool buildInfo);
+	void displayBuildingInfo(ColonyBuilding& building, Planet& planet, bool buildInfo);
 	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
 	
 	tgui::Panel::Ptr m_planetIconPanel;

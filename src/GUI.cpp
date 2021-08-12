@@ -1524,7 +1524,7 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 				auto& allBuildings = planet.getColony().getBuildings();
 				for (ColonyBuilding& building : allBuildings) {
 					if (building.getName() == buildingsBox->getSelectedItem()) {
-						displayBuildingInfo(building, false);
+						displayBuildingInfo(building, planet, false);
 						break;
 					}
 				}
@@ -1563,7 +1563,7 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 						auto allBuildings = playerFaction->getColonyBuildings();
 						for (ColonyBuilding& building : allBuildings) {
 							if (building.getName() == listBox->getSelectedItem()) {
-								displayBuildingInfo(building, true);
+								displayBuildingInfo(building, planet, true);
 
 								if (!planet.getColony().hasBuildingOfType(building.getType())) {
 									auto buildButton = tgui::Button::create("Build");
@@ -1571,13 +1571,16 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 									m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
 
 									buildButton->onPress([this, buildButton, building, &planet, playerFaction]() {
-										if (!planet.getColony().hasBuildingOfType(building.getType()) &&
-											playerFaction->canSubtractResources(building.getResourceCost())) {
-											planet.getColony().addBuilding(building);
-											playerFaction->subtractResources(building.getResourceCost());
-											
-											m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
-											createBuildStatusLabel(planet, building);
+										if (!planet.getColony().hasBuildingOfType(building.getType())) {
+											auto cost = building.getResourceCost(planet);
+
+											if (playerFaction->canSubtractResources(cost)) {
+												planet.getColony().addBuilding(building);
+												playerFaction->subtractResources(cost);
+
+												m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
+												createBuildStatusLabel(planet, building);
+											}
 										}
 									});
 								}
@@ -1597,7 +1600,7 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 	m_planetInfoPanel->add(buildingsButton);
 }
 
-void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool buildInfo) {
+void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, Planet& planet, bool buildInfo) {
 	auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
 	if (infoGroup != nullptr) {
 		m_sideWindow->remove(infoGroup);
@@ -1636,7 +1639,7 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, bool buildInfo) {
 		infoGroup->add(statusLabel);
 	}
 	else {
-		auto cost = building.getResourceCost();
+		auto cost = building.getResourceCost(planet);
 		std::stringstream resourceStr;
 		resourceStr << "Build Cost: \n";
 		resourceStr << std::fixed << std::setprecision(1);
