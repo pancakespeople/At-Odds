@@ -1311,6 +1311,24 @@ void PlanetGUI::update(GameState& state) {
 			// Lock camera on planet
 			state.getCamera().setPos(planet.getPos());
 		}
+
+		if (m_sideWindow != nullptr) {
+			if (m_sideWindow->getTitle() == "Buildings") {
+				auto buildingsBox = m_sideWindow->get<tgui::ListBox>("buildingsBox");
+				
+				if (buildingsBox->getSelectedItemIndex() != -1) {
+					Planet& planet = state.getLocalViewStar()->getPlanets()[planetList->getSelectedItemIndex()];
+
+					for (ColonyBuilding& building : planet.getColony().getBuildings()) {
+						if (building.getName() == buildingsBox->getSelectedItem()) {
+							// Update progress bar
+							m_sideWindow->get<tgui::ProgressBar>("buildProgressBar")->setValue(building.getPercentBuilt());
+						}
+					}
+
+				}
+			}
+		}
 	}
 }
 
@@ -1633,10 +1651,14 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, Planet& planet, bo
 			statusLabel->setText("Status: Operational");
 		}
 		statusLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
-		statusLabel->setSize("100%", "25%");
+		statusLabel->setSize("100%", "10%");
 		statusLabel->getRenderer()->setBorders(1);
 		statusLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
-		infoGroup->add(statusLabel);
+		infoGroup->add(statusLabel, "statusLabel");
+
+		auto buildProgressBar = tgui::ProgressBar::create();
+		buildProgressBar->setPosition("statusLabel.left", "statusLabel.bottom");
+		infoGroup->add(buildProgressBar, "buildProgressBar");
 	}
 	else {
 		auto cost = building.getResourceCost(planet);

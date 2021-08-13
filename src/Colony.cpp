@@ -15,6 +15,7 @@ void Colony::setFactionColonyLegality(int allegiance, bool legality) {
 }
 
 void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
+	// Grow population
 	if (m_ticksUntilNextGrowth == 0) {
 		float growthRate = getGrowthRate(planet->getHabitability());
 		float growth = m_population * growthRate;
@@ -49,8 +50,16 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	// Resource exploitation
 	if (faction != nullptr) {
 		if (m_ticksToNextResourceExploit == 0) {
+			float multiplier = 1.0f;
+
+			for (ColonyBuilding& building : m_buildings) {
+				if (building.isBuilt()) {
+					multiplier *= building.getExploitationModifer();
+				}
+			}
+
 			for (Resource& resource : planet->getResources()) {
-				float amount = m_population * resource.abundance / 1000.0f;
+				float amount = (m_population * resource.abundance / 1000.0f) * multiplier;
 				faction->addResource(resource.type, amount);
 			}
 			m_ticksToNextResourceExploit = 1000;
@@ -58,6 +67,11 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 		else {
 			m_ticksToNextResourceExploit--;
 		}
+	}
+
+	// Update colony buildings
+	for (ColonyBuilding& building : m_buildings) {
+		building.update();
 	}
 }
 
@@ -83,7 +97,9 @@ bool Colony::hasBuildingOfType(const std::string& string) {
 float Colony::getGrowthRate(float planetHabitability) {
 	// Apply building modifiers
 	for (ColonyBuilding& building : m_buildings) {
-		planetHabitability *= building.getHabitabilityModifier();
+		if (building.isBuilt()) {
+			planetHabitability *= building.getHabitabilityModifier();
+		}
 	}
 	
 	// Negative growth rate if habitability is less than 1.0
@@ -140,4 +156,15 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& p
 float ColonyBuilding::getHabitabilityModifier() {
 	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	return table[m_type]["habitabilityModifier"].value_or(1.0f);
+}
+
+void ColonyBuilding::update() {
+	if (!isBuilt()) {
+		m_percentBuilt += 0.01;
+	}
+}
+
+float ColonyBuilding::getExploitationModifer() {
+	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["exploitationModifier"].value_or(1.0f);
 }

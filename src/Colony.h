@@ -10,6 +10,8 @@ class ColonyBuilding {
 public:
 	ColonyBuilding(const std::string& type);
 
+	void update();
+
 	std::string getName() const;
 	std::string getDescription() const;
 	std::string getType() const { return m_type; }
@@ -18,6 +20,8 @@ public:
 	bool isBuilt() { return m_percentBuilt >= 100.0f; }
 
 	float getHabitabilityModifier();
+	float getExploitationModifer();
+	float getPercentBuilt() { return m_percentBuilt; }
 
 private:
 	friend class boost::serialization::access;
