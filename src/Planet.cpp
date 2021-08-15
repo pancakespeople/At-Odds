@@ -50,7 +50,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 
 void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time) {
 	m_orbit.draw(window);
-	emitter.drawGlow(window, m_shape.getPosition(), m_shape.getRadius() * 3.0f, m_shape.getFillColor());
+	emitter.drawGlow(window, m_shape.getPosition(), m_shape.getRadius() * 5.0f, m_shape.getFillColor());
 	emitter.drawPlanet(window, m_shape, this, m_shaderRandomSeed, time);
 
 	if (m_colony.getAllegiance() != -1) {
