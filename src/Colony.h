@@ -15,13 +15,14 @@ public:
 	std::string getName() const;
 	std::string getDescription() const;
 	std::string getType() const { return m_type; }
+	std::string getEffectsString() const;
 	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
 
 	bool isBuilt() { return m_percentBuilt >= 100.0f; }
 
-	float getHabitabilityModifier();
-	float getExploitationModifer();
-	float getPercentBuilt() { return m_percentBuilt; }
+	float getHabitabilityModifier() const;
+	float getExploitationModifer() const;
+	float getPercentBuilt() const { return m_percentBuilt; }
 
 private:
 	friend class boost::serialization::access;

@@ -4,6 +4,7 @@
 #include "Star.h"
 #include "Faction.h"
 #include "TOMLCache.h"
+#include "Util.h"
 
 bool Colony::isColonizationLegal(int allegiance) {
 	if (m_factionColonyLegality.count(allegiance) == 0) return false;
@@ -153,7 +154,7 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& p
 	return cost;
 }
 
-float ColonyBuilding::getHabitabilityModifier() {
+float ColonyBuilding::getHabitabilityModifier() const {
 	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	return table[m_type]["habitabilityModifier"].value_or(1.0f);
 }
@@ -164,7 +165,29 @@ void ColonyBuilding::update() {
 	}
 }
 
-float ColonyBuilding::getExploitationModifer() {
+float ColonyBuilding::getExploitationModifer() const {
 	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	return table[m_type]["exploitationModifier"].value_or(1.0f);
+}
+
+std::string ColonyBuilding::getEffectsString() const {
+	std::stringstream effects;
+	effects << std::fixed << std::setprecision(1);
+
+	float habitabilityModifier = getHabitabilityModifier();
+	float exploitationModifier = getExploitationModifer();
+
+	if (getName() == "Mine") {
+		DEBUG_PRINT(exploitationModifier);
+	}
+
+	if (habitabilityModifier != 1.0f) {
+		effects << "Habitability: " << Util::percentify(habitabilityModifier, 1) << "\n";
+	}
+
+	if (exploitationModifier != 1.0f) {
+		effects << "Resource Extraction Rate: " << Util::percentify(exploitationModifier, 1) << "\n";
+	}
+
+	return effects.str();
 }

@@ -20,7 +20,7 @@ description = "Having a proper spaceport will greatly increase the commercial ac
 [MINING]
 name = "Mine"
 description = "All your ores will be mine."
-exploitationModifer = 1.7
+exploitationModifier = 1.7
 
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"

@@ -1642,6 +1642,13 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, Planet& planet, bo
 	descriptionLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 	infoGroup->add(descriptionLabel, "descriptionLabel");
 
+	auto effectsLabel = tgui::Label::create(building.getEffectsString());
+	effectsLabel->setPosition("0%", "descriptionLabel.bottom");
+	effectsLabel->setSize("100%", "20%");
+	effectsLabel->getRenderer()->setBorders(1);
+	effectsLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
+	infoGroup->add(effectsLabel, "effectsLabel");
+
 	if (!buildInfo) {
 		auto statusLabel = tgui::Label::create();
 		if (!building.isBuilt()) {
@@ -1650,7 +1657,7 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, Planet& planet, bo
 		else {
 			statusLabel->setText("Status: Operational");
 		}
-		statusLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
+		statusLabel->setPosition("effectsLabel.left", "effectsLabel.bottom");
 		statusLabel->setSize("100%", "10%");
 		statusLabel->getRenderer()->setBorders(1);
 		statusLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
@@ -1671,7 +1678,7 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, Planet& planet, bo
 		}
 
 		auto costLabel = tgui::Label::create(resourceStr.str());
-		costLabel->setPosition("descriptionLabel.left", "descriptionLabel.bottom");
+		costLabel->setPosition("effectsLabel.left", "effectsLabel.bottom");
 		costLabel->setSize("100%", "10%");
 		costLabel->getRenderer()->setBorders(1);
 		costLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));

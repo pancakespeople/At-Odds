@@ -14,7 +14,7 @@ void main() {
 	float dist = distance(pixel, vertPos.xy - size / 2.0);
 	float mod = gauss(dist * 5.0 / size.y);
 
-	if (mod > 0.01) {
+	if (mod > 0.05) {
 		gl_FragColor = color * gauss(dist * 5.0 / size.y);
 	}
 	else {
