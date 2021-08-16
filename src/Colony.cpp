@@ -30,16 +30,20 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	// Spawn space bus
 	if (m_population >= 1000 && faction != nullptr) {
 		if (m_ticksToNextBus == 0) {
-			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
+			if (hasBuildingFlag("ENABLE_SPACEBUS")) {
+				Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
 
-			if (targetStar->getPlanets().size() > 0) {
-				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_allegiance, targetStar, planet);
+				if (targetStar->getPlanets().size() > 0) {
+					Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_allegiance, targetStar, planet);
 
-				if (targetPlanet != nullptr) {
-					planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
+					if (targetPlanet != nullptr) {
+						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
 
-					m_population -= 1000;
+						m_population -= 1000;
+					}
 				}
+
+				DEBUG_PRINT("Planet spawned space bus");
 			}
 			m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population);
 		}
@@ -107,6 +111,15 @@ float Colony::getGrowthRate(float planetHabitability) {
 	float growthRate = (planetHabitability - 1.0f) / 10.0f;
 
 	return growthRate;
+}
+
+bool Colony::hasBuildingFlag(const std::string& flag) {
+	for (ColonyBuilding& building : m_buildings) {
+		if (building.hasFlag(flag)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 ColonyBuilding* Colony::getBuildingOfType(const std::string& type) {
@@ -177,10 +190,6 @@ std::string ColonyBuilding::getEffectsString() const {
 	float habitabilityModifier = getHabitabilityModifier();
 	float exploitationModifier = getExploitationModifer();
 
-	if (getName() == "Mine") {
-		DEBUG_PRINT(exploitationModifier);
-	}
-
 	if (habitabilityModifier != 1.0f) {
 		effects << "Habitability: " << Util::percentify(habitabilityModifier, 1) << "\n";
 	}
@@ -190,4 +199,18 @@ std::string ColonyBuilding::getEffectsString() const {
 	}
 
 	return effects.str();
+}
+
+bool ColonyBuilding::hasFlag(const std::string& flag) {
+	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+
+	auto* arr = table[m_type]["flags"].as_array();
+	if (arr != nullptr) {
+		for (auto& elem : *arr) {
+			if (elem.value_or("") == flag) {
+				return true;
+			}
+		}
+	}
+	return false;
 }

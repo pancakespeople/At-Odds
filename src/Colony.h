@@ -19,6 +19,7 @@ public:
 	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
 
 	bool isBuilt() { return m_percentBuilt >= 100.0f; }
+	bool hasFlag(const std::string& flag);
 
 	float getHabitabilityModifier() const;
 	float getExploitationModifer() const;
@@ -52,6 +53,7 @@ public:
 	
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);
+	bool hasBuildingFlag(const std::string& flag);
 
 	void setFactionColonyLegality(int allegiance, bool legality);
 	void setTicksToNextBus(int ticks) { m_ticksToNextBus = ticks; }
