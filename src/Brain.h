@@ -1,60 +1,92 @@
 #pragma once
 class Faction;
 class Star;
+class Brain;
 
-class Brain {
+class SubAI {
 public:
-	enum class AI_STATE {
-		NONE,
-		ATTACKING,
-		FORTIFYING,
-		ECONOMY
-	};
-	
-	void onStart(Faction* faction);
-	void onSpawn(Faction* faction);
-	void onStarTakeover(Faction* faction, Star* star);
-	void controlFaction(Faction* faction);
-	void considerAttack(Faction* faction);
-	void considerFortifying(Faction* faction);
-	void considerEconomy(Faction* faction);
-	void considerChangingState();
+	void sleep(uint32_t ticks);
+	bool sleepCheck();
+
+	virtual void update(Faction* faction, Brain* brain) = 0;
+
+private:
+	uint32_t m_sleepTime = 0;
+};
+
+class MilitaryAI : public SubAI {
+public:
+	virtual void update(Faction* faction, Brain* brain) override;
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_state;
-		archive & m_stateChangeTimer;
-		archive & m_personality.aggressiveness;
-		archive & m_personality.economizer;
-		archive & m_attackVars.expansionTarget;
-		archive & m_attackVars.launchingAttack;
-		archive & m_attackVars.attackTimer;
-		archive & m_attackVars.attackFrustration;
-		archive & m_fortifyingVars.fortifyingTimer;
+		archive & m_expansionTarget;
+		archive & m_launchingAttack;
+		archive & m_attackTimer;
+		archive & m_attackFrustration;
 	}
 	
-	AI_STATE m_state = AI_STATE::NONE;
-	int m_stateChangeTimer = 0;
+	Star* m_expansionTarget = nullptr; // Star that the AI wants to attack
 
+	bool m_launchingAttack = false; // If an attack has been ordered on a star
+
+	int m_attackTimer = 0; // Time to when the AI checks if the expansion target has been captured
+	int m_attackFrustration = 0;
+};
+
+class DefenseAI : public SubAI {
+public:
+	virtual void update(Faction* faction, Brain* brain) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_fortifyingTimer;
+	}
+	
+	int m_fortifyingTimer = 0;
+};
+
+class EconomyAI : public SubAI {
+public:
+	virtual void update(Faction* faction, Brain* brain) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {}
+};
+
+class Brain {
+public:
+	void onStart(Faction* faction);
+	void onSpawn(Faction* faction);
+	void onStarTakeover(Faction* faction, Star* star);
+	void controlFaction(Faction* faction);
+	void controlSubAI(Faction* faction, SubAI* subAI);
+
+	MilitaryAI militaryAI;
+	DefenseAI defenseAI;
+	EconomyAI economyAI;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & militaryAI;
+		archive & defenseAI;
+		archive & economyAI;
+		archive & m_personality.aggressiveness;
+		archive & m_personality.economizer;
+	}
+	
 	struct Personality {
-		// All vals are percent
+		// All vals are 0-1
 		float aggressiveness = 0.5f;
 		float economizer = 0.5f;
 	} m_personality;
-
-	struct AttackVars {
-		Star* expansionTarget = nullptr; // Star that the AI wants to attack
-
-		bool launchingAttack = false; // If an attack has been ordered on a star
-
-		int attackTimer = 0; // Time to when the AI checks if the expansion target has been captured
-		int attackFrustration = 0;
-	} m_attackVars;
-
-	struct FortifyingVars {
-		int fortifyingTimer = 0;
-	} m_fortifyingVars;
 };
 

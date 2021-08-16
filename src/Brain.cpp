@@ -8,25 +8,28 @@
 #include "Building.h"
 #include "Derelict.h"
 
+void SubAI::sleep(uint32_t ticks) {
+	m_sleepTime = ticks;
+}
+
+bool SubAI::sleepCheck() {
+	if (m_sleepTime == 0) return true;
+	else m_sleepTime--; 
+	return false;
+}
+
 void Brain::onStart(Faction* faction) {
 	
 }
 
 void Brain::controlFaction(Faction* faction) {
-	if (m_state == AI_STATE::NONE || m_stateChangeTimer <= 0) {
-		considerChangingState();
-	}
-	else if (m_state == AI_STATE::ATTACKING) {
-		considerAttack(faction);
-	}
-	else if (m_state == AI_STATE::FORTIFYING) {
-		considerFortifying(faction);
-	}
-	else if (m_state == AI_STATE::ECONOMY) {
-		considerEconomy(faction);
-	}
+	controlSubAI(faction, &militaryAI);
+	controlSubAI(faction, &defenseAI);
+	controlSubAI(faction, &economyAI);
+}
 
-	m_stateChangeTimer--;
+void Brain::controlSubAI(Faction* faction, SubAI* subAI) {
+	if (subAI->sleepCheck()) subAI->update(faction, this);
 }
 
 void Brain::onStarTakeover(Faction* faction, Star* star) {
@@ -62,22 +65,6 @@ void Brain::onStarTakeover(Faction* faction, Star* star) {
 	}
 }
 
-void Brain::considerChangingState() {
-	if (Random::randFloat(0.0f, 1.0f) < m_personality.aggressiveness) {
-		m_state = AI_STATE::ATTACKING;
-	}
-	else {
-		if (Random::randFloat(0.0f, 1.0f) < m_personality.economizer) {
-			m_state = AI_STATE::ECONOMY;
-		}
-		else {
-			m_state = AI_STATE::FORTIFYING;
-		}
-	}
-
-	m_stateChangeTimer = 3000;
-}
-
 void Brain::onSpawn(Faction* faction) {
 	for (Planet& planet : faction->getCapitol()->getPlanets()) {
 		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
@@ -87,8 +74,81 @@ void Brain::onSpawn(Faction* faction) {
 	}
 }
 
-void Brain::considerFortifying(Faction* faction) {
-	if (m_fortifyingVars.fortifyingTimer == 0) {
+void MilitaryAI::update(Faction* faction, Brain* brain) {
+	if (faction->getAllCombatShips().size() == 0) {
+		sleep(100);
+		return;
+	}
+
+	if (m_expansionTarget == nullptr) {
+
+		// Secure stars connected to capitol
+		for (Star* s : faction->getCapitol()->getConnectedStars()) {
+			if (s->getAllegiance() != faction->getID()) {
+				m_expansionTarget = s;
+				//AI_DEBUG_PRINT("Expansion target (near capitol) chosen");
+				break;
+			}
+		}
+
+		if (m_expansionTarget == nullptr) {
+			std::vector<Star*>& ownedStars = faction->getOwnedStars();
+			for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
+				for (Star* adj : ownedStars[i]->getConnectedStars()) {
+					if (adj->getAllegiance() != faction->getID()) {
+						m_expansionTarget = adj;
+						//AI_DEBUG_PRINT("Expansion target chosen");
+						break;
+					}
+				}
+				if (m_expansionTarget != nullptr) {
+					break;
+				}
+			}
+		}
+
+	}
+	else {
+		if (!m_launchingAttack) {
+			faction->giveAllCombatShipsOrder(TravelOrder(m_expansionTarget));
+			m_launchingAttack = true;
+			m_attackTimer = 1600;
+			//AI_DEBUG_PRINT("Begun attack");
+		}
+		else {
+			if (m_attackTimer == 0) {
+				if (m_expansionTarget->getAllegiance() == faction->getID()) {
+					m_expansionTarget = nullptr;
+					m_launchingAttack = false;
+					//AI_DEBUG_PRINT("Capture of star complete");
+				}
+				else {
+					m_attackTimer = 1600;
+
+					if (m_expansionTarget->numAlliedShips(faction->getID()) == 0) {
+						m_attackFrustration++;
+					}
+					else {
+						m_attackFrustration = 0;
+					}
+
+					if (m_attackFrustration >= 5) {
+						m_expansionTarget = nullptr;
+						m_launchingAttack = false;
+						m_attackFrustration = 0;
+						//AI_DEBUG_PRINT("Gave up on capture of star");
+					}
+				}
+			}
+			else {
+				m_attackTimer--;
+			}
+		}
+	}
+}
+
+void DefenseAI::update(Faction* faction, Brain* brain) {
+	if (m_fortifyingTimer == 0) {
 		for (Star* star : faction->getOwnedStars()) {
 			if (Random::randBool()) {
 				if (!star->containsBuildingName("Outpost", true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
@@ -163,88 +223,15 @@ void Brain::considerFortifying(Faction* faction) {
 				}
 			}
 		}
-		m_fortifyingVars.fortifyingTimer = 500;
+		m_fortifyingTimer = 500;
 	}
 
-	m_fortifyingVars.fortifyingTimer--;
+	m_fortifyingTimer--;
 }
 
-void Brain::considerAttack(Faction* faction) {
-	if (faction->getAllCombatShips().size() == 0) {
-		m_state = AI_STATE::NONE;
-		return;
-	}
-	
-	if (m_attackVars.expansionTarget == nullptr) {
-
-		// Secure stars connected to capitol
-		for (Star* s : faction->getCapitol()->getConnectedStars()) {
-			if (s->getAllegiance() != faction->getID()) {
-				m_attackVars.expansionTarget = s;
-				//AI_DEBUG_PRINT("Expansion target (near capitol) chosen");
-				break;
-			}
-		}
-
-		if (m_attackVars.expansionTarget == nullptr) {
-			std::vector<Star*>& ownedStars = faction->getOwnedStars();
-			for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
-				for (Star* adj : ownedStars[i]->getConnectedStars()) {
-					if (adj->getAllegiance() != faction->getID()) {
-						m_attackVars.expansionTarget = adj;
-						//AI_DEBUG_PRINT("Expansion target chosen");
-						break;
-					}
-				}
-				if (m_attackVars.expansionTarget != nullptr) {
-					break;
-				}
-			}
-		}
-
-	}
-	else {
-		if (!m_attackVars.launchingAttack) {
-			faction->giveAllCombatShipsOrder(TravelOrder(m_attackVars.expansionTarget));
-			m_attackVars.launchingAttack = true;
-			m_attackVars.attackTimer = 1600;
-			//AI_DEBUG_PRINT("Begun attack");
-		}
-		else {
-			if (m_attackVars.attackTimer == 0) {
-				if (m_attackVars.expansionTarget->getAllegiance() == faction->getID()) {
-					m_attackVars.expansionTarget = nullptr;
-					m_attackVars.launchingAttack = false;
-					//AI_DEBUG_PRINT("Capture of star complete");
-				}
-				else {
-					m_attackVars.attackTimer = 1600;
-
-					if (m_attackVars.expansionTarget->numAlliedShips(faction->getID()) == 0) {
-						m_attackVars.attackFrustration++;
-					}
-					else {
-						m_attackVars.attackFrustration = 0;
-					}
-
-					if (m_attackVars.attackFrustration >= 5) {
-						m_attackVars.expansionTarget = nullptr;
-						m_attackVars.launchingAttack = false;
-						m_attackVars.attackFrustration = 0;
-						//AI_DEBUG_PRINT("Gave up on capture of star");
-					}
-				}
-			}
-			else {
-				m_attackVars.attackTimer--;
-			}
-		}
-	}
-}
-
-void Brain::considerEconomy(Faction* faction) {
+void EconomyAI::update(Faction* faction, Brain* brain) {
 	for (Star* star : faction->getOwnedStars()) {
-		
+
 		bool builtShipFactory = false;
 
 		// Build ship factories
@@ -289,7 +276,7 @@ void Brain::considerEconomy(Faction* faction) {
 	}
 
 	// Handle ship designs
-	
+
 	// Weapons
 	for (auto& weapon : faction->getWeapons()) {
 		bool notUsed = true;
@@ -375,5 +362,22 @@ void Brain::considerEconomy(Faction* faction) {
 		}
 	}
 
-	m_state = AI_STATE::NONE;
+	// Colonies
+	Planet* bestColony = faction->getMostHabitablePlanet();
+	if (bestColony != nullptr) {
+		std::vector<std::string> possibleBuildings = {
+			"FARMING",
+			"MINING",
+			"SPACEPORT"
+		};
+
+		int rnd = Random::randInt(0, possibleBuildings.size() - 1);
+
+		ColonyBuilding toBuild(possibleBuildings[rnd]);
+		if (bestColony->getColony().buyBuilding(toBuild, faction, *bestColony)) {
+			AI_DEBUG_PRINT("Building colony building " << toBuild.getName());
+		}
+	}
+
+	sleep(1000);
 }

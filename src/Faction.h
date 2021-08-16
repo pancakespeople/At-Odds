@@ -64,6 +64,7 @@ public:
 	Spaceship::DesignerShip getShipDesignByName(const std::string& name);
 
 	Star* getCapitol() { return m_capitol; }
+	Planet* getMostHabitablePlanet();
 
 	template <typename T>
 	void giveAllShipsOrder(const T order) {

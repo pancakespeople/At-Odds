@@ -42,8 +42,6 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 						m_population -= 1000;
 					}
 				}
-
-				DEBUG_PRINT("Planet spawned space bus");
 			}
 			m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population);
 		}
@@ -116,6 +114,17 @@ float Colony::getGrowthRate(float planetHabitability) {
 bool Colony::hasBuildingFlag(const std::string& flag) {
 	for (ColonyBuilding& building : m_buildings) {
 		if (building.hasFlag(flag)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Colony::buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet) {
+	if (!hasBuildingOfType(building.getType())) {
+		if (faction->canSubtractResources(building.getResourceCost(planet))) {
+			faction->subtractResources(building.getResourceCost(planet));
+			planet.getColony().addBuilding(building);
 			return true;
 		}
 	}

@@ -55,12 +55,16 @@ public:
 	bool hasBuildingOfType(const std::string& string);
 	bool hasBuildingFlag(const std::string& flag);
 
+	// Buys a building for a faction, returns false if failed
+	bool buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet);
+	
 	void setFactionColonyLegality(int allegiance, bool legality);
 	void setTicksToNextBus(int ticks) { m_ticksToNextBus = ticks; }
 	void addPopulation(int pop);
 	void setAllegiance(int id) { m_allegiance = id; }
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
 	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }
+	
 
 	sf::Color getFactionColor() { return m_factionColor; }
 

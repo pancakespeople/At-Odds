@@ -333,3 +333,22 @@ std::vector<ColonyBuilding> Faction::getColonyBuildings() {
 	}
 	return buildings;
 }
+
+Planet* Faction::getMostHabitablePlanet() {
+	Planet* mostHabitable = nullptr;
+	for (Star* star : m_ownedSystems) {
+		for (Planet& planet : star->getPlanets()) {
+			if (planet.getColony().getAllegiance() == m_id) {
+				if (mostHabitable != nullptr) {
+					if (planet.getHabitability() > mostHabitable->getHabitability()) {
+						mostHabitable = &planet;
+					}
+				}
+				else {
+					mostHabitable = &planet;
+				}
+			}
+		}
+	}
+	return mostHabitable;
+}
