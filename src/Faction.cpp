@@ -27,7 +27,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	randStar->destroyAllShips();
 
-	makeCapitol(randStar);
+	makeCapital(randStar);
 	randStar->factionTakeOwnership(this, true);
 
 	// Add a random starter weapon
@@ -44,22 +44,22 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		addSpaceship(m_capitol->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", pos, m_capitol, m_id, m_color)));
+		addSpaceship(m_capital->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", pos, m_capital, m_id, m_color)));
 		m_ships.back()->addWeapon(Weapon(m_weapons.back().type));
 	}
 
 	for (int i = 0; i < 3; i++) {
-		sf::Vector2f pos = m_capitol->getRandomLocalPos(-10000.0f, 10000.0f);
-		addSpaceship(m_capitol->createSpaceship(std::make_unique<Spaceship>("CONSTRUCTION_SHIP", pos, m_capitol, m_id, m_color)));
+		sf::Vector2f pos = m_capital->getRandomLocalPos(-10000.0f, 10000.0f);
+		addSpaceship(m_capital->createSpaceship(std::make_unique<Spaceship>("CONSTRUCTION_SHIP", pos, m_capital, m_id, m_color)));
 		m_ships.back()->addWeapon(Weapon("CONSTRUCTION_GUN"));
 	}
 
-	addSpaceship(m_capitol->createSpaceship(std::make_unique<Spaceship>("DESTROYER_1", Random::randVec(-10000, 10000), m_capitol, m_id, m_color)));
+	addSpaceship(m_capital->createSpaceship(std::make_unique<Spaceship>("DESTROYER_1", Random::randVec(-10000, 10000), m_capital, m_id, m_color)));
 	m_ships.back()->addWeapon(Weapon("GAUSS_CANNON"));
 
-	m_capitol->createBuilding(std::make_unique<Building>("OUTPOST", m_capitol, m_capitol->getRandomLocalPos(-10000, 10000), this));
-	m_capitol->createBuilding(std::make_unique<Building>("SHIP_FACTORY", m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), this));
-	m_capitol->createBuilding(std::make_unique<Building>("SPACE_HABITAT", m_capitol, m_capitol->getRandomLocalPos(-10000.0f, 10000.0f), this));
+	m_capital->createBuilding(std::make_unique<Building>("OUTPOST", m_capital, m_capital->getRandomLocalPos(-10000, 10000), this));
+	m_capital->createBuilding(std::make_unique<Building>("SHIP_FACTORY", m_capital, m_capital->getRandomLocalPos(-10000.0f, 10000.0f), this));
+	m_capital->createBuilding(std::make_unique<Building>("SPACE_HABITAT", m_capital, m_capital->getRandomLocalPos(-10000.0f, 10000.0f), this));
 
 	addResource("COMMON_ORE", 100.0f);
 	
@@ -92,15 +92,15 @@ void Faction::addOwnedSystem(Star* star) {
 	if (m_aiEnabled) m_ai.onStarTakeover(this, star);
 }
 
-void Faction::makeCapitol(Star* star) {
-	m_capitol = star;
-	m_capitolID = star->getID();
+void Faction::makeCapital(Star* star) {
+	m_capital = star;
+	m_capitalID = star->getID();
 }
 
 void Faction::update() {
-	if (m_capitol->getAllegiance() != m_id) {
+	if (m_capital->getAllegiance() != m_id) {
 		if (m_ownedSystems.size() > 0) {
-			makeCapitol(m_ownedSystems[0]);
+			makeCapital(m_ownedSystems[0]);
 		}
 		else {
 			if (m_ships.size() == 0) {
@@ -309,7 +309,7 @@ bool Faction::hasWeapon(const std::string& type) {
 }
 
 void Faction::reinitAfterLoad(Constellation* constellation) {
-	m_capitol = constellation->getStarByID(m_capitolID);
+	m_capital = constellation->getStarByID(m_capitalID);
 	
 	for (uint32_t id : m_ownedSystemIDs) {
 		m_ownedSystems.push_back(constellation->getStarByID(id));
@@ -351,4 +351,12 @@ Planet* Faction::getMostHabitablePlanet() {
 		}
 	}
 	return mostHabitable;
+}
+
+Star* Faction::getRandomOwnedStar() {
+	if (m_ownedSystems.size() > 0) {
+		int rnd = Random::randInt(0, m_ownedSystems.size() - 1);
+		return m_ownedSystems[rnd];
+	}
+	return nullptr;
 }

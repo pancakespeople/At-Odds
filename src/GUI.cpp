@@ -457,8 +457,8 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 	if (!spectate) {
 		constellation.getFactions()[0].controlByPlayer(state.getPlayer());
-		state.changeToLocalView(constellation.getFactions()[0].getCapitol());
-		state.getCamera().setPos(constellation.getFactions()[0].getCapitol()->getLocalViewCenter());
+		state.changeToLocalView(constellation.getFactions()[0].getCapital());
+		state.getCamera().setPos(constellation.getFactions()[0].getCapital()->getLocalViewCenter());
 
 		m_playerGui.open(gui, state, constellation, false);
 	}

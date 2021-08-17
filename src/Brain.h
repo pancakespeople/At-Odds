@@ -2,6 +2,8 @@
 class Faction;
 class Star;
 class Brain;
+class Colony;
+class Planet;
 
 class SubAI {
 public:
@@ -52,12 +54,27 @@ private:
 
 class EconomyAI : public SubAI {
 public:
+	enum class EconomyState {
+		DEVELOPING_PLANETS,
+		BUILDING_SHIPS,
+		NONE
+	};
+	
 	virtual void update(Faction* faction, Brain* brain) override;
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {}
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_state;
+		archive & m_stateChangeTimer;
+	}
+
+	// Returns true if all wanted buildings were built
+	bool buildColonyBuilding(Planet& planet, Faction* faction);
+
+	EconomyState m_state = EconomyState::NONE;
+	int m_stateChangeTimer = 0;
 };
 
 class Brain {

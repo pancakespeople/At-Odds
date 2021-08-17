@@ -612,3 +612,18 @@ void Star::reinitAfterLoad(Constellation* constellation) {
 		building->reinitAfterLoad(this);
 	}
 }
+
+Planet* Star::getMostHabitablePlanet(int allegiance) {
+	Planet* mostHabitable = nullptr;
+	for (Planet& planet : m_planets) {
+		if (mostHabitable != nullptr) {
+			if (planet.getColony().getAllegiance() == allegiance && planet.getHabitability() > mostHabitable->getHabitability()) {
+				mostHabitable = &planet;
+			}
+		}
+		else {
+			mostHabitable = &planet;
+		}
+	}
+	return mostHabitable;
+}

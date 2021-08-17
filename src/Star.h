@@ -90,6 +90,7 @@ public:
 	Hyperlane* getHyperlaneByID(uint32_t id);
 
 	Planet& getMostHabitablePlanet();
+	Planet* getMostHabitablePlanet(int allegiance);
 
 private:
 	friend class boost::serialization::access;

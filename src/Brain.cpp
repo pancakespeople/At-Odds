@@ -66,7 +66,7 @@ void Brain::onStarTakeover(Faction* faction, Star* star) {
 }
 
 void Brain::onSpawn(Faction* faction) {
-	for (Planet& planet : faction->getCapitol()->getPlanets()) {
+	for (Planet& planet : faction->getCapital()->getPlanets()) {
 		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
 			planet.getColony().setFactionColonyLegality(faction->getID(), true);
 			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
@@ -82,11 +82,11 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 
 	if (m_expansionTarget == nullptr) {
 
-		// Secure stars connected to capitol
-		for (Star* s : faction->getCapitol()->getConnectedStars()) {
+		// Secure stars connected to capital
+		for (Star* s : faction->getCapital()->getConnectedStars()) {
 			if (s->getAllegiance() != faction->getID()) {
 				m_expansionTarget = s;
-				//AI_DEBUG_PRINT("Expansion target (near capitol) chosen");
+				//AI_DEBUG_PRINT("Expansion target (near capital) chosen");
 				break;
 			}
 		}
@@ -230,6 +230,23 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 }
 
 void EconomyAI::update(Faction* faction, Brain* brain) {
+	// Decide economy state
+	if (m_stateChangeTimer == 0 || m_state == EconomyState::NONE) {
+		if (Random::randBool()) {
+			m_state = EconomyState::BUILDING_SHIPS;
+			AI_DEBUG_PRINT("Changed state to building ships");
+		}
+		else {
+			m_state = EconomyState::DEVELOPING_PLANETS;
+			AI_DEBUG_PRINT("Changed state to developing planets");
+		}
+
+		m_stateChangeTimer = Random::randInt(1, 10);
+	}
+	else {
+		m_stateChangeTimer--;
+	}
+	
 	for (Star* star : faction->getOwnedStars()) {
 
 		bool builtShipFactory = false;
@@ -250,7 +267,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		// Set colonization of planets to be legal
 		if (star->getPlanets().size() > 0) {
 			Planet& mostHabitable = star->getMostHabitablePlanet();
-			if (!mostHabitable.getColony().isColonizationLegal(faction->getID())) {
+			if (!mostHabitable.getColony().isColonizationLegal(faction->getID()) && mostHabitable.getResources().size() > 0) {
 				mostHabitable.getColony().setFactionColonyLegality(faction->getID(), true);
 				AI_DEBUG_PRINT("Made colonization of " << mostHabitable.getTypeString() << " legal");
 			}
@@ -260,7 +277,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 				auto planets = star->getPlanets();
 				Planet& randPlanet = planets[Random::randInt(0, planets.size() - 1)];
 
-				if (!randPlanet.getColony().isColonizationLegal(faction->getID())) {
+				if (!randPlanet.getColony().isColonizationLegal(faction->getID()) && randPlanet.getResources().size() > 0) {
 					randPlanet.getColony().setFactionColonyLegality(faction->getID(), true);
 					AI_DEBUG_PRINT("Made colonization of " << randPlanet.getTypeString() << " legal");
 				}
@@ -268,11 +285,15 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		}
 	}
 
-	bool useResources = Random::randBool();
+	// Handle building ships
+	bool buildShips = false;
+	if (m_state == EconomyState::BUILDING_SHIPS) {
+		buildShips = true;
+	}
 	for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
 		FactoryMod* mod = factory->getMod<FactoryMod>();
 		mod->updateDesigns(faction);
-		mod->setBuildAll(useResources);
+		mod->setBuildAll(buildShips);
 	}
 
 	// Handle ship designs
@@ -363,21 +384,54 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 	}
 
 	// Colonies
-	Planet* bestColony = faction->getMostHabitablePlanet();
-	if (bestColony != nullptr) {
-		std::vector<std::string> possibleBuildings = {
-			"FARMING",
-			"MINING",
-			"SPACEPORT"
-		};
+	if (m_state == EconomyState::DEVELOPING_PLANETS) {
+		Planet* bestColony = faction->getMostHabitablePlanet();
+		bool bestColonyDone = false;
+		
+		if (bestColony != nullptr) {
+			bestColonyDone = buildColonyBuilding(*bestColony, faction);
+		}
 
-		int rnd = Random::randInt(0, possibleBuildings.size() - 1);
-
-		ColonyBuilding toBuild(possibleBuildings[rnd]);
-		if (bestColony->getColony().buyBuilding(toBuild, faction, *bestColony)) {
-			AI_DEBUG_PRINT("Building colony building " << toBuild.getName());
+		if (bestColonyDone) {
+			Star* rndStar = faction->getRandomOwnedStar();
+			if (rndStar != nullptr) {
+				Planet* best = rndStar->getMostHabitablePlanet(faction->getID());
+				if (best != nullptr) {
+					buildColonyBuilding(*best, faction);
+				}
+			}
 		}
 	}
 
 	sleep(1000);
+}
+
+bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
+	std::vector<std::string> wantedBuildings = {
+				"FARMING",
+				"MINING",
+				"SPACEPORT"
+	};
+
+	// Check if the wanted buildings are built
+	for (int i = 0; i < wantedBuildings.size(); i++) {
+		if (planet.getColony().hasBuildingOfType(wantedBuildings[i])) {
+			wantedBuildings.erase(wantedBuildings.begin() + i);
+			i--;
+		}
+	}
+
+	if (wantedBuildings.size() != 0) {
+		int rnd = Random::randInt(0, wantedBuildings.size() - 1);
+
+		ColonyBuilding toBuild(wantedBuildings[rnd]);
+		if (planet.getColony().buyBuilding(toBuild, faction, planet)) {
+			AI_DEBUG_PRINT("Building colony building " << toBuild.getName());
+		}
+		return false;
+	}
+	else {
+		// All wanted buildings built
+		return true;
+	}
 }

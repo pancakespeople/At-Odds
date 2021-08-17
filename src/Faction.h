@@ -14,7 +14,7 @@ public:
 
 	void spawnAtRandomStar(Constellation* constellation);
 	void addOwnedSystem(Star* star);
-	void makeCapitol(Star* star);
+	void makeCapital(Star* star);
 	void update();
 	void controlByPlayer(Player& player);
 	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
@@ -63,7 +63,9 @@ public:
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
 	Spaceship::DesignerShip getShipDesignByName(const std::string& name);
 
-	Star* getCapitol() { return m_capitol; }
+	Star* getCapital() { return m_capital; }
+	Star* getRandomOwnedStar();
+
 	Planet* getMostHabitablePlanet();
 
 	template <typename T>
@@ -86,7 +88,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_capitolID;
+		archive & m_capitalID;
 		archive & m_color;
 		archive & m_ownedSystemIDs;
 		archive & m_shipIDs;
@@ -105,8 +107,8 @@ private:
 	
 	Faction() {}
 
-	Star* m_capitol = nullptr;
-	uint32_t m_capitolID = 0;
+	Star* m_capital = nullptr;
+	uint32_t m_capitalID = 0;
 	
 	sf::Color m_color;
 	
