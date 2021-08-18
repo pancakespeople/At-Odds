@@ -126,7 +126,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 	if (m_drawHidden) {
 
 		for (Planet& planet : m_planets) {
-			planet.draw(window, emitter, time);
+			planet.draw(window, emitter, this, time);
 		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {

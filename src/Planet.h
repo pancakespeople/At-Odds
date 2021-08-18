@@ -28,7 +28,7 @@ public:
 	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature);
 
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time);
+	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star, float time);
 	void update(Star* currentStar, Faction* faction);
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);
@@ -39,7 +39,7 @@ public:
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
 	float getWater() const { return m_water; }
-	float getRadius() const { return m_shape.getRadius(); }
+	float getRadius() const { return m_shape.getLocalBounds().width / 2.0; }
 	float getHabitability() const;
 
 	Colony& getColony() { return m_colony; }
@@ -72,7 +72,7 @@ private:
 	
 	Planet() {}
 
-	sf::CircleShape m_shape;
+	sf::RectangleShape m_shape;
 	
 	float m_shaderRandomSeed = 1.0f;
 	float m_temperature = 500.0f; // Kelvin

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 class Planet;
+class Star;
 
 class EffectsEmitter {
 public:
@@ -14,7 +15,7 @@ public:
 	void drawWithDistanceShader(sf::RenderWindow& window, sf::Shape& s, const sf::Vector2i& pos);
 	void drawFogOfWar(sf::RenderWindow& window);
 	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time, float seed);
-	void drawPlanet(sf::RenderWindow& window, const sf::CircleShape& shape, const Planet* planet, float seed, float time);
+	void drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
 	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
 	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);
 	void drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed);

@@ -11,6 +11,7 @@ uniform bool gasGiant;
 uniform bool frozen;
 uniform float water;
 uniform float time;
+uniform vec2 sunVec;
 
 vec2 random2(vec2 st) {
 	st = vec2(dot(st, vec2(127.1, 311.7)),
@@ -51,37 +52,36 @@ void main() {
 	vec2 worldPos = vertPos.xy - size;
 	float radius = distance(worldPos, pixel) * 2.0;
 	vec2 noisePos;
+	float r = sqrt(dot(worldPos, worldPos)) / size.x;
+	float f = (1.0 - sqrt(1.0 - r)) / (r);
+	float light = dot(worldPos / 250.0, sunVec);
 	
 	if (!gasGiant) {
-		noisePos = worldPos / 50.0;
+		noisePos = worldPos * f / 75.0;
 	}
 	else {
-		noisePos = (worldPos * pow(radius, 0.4)) / 3000.0;
+		noisePos = worldPos * f / 300.0;
 		
-		vec2 angleVector = random2(vec2(randSeed)) * 5.0;
+		vec2 angleVector = random2(vec2(randSeed));
 
 		noisePos.x += angleVector.x * time;
 		noisePos.y += angleVector.y * time;
 	}
 
 	float noiseVal = fbm(noisePos * 0.5 + 0.5) * 2.0;
-	vec4 noiseVec = vec4(vec3(noiseVal) + 0.5 * 2.0, 1.0);
+	vec3 noiseVec = vec3(vec3(noiseVal) + 0.5 * 2.0);
 
-	if (max(0.0f, noiseVal + 0.75f) < water && !gasGiant) {
-		if (radius / 2.0 <= size.x - 10.0) {
-			if (frozen) gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-			else gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+	if (r < 1.0) {
+		if (max(0.0f, noiseVal + 0.75f) < water && !gasGiant) {
+				if (frozen) gl_FragColor = vec4(vec3(1.0, 1.0, 1.0) * light, 1.0);
+				else gl_FragColor = vec4(vec3(0.0, 0.0, 1.0) * light, 1.0);
 		}
 		else {
-			gl_FragColor = vec4(0.0);
+			gl_FragColor = vec4(vec3(color.r, color.g, color.b) * noiseVec * light, 1.0);
+
 		}
 	}
 	else {
-		if (radius / 2.0 <= size.x - 10.0) {
-			gl_FragColor = color * noiseVec;
-		}
-		else {
-			gl_FragColor = vec4(0.0);
-		}
+		gl_FragColor = vec4(0.0);
 	}
 }

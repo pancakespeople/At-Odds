@@ -8,7 +8,7 @@
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
-	m_shape.setRadius(250.0f);
+	m_shape.setSize(sf::Vector2f(500.0f, 500.0f));
 	m_shape.setPosition(pos);
 
 	float radiusFromStar = Math::distance(pos, starPos);
@@ -45,19 +45,19 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	generateResources();
 	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
 
-	m_shape.setOrigin(sf::Vector2f(m_shape.getRadius(), m_shape.getRadius()));
+	m_shape.setOrigin(sf::Vector2f(getRadius(), getRadius()));
 }
 
-void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time) {
+void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star, float time) {
 	m_orbit.draw(window);
-	emitter.drawGlow(window, m_shape.getPosition(), m_shape.getRadius() * 5.0f, m_shape.getFillColor());
-	emitter.drawPlanet(window, m_shape, this, m_shaderRandomSeed, time);
+	emitter.drawGlow(window, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
+	emitter.drawPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
 
 	if (m_colony.getAllegiance() != -1) {
 		// Draw faction indicator circle
 
 		sf::CircleShape circle;
-		circle.setRadius(m_shape.getRadius() + 100.0f);
+		circle.setRadius(getRadius() + 100.0f);
 		circle.setFillColor(sf::Color::Transparent);
 		circle.setOutlineColor(m_colony.getFactionColor());
 		circle.setOutlineThickness(50.0f);
@@ -74,7 +74,8 @@ void Planet::update(Star* currentStar, Faction* faction) {
 }
 
 void Planet::generateGasGiant(float baseTemperature) {
-	m_shape.setRadius(m_shape.getRadius() * Random::randFloat(2.0f, 4.0f));
+	float radius = getRadius() * Random::randFloat(2.0f, 4.0f) * 2.0;
+	m_shape.setSize(sf::Vector2f(radius, radius));
 	
 	if (baseTemperature < 100.0f) {
 		// Blue
@@ -101,7 +102,8 @@ void Planet::generateGasGiant(float baseTemperature) {
 }
 
 void Planet::generateTerrestrial(float baseTemperature) {
-	m_shape.setRadius(m_shape.getRadius() * Random::randFloat(0.75f, 1.9f));
+	float radius = getRadius() * Random::randFloat(0.75f, 1.9f) * 2.0;
+	m_shape.setSize(sf::Vector2f(radius, radius));
 
 	if (baseTemperature > 400.0f) {
 		// Too hot to sustain an atmosphere
