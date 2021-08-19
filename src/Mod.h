@@ -41,6 +41,7 @@ public:
 
 	void updateDesigns(Faction* faction);
 	void setBuildAll(bool build);
+	void setBuild(const std::string& name, bool build);
 
 private:
 	friend class boost::serialization::access;

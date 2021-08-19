@@ -232,6 +232,16 @@ void FactoryMod::setBuildAll(bool build) {
 	}
 }
 
+void FactoryMod::setBuild(const std::string& name, bool build) {
+	for (auto& data : m_shipBuildData) {
+		if (data.first == name) {
+			data.second.build = build;
+			data.second.continuous = build;
+			break;
+		}
+	}
+}
+
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {
 	for (int i = 0; i < 4; i++) {
 		float radius = unit->getCollider().getRadius();

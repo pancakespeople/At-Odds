@@ -34,7 +34,7 @@ void Brain::controlSubAI(Faction* faction, SubAI* subAI) {
 
 void Brain::onStarTakeover(Faction* faction, Star* star) {
 	for (Planet& planet : star->getPlanets()) {
-		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
+		if (!planet.getColony().isColonizationLegal(faction->getID()) && planet.getResources().size() > 0) {
 			planet.getColony().setFactionColonyLegality(faction->getID(), true);
 			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
 		}
@@ -74,77 +74,120 @@ void Brain::onSpawn(Faction* faction) {
 	}
 }
 
+void Brain::reinitAfterLoad(Constellation* constellation) {
+	militaryAI.reinitAfterLoad(constellation);
+}
+
 void MilitaryAI::update(Faction* faction, Brain* brain) {
 	if (faction->getAllCombatShips().size() == 0) {
 		sleep(100);
 		return;
 	}
 
-	if (m_expansionTarget == nullptr) {
-
-		// Secure stars connected to capital
-		for (Star* s : faction->getCapital()->getConnectedStars()) {
-			if (s->getAllegiance() != faction->getID()) {
-				m_expansionTarget = s;
-				//AI_DEBUG_PRINT("Expansion target (near capital) chosen");
-				break;
-			}
+	// Change states
+	if (m_stateChangeTimer == 0) {
+		if (Random::randBool()) {
+			m_state = MilitaryState::RALLYING;
+			AI_DEBUG_PRINT("Changed state to rallying");
 		}
+		else {
+			m_state = MilitaryState::ATTACKING;
+			AI_DEBUG_PRINT("Changed state to attacking");
+		}
+		m_stateChangeTimer = Random::randInt(5000, 15000);
+	}
+	else {
+		m_stateChangeTimer--;
+	}
 
+	if (m_state == MilitaryState::ATTACKING) {
 		if (m_expansionTarget == nullptr) {
-			std::vector<Star*>& ownedStars = faction->getOwnedStars();
-			for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
-				for (Star* adj : ownedStars[i]->getConnectedStars()) {
-					if (adj->getAllegiance() != faction->getID()) {
-						m_expansionTarget = adj;
-						//AI_DEBUG_PRINT("Expansion target chosen");
-						break;
-					}
-				}
-				if (m_expansionTarget != nullptr) {
+
+			// Secure stars connected to capital
+			for (Star* s : faction->getCapital()->getConnectedStars()) {
+				if (s->getAllegiance() != faction->getID()) {
+					m_expansionTarget = s;
+					m_expansionTargetID = s->getID();
+					//AI_DEBUG_PRINT("Expansion target (near capital) chosen");
 					break;
 				}
 			}
-		}
 
-	}
-	else {
-		if (!m_launchingAttack) {
-			faction->giveAllCombatShipsOrder(TravelOrder(m_expansionTarget));
-			m_launchingAttack = true;
-			m_attackTimer = 1600;
-			//AI_DEBUG_PRINT("Begun attack");
+			if (m_expansionTarget == nullptr) {
+				std::vector<Star*>& ownedStars = faction->getOwnedStars();
+				for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
+					for (Star* adj : ownedStars[i]->getConnectedStars()) {
+						if (adj->getAllegiance() != faction->getID()) {
+							m_expansionTarget = adj;
+							m_expansionTargetID = adj->getID();
+							//AI_DEBUG_PRINT("Expansion target chosen");
+							break;
+						}
+					}
+					if (m_expansionTarget != nullptr) {
+						break;
+					}
+				}
+			}
+
 		}
 		else {
-			if (m_attackTimer == 0) {
-				if (m_expansionTarget->getAllegiance() == faction->getID()) {
-					m_expansionTarget = nullptr;
-					m_launchingAttack = false;
-					//AI_DEBUG_PRINT("Capture of star complete");
-				}
-				else {
-					m_attackTimer = 1600;
-
-					if (m_expansionTarget->numAlliedShips(faction->getID()) == 0) {
-						m_attackFrustration++;
-					}
-					else {
-						m_attackFrustration = 0;
-					}
-
-					if (m_attackFrustration >= 5) {
-						m_expansionTarget = nullptr;
-						m_launchingAttack = false;
-						m_attackFrustration = 0;
-						//AI_DEBUG_PRINT("Gave up on capture of star");
-					}
-				}
+			if (!m_launchingAttack) {
+				faction->giveAllCombatShipsOrder(TravelOrder(m_expansionTarget));
+				m_launchingAttack = true;
+				m_attackTimer = 1600;
+				//AI_DEBUG_PRINT("Begun attack");
 			}
 			else {
-				m_attackTimer--;
+				if (m_attackTimer == 0) {
+					if (m_expansionTarget->getAllegiance() == faction->getID()) {
+						m_expansionTarget = nullptr;
+						m_expansionTargetID = 0;
+						m_launchingAttack = false;
+						//AI_DEBUG_PRINT("Capture of star complete");
+					}
+					else {
+						m_attackTimer = 1600;
+
+						if (m_expansionTarget->numAlliedShips(faction->getID()) == 0) {
+							m_attackFrustration++;
+						}
+						else {
+							m_attackFrustration = 0;
+						}
+
+						if (m_attackFrustration >= 5) {
+							m_expansionTarget = nullptr;
+							m_expansionTargetID = 0;
+							m_launchingAttack = false;
+							m_attackFrustration = 0;
+							//AI_DEBUG_PRINT("Gave up on capture of star");
+						}
+					}
+				}
+				else {
+					m_attackTimer--;
+				}
 			}
 		}
 	}
+	else if (m_state == MilitaryState::RALLYING) {
+		if (m_rallyTimer == 0) {
+			// Send an order to all combat ships to travel to the capital
+			for (Spaceship* ship : faction->getAllCombatShips()) {
+				ship->addOrder(TravelOrder(faction->getCapital()));
+			}
+			
+			m_rallyTimer = 500;
+		}
+		else {
+			m_rallyTimer--;
+		}
+	}
+}
+
+void MilitaryAI::reinitAfterLoad(Constellation* constellation) {
+	m_expansionTarget = constellation->getStarByID(m_expansionTargetID);
 }
 
 void DefenseAI::update(Faction* faction, Brain* brain) {
@@ -290,6 +333,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 	if (m_state == EconomyState::BUILDING_SHIPS) {
 		buildShips = true;
 	}
+
 	for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
 		FactoryMod* mod = factory->getMod<FactoryMod>();
 		mod->updateDesigns(faction);

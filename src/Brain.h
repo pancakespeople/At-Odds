@@ -4,6 +4,7 @@ class Star;
 class Brain;
 class Colony;
 class Planet;
+class Constellation;
 
 class SubAI {
 public:
@@ -18,24 +19,39 @@ private:
 
 class MilitaryAI : public SubAI {
 public:
+	enum class MilitaryState {
+		ATTACKING,
+		RALLYING,
+		NONE,
+	};
+	
 	virtual void update(Faction* faction, Brain* brain) override;
+	void reinitAfterLoad(Constellation* constellation);
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_expansionTarget;
+		archive & m_state;
+		archive & m_expansionTargetID;
 		archive & m_launchingAttack;
 		archive & m_attackTimer;
 		archive & m_attackFrustration;
+		archive & m_rallyTimer;
 	}
 	
+	MilitaryState m_state = MilitaryState::NONE;
+	int m_stateChangeTimer = 0;
+
 	Star* m_expansionTarget = nullptr; // Star that the AI wants to attack
+	uint32_t m_expansionTargetID = 0;
 
 	bool m_launchingAttack = false; // If an attack has been ordered on a star
 
 	int m_attackTimer = 0; // Time to when the AI checks if the expansion target has been captured
 	int m_attackFrustration = 0;
+
+	int m_rallyTimer = 0;
 };
 
 class DefenseAI : public SubAI {
@@ -84,6 +100,7 @@ public:
 	void onStarTakeover(Faction* faction, Star* star);
 	void controlFaction(Faction* faction);
 	void controlSubAI(Faction* faction, SubAI* subAI);
+	void reinitAfterLoad(Constellation* constellation);
 
 	MilitaryAI militaryAI;
 	DefenseAI defenseAI;

@@ -318,6 +318,8 @@ void Faction::reinitAfterLoad(Constellation* constellation) {
 	for (uint32_t id : m_shipIDs) {
 		m_ships.push_back(constellation->getShipByID(id));
 	}
+
+	m_ai.reinitAfterLoad(constellation);
 }
 
 void Faction::addColonyBuilding(const std::string& type) {
