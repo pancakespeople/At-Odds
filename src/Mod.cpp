@@ -70,6 +70,9 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 					shipPtr->addWeapon(Weapon("CONSTRUCTION_GUN"));
 				}
 
+				sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
+				shipPtr->addVelocity(randVel);
+
 				faction->addSpaceship(currentStar->createSpaceship(shipPtr));
 
 				DEBUG_PRINT("Created spaceship " + shipDesign.chassis.type);

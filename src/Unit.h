@@ -41,6 +41,7 @@ public:
 	void onDeath(Star* currentStar);
 	void openModGUI(tgui::ChildWindow::Ptr window, Faction* faction);
 	void reinitAfterLoad(Star* star) { m_currentStar = star; }
+	void addVelocity(sf::Vector2f vel) { m_velocity += vel; }
 	
 	int getAllegiance() const { return m_allegiance; }
 
