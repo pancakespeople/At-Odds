@@ -24,7 +24,7 @@ public:
 	Star(sf::Vector2f pos);
 
 	void draw(sf::RenderWindow& window);
-	void draw(sf::RenderWindow& window, sf::Shader& shader);
+	void draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction);
 	void drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time);
 	void setPos(sf::Vector2f pos);
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
@@ -41,7 +41,7 @@ public:
 	void clearAnimations() { m_localViewAnimations.clear(); }
 	void moveShipToOtherStar(Spaceship* ship, Star* other);
 	void generatePlanets();
-	void setDiscovered(bool isDiscovered) { m_discovered = isDiscovered; }
+	void setDiscovered(bool isDiscovered, int allegiance);
 	void drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader);
 	void generateDerelicts();
 	void reinitAfterLoad(Constellation* constellation);
@@ -59,7 +59,7 @@ public:
 	bool isInShapeRadius(float x, float y) const;
 	bool isLocalViewActive() const { return m_localViewActive; }
 	bool containsBuildingName(const std::string& name, bool allegianceOnly = false, int allegiance = 0) const;
-	bool isDiscovered() const { return m_discovered; }
+	bool isDiscovered(int allegiance) const { return m_factionsDiscovered.count(allegiance); }
 	bool isDrawingHidden() const { return m_drawHidden; }
 
 	int getAllegiance() const { return m_allegiance; }
@@ -111,9 +111,9 @@ private:
 		archive & m_allegiance;
 		archive & m_shaderRandomSeed;
 		archive & m_temperature;
-		archive & m_discovered;
 		archive & m_derelicts;
 		archive & m_drawHidden;
+		archive & m_factionsDiscovered;
 	}
 	
 	void handleCollisions();
@@ -138,10 +138,10 @@ private:
 	std::vector<Animation> m_localViewAnimations;	
 	std::vector<Planet> m_planets;
 	std::vector<Derelict> m_derelicts;
+	std::unordered_set<int> m_factionsDiscovered = {-1};
 
 	bool m_localViewActive = false;
 	bool m_multipleFactionsPresent = false;
-	bool m_discovered = false;
 	bool m_drawHidden = true;
 
 	int m_allegiance = -1;

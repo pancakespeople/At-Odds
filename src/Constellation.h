@@ -18,15 +18,13 @@ public:
 	void generateRecursiveConstellation(int sizeWidth, int sizeHeight, int numStars);
 	void generateRandomHyperlanes(int size, int numStars);
 	void generateRobustHyperlanes(int size, int numStars);
-	void draw(sf::RenderWindow& window);
-	void draw(sf::RenderWindow& window, sf::Shader& shader);
+	void draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction);
 	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state);
 	void setupStars();
 	void generateFactions(int numFactions);
 	void update(const Player& player);
 	void generateNeutralSquatters();
 	void moveShipToPurgatory(std::unique_ptr<Spaceship>& ship);
-	void discoverAllStars();
 	void reinitAfterLoad();
 
 	std::vector<std::unique_ptr<Star>>& getStars() { return m_stars; }

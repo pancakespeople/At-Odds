@@ -58,11 +58,11 @@ void Star::draw(sf::RenderWindow& window) {
 	window.draw(m_shape);
 }
 
-void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
+void Star::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction) {
 	sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
 	sf::Vector2f mouseCoordsWorld = window.mapPixelToCoords(mouseCoords);
 
-	if (m_multipleFactionsPresent && m_discovered) {
+	if (m_multipleFactionsPresent && isDiscovered(playerFaction)) {
 		shader.setUniform("flashing", true);
 	}
 	else {
@@ -82,7 +82,7 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
 
 		shader.setUniform("radius", getRadius());
 
-		if (!m_discovered) {
+		if (!isDiscovered(playerFaction)) {
 			drawUndiscovered(window, shader);
 		}
 		else {
@@ -95,7 +95,7 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader) {
 		shader.setUniform("radius", getRadius());
 	}
 	else {
-		if (!m_discovered) {
+		if (!isDiscovered(playerFaction)) {
 			drawUndiscovered(window, shader);
 		}
 		else {
@@ -302,7 +302,7 @@ void Star::cleanUpAnimations() {
 }
 
 void Star::update(Constellation* constellation, const Player& player) {
-	std::vector<int> factions;
+	std::set<int> factions;
 	
 	// Update spaceships
 	for (int i = 0; i < m_localShips.size(); i++) {
@@ -315,18 +315,8 @@ void Star::update(Constellation* constellation, const Player& player) {
 			i--;
 			continue;
 		}
-
-		if (factions.size() == 0) {
-			if (!m_localShips[i]->isCivilian()) {
-				factions.push_back(m_localShips[i]->getAllegiance());
-			}
-		}
-		else {
-			if (std::find(factions.begin(), factions.end(), m_localShips[i]->getAllegiance()) == factions.end()) {
-				if (!m_localShips[i]->isCivilian()) {
-					factions.push_back(m_localShips[i]->getAllegiance());
-				}
-			}
+		if (!m_localShips[i]->isCivilian()) {
+			factions.insert(m_localShips[i]->getAllegiance());
 		}
 		if (m_localShips[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_localShips[i]->getPos(), m_localShips[i]->getCollider().getOutlineColor(), 10.0f, 100);
@@ -351,13 +341,9 @@ void Star::update(Constellation* constellation, const Player& player) {
 		}
 	}
 
-	// Discover system for player
-	if (factions.size() > 0) {
-		if (!m_discovered) {
-			if (std::find(factions.begin(), factions.end(), player.getFaction()) != factions.end()) {
-				m_discovered = true;
-			}
-		}
+	// Discover system for factions
+	for (int i : factions) {
+		m_factionsDiscovered.insert(i);
 	}
 
 	// For the flashy thing
@@ -626,4 +612,15 @@ Planet* Star::getMostHabitablePlanet(int allegiance) {
 		}
 	}
 	return mostHabitable;
+}
+
+void Star::setDiscovered(bool isDiscovered, int allegiance) {
+	if (isDiscovered) {
+		m_factionsDiscovered.insert(allegiance);
+	}
+	else {
+		if (m_factionsDiscovered.count(allegiance)) {
+			m_factionsDiscovered.erase(allegiance);
+		}
+	}
 }

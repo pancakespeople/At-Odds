@@ -102,20 +102,12 @@ void Constellation::generateRecursiveConstellation(int sizeWidth, int sizeHeight
     DEBUG_PRINT("Generation finished with " << m_stars.size() << " stars");
 }
 
-void Constellation::draw(sf::RenderWindow& window) {
+void Constellation::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction) {
     for (std::unique_ptr<Hyperlane>& h : m_hyperlanes) {
-        h->draw(window);
-        h->getBeginStar()->draw(window);
-        h->getEndStar()->draw(window);
-    }
-}
-
-void Constellation::draw(sf::RenderWindow& window, sf::Shader& shader) {
-    for (std::unique_ptr<Hyperlane>& h : m_hyperlanes) {
-        h->draw(window);
+        h->draw(window, playerFaction);
     }
     for (std::unique_ptr<Star>& s : m_stars) {
-        s->draw(window, shader);
+        s->draw(window, shader, playerFaction);
     }
 }
 
@@ -297,12 +289,6 @@ void Constellation::moveShipToPurgatory(std::unique_ptr<Spaceship>& ship) {
 Faction* Constellation::getFaction(int id) {
     if (id < 0 || id >= m_factions.size()) return nullptr;
     else return &m_factions[id];
-}
-
-void Constellation::discoverAllStars() {
-    for (auto& star : m_stars) {
-        star->setDiscovered(true);
-    }
 }
 
 void Constellation::reinitAfterLoad() {

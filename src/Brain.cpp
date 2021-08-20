@@ -102,34 +102,68 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 
 	if (m_state == MilitaryState::ATTACKING) {
 		if (m_expansionTarget == nullptr) {
-
+			// Choose expansion target
+			
 			// Secure stars connected to capital
-			for (Star* s : faction->getCapital()->getConnectedStars()) {
-				if (s->getAllegiance() != faction->getID()) {
-					m_expansionTarget = s;
-					m_expansionTargetID = s->getID();
-					//AI_DEBUG_PRINT("Expansion target (near capital) chosen");
+			//for (Star* s : faction->getCapital()->getConnectedStars()) {
+			//	if (s->getAllegiance() != faction->getID()) {
+			//		m_expansionTarget = s;
+			//		m_expansionTargetID = s->getID();
+			//		//AI_DEBUG_PRINT("Expansion target (near capital) chosen");
+			//		break;
+			//	}
+			//}
+
+			//if (m_expansionTarget == nullptr) {
+			//	std::vector<Star*>& ownedStars = faction->getOwnedStars();
+			//	for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
+			//		for (Star* adj : ownedStars[i]->getConnectedStars()) {
+			//			if (adj->getAllegiance() != faction->getID()) {
+			//				m_expansionTarget = adj;
+			//				m_expansionTargetID = adj->getID();
+			//				//AI_DEBUG_PRINT("Expansion target chosen");
+			//				break;
+			//			}
+			//		}
+			//		if (m_expansionTarget != nullptr) {
+			//			break;
+			//		}
+			//	}
+			//}
+
+			std::vector<Star*> borderStars = faction->getBorderStars();
+
+			// Prioritize undiscovered stars first
+			for (Star* star : borderStars) {
+				if (!star->isDiscovered(faction->getID())) {
+					m_expansionTarget = star;
+					m_expansionTargetID = star->getID();
+					AI_DEBUG_PRINT("Attacking undiscovered star");
 					break;
 				}
 			}
 
+			// Go for neutral stars next
 			if (m_expansionTarget == nullptr) {
-				std::vector<Star*>& ownedStars = faction->getOwnedStars();
-				for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
-					for (Star* adj : ownedStars[i]->getConnectedStars()) {
-						if (adj->getAllegiance() != faction->getID()) {
-							m_expansionTarget = adj;
-							m_expansionTargetID = adj->getID();
-							//AI_DEBUG_PRINT("Expansion target chosen");
-							break;
-						}
-					}
-					if (m_expansionTarget != nullptr) {
+				for (Star* star : borderStars) {
+					if (star->getAllegiance() == -1) {
+						m_expansionTarget = star;
+						m_expansionTargetID = star->getID();
+						AI_DEBUG_PRINT("Attacking neutral star");
 						break;
 					}
 				}
 			}
 
+			// Choose random stars next
+			if (m_expansionTarget == nullptr) {
+				if (borderStars.size() > 0) {
+					int rnd = Random::randInt(0, borderStars.size() - 1);
+					m_expansionTarget = borderStars[rnd];
+					m_expansionTargetID = borderStars[rnd]->getID();
+					AI_DEBUG_PRINT("Attacking random star");
+				}
+			}
 		}
 		else {
 			if (!m_launchingAttack) {

@@ -57,9 +57,9 @@ Hyperlane::Hyperlane(Star* begin, Star* end) : m_beginStar(begin), m_endStar(end
 	m_endStarID = end->getID();
 }
 
-void Hyperlane::draw(sf::RenderWindow& window) {
+void Hyperlane::draw(sf::RenderWindow& window, int playerFaction) {
 	// Set faction colors
-	if (m_beginStar->isDiscovered()) {
+	if (m_beginStar->isDiscovered(playerFaction)) {
 		if (m_beginStar->getAllegiance() != -1) {
 			m_vertices[0].color = m_beginStar->getColor();
 			m_vertices[1].color = m_beginStar->getColor();
@@ -74,7 +74,7 @@ void Hyperlane::draw(sf::RenderWindow& window) {
 		m_vertices[1].color = sf::Color(255, 255, 255, 100);
 	}
 
-	if (m_endStar->isDiscovered()) {
+	if (m_endStar->isDiscovered(playerFaction)) {
 		if (m_endStar->getAllegiance() != -1) {
 			m_vertices[2].color = m_endStar->getColor();
 			m_vertices[3].color = m_endStar->getColor();

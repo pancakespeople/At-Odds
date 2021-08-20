@@ -362,3 +362,15 @@ Star* Faction::getRandomOwnedStar() {
 	}
 	return nullptr;
 }
+
+std::vector<Star*> Faction::getBorderStars() {
+	std::vector<Star*> stars;
+	for (Star* star : m_ownedSystems) {
+		for (Star* con : star->getConnectedStars()) {
+			if (con->getAllegiance() != m_id) {
+				stars.push_back(con);
+			}
+		}
+	}
+	return stars;
+}

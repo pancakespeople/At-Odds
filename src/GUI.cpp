@@ -464,7 +464,6 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	}
 	else {
 		state.changeToWorldView();
-		constellation.discoverAllStars();
 
 		m_playerGui.open(gui, state, constellation, true);
 	}
@@ -1061,15 +1060,6 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 
 					gui.removeAllWidgets();
 					playerGUI.open(gui, state, constellation, false);
-
-					for (auto& star : constellation.getStars()) {
-						if (star->getAllShipsOfAllegiance(faction->getID()).size() > 0) {
-							star->setDiscovered(true);
-						}
-						else {
-							star->setDiscovered(false);
-						}
-					}
 				}
 				else {
 					m_chatBox->addLine("Invalid faction");
@@ -1085,8 +1075,6 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 
 				gui.removeAllWidgets();
 				playerGUI.open(gui, state, constellation, true);
-
-				constellation.discoverAllStars();
 			}
 		}		
 		else if (command.command == "giveweapon") {
@@ -1181,7 +1169,12 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 				m_planetPanel->add(planetList, "planetList");
 
 				// Add planets to dropdown list if star is discovered
-				if (state.getLocalViewStar()->isDiscovered()) {
+				int playerAllegiance = -1;
+				if (playerFaction != nullptr) {
+					playerAllegiance = playerFaction->getID();
+				}
+
+				if (state.getLocalViewStar()->isDiscovered(playerAllegiance)) {
 					for (int i = 0; i < planets.size(); i++) {
 						planetList->addItem(std::to_string(i + 1) + ": " + planets[i].getTypeString());
 					}
@@ -2184,7 +2177,7 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 
 		window.draw(dot);
 
-		if ((currentStar->isDrawingHidden() && currentStar->isDiscovered()) || playerAllegiance == -1) {
+		if ((currentStar->isDrawingHidden() && currentStar->isDiscovered(playerAllegiance)) || playerAllegiance == -1) {
 			for (auto& ship : currentStar->getSpaceships()) {
 				dot.setPosition(ship->getPos());
 				if (playerAllegiance == -1) {
