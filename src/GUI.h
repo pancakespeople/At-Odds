@@ -183,6 +183,17 @@ public:
 	void draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance);
 };
 
+class ColonyListGUI {
+public:
+	ColonyListGUI() {}
+
+	void open(tgui::Gui& gui, GameState& state, Constellation& constellation);
+
+private:
+	GameWidget::Icon m_icon;
+	tgui::ChildWindow::Ptr m_window = nullptr;
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
@@ -200,6 +211,7 @@ struct PlayerGUI {
 	ShipDesignerGUI shipDesignerGUI;
 	AnnouncerGUI announcerGUI;
 	MinimapGUI minimapGUI;
+	ColonyListGUI colonyListGUI;
 };
 
 class NewGameMenu {

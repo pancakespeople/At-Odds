@@ -886,6 +886,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		resourceGUI.open(gui);
 		shipDesignerGUI.open(gui, playerFaction);
 		announcerGUI.open(gui);
+		colonyListGUI.open(gui, state, constellation);
 	}
 	else {
 		unitGUI.open(gui);
@@ -2204,4 +2205,58 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 
 		window.setView(oldView);
 	}
+}
+
+void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation) {
+	m_icon.open(gui, tgui::Layout2d("0%", "75%"), tgui::Layout2d("2.5%", "5%"), "data/art/colonyicon.png");
+	
+	m_icon.panel->onClick([this, &gui, &state, &constellation]() {
+		if (m_window == nullptr) {
+			m_window = tgui::ChildWindow::create("Colony List");
+			m_window->setSize("50%", "50%");
+			m_window->setOrigin(0.5, 0.5);
+			m_window->setPosition(gui.getTarget()->getSize().x / 2.0, gui.getTarget()->getSize().y / 2.0);
+			m_window->getRenderer()->setOpacity(0.75f);
+			m_window->onClose([this]() {
+				m_window = nullptr;
+			});
+			gui.add(m_window);
+
+			auto listView = tgui::ListView::create();
+			listView->setSize("100%", "100%");
+			listView->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
+			listView->addColumn("Type    ");
+			listView->addColumn("Population");
+			listView->addColumn("Growth Rate");
+
+			int playerFaction = state.getPlayer().getFaction();
+			for (auto& star : constellation.getStars()) {
+				for (Planet& planet : star->getPlanets()) {
+					if (planet.getColony().getAllegiance() == playerFaction) {
+						std::vector<tgui::String> info;
+						info.push_back(planet.getTypeString());
+						info.push_back(std::to_string(planet.getColony().getPopulation()));
+						info.push_back(std::to_string(planet.getColony().getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
+						listView->addItem(info);
+					}
+				}
+			}
+
+			listView->onHeaderClick([listView](int index) {
+				if (index != 0) {
+					listView->sort(index, [](const tgui::String& a, const tgui::String& b) {
+						float aFloat = a.toFloat();
+						float bFloat = b.toFloat();
+						return aFloat > bFloat;
+					});
+				}
+			});
+
+			m_window->add(listView);
+		}
+		else {
+			gui.remove(m_window);
+			m_window = nullptr;
+		}
+	});
 }
