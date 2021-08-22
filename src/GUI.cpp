@@ -2228,6 +2228,10 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 			listView->addColumn("Type    ");
 			listView->addColumn("Population");
 			listView->addColumn("Growth Rate");
+			listView->addColumn("Temperature");
+			listView->addColumn("Water");
+			listView->addColumn("Atmosphere");
+			listView->addColumn("Habitability");
 
 			int playerFaction = state.getPlayer().getFaction();
 			for (auto& star : constellation.getStars()) {
@@ -2237,18 +2241,40 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 						info.push_back(planet.getTypeString());
 						info.push_back(std::to_string(planet.getColony().getPopulation()));
 						info.push_back(std::to_string(planet.getColony().getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
+						info.push_back(std::to_string(planet.getTemperature()));
+						info.push_back(std::to_string(planet.getWater()));
+						info.push_back(std::to_string(planet.getAtmosphericPressure()));
+						info.push_back(std::to_string(planet.getHabitability()));
 						listView->addItem(info);
+						listView->setItemData(listView->getItemCount() - 1, std::pair<int, int>(star->getID(), planet.getID()));
 					}
 				}
 			}
 
 			listView->onHeaderClick([listView](int index) {
-				if (index != 0) {
-					listView->sort(index, [](const tgui::String& a, const tgui::String& b) {
-						float aFloat = a.toFloat();
-						float bFloat = b.toFloat();
-						return aFloat > bFloat;
-					});
+				listView->sort(index, [](const tgui::String& a, const tgui::String& b) {
+					float aFloat = a.toFloat();
+					float bFloat = b.toFloat();
+					return aFloat > bFloat;
+				});
+			});
+
+			listView->onItemSelect([listView, &state, &constellation](int index) {
+				if (index == -1) return;
+				std::pair<int, int> starPlanetPair = listView->getItemData<std::pair<int, int>>(index); // IDs
+				Star* star = constellation.getStarByID(starPlanetPair.first);
+				if (star != nullptr) {
+					Planet* planet = star->getPlanetByID(starPlanetPair.second);
+					if (planet != nullptr) {
+						if (state.getState() == GameState::State::LOCAL_VIEW) {
+							state.changeToWorldView();
+							state.changeToLocalView(star);
+						}
+						else {
+							state.changeToLocalView(star);
+						}
+						state.getCamera().setPos(planet->getPos());
+					}
 				}
 			});
 
