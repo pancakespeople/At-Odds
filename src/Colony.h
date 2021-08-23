@@ -17,6 +17,7 @@ public:
 	std::string getType() const { return m_type; }
 	std::string getEffectsString() const;
 	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
+	std::vector<std::string> getFlags() const;
 
 	bool isBuilt() { return m_percentBuilt >= 100.0f; }
 	bool hasFlag(const std::string& flag);

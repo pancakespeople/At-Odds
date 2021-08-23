@@ -1288,9 +1288,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 		createLawsButton(gui, state, planet);
 	}
 
-	if (playerFaction != nullptr) {
-		createBuildingsButton(gui, planet, playerFaction);
-	}
+	createBuildingsButton(gui, planet, playerFaction);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
@@ -1543,7 +1541,12 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 			}
 		});
 
-		if (planet.getColony().getAllegiance() == playerFaction->getID()) {
+		int playerAllegiance = -1;
+		if (playerFaction != nullptr) {
+			playerAllegiance = playerFaction->getID();
+		}
+
+		if (planet.getColony().getAllegiance() == playerAllegiance && playerAllegiance != -1) {
 			auto buildButton = tgui::Button::create("Build");
 			buildButton->setPosition("buildingsBox.right + 2.5%", "85%");
 			buildButton->onPress([this, &gui, &planet, playerFaction]() {

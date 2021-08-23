@@ -207,6 +207,12 @@ std::string ColonyBuilding::getEffectsString() const {
 		effects << "Resource Extraction Rate: " << Util::percentify(exploitationModifier, 1) << "\n";
 	}
 
+	for (std::string& flag : getFlags()) {
+		if (flag == "ENABLE_SPACEBUS") {
+			effects << "Enables Space Bus" << "\n";
+		}
+	}
+
 	return effects.str();
 }
 
@@ -222,4 +228,18 @@ bool ColonyBuilding::hasFlag(const std::string& flag) {
 		}
 	}
 	return false;
+}
+
+std::vector<std::string> ColonyBuilding::getFlags() const {
+	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	std::vector<std::string> flags;
+
+	auto* arr = table[m_type]["flags"].as_array();
+	if (arr != nullptr) {
+		for (auto& elem : *arr) {
+			flags.push_back(elem.value_or(""));
+		}
+	}
+
+	return flags;
 }
