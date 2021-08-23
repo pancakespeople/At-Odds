@@ -35,26 +35,28 @@ sf::Sound& Sounds::getSound(const std::string& filePath) {
 }
 
 void Sounds::playSound(const std::string& filePath, const sf::Vector2f& pos, float volume, float pitch, Star* star, bool noSpatial) {
-	getSound(filePath);
-	GameSound gameSound;
+	if (m_playingSounds.size() < 255) {
+		getSound(filePath);
+		GameSound gameSound;
 
-	gameSound.sound.setBuffer(m_soundBuffers[filePath]);
-	gameSound.sound.setVolume(volume * m_globalVolume);
-	gameSound.sound.setPitch(pitch);
-	
-	if (noSpatial) {
-		gameSound.sound.setRelativeToListener(true);
-		gameSound.sound.setPosition(sf::Vector3f(0.0f, 0.0f, 0.0f));
+		gameSound.sound.setBuffer(m_soundBuffers[filePath]);
+		gameSound.sound.setVolume(volume * m_globalVolume);
+		gameSound.sound.setPitch(pitch);
+
+		if (noSpatial) {
+			gameSound.sound.setRelativeToListener(true);
+			gameSound.sound.setPosition(sf::Vector3f(0.0f, 0.0f, 0.0f));
+		}
+		else {
+			gameSound.sound.setPosition(sf::Vector3f(pos.x, 0.0f, pos.y));
+		}
+
+		gameSound.sound.setMinDistance(1000.f);
+		gameSound.sound.setAttenuation(10.f);
+		gameSound.star = star;
+
+		m_playingSounds.push_back(gameSound);
 	}
-	else {
-		gameSound.sound.setPosition(sf::Vector3f(pos.x, 0.0f, pos.y));
-	}
-
-	gameSound.sound.setMinDistance(1000.f);
-	gameSound.sound.setAttenuation(10.f);
-	gameSound.star = star;
-
-	m_playingSounds.push_back(gameSound);
 }
 
 void Sounds::updateSounds(const Player& player, const Camera& camera) {
