@@ -92,9 +92,6 @@ int main(int argc, const char* argv[])
 
     sf::Clock fpsClock;
     float fps = 60;
-
-    sf::Clock updateClock;
-    int updatesPerSecondTarget = 60;
     float updateStep = 1.0f;
 
     while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
@@ -113,7 +110,7 @@ int main(int argc, const char* argv[])
             playerGui.buildingGUI.onEvent(event, window, gui, state, constellation, playerGui.mainPanel);
             buildGui.onEvent(event, window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
             console.onEvent(event, gui, state);
-            playerGui.timescaleGUI.onEvent(event, gui, updatesPerSecondTarget);
+            playerGui.timescaleGUI.onEvent(event, gui);
             playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, state.getLocalViewStar(), playerGui.mainPanel);
         }
 
@@ -126,10 +123,10 @@ int main(int argc, const char* argv[])
         }
         
         // Maintain a constant update rate
-        updateStep = updatesPerSecondTarget / (1.0f / updateClock.getElapsedTime().asSeconds());
+        updateStep = playerGui.timescaleGUI.getUpdatesPerSecondTarget() / (1.0f / playerGui.timescaleGUI.getUpdateClock().getElapsedTime().asSeconds());
         for (int i = 0; i < std::round(updateStep); i++) {
             constellation.update(state.getPlayer());
-            updateClock.restart();
+            playerGui.timescaleGUI.restartUpdateClock();
         }
 
         starShader.setUniform("time", time);

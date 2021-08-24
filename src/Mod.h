@@ -110,7 +110,7 @@ private:
 	std::vector<unsigned int> m_fighterShipIds;
 	FIGHTER_STATUS m_fighterStatus = FIGHTER_STATUS::DOCKED;
 	const int m_maxFighters = 4;
-	int m_ticksToNextFighter = 1000;
+	int m_ticksToNextFighter = 2500;
 };
 
 class HabitatMod : public Mod {

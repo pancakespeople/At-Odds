@@ -124,11 +124,17 @@ public:
 	TimescaleGUI() {}
 
 	void open(tgui::Gui& gui);
-	void onEvent(sf::Event& ev, tgui::Gui& gui, int& updatesPerSecondTarget);
+	void onEvent(sf::Event& ev, tgui::Gui& gui);
+
+	const sf::Clock& getUpdateClock() { return m_updateClock; }
+	int getUpdatesPerSecondTarget() { return m_updatesPerSecondTarget; }
+	void restartUpdateClock() { m_updateClock.restart(); }
 
 private:
 	tgui::Label::Ptr m_timescaleLabel;
 	int m_timescale = 1;
+	int m_updatesPerSecondTarget = 60;
+	sf::Clock m_updateClock;
 };
 
 class ResourceGUI {

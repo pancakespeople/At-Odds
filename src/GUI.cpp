@@ -1748,31 +1748,61 @@ void TimescaleGUI::open(tgui::Gui& gui) {
 	gui.add(m_timescaleLabel);
 }
 
-void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, int& updatesPerSecondTarget) {
+void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui) {
 	if (m_timescaleLabel != nullptr) {
-		if (ev.type == sf::Event::KeyReleased && ((ev.key.code == sf::Keyboard::Equal && ev.key.shift) ||
-			(ev.key.code == sf::Keyboard::Dash))) {
-			// + or - pressed
+		tgui::Widget::Ptr focused = gui.getFocusedLeaf();
+		tgui::String focusedType;
+		if (focused != nullptr) {
+			focusedType = focused->getWidgetType();
+		}
 
-			gui.remove(m_timescaleLabel);
-			open(gui);
+		if (focusedType != "EditBox") {
+			if (ev.type == sf::Event::KeyReleased && ((ev.key.code == sf::Keyboard::Equal && ev.key.shift) ||
+				(ev.key.code == sf::Keyboard::Dash))) {
+				// + or - pressed
 
-			if (ev.key.code == sf::Keyboard::Dash) {
-				if (m_timescale > 1) {
-					m_timescale = m_timescale >> 1;
+				gui.remove(m_timescaleLabel);
+				open(gui);
+
+				if (ev.key.code == sf::Keyboard::Dash) {
+					if (m_timescale > 1) {
+						m_timescale = m_timescale >> 1;
+					}
 				}
-			}
-			else {
-				if (m_timescale < 64) {
-					m_timescale = m_timescale << 1;
+				else {
+					if (m_timescale < 64) {
+						m_timescale = m_timescale << 1;
+					}
 				}
-			}
 
-			updatesPerSecondTarget = 60 * m_timescale;
-			
-			m_timescaleLabel->setText("Timescale: " + std::to_string(m_timescale) + "x");
-			m_timescaleLabel->setVisible(true);
-			m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
+				m_updatesPerSecondTarget = 60 * m_timescale;
+
+				m_timescaleLabel->setText("Timescale: " + std::to_string(m_timescale) + "x");
+				m_timescaleLabel->setVisible(true);
+				m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
+			}
+			else if (ev.type == sf::Event::KeyReleased && ev.key.code == sf::Keyboard::Space) {
+				gui.remove(m_timescaleLabel);
+				open(gui);
+
+				if (m_timescale != 0) {
+					m_timescale = 0;
+
+					m_timescaleLabel->setText("Paused");
+					m_timescaleLabel->setVisible(true);
+				}
+				else {
+					m_timescale = 1;
+
+					m_updateClock.restart();
+
+					m_timescaleLabel->setText("Unpaused");
+					m_timescaleLabel->setVisible(true);
+					m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
+				}
+
+				m_updatesPerSecondTarget = 60 * m_timescale;
+			}
 		}
 	}
 }
