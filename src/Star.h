@@ -11,6 +11,7 @@
 #include "Planet.h"
 #include "Derelict.h"
 #include "Identifiable.h"
+#include "Quadtree.h"
 
 class Hyperlane;
 class Faction;
@@ -150,5 +151,6 @@ private:
 	float m_temperature = 5000.0f; // Kelvin
 
 	ParticleSystem m_particleSystem;
+	Quadtree m_quadtree;
 };
 

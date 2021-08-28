@@ -124,3 +124,16 @@ void Projectile::onDeath(Star* star) {
 		Sounds::playSoundLocal(m_deathSoundPath, star, getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
 }
+
+Collider Projectile::getCollider() {
+	Collider collider;
+	if (m_usesSprite) {
+		collider.setPosition(m_sprite.getPosition());
+		collider.setRadius(m_sprite.getLocalBounds().width / 2.0f);
+	}
+	else {
+		collider.setPosition(m_shape.getPosition());
+		collider.setRadius(m_shape.getLocalBounds().width / 2.0f);
+	}
+	return collider;
+}

@@ -22,6 +22,7 @@ void Star::init(const sf::Vector2f& pos) {
 	m_shape.setPosition(pos);
 	//m_localViewSprite.setTexture(TextureCache::getTexture("data/art/star1.png"));
 	m_localViewSprite.setPosition(pos);
+	m_quadtree = Quadtree(getLocalViewCenter(), 1000000);
 	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
 
 	int starColorRand = Random::randInt(0, 8);
@@ -145,6 +146,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 			a.draw(window);
 		}
 		m_particleSystem.drawParticles(window);
+		m_quadtree.draw(window);
 	}
 }
 
@@ -258,8 +260,33 @@ void Star::addProjectile(Projectile proj) {
 }
 
 void Star::handleCollisions() {
+	// Fill quadtree
+	m_quadtree = Quadtree(getLocalViewCenter(), 100000);
+
+	for (auto& ship : m_localShips) {
+		m_quadtree.insert(ship.get());
+	}
+	for (auto& building : m_buildings) {
+		m_quadtree.insert(building.get());
+	}
+	
 	for (Projectile& p : m_projectiles) {
-		for (auto& s : m_localShips) {
+		std::vector<Unit*> nearUnits;
+		m_quadtree.retrieve(nearUnits, p.getCollider());
+
+		for (Unit* unit : nearUnits) {
+			if (p.isCollidingWith(unit->getCollider()) && p.getAllegiance() != unit->getAllegiance()) {
+				unit->takeDamage(p.getDamage());
+				p.kill();
+				m_particleSystem.createParticle(
+					ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), unit->getCollider().getOutlineColor()
+				);
+			}
+		}
+
+		//DEBUG_PRINT("Comparisons: " << nearUnits.size());
+
+		/*for (auto& s : m_localShips) {
 			if (p.isCollidingWith(s->getCollider()) && p.getAllegiance() != s->getAllegiance()) {
 				s->takeDamage(p.getDamage());
 				p.kill();
@@ -282,7 +309,9 @@ void Star::handleCollisions() {
 					ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), b->getCollider().getOutlineColor()
 				);
 			}
-		}
+		}*/
+
+		//DEBUG_PRINT("Comparisons: " << m_localShips.size() + m_buildings.size());
 	}
 }
 

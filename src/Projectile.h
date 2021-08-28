@@ -40,6 +40,8 @@ public:
 
 	sf::Vector2f getPos() { if (m_usesSprite) return m_sprite.getPosition(); else return m_shape.getPosition(); }
 
+	Collider getCollider();
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
