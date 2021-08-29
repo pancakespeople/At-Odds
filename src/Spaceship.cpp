@@ -252,6 +252,28 @@ bool Spaceship::flyTo(const sf::Vector2f& pos) {
 	float closeArea = 25000000 / m_mass;
 	float farArea = 250000000 / m_mass;
 	
+	if (isHeavy()) {
+		if (dist > closeArea) {
+			rotateTo(angle);
+			float angleDiff = std::abs(m_facingAngle - angle);
+			if (angleDiff < 5.0f) {
+				if (dist > farArea) {
+					accelerate(m_maxAcceleration);
+				}
+				else if (dist > closeArea) {
+					keepSpeed(10.0f);
+				}
+			}
+		}
+		else if (getSpeed() < 5.0f) {
+			return true;
+		}
+		else {
+			return true;
+		}
+		return false;
+	}
+
 	if (dist > closeArea) {
 		rotateTo(angle);
 		if (dist > farArea) {
@@ -454,6 +476,7 @@ Spaceship::DesignerChassis::DesignerChassis(const std::string& typeStr) {
 	type = table[typeStr]["type"].value_or("");
 	name = table[typeStr]["name"].value_or("");
 	maxWeaponCapacity = table[typeStr]["maxWeaponCapacity"].value_or(1.0f);
+	buildTimeMultiplier = table[typeStr]["buildTimeMultiplier"].value_or(1.0f);
 
 	for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
 		std::string resourceType = table[typeStr]["cost"][i][0].value_or("");

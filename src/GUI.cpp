@@ -1086,6 +1086,14 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 				}
 			}
 		}
+		else if (command.command == "giveresource") {
+			if (validateArgs(command, 2) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
+				Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
+				if (playerFaction != nullptr) {
+					playerFaction->addResource(command.args[0], std::stof(command.args[1]));
+				}
+			}
+		}
 		else {
 			m_chatBox->addLine("Invalid command " + command.command);
 		}

@@ -58,6 +58,7 @@ private:
 		bool continuous = false;
 		float progressPercent = 0.0f;
 		int amount = 1;
+		float buildTimeMultiplier = 1.0f;
 
 		friend class boost::serialization::access;
 		template<class Archive>
@@ -67,6 +68,7 @@ private:
 			archive & progressPercent;
 			archive & continuous;
 			archive & amount;
+			archive & buildTimeMultiplier;
 		}
 	};
 

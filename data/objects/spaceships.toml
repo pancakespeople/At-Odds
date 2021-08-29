@@ -43,3 +43,10 @@ health = 50.0
 colliderRadius = 150.0
 civilian = true
 playerCanGiveOrders = false
+
+[CRUISER]
+texturePath = "data/art/medfighter.png"
+scale = 6.0
+mass = 250000
+health = 500.0
+colliderRadius = 300.0

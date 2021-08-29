@@ -65,6 +65,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	
 	addChassis(Spaceship::DesignerChassis("FRIGATE"));
 	addChassis(Spaceship::DesignerChassis("DESTROYER"));
+	addChassis(Spaceship::DesignerChassis("CRUISER"));
 	addChassis(Spaceship::DesignerChassis("CONSTRUCTOR"));
 
 	Spaceship::DesignerShip starterFrig;

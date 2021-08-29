@@ -51,6 +51,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 				else {
 					faction->subtractResources(cost);
 					build.second.resourcesSubtracted = true;
+					build.second.buildTimeMultiplier = shipDesign.chassis.buildTimeMultiplier;
 				}
 			}
 			
@@ -93,7 +94,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 				}
 			}
 			else {
-				build.second.progressPercent += 0.05f;
+				build.second.progressPercent += 0.05f / build.second.buildTimeMultiplier;
 
 				if (m_buildProgressBar != nullptr && build.second.selected) {
 					m_buildProgressBar->setValue(build.second.progressPercent);

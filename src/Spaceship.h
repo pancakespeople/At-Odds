@@ -39,6 +39,7 @@ public:
 		std::string name;
 		float maxWeaponCapacity = 1.0f;
 		std::unordered_map<std::string, float> resourceCost;
+		float buildTimeMultiplier = 1.0f;
 
 	private:
 		friend class boost::serialization::access;
@@ -48,6 +49,7 @@ public:
 			archive & name;
 			archive & maxWeaponCapacity;
 			archive & resourceCost;
+			archive & buildTimeMultiplier;
 		}
 	};
 
@@ -122,6 +124,7 @@ public:
 	bool canPlayerGiveOrders() { return m_playerCanGiveOrders; }
 	bool isCivilian() { return m_civilian; }
 	bool isConstructor() { return m_constructionSpeed > 0.0f; }
+	bool isHeavy() { return m_mass >= 125000; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
