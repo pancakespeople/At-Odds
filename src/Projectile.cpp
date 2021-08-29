@@ -52,14 +52,18 @@ void Projectile::init(const sf::Vector2f& pos, float angleDegrees, int allegianc
 	}
 
 	m_allegiance = allegiance;
+	m_collider.setPosition(pos);
+	m_collider.setRadius(1.0f);
 }
 
 void Projectile::update(Star* star) {
 	if (m_usesSprite) {
 		m_sprite.move(sf::Vector2f(std::cos(m_angle * Math::toRadians) * m_speed, -std::sin(m_angle * Math::toRadians) * m_speed));
+		m_collider.update(m_sprite.getPosition());
 	}
 	else {
 		m_shape.move(sf::Vector2f(std::cos(m_angle * Math::toRadians) * m_speed, -std::sin(m_angle * Math::toRadians) * m_speed));
+		m_collider.update(m_shape.getPosition());
 	}
 	m_life -= 1.0f;
 }
@@ -74,23 +78,12 @@ void Projectile::draw(sf::RenderWindow& window) {
 }
 
 bool Projectile::isCollidingWith(const Collider& collider) {
-	if (m_usesSprite) {
-		float dist = Math::distance(m_sprite.getPosition(), collider.getPosition());
-		if (dist <= collider.getRadius()) {
-			return true;
-		}
-		else {
-			return false;
-		}
+	float dist = Math::distance(m_collider.getPosition(), collider.getPosition());
+	if (dist <= collider.getRadius()) {
+		return true;
 	}
 	else {
-		float dist = Math::distance(m_shape.getPosition(), collider.getPosition());
-		if (dist <= collider.getRadius()) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return false;
 	}
 }
 
@@ -125,15 +118,6 @@ void Projectile::onDeath(Star* star) {
 	}
 }
 
-Collider Projectile::getCollider() {
-	Collider collider;
-	if (m_usesSprite) {
-		collider.setPosition(m_sprite.getPosition());
-		collider.setRadius(m_sprite.getLocalBounds().width / 2.0f);
-	}
-	else {
-		collider.setPosition(m_shape.getPosition());
-		collider.setRadius(m_shape.getLocalBounds().width / 2.0f);
-	}
-	return collider;
+const Collider& Projectile::getCollider() {
+	return m_collider;
 }

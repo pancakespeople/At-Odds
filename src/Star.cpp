@@ -146,7 +146,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 			a.draw(window);
 		}
 		m_particleSystem.drawParticles(window);
-		m_quadtree.draw(window);
+		//m_quadtree.draw(window);
 	}
 }
 

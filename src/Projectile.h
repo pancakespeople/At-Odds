@@ -40,7 +40,7 @@ public:
 
 	sf::Vector2f getPos() { if (m_usesSprite) return m_sprite.getPosition(); else return m_shape.getPosition(); }
 
-	Collider getCollider();
+	const Collider& getCollider();
 
 private:
 	friend class boost::serialization::access;
@@ -56,6 +56,7 @@ private:
 		archive & m_usesSprite;
 		archive & m_deathAnimationType;
 		archive & m_deathSoundPath;
+		archive & m_collider;
 	}
 	
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
@@ -70,5 +71,6 @@ private:
 	bool m_usesSprite = false;
 	std::string m_deathAnimationType;
 	std::string m_deathSoundPath;
+	Collider m_collider;
 };
 
