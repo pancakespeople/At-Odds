@@ -40,3 +40,7 @@ projectile = "FLAK"
 sound = "data/sound/gunshot1.wav"
 accuracy = 0.6
 numProjectiles = 6
+
+[MEGA_LASER]
+projectile = "MEGA_LASER"
+sound = "data/sound/pew1.wav"

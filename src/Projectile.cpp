@@ -9,6 +9,12 @@
 #include "Sounds.h"
 #include "Random.h"
 
+const std::map<std::string, std::function<void(Star* star, Projectile* proj)>> deathFunctions = {
+	{"test", &DeathFunctions::test},
+	{"smallExplosion", &DeathFunctions::smallExplosion},
+	{"laserRing", &DeathFunctions::laserRing}
+};
+
 Projectile::Projectile(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/projectiles.toml");
 
@@ -28,9 +34,7 @@ Projectile::Projectile(const std::string& type) {
 		m_shape.setFillColor(sf::Color(table[type]["color"][0].value_or(255.0f), table[type]["color"][1].value_or(255.0f), table[type]["color"][2].value_or(255.0f)));
 	}
 
-	m_deathAnimationType = table[type]["deathAnimation"].value_or("");
-	m_deathSoundPath = table[type]["deathSoundPath"].value_or("");
-
+	m_deathFunctionName = table[type]["deathFunction"].value_or("");
 	init(sf::Vector2f(0.0f, 0.0f), 90.0f, -1);
 }
 
@@ -112,12 +116,31 @@ void Projectile::setAllegiance(int allegiance) {
 }
 
 void Projectile::onDeath(Star* star) {
-	if (m_deathAnimationType != "") {
-		star->addAnimation(Animation(m_deathAnimationType, getPos()));
-		Sounds::playSoundLocal(m_deathSoundPath, star, getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
-	}
+	// Call death function
+	if (deathFunctions.count(m_deathFunctionName) > 0) deathFunctions.at(m_deathFunctionName)(star, this);
 }
 
 const Collider& Projectile::getCollider() {
 	return m_collider;
+}
+
+void DeathFunctions::test(Star* star, Projectile* proj) {
+	DEBUG_PRINT("Projectile died");
+}
+
+void DeathFunctions::smallExplosion(Star* star, Projectile* proj) {
+	star->addAnimation(Animation("SMALL_EXPLOSION", proj->getPos()));
+	Sounds::playSoundLocal("data/sound/boom2.wav", star, proj->getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
+}
+
+void DeathFunctions::laserRing(Star* star, Projectile* proj) {
+	float angle = 0.0f;
+	for (int i = 0; i < 8; i++) {
+		Projectile p("LASER");
+		p.setPos(proj->getPos());
+		p.setRotation(angle);
+		p.setAllegiance(proj->getAllegiance());
+		angle += 45.0f;
+		star->addProjectile(p);
+	}
 }

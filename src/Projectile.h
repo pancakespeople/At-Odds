@@ -54,9 +54,8 @@ private:
 		archive & m_allegiance;
 		archive & m_damage;
 		archive & m_usesSprite;
-		archive & m_deathAnimationType;
-		archive & m_deathSoundPath;
 		archive & m_collider;
+		archive & m_deathFunctionName;
 	}
 	
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
@@ -69,8 +68,12 @@ private:
 	int m_allegiance;
 	float m_damage;
 	bool m_usesSprite = false;
-	std::string m_deathAnimationType;
-	std::string m_deathSoundPath;
 	Collider m_collider;
+	std::string m_deathFunctionName;
 };
 
+namespace DeathFunctions {
+	void test(Star* star, Projectile* proj);
+	void smallExplosion(Star* star, Projectile* proj);
+	void laserRing(Star* star, Projectile* proj);
+}

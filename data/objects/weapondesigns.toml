@@ -27,3 +27,9 @@ type = "FLAK_CANNON"
 name = "Flak Cannon"
 weaponPoints = 1.5
 cost = [["COMMON_ORE", 5.0], ["UNCOMMON_ORE", 2.0]]
+
+[MEGA_LASER]
+type = "MEGA_LASER"
+name = "Mega Laser"
+weaponPoints = 4.0
+cost = [["COMMON_ORE", 75.0], ["UNCOMMON_ORE", 66.0]]

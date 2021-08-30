@@ -42,15 +42,23 @@ speed = 15.0
 [ROCKET]
 usesSprite = true
 texturePath = "data/art/rocket.png"
-deathAnimation = "SMALL_EXPLOSION"
-deathSoundPath = "data/sound/boom2.wav"
+deathFunction = "smallExplosion"
 life = 400.0
 damage = 15.0
 
 [FLAK]
 usesSprite = true
 texturePath = "data/art/flak.png"
-deathAnimation = "SMALL_EXPLOSION"
-deathSoundPath = "data/sound/boom2.wav"
+deathFunction = "smallExplosion"
 life = 175.0
 damage = 10.0
+
+[MEGA_LASER]
+usesSprite = true
+texturePath = "data/art/megalaser.png"
+deathFunction = "laserRing"
+scaleX = 2.0
+scaleY = 2.0
+life = 500.0
+damage = 105.0
+speed = 20.0
