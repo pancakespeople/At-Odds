@@ -35,6 +35,9 @@ Projectile::Projectile(const std::string& type) {
 	}
 
 	m_deathFunctionName = table[type]["deathFunction"].value_or("");
+	m_diesOnCollision = table[type]["diesOnCollision"].value_or(true);
+	m_collider.setRadius(table[type]["radius"].value_or(1.0f));
+
 	init(sf::Vector2f(0.0f, 0.0f), 90.0f, -1);
 }
 
@@ -57,7 +60,6 @@ void Projectile::init(const sf::Vector2f& pos, float angleDegrees, int allegianc
 
 	m_allegiance = allegiance;
 	m_collider.setPosition(pos);
-	m_collider.setRadius(1.0f);
 }
 
 void Projectile::update(Star* star) {
@@ -83,7 +85,7 @@ void Projectile::draw(sf::RenderWindow& window) {
 
 bool Projectile::isCollidingWith(const Collider& collider) {
 	float dist = Math::distance(m_collider.getPosition(), collider.getPosition());
-	if (dist <= collider.getRadius()) {
+	if (dist - m_collider.getRadius() <= collider.getRadius()) {
 		return true;
 	}
 	else {

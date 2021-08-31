@@ -35,6 +35,7 @@ public:
 
 	bool isDead() { return m_life <= 0.0f; }
 	bool isCollidingWith(const Collider& collider);
+	bool diesOnCollision() { return m_diesOnCollision; }
 
 	int getAllegiance() { return m_allegiance; }
 
@@ -56,6 +57,7 @@ private:
 		archive & m_usesSprite;
 		archive & m_collider;
 		archive & m_deathFunctionName;
+		archive & m_diesOnCollision;
 	}
 	
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
@@ -70,6 +72,7 @@ private:
 	bool m_usesSprite = false;
 	Collider m_collider;
 	std::string m_deathFunctionName;
+	bool m_diesOnCollision = true;
 };
 
 namespace DeathFunctions {

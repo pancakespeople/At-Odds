@@ -277,7 +277,7 @@ void Star::handleCollisions() {
 		for (Unit* unit : nearUnits) {
 			if (p.isCollidingWith(unit->getCollider()) && p.getAllegiance() != unit->getAllegiance()) {
 				unit->takeDamage(p.getDamage());
-				p.kill();
+				if (p.diesOnCollision()) p.kill();
 				m_particleSystem.createParticle(
 					ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), unit->getCollider().getOutlineColor()
 				);
