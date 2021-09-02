@@ -72,12 +72,12 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	starterFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
 	starterFrig.weapons.push_back(Spaceship::DesignerWeapon(m_weapons.back().type));
 	starterFrig.name = starterFrig.generateName();
-	addOrReplaceDesignerShip(starterFrig);
+	addShipDesign(starterFrig);
 
 	Spaceship::DesignerShip constructor;
 	constructor.name = "Constructor";
 	constructor.chassis = Spaceship::DesignerChassis("CONSTRUCTOR");
-	addOrReplaceDesignerShip(constructor);
+	addShipDesign(constructor);
 
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	for (auto& val : table) {
@@ -250,7 +250,7 @@ Spaceship::DesignerWeapon Faction::getWeaponByName(const std::string& name) {
 	return Spaceship::DesignerWeapon();
 }
 
-void Faction::addOrReplaceDesignerShip(const Spaceship::DesignerShip& ship) {
+void Faction::addShipDesign(const Spaceship::DesignerShip& ship) {
 	for (Spaceship::DesignerShip& designerShip : m_designerShips) {
 		if (ship.name == designerShip.name) {
 			designerShip = ship;

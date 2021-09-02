@@ -22,8 +22,8 @@ public:
 	void addResource(const std::string& type, float num);
 	void subtractResource(const std::string& type, float num);
 	void addChassis(const Spaceship::DesignerChassis& chassis) { m_chassis.push_back(chassis); }
-	void addWeapon(const Spaceship::DesignerWeapon& weapon) { m_weapons.push_back(weapon); }
-	void addOrReplaceDesignerShip(const Spaceship::DesignerShip& ship);
+	void addWeapon(const Spaceship::DesignerWeapon& weapon) { if (!hasWeapon(weapon.type)) m_weapons.push_back(weapon); }
+	void addShipDesign(const Spaceship::DesignerShip& ship);
 	void subtractResources(const std::unordered_map<std::string, float>& resources);
 	void addAnnouncementEvent(const std::string& text);
 	void clearAnnouncementEvents() { m_announcementEvents.clear(); }

@@ -416,7 +416,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 
 			if (newDesign.weapons.size() > 0) {
 				newDesign.name = newDesign.generateName();
-				faction->addOrReplaceDesignerShip(newDesign);
+				faction->addShipDesign(newDesign);
 
 				AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
 			}
@@ -453,7 +453,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 
 				if (newDesign.weapons.size() > 0) {
 					newDesign.name = newDesign.generateName();
-					faction->addOrReplaceDesignerShip(newDesign);
+					faction->addShipDesign(newDesign);
 
 					AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
 				}

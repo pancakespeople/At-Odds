@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{2AEC870B-96F5-877C-1F71-9E7C8B79937C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{809C880B-ECA5-887C-7521-9F7CE129947C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Animation.h" />
+    <ClInclude Include="src\Background.h" />
+    <ClInclude Include="src\Brain.h" />
+    <ClInclude Include="src\Building.h" />
+    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Collider.h" />
+    <ClInclude Include="src\Colony.h" />
+    <ClInclude Include="src\Constellation.h" />
+    <ClInclude Include="src\Debug.h" />
+    <ClInclude Include="src\Derelict.h" />
+    <ClInclude Include="src\EffectsEmitter.h" />
+    <ClInclude Include="src\Faction.h" />
+    <ClInclude Include="src\GUI.h" />
+    <ClInclude Include="src\GUI\DebugConsole.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameState.h" />
+    <ClInclude Include="src\Hyperlane.h" />
+    <ClInclude Include="src\Identifiable.h" />
+    <ClInclude Include="src\JumpPoint.h" />
+    <ClInclude Include="src\Math.h" />
+    <ClInclude Include="src\Mod.h" />
+    <ClInclude Include="src\Orbit.h" />
+    <ClInclude Include="src\Order.h" />
+    <ClInclude Include="src\ParticleSystem.h" />
+    <ClInclude Include="src\Pathfinder.h" />
+    <ClInclude Include="src\Planet.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\Projectile.h" />
+    <ClInclude Include="src\Quadtree.h" />
+    <ClInclude Include="src\Random.h" />
+    <ClInclude Include="src\Resource.h" />
+    <ClInclude Include="src\SaveLoader.h" />
+    <ClInclude Include="src\Sounds.h" />
+    <ClInclude Include="src\Spaceship.h" />
+    <ClInclude Include="src\Star.h" />
+    <ClInclude Include="src\TOMLCache.h" />
+    <ClInclude Include="src\TextureCache.h" />
+    <ClInclude Include="src\Unit.h" />
+    <ClInclude Include="src\Util.h" />
+    <ClInclude Include="src\Weapon.h" />
+    <ClInclude Include="src\pch\gamepch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="src\toml.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\Background.cpp" />
+    <ClCompile Include="src\Brain.cpp" />
+    <ClCompile Include="src\Building.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Collider.cpp" />
+    <ClCompile Include="src\Colony.cpp" />
+    <ClCompile Include="src\Constellation.cpp" />
+    <ClCompile Include="src\Derelict.cpp" />
+    <ClCompile Include="src\EffectsEmitter.cpp" />
+    <ClCompile Include="src\Faction.cpp" />
+    <ClCompile Include="src\GUI.cpp" />
+    <ClCompile Include="src\GUI\DebugConsole.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameState.cpp" />
+    <ClCompile Include="src\Hyperlane.cpp" />
+    <ClCompile Include="src\Identifiable.cpp" />
+    <ClCompile Include="src\JumpPoint.cpp" />
+    <ClCompile Include="src\Mod.cpp" />
+    <ClCompile Include="src\Orbit.cpp" />
+    <ClCompile Include="src\Order.cpp" />
+    <ClCompile Include="src\ParticleSystem.cpp" />
+    <ClCompile Include="src\Pathfinder.cpp" />
+    <ClCompile Include="src\Planet.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Projectile.cpp" />
+    <ClCompile Include="src\Quadtree.cpp" />
+    <ClCompile Include="src\Random.cpp" />
+    <ClCompile Include="src\Resource.cpp" />
+    <ClCompile Include="src\SaveLoader.cpp" />
+    <ClCompile Include="src\Sounds.cpp" />
+    <ClCompile Include="src\Spaceship.cpp" />
+    <ClCompile Include="src\Star.cpp" />
+    <ClCompile Include="src\TOMLCache.cpp" />
+    <ClCompile Include="src\TextureCache.cpp" />
+    <ClCompile Include="src\Unit.cpp" />
+    <ClCompile Include="src\Weapon.cpp" />
+    <ClCompile Include="src\gamepch.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+</Project>

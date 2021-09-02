@@ -5,14 +5,14 @@ project "at_odds"
    language "C++"
    cppdialect "C++17"
    targetdir "bin/%{cfg.buildcfg}"
+   includedirs "src/pch"
    
-   pchheader "src/gamepch.h"
+   pchheader "gamepch.h"
    pchsource "src/gamepch.cpp"
 
    files { "src/**.h", "src/**.hpp", "src/**.cpp" }
    
    filter "system:Windows"
-      pchheader "gamepch.h"
       buildoptions "/bigobj"
    
    filter "system:Linux"
