@@ -8,6 +8,7 @@
 #include "Star.h"
 #include "Sounds.h"
 #include "Random.h"
+#include "Animation.h"
 
 const std::map<std::string, std::function<void(Star* star, Projectile* proj)>> deathFunctions = {
 	{"test", &DeathFunctions::test},

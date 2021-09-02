@@ -12,3 +12,10 @@ frameWidth = 4
 frameHeight = 4
 frameDelay = 20
 scale = 4.0
+
+[LIGHTNING]
+filePath = "data/art/lightning.png"
+frameWidth = 17
+frameHeight = 1
+frameDelay = 10
+scale = 10.0

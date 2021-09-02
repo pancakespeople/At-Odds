@@ -28,9 +28,13 @@ void Animation::init(const std::string& filePath, int frameWidth, int frameHeigh
 
 	m_frames.reserve(static_cast<size_t>(frameWidth) * frameHeight);
 
+	if (filePath == "data/art/lightning.png") {
+		DEBUG_PRINT("lightning");
+	}
+
 	for (int y = 0; y < frameHeight; y++) {
 		for (int x = 0; x < frameWidth; x++) {
-			sf::IntRect rect(x * widthStep, y * heightStep, x + widthStep, y + heightStep);
+			sf::IntRect rect(x * widthStep, y * heightStep, widthStep, heightStep);
 			sf::Sprite sprite(TextureCache::getTexture(filePath), rect);
 			sprite.setOrigin(sf::Vector2f(sprite.getTextureRect().width / 2.0f, sprite.getTextureRect().height / 2.0f));
 			sprite.setPosition(pos);
