@@ -43,5 +43,5 @@
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/unordered_set.hpp>
 
-#include "Debug.h"
-#include "toml.hpp"
+#include "../Debug.h"
+#include "../toml.hpp"
