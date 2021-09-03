@@ -14,8 +14,8 @@ frameDelay = 20
 scale = 4.0
 
 [LIGHTNING]
-filePath = "data/art/lightning.png"
-frameWidth = 17
+filePath = "data/art/lightning3.png"
+frameWidth = 12
 frameHeight = 1
 frameDelay = 10
-scale = 10.0
+scale = 32.0

@@ -28,10 +28,6 @@ void Animation::init(const std::string& filePath, int frameWidth, int frameHeigh
 
 	m_frames.reserve(static_cast<size_t>(frameWidth) * frameHeight);
 
-	if (filePath == "data/art/lightning.png") {
-		DEBUG_PRINT("lightning");
-	}
-
 	for (int y = 0; y < frameHeight; y++) {
 		for (int x = 0; x < frameWidth; x++) {
 			sf::IntRect rect(x * widthStep, y * heightStep, widthStep, heightStep);

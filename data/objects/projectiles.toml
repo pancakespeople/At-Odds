@@ -62,3 +62,18 @@ scaleY = 2.0
 life = 500.0
 damage = 105.0
 speed = 20.0
+
+[LIGHTNING]
+usesSprite = true
+texturePath = "data/art/lightningproj.png"
+deathFunction = "lightningAOE"
+life = 250.0
+damage = 10.0
+speed = 20.0
+
+[LIGHTNING_AOE]
+radius = 1000.0
+life = 2.0
+damage = 10.0
+speed = 0.0
+diesOnCollision = false

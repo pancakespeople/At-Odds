@@ -76,7 +76,7 @@ private:
 };
 
 namespace DeathFunctions {
-	void test(Star* star, Projectile* proj);
 	void smallExplosion(Star* star, Projectile* proj);
 	void laserRing(Star* star, Projectile* proj);
+	void lightningAOE(Star* star, Projectile* proj);
 }

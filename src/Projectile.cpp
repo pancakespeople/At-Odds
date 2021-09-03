@@ -11,9 +11,9 @@
 #include "Animation.h"
 
 const std::map<std::string, std::function<void(Star* star, Projectile* proj)>> deathFunctions = {
-	{"test", &DeathFunctions::test},
 	{"smallExplosion", &DeathFunctions::smallExplosion},
-	{"laserRing", &DeathFunctions::laserRing}
+	{"laserRing", &DeathFunctions::laserRing},
+	{"lightningAOE", &DeathFunctions::lightningAOE}
 };
 
 Projectile::Projectile(const std::string& type) {
@@ -127,10 +127,6 @@ const Collider& Projectile::getCollider() {
 	return m_collider;
 }
 
-void DeathFunctions::test(Star* star, Projectile* proj) {
-	DEBUG_PRINT("Projectile died");
-}
-
 void DeathFunctions::smallExplosion(Star* star, Projectile* proj) {
 	star->addAnimation(Animation("SMALL_EXPLOSION", proj->getPos()));
 	Sounds::playSoundLocal("data/sound/boom2.wav", star, proj->getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
@@ -146,4 +142,12 @@ void DeathFunctions::laserRing(Star* star, Projectile* proj) {
 		angle += 45.0f;
 		star->addProjectile(p);
 	}
+}
+
+void DeathFunctions::lightningAOE(Star* star, Projectile* proj) {
+	star->addAnimation(Animation("LIGHTNING", proj->getPos()));
+	Projectile p("LIGHTNING_AOE");
+	p.setPos(proj->getPos());
+	p.setAllegiance(proj->getAllegiance());
+	star->addProjectile(p);
 }

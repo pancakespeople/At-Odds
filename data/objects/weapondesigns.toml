@@ -33,3 +33,9 @@ type = "MEGA_LASER"
 name = "Mega Laser"
 weaponPoints = 4.0
 cost = [["COMMON_ORE", 75.0], ["UNCOMMON_ORE", 66.0]]
+
+[ARC_GUN]
+type = "ARC_GUN"
+name = "Arc Gun"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 20.0], ["UNCOMMON_ORE", 20.0]]
