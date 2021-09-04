@@ -77,3 +77,13 @@ life = 2.0
 damage = 10.0
 speed = 0.0
 diesOnCollision = false
+
+[CRUSHER_BOLT]
+radius = 50.0
+usesSprite = true
+texturePath = "data/art/crusher.png"
+deathFunction = "knockAll"
+scaleX = 2.0
+scaleY = 2.0
+life = 400.0
+damage = 75.0

@@ -47,3 +47,8 @@ sound = "data/sound/pew1.wav"
 
 [ARC_GUN]
 projectile = "LIGHTNING"
+
+[THE_CRUSHER]
+projectile = "CRUSHER_BOLT"
+sound = "data/sound/gunshot1.wav"
+cooldownRecovery = 0.5

@@ -13,7 +13,8 @@
 const std::map<std::string, std::function<void(Star* star, Projectile* proj)>> deathFunctions = {
 	{"smallExplosion", &DeathFunctions::smallExplosion},
 	{"laserRing", &DeathFunctions::laserRing},
-	{"lightningAOE", &DeathFunctions::lightningAOE}
+	{"lightningAOE", &DeathFunctions::lightningAOE},
+	{"knockAll", &DeathFunctions::knockAll}
 };
 
 Projectile::Projectile(const std::string& type) {
@@ -150,4 +151,17 @@ void DeathFunctions::lightningAOE(Star* star, Projectile* proj) {
 	p.setPos(proj->getPos());
 	p.setAllegiance(proj->getAllegiance());
 	star->addProjectile(p);
+}
+
+void DeathFunctions::knockAll(Star* star, Projectile* proj) {
+	star->addAnimation(Animation("EXPLOSION", proj->getPos()));
+	Sounds::playSoundLocal("data/sound/boom1.wav", star, proj->getPos(), 50.0f, 0.25f);
+
+	auto& spaceships = star->getSpaceships();
+	for (auto& ship : spaceships) {
+		float dist = Math::distance(proj->getPos(), ship->getPos());
+		float accel = 1000000000.0f / ship->getMass() / dist;
+		float angle = Math::angleBetween(proj->getPos(), ship->getPos()) + 180.0f;
+		ship->addVelocity(sf::Vector2f(std::cos(angle * Math::toRadians), std::sin(angle * Math::toRadians) * accel));
+	}
 }

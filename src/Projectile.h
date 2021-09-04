@@ -79,4 +79,5 @@ namespace DeathFunctions {
 	void smallExplosion(Star* star, Projectile* proj);
 	void laserRing(Star* star, Projectile* proj);
 	void lightningAOE(Star* star, Projectile* proj);
+	void knockAll(Star* star, Projectile* proj);
 }

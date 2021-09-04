@@ -39,3 +39,9 @@ type = "ARC_GUN"
 name = "Arc Gun"
 weaponPoints = 2.0
 cost = [["COMMON_ORE", 20.0], ["UNCOMMON_ORE", 20.0]]
+
+[THE_CRUSHER]
+type = "THE_CRUSHER"
+name = "The Crusher"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 50.0]]

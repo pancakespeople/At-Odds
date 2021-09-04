@@ -130,6 +130,7 @@ public:
 	float angleTo(const sf::Vector2f& pos);
 	float getSpeed();
 	float getConstructionSpeed() const { return m_constructionSpeed; }
+	float getMass() const { return m_mass; }
 
 	int numOrders() { return m_orders.size(); }
 
