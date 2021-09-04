@@ -54,6 +54,10 @@
       <Filter>pch</Filter>
     </ClInclude>
     <ClInclude Include="src\toml.hpp" />
+    <ClInclude Include="src\GUI\ShipDesigner.h" />
+    <ClInclude Include="src\GUI\PlayerGUI.h" />
+    <ClInclude Include="src\GUI\NewGameMenu.h" />
+    <ClInclude Include="src\GUI\MainMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -96,5 +100,9 @@
     <ClCompile Include="src\Weapon.cpp" />
     <ClCompile Include="src\gamepch.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\GUI\ShipDesigner.cpp" />
+    <ClCompile Include="src\GUI\PlayerGUI.cpp" />
+    <ClCompile Include="src\GUI\NewGameMenu.cpp" />
+    <ClCompile Include="src\GUI\MainMenu.cpp" />
   </ItemGroup>
 </Project>

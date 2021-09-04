@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../GUI.h"
+#include "PlayerGUI.h"
 
 class DebugConsole {
 public:

@@ -9,6 +9,7 @@ type = "DESTROYER_1"
 name = "Destroyer"
 maxWeaponCapacity = 2.0
 cost = [["COMMON_ORE", 15.0]]
+buildTimeMultiplier = 1.25
 
 [CONSTRUCTOR]
 type = "CONSTRUCTION_SHIP"

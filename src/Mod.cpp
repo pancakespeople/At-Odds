@@ -8,6 +8,7 @@
 #include "Math.h"
 #include "Planet.h"
 #include "GUI.h"
+#include "GUI/ShipDesigner.h"
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")

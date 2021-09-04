@@ -156,21 +156,6 @@ namespace GameWidget {
 
 }
 
-class ShipDesignerGUI {
-public:
-	ShipDesignerGUI() {}
-
-	void open(tgui::Gui& gui, Faction* playerFaction);
-	void displayShipInfo(Faction* playerFaction);
-	bool canChassisFitWeapons(Faction* playerFaction);
-	void displayShipDesigns(Faction* playerFaction);
-	static void displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<std::string, float>& totalResourceCost, int yPosPercent);
-
-private:
-	GameWidget::Icon m_icon;
-	tgui::ChildWindow::Ptr m_window;
-};
-
 class AnnouncerGUI {
 public:
 	AnnouncerGUI() {}
@@ -198,50 +183,6 @@ public:
 private:
 	GameWidget::Icon m_icon;
 	tgui::ChildWindow::Ptr m_window = nullptr;
-};
-
-struct PlayerGUI {
-	PlayerGUI() {}
-
-	void open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator);
-
-	tgui::Panel::Ptr mainPanel;
-
-	HelpWindow helpWindow;
-	BuildGUI buildGUI;
-	UnitGUI unitGUI;
-	PlanetGUI planetGUI;
-	BuildingGUI buildingGUI;
-	TimescaleGUI timescaleGUI;
-	ResourceGUI resourceGUI;
-	ShipDesignerGUI shipDesignerGUI;
-	AnnouncerGUI announcerGUI;
-	MinimapGUI minimapGUI;
-	ColonyListGUI colonyListGUI;
-};
-
-class NewGameMenu {
-public:
-	NewGameMenu() {}
-
-	void open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
-	void close();
-	void addGameStartCallbacK(std::function<void()> func) { m_gameStartCallbacks.push_back(func); }
-
-	bool isOpen() { return m_window->isEnabled(); }
-
-	PlayerGUI& getPlayerGUI() { return m_playerGui; }
-
-private:
-	void onStarsSliderChange(tgui::Gui& gui);
-	void onFactionsSliderChange(tgui::Gui& gui);
-	void startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state);
-
-	tgui::ChildWindow::Ptr m_window;
-
-	PlayerGUI m_playerGui;
-
-	std::vector<std::function<void()>> m_gameStartCallbacks;
 };
 
 class OptionsMenu {
@@ -276,25 +217,5 @@ private:
 
 	bool m_updateGameSettings = false;
 	bool m_displayChanged = false;
-};
-
-class MainMenu {
-public:
-	MainMenu() {}
-
-	void open(tgui::Gui& gui, Constellation& constellation, GameState& state);
-	void close(tgui::Gui& gui);
-	void onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state);
-	OptionsMenu& getOptionsMenu() { return m_optionsMenu; }
-	NewGameMenu& getNewGameMenu() { return m_newGameMenu; }
-
-private:
-	void exitGame(GameState& state);
-
-	tgui::Panel::Ptr m_panel;
-	tgui::Label::Ptr m_title;
-	NewGameMenu m_newGameMenu;
-	OptionsMenu m_optionsMenu;
-	bool m_opened = false;
 };
 

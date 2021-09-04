@@ -21,6 +21,7 @@
 #include "SaveLoader.h"
 #include "TextureCache.h"
 #include "GUI/DebugConsole.h"
+#include "GUI/MainMenu.h"
 
 int main(int argc, const char* argv[])
 {
