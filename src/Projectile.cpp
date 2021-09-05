@@ -26,15 +26,12 @@ Projectile::Projectile(const std::string& type) {
 	m_life = table[type]["life"].value_or(100.0f);
 	m_speed = table[type]["speed"].value_or(10.0f);
 
-	if (table[type]["usesSprite"].value_or(false)) {
+	std::string texturePath = table[type]["texturePath"].value_or("");
+
+	if (texturePath != "") {
 		m_sprite.setTexture(TextureCache::getTexture(table[type]["texturePath"].value_or("")));
-		m_sprite.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));
-		m_usesSprite = true;
 	}
-	else {
-		m_shape.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));
-		m_shape.setFillColor(sf::Color(table[type]["color"][0].value_or(255.0f), table[type]["color"][1].value_or(255.0f), table[type]["color"][2].value_or(255.0f)));
-	}
+	m_sprite.setScale(table[type]["scaleX"].value_or(1.0f), table[type]["scaleY"].value_or(1.0f));
 
 	m_deathFunctionName = table[type]["deathFunction"].value_or("");
 	m_diesOnCollision = table[type]["diesOnCollision"].value_or(true);
@@ -50,39 +47,22 @@ Projectile::Projectile() {
 void Projectile::init(const sf::Vector2f& pos, float angleDegrees, int allegiance) {
 	m_angle = angleDegrees;
 	
-	if (m_usesSprite) {
-		m_sprite.setPosition(pos);
-		m_sprite.rotate(-angleDegrees);
-	}
-	else {
-		m_shape.setPosition(pos);
-		m_shape.setSize(sf::Vector2f(100.0f, 5.0f));
-		m_shape.rotate(-angleDegrees);
-	}
+	m_sprite.setOrigin(sf::Vector2f(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f));
+	m_sprite.setPosition(pos);
+	m_sprite.rotate(-angleDegrees);
 
 	m_allegiance = allegiance;
 	m_collider.setPosition(pos);
 }
 
 void Projectile::update(Star* star) {
-	if (m_usesSprite) {
-		m_sprite.move(sf::Vector2f(std::cos(m_angle * Math::toRadians) * m_speed, -std::sin(m_angle * Math::toRadians) * m_speed));
-		m_collider.update(m_sprite.getPosition());
-	}
-	else {
-		m_shape.move(sf::Vector2f(std::cos(m_angle * Math::toRadians) * m_speed, -std::sin(m_angle * Math::toRadians) * m_speed));
-		m_collider.update(m_shape.getPosition());
-	}
+	m_sprite.move(sf::Vector2f(std::cos(m_angle * Math::toRadians) * m_speed, -std::sin(m_angle * Math::toRadians) * m_speed));
+	m_collider.update(m_sprite.getPosition());
 	m_life -= 1.0f;
 }
 
 void Projectile::draw(sf::RenderWindow& window) {
-	if (m_usesSprite) {
-		window.draw(m_sprite);
-	}
-	else {
-		window.draw(m_shape);
-	}
+	window.draw(m_sprite);
 }
 
 bool Projectile::isCollidingWith(const Collider& collider) {
@@ -96,23 +76,12 @@ bool Projectile::isCollidingWith(const Collider& collider) {
 }
 
 void Projectile::setPos(const sf::Vector2f& pos) { 
-	if (m_usesSprite) {
-		m_sprite.setPosition(pos);
-	}
-	else {
-		m_shape.setPosition(pos);
-	}
+	m_sprite.setPosition(pos);
 }
 
 void Projectile::setRotation(float angleDegrees) {
 	m_angle = angleDegrees; 
-	
-	if (m_usesSprite) {
-		m_sprite.setRotation(-angleDegrees + 90.0f);
-	}
-	else {
-		m_shape.setRotation(-angleDegrees);
-	}
+	m_sprite.setRotation(-angleDegrees + 90.0f);
 }
 
 void Projectile::setAllegiance(int allegiance) { 

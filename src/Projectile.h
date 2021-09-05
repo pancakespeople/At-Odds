@@ -39,7 +39,7 @@ public:
 
 	int getAllegiance() { return m_allegiance; }
 
-	sf::Vector2f getPos() { if (m_usesSprite) return m_sprite.getPosition(); else return m_shape.getPosition(); }
+	sf::Vector2f getPos() { return m_sprite.getPosition(); }
 
 	const Collider& getCollider();
 
@@ -48,13 +48,11 @@ private:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & m_angle;
-		archive & m_shape;
 		archive & m_sprite;
 		archive & m_life;
 		archive & m_speed;
 		archive & m_allegiance;
 		archive & m_damage;
-		archive & m_usesSprite;
 		archive & m_collider;
 		archive & m_deathFunctionName;
 		archive & m_diesOnCollision;
@@ -63,13 +61,11 @@ private:
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
 
 	float m_angle; // Degrees
-	sf::RectangleShape m_shape;
 	sf::Sprite m_sprite;
 	float m_life;
 	float m_speed;
 	int m_allegiance;
 	float m_damage;
-	bool m_usesSprite = false;
 	Collider m_collider;
 	std::string m_deathFunctionName;
 	bool m_diesOnCollision = true;

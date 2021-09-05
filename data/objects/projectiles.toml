@@ -1,11 +1,10 @@
 [LASER]
-color = [255.0, 0.0, 0.0]
+texturePath = "data/art/laser.png"
 damage = 10.0
 life = 100.0
 speed = 10.0
 
 [GAUSS]
-usesSprite = true
 texturePath = "data/art/gaussproj.png"
 scaleX = 2.0
 scaleY = 2.0
@@ -14,47 +13,42 @@ damage = 25.0
 speed = 10.0
 
 [LIGHT_BALLISTIC]
-color = [255.0, 255.0, 0.0]
+texturePath = "data/art/bullet.png"
 damage = 1.0
 life = 100.0
 speed = 15.0
 
 [LONG_RANGE_LASER]
-color = [255.0, 0.0, 0.0]
+texturePath = "data/art/laser.png"
 damage = 10.0
 life = 1000.0
 speed = 10.0
 
 [LONG_RANGE_LIGHT_BALLISTIC]
-color = [255.0, 255.0, 0.0]
+texturePath = "data/art/bullet.png"
 damage = 1.0
 life = 1000.0
 speed = 15.0
 	
 [CONSTRUCTION]
-color = [100, 100, 255]
-scaleX = 1.0
-scaleY = 4.0
+texturePath = "data/art/hammerproj.png"
 damage = 0.0
 life = 100.0
 speed = 15.0
 
 [ROCKET]
-usesSprite = true
 texturePath = "data/art/rocket.png"
 deathFunction = "smallExplosion"
 life = 400.0
 damage = 15.0
 
 [FLAK]
-usesSprite = true
 texturePath = "data/art/flak.png"
 deathFunction = "smallExplosion"
 life = 175.0
 damage = 10.0
 
 [MEGA_LASER]
-usesSprite = true
 texturePath = "data/art/megalaser.png"
 deathFunction = "laserRing"
 scaleX = 2.0
@@ -64,7 +58,6 @@ damage = 105.0
 speed = 20.0
 
 [LIGHTNING]
-usesSprite = true
 texturePath = "data/art/lightningproj.png"
 deathFunction = "lightningAOE"
 life = 250.0
@@ -79,7 +72,6 @@ speed = 0.0
 diesOnCollision = false
 
 [CRUSHER_BOLT]
-radius = 50.0
 usesSprite = true
 texturePath = "data/art/crusher.png"
 deathFunction = "knockAll"
