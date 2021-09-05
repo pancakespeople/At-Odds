@@ -45,7 +45,7 @@ numProjectiles = 6
 projectile = "MEGA_LASER"
 sound = "data/sound/pew1.wav"
 
-[ARC_GUN]
+[ZAPPER]
 projectile = "LIGHTNING"
 
 [THE_CRUSHER]
