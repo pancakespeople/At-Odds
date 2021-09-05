@@ -1573,3 +1573,26 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 		}
 	});
 }
+
+void GUIUtil::displayResourceCost(tgui::Group::Ptr group, const std::unordered_map<std::string, float>& totalResourceCost, int yPosPercent, int percentStep) {
+	auto resourcesLabel = tgui::Label::create("Resources: ");
+	resourcesLabel->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
+	group->add(resourcesLabel);
+
+	yPosPercent += percentStep;
+
+	// Add resource cost labels
+	for (auto& resource : totalResourceCost) {
+		Resource r;
+		r.type = resource.first;
+
+		std::stringstream labelString;
+		labelString << r.getName() << ": " << std::fixed << std::setprecision(1) << resource.second;
+
+		auto label = tgui::Label::create(labelString.str());
+		label->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
+		group->add(label);
+
+		yPosPercent += percentStep;
+	}
+}

@@ -73,6 +73,35 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			auto weaponsListBox = tgui::ListBox::create();
 			weaponsListBox->setPosition("52.5%", "5%");
 			weaponsListBox->setSize("22.5%", "30%");
+			weaponsListBox->onItemSelect([this, &gui, weaponsListBox, playerFaction]() {
+				auto weaponInfoGroup = m_window->get<tgui::Group>("weaponInfoGroup");
+				if (weaponInfoGroup != nullptr) {
+					m_window->remove(weaponInfoGroup);
+				}
+
+				if (weaponsListBox->getSelectedItemIndex() != -1) {
+					weaponInfoGroup = tgui::Group::create();
+					weaponInfoGroup->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
+					m_window->add(weaponInfoGroup, "weaponInfoGroup");
+
+					Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(weaponsListBox->getSelectedItem().toStdString());
+					
+					auto weaponNameLabel = tgui::Label::create(weapon.name);
+					weaponNameLabel->getRenderer()->setTextStyle(tgui::TextStyle::Underlined);
+					weaponInfoGroup->add(weaponNameLabel);
+					
+					auto weaponCapacityLabel = tgui::Label::create();
+					weaponCapacityLabel->setPosition("0%", "5%");
+
+					std::stringstream ss;
+					ss << "Weapon Capacity: " << std::fixed << std::setprecision(1) << weapon.weaponPoints;
+
+					weaponCapacityLabel->setText(ss.str());
+					weaponInfoGroup->add(weaponCapacityLabel);
+
+					GUIUtil::displayResourceCost(weaponInfoGroup, weapon.resourceCost, 10);
+				}
+			});
 			m_window->add(weaponsListBox, "weaponsListBox");
 
 			// Add weapons to list box
@@ -106,13 +135,21 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			designNameSaveButton->setPosition("designNameTextBox.right + 1%", "designNameTextBox.top + designNameTextBox.height / 2.0");
 			designNameSaveButton->onClick([this, designNameTextBox, shipChassisListBox, shipWeaponsListBox, playerFaction]() {
 				if (shipChassisListBox->getItemCount() > 0) {
-					if (designNameTextBox->getText().length() > 0 && canChassisFitWeapons(playerFaction)) {
+					if (canChassisFitWeapons(playerFaction)) {
 						Spaceship::DesignerShip ship;
 						ship.chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
+						
 						for (tgui::String& weapon : shipWeaponsListBox->getItems()) {
 							ship.weapons.push_back(playerFaction->getWeaponByName(weapon.toStdString()));
 						}
-						ship.name = designNameTextBox->getText().toStdString();
+						
+						if (designNameTextBox->getText().size() == 0) {
+							ship.name = ship.generateName();
+						}
+						else {
+							ship.name = designNameTextBox->getText().toStdString();
+						}
+						
 						playerFaction->addShipDesign(ship);
 						displayShipDesigns(playerFaction);
 					}
@@ -220,21 +257,26 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 		}
 
 		shipInfoGroup = tgui::Group::create();
-		shipInfoGroup->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
+		shipInfoGroup->setPosition("shipWeaponsListBox.right + 2.5%", "shipWeaponsListBox.top");
 		shipInfoGroup->setSize("22.5%", "90%");
 		m_window->add(shipInfoGroup, "shipInfoGroup");
 
+		auto spaceshipLabel = tgui::Label::create("Spaceship");
+		spaceshipLabel->getRenderer()->setTextStyle(tgui::TextStyle::Underlined);
+		spaceshipLabel->setPosition("0%", "0%");
+		shipInfoGroup->add(spaceshipLabel);
+
 		// Use stringstream to set the decimals properly
 		std::stringstream ss;
-		ss << "WC: " << std::fixed << std::setprecision(1) << totalWeaponPoints << "/" << chassis.maxWeaponCapacity;
+		ss << "Weapon Capacity: " << std::fixed << std::setprecision(1) << totalWeaponPoints << "/" << chassis.maxWeaponCapacity;
 
 		auto capacityLabel = tgui::Label::create(ss.str());
-		capacityLabel->setPosition("0%", "0%");
-		tgui::ToolTip::setInitialDelay(0);
-		capacityLabel->setToolTip(tgui::Label::create("Weapon Capacity"));
+		capacityLabel->setPosition("0%", "5%");
+		//tgui::ToolTip::setInitialDelay(0);
+		//capacityLabel->setToolTip(tgui::Label::create("Weapon Capacity"));*/
 		shipInfoGroup->add(capacityLabel, "capacityLabel");
 
-		ShipDesignerGUI::displayShipResourceCost(shipInfoGroup, totalResourceCost, 5);
+		GUIUtil::displayResourceCost(shipInfoGroup, totalResourceCost, 10);
 	}
 	else {
 		if (shipInfoGroup != nullptr) {
@@ -265,28 +307,5 @@ void ShipDesignerGUI::displayShipDesigns(Faction* playerFaction) {
 
 	for (Spaceship::DesignerShip& ship : playerFaction->getShipDesigns()) {
 		designListBox->addItem(ship.name);
-	}
-}
-
-void ShipDesignerGUI::displayShipResourceCost(tgui::Group::Ptr group, const std::unordered_map<std::string, float>& totalResourceCost, int yPosPercent) {
-	auto resourcesLabel = tgui::Label::create("Resources: ");
-	resourcesLabel->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
-	group->add(resourcesLabel);
-
-	yPosPercent += 5;
-
-	// Add resource cost labels
-	for (auto& resource : totalResourceCost) {
-		Resource r;
-		r.type = resource.first;
-
-		std::stringstream labelString;
-		labelString << r.getName() << ": " << std::fixed << std::setprecision(1) << resource.second;
-
-		auto label = tgui::Label::create(labelString.str());
-		label->setPosition("0%", (std::to_string(yPosPercent) + "%").c_str());
-		group->add(label);
-
-		yPosPercent += 5;
 	}
 }

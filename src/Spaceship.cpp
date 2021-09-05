@@ -503,8 +503,9 @@ std::string Spaceship::DesignerShip::generateName() {
 	std::string weaponName;
 	if (weapons.size() > 0) {
 		weaponName = weapons[0].name;
+		return weaponName + " " + chassis.name;
 	}
-	return weaponName + " " + chassis.name;
+	return chassis.name;
 }
 
 float Spaceship::DesignerShip::getTotalWeaponPoints() {

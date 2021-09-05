@@ -219,3 +219,6 @@ private:
 	bool m_displayChanged = false;
 };
 
+namespace GUIUtil {
+	void displayResourceCost(tgui::Group::Ptr group, const std::unordered_map<std::string, float>& totalResourceCost, int yPosPercent, int percentStep = 5);
+}

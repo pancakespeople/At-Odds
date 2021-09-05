@@ -131,7 +131,7 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			shipInfoGroup->setSize("33% - 2.5%", "90% - 2.5%");
 			shipWidgets->add(shipInfoGroup, "shipInfoGroup");
 
-			ShipDesignerGUI::displayShipResourceCost(shipInfoGroup, totalResourceCost, 0);
+			GUIUtil::displayResourceCost(shipInfoGroup, totalResourceCost, 0, 10);
 
 			auto buildCheckbox = tgui::CheckBox::create("Build");
 			buildCheckbox->setPosition("shipInfoGroup.right + 2.5%", "shipInfoGroup.top");
