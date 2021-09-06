@@ -172,6 +172,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 					JumpPoint* jumpPoint = nullptr;
 					Spaceship* attackTarget = nullptr;
 					Building* buildingClick = nullptr;
+					Planet* planetClick = nullptr;
 
 					// Check if click was on a jump point
 					for (JumpPoint& j : state.getLocalViewStar()->getJumpPoints()) {
@@ -198,6 +199,13 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 						}
 					}
 
+					// Planets
+					for (auto& planet : state.getLocalViewStar()->getPlanets()) {
+						if (Math::distance(worldClick, planet.getPos()) < planet.getRadius()) {
+							planetClick = &planet;
+						}
+					}
+
 					// Add orders
 					for (Spaceship* s : m_selectedShips) {
 						if (!s->canPlayerGiveOrders()) continue;
@@ -216,6 +224,9 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 							}
 							else if (jumpPoint != nullptr) {
 								s->addOrder(JumpOrder(jumpPoint));
+							}
+							else if (planetClick != nullptr) {
+								s->addOrder(InteractWithPlanetOrder(planetClick, state.getLocalViewStar()));
 							}
 							else {
 								s->addOrder(FlyToOrder(worldClick));

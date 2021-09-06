@@ -4,6 +4,178 @@
 #include "../Constellation.h"
 #include "../TOMLCache.h"
 
+void spawnShip(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 2) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
+		std::string type = command.args[0];
+		int allegiance = std::atoi(command.args[1].c_str());
+		sf::Vector2f pos = goodies.window.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
+		Star* star = goodies.state.getLocalViewStar();
+		Faction* faction = goodies.constellation.getFaction(allegiance);
+		sf::Color color = faction->getColor();
+
+		std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
+		ship->addWeapon(Weapon("LASER_GUN"));
+		faction->addSpaceship(star->createSpaceship(ship));
+
+		goodies.console->addLine("Created spaceship at mouse cursor");
+	}
+}
+
+void planetDebug(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 0) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
+		std::vector<Planet>& planets = goodies.state.getLocalViewStar()->getPlanets();
+		for (int i = 0; i < planets.size(); i++) {
+			goodies.console->addLine("Planet " + std::to_string(i));
+			goodies.console->addLine("Type: " + planets[i].getTypeString());
+			goodies.console->addLine("Temperature: " + std::to_string(planets[i].getTemperature()));
+			goodies.console->addLine("Atmospheric Pressure: " + std::to_string(planets[i].getAtmosphericPressure()));
+			goodies.console->addLine("Water: " + std::to_string(planets[i].getWater()));
+		}
+	}
+}
+
+void goPlanet(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 1) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
+		int index = std::atoi(command.args[0].c_str());
+		std::vector<Planet>& planets = goodies.state.getLocalViewStar()->getPlanets();
+
+		if (index < 0 || index >= planets.size()) {
+			goodies.console->addLine("Invalid index");
+		}
+		else {
+			goodies.state.getCamera().setPos(planets[index].getPos());
+			goodies.console->addLine("Set camera pos to planet " + command.args[0]);
+		}
+	}
+}
+
+void mostHabitable(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		if (goodies.state.getState() == GameState::State::LOCAL_VIEW) {
+			goodies.state.changeToWorldView();
+		}
+		Star* highestHabitabilityStar = nullptr;
+		Planet* highestHabitabilityPlanet = nullptr;
+		float highestHabitability = 0.0f;
+
+		for (auto& star : goodies.constellation.getStars()) {
+			for (auto& planet : star->getPlanets()) {
+				float habitability = planet.getHabitability();
+				if (habitability > highestHabitability) {
+					highestHabitability = habitability;
+					highestHabitabilityStar = star.get();
+					highestHabitabilityPlanet = &planet;
+				}
+			}
+		}
+
+		if (highestHabitabilityPlanet == nullptr) {
+			goodies.console->addLine("Didn't find a planet somehow");
+		}
+		else {
+			goodies.state.changeToLocalView(highestHabitabilityStar);
+			goodies.state.getCamera().setPos(highestHabitabilityPlanet->getPos());
+			goodies.state.getCamera().setAbsoluteZoom(1.0f);
+			goodies.console->addLine("Zoomed to the most habitable planet in the constellation");
+		}
+
+	}
+}
+
+void listFactions(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		int i = 0;
+		for (Faction& faction : goodies.constellation.getFactions()) {
+			goodies.console->addLine(std::to_string(i) + ": " + faction.getName());
+			i++;
+		}
+	}
+}
+
+void possess(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 1) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		Faction* faction = goodies.constellation.getFaction(std::atoi(command.args[0].c_str()));
+		if (faction != nullptr) {
+			goodies.state.getPlayer().setFaction(faction->getID(), faction->getColor());
+			goodies.state.getPlayer().enableFogOfWar();
+
+			goodies.console->close(goodies.gui);
+
+			goodies.gui.removeAllWidgets();
+			goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, false);
+		}
+		else {
+			goodies.console->addLine("Invalid faction");
+		}
+	}
+}
+
+void spectate(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		goodies.state.getPlayer().setFaction(-1, sf::Color(175, 175, 175));
+		goodies.state.getPlayer().disableFogOfWar();
+
+		goodies.console->close(goodies.gui);
+
+		goodies.gui.removeAllWidgets();
+		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, true);
+	}
+}
+
+void giveWeapon(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 1) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
+		if (playerFaction != nullptr) {
+			playerFaction->addWeapon(command.args[0]);
+		}
+	}
+}
+
+void giveResource(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 2) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
+		if (playerFaction != nullptr) {
+			playerFaction->addResource(command.args[0], std::stof(command.args[1]));
+		}
+	}
+}
+
+void giveEverything(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		const toml::table& resources = TOMLCache::getTable("data/objects/resources.toml");
+		const toml::table& weaponDesigns = TOMLCache::getTable("data/objects/weapondesigns.toml");
+
+		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
+
+		for (auto& elem : resources) {
+			playerFaction->addResource(elem.first, 100000);
+		}
+
+		for (auto& elem : weaponDesigns) {
+			playerFaction->addWeapon(elem.first);
+		}
+	}
+}
+
+void ownPlanet(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 2) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
+		Planet& planet = goodies.state.getLocalViewStar()->getPlanets()[std::stoi(command.args[0])];
+		int allegiance = std::stoi(command.args[1]);
+		Faction* faction = goodies.constellation.getFaction(allegiance);
+
+		if (planet.getColony().getPopulation() == 0) {
+			planet.onColonization();
+			planet.getColony().addPopulation(1000);
+		}
+
+		planet.getColony().setFactionColor(faction->getColor());
+		planet.getColony().setAllegiance(allegiance);
+	}
+	else {
+		goodies.console->addLine("usage: ownplanet {planet index} {allegiance}");
+	}
+}
+
 void DebugConsole::open(tgui::Gui& gui) {
 	m_console = tgui::Group::create();
 	m_console->getRenderer()->setOpacity(0.75f);
@@ -24,6 +196,18 @@ void DebugConsole::open(tgui::Gui& gui) {
 	m_console->add(m_editBox);
 
 	gui.add(m_console);
+
+	addCommand("spawnship", spawnShip);
+	addCommand("planetdebug", planetDebug);
+	addCommand("goplanet", goPlanet);
+	addCommand("mosthabitable", mostHabitable);
+	addCommand("listfactions", listFactions);
+	addCommand("possess", possess);
+	addCommand("spectate", spectate);
+	addCommand("giveweapon", giveWeapon);
+	addCommand("giveresource", giveResource);
+	addCommand("giveeverything", giveEverything);
+	addCommand("ownplanet", ownPlanet);
 }
 
 void DebugConsole::close(tgui::Gui& gui) {
@@ -74,153 +258,12 @@ void DebugConsole::runCommands(Constellation& constellation, GameState& state, s
 		Command command = m_commandQueue.front();
 		m_commandQueue.pop();
 
-		m_chatBox->addLine("Running command " + command.command);
-
-		if (command.command == "spawnship") {
-			if (validateArgs(command, 2) && validateState(command, state, GameState::State::LOCAL_VIEW)) {
-				std::string type = command.args[0];
-				int allegiance = std::atoi(command.args[1].c_str());
-				sf::Vector2f pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-				Star* star = state.getLocalViewStar();
-				Faction* faction = constellation.getFaction(allegiance);
-				sf::Color color = faction->getColor();
-
-				std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
-				ship->addWeapon(Weapon("LASER_GUN"));
-				faction->addSpaceship(star->createSpaceship(ship));
-
-				m_chatBox->addLine("Created spaceship at mouse cursor");
-			}
-		}
-		else if (command.command == "planetdebug") {
-			if (validateArgs(command, 0) && validateState(command, state, GameState::State::LOCAL_VIEW)) {
-				std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
-				for (int i = 0; i < planets.size(); i++) {
-					m_chatBox->addLine("Planet " + std::to_string(i));
-					m_chatBox->addLine("Type: " + planets[i].getTypeString());
-					m_chatBox->addLine("Temperature: " + std::to_string(planets[i].getTemperature()));
-					m_chatBox->addLine("Atmospheric Pressure: " + std::to_string(planets[i].getAtmosphericPressure()));
-					m_chatBox->addLine("Water: " + std::to_string(planets[i].getWater()));
-				}
-			}
-		}
-		else if (command.command == "goplanet") {
-			if (validateArgs(command, 1) && validateState(command, state, GameState::State::LOCAL_VIEW)) {
-				int index = std::atoi(command.args[0].c_str());
-				std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
-
-				if (index < 0 || index >= planets.size()) {
-					m_chatBox->addLine("Invalid index");
-				}
-				else {
-					state.getCamera().setPos(planets[index].getPos());
-					m_chatBox->addLine("Set camera pos to planet " + command.args[0]);
-				}
-			}
-		}
-		else if (command.command == "mosthabitable") {
-			if (validateArgs(command, 0) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
-				if (state.getState() == GameState::State::LOCAL_VIEW) {
-					state.changeToWorldView();
-				}
-				Star* highestHabitabilityStar = nullptr;
-				Planet* highestHabitabilityPlanet = nullptr;
-				float highestHabitability = 0.0f;
-
-				for (auto& star : constellation.getStars()) {
-					for (auto& planet : star->getPlanets()) {
-						float habitability = planet.getHabitability();
-						if (habitability > highestHabitability) {
-							highestHabitability = habitability;
-							highestHabitabilityStar = star.get();
-							highestHabitabilityPlanet = &planet;
-						}
-					}
-				}
-
-				if (highestHabitabilityPlanet == nullptr) {
-					m_chatBox->addLine("Didn't find a planet somehow");
-				}
-				else {
-					state.changeToLocalView(highestHabitabilityStar);
-					state.getCamera().setPos(highestHabitabilityPlanet->getPos());
-					state.getCamera().setAbsoluteZoom(1.0f);
-					m_chatBox->addLine("Zoomed to the most habitable planet in the constellation");
-				}
-
-			}
-		}
-		else if (command.command == "listfactions") {
-			if (validateArgs(command, 0) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
-				int i = 0;
-				for (Faction& faction : constellation.getFactions()) {
-					m_chatBox->addLine(std::to_string(i) + ": " + faction.getName());
-					i++;
-				}
-			}
-		}
-		else if (command.command == "possess") {
-			if (validateArgs(command, 1) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
-				Faction* faction = constellation.getFaction(std::atoi(command.args[0].c_str()));
-				if (faction != nullptr) {
-					state.getPlayer().setFaction(faction->getID(), faction->getColor());
-					state.getPlayer().enableFogOfWar();
-
-					close(gui);
-
-					gui.removeAllWidgets();
-					playerGUI.open(gui, state, constellation, false);
-				}
-				else {
-					m_chatBox->addLine("Invalid faction");
-				}
-			}
-		}
-		else if (command.command == "spectate") {
-			if (validateArgs(command, 0) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
-				state.getPlayer().setFaction(-1, sf::Color(175, 175, 175));
-				state.getPlayer().disableFogOfWar();
-
-				close(gui);
-
-				gui.removeAllWidgets();
-				playerGUI.open(gui, state, constellation, true);
-			}
-		}
-		else if (command.command == "giveweapon") {
-			if (validateArgs(command, 1) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
-				Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
-				if (playerFaction != nullptr) {
-					playerFaction->addWeapon(command.args[0]);
-				}
-			}
-		}
-		else if (command.command == "giveresource") {
-			if (validateArgs(command, 2) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
-				Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
-				if (playerFaction != nullptr) {
-					playerFaction->addResource(command.args[0], std::stof(command.args[1]));
-				}
-			}
-		}
-		else if (command.command == "giveeverything") {
-			if (validateArgs(command, 0) && validateNotState(command, state, GameState::State::MAIN_MENU)) {
-				const toml::table& resources = TOMLCache::getTable("data/objects/resources.toml");
-				const toml::table& weaponDesigns = TOMLCache::getTable("data/objects/weapondesigns.toml");
-
-				Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
-
-				for (auto& elem : resources) {
-					playerFaction->addResource(elem.first, 100000);
-				}
-
-				for (auto& elem : weaponDesigns) {
-					playerFaction->addWeapon(elem.first);
-				}
-			}
+		if (m_commands.count(command.command) > 0) {
+			addLine("Running command " + command.command);
+			m_commands[command.command](command, DebugConsole::Goodies{ this, constellation, state, window, gui, playerGUI });
 		}
 		else {
-			m_chatBox->addLine("Invalid command " + command.command);
+			addLine("Invalid command " + command.command);
 		}
 	}
 }

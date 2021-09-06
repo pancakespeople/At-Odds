@@ -252,10 +252,24 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 	ship->orbit(m_planet->getPos());
 
 	if (Math::distance(ship->getPos(), m_planet->getPos()) < (m_planet->getRadius() + ship->getCollider().getRadius())) {
-		for (auto& mod : ship->getMods()) {
-			mod->interactWithPlanet(ship, m_planet);
+		
+		// Mods interact if civilian or friendly planet
+		if (ship->isCivilian() || ship->getAllegiance() == m_planet->getColony().getAllegiance()) {
+			for (auto& mod : ship->getMods()) {
+				mod->interactWithPlanet(ship, m_planet);
+			}
+			return true;
 		}
-		return true;
+		else {
+			// Orbital bombardment
+
+			auto& weapons = ship->getWeapons();
+			for (Weapon& weapon : weapons) {
+				if (weapon.canOrbitallyBombard() && !weapon.isOnCooldown()) {
+					weapon.fireAt(ship, m_planet->getPos(), currentStar);
+				}
+			}
+		}
 	}
 	return false;
 }
