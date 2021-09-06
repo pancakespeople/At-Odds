@@ -72,10 +72,15 @@ speed = 0.0
 diesOnCollision = false
 
 [CRUSHER_BOLT]
-usesSprite = true
 texturePath = "data/art/crusher.png"
 deathFunction = "knockAll"
 scaleX = 2.0
 scaleY = 2.0
 life = 400.0
 damage = 75.0
+
+[NUCLEAR_MISSILE]
+texturePath = "data/art/nuclearmissile.png"
+deathFunction = "largeExplosion"
+life = 100.0
+damage = 80.0

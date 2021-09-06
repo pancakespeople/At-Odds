@@ -12,9 +12,10 @@
 
 const std::map<std::string, std::function<void(Star* star, Projectile* proj)>> deathFunctions = {
 	{"smallExplosion", &DeathFunctions::smallExplosion},
+	{"largeExplosion", &DeathFunctions::largeExplosion},
 	{"laserRing", &DeathFunctions::laserRing},
 	{"lightningAOE", &DeathFunctions::lightningAOE},
-	{"knockAll", &DeathFunctions::knockAll}
+	{"knockAll", &DeathFunctions::knockAll},
 };
 
 Projectile::Projectile(const std::string& type) {
@@ -100,6 +101,11 @@ const Collider& Projectile::getCollider() {
 void DeathFunctions::smallExplosion(Star* star, Projectile* proj) {
 	star->addAnimation(Animation("SMALL_EXPLOSION", proj->getPos()));
 	Sounds::playSoundLocal("data/sound/boom2.wav", star, proj->getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
+}
+
+void DeathFunctions::largeExplosion(Star* star, Projectile* proj) {
+	star->addAnimation(Animation("EXPLOSION", proj->getPos()));
+	Sounds::playSoundLocal("data/sound/boom1.wav", star, proj->getPos(), 25, 1.0f + Random::randFloat(-0.5f, 0.5f));
 }
 
 void DeathFunctions::laserRing(Star* star, Projectile* proj) {

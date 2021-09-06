@@ -10,28 +10,18 @@ class Unit;
 
 class Weapon {
 public:
-	enum class WEAPON_TYPE {
-		LASER_GUN,
-		GAUSS_CANNON,
-		MACHINE_GUN,
-		LONG_RANGE_LASER_GUN,
-		LONG_RANGE_MACHINE_GUN,
-		CONSTRUCTION_GUN
-	};
-	
-	static const std::vector<std::string> weaponSounds;
-
 	Weapon(const std::string& type);
 
 	void fireAtAngle(const Unit* source, float angleDegrees, Star* star);
-
 	void fireAt(const Unit* source, const sf::Vector2f& target, Star* star);
-
 	void update();
+	void setAccuracy(float accuracy) { m_accuracy = accuracy; }
 
 	bool isOnCooldown();
 
 	float getRange() { return m_projectile.getRange(); }
+	float getAccuracy() { return m_accuracy; }
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>

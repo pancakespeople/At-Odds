@@ -76,3 +76,12 @@ void Unit::openModGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 		mod->openGUI(window, faction);
 	}
 }
+
+void Unit::addWeapon(Weapon weapon) {
+	if (m_weapons.size() > 0) {
+		// Decrease accuracy for subsequent weapons
+		float fallOff = 1.0f - m_weapons.size() * 0.05;
+		weapon.setAccuracy(weapon.getAccuracy() * fallOff);
+	}
+	m_weapons.push_back(weapon);
+}

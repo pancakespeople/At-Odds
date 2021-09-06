@@ -33,7 +33,7 @@ public:
 	
 	void kill() { m_health = 0.0f; }
 	void takeDamage(float damage) { m_health -= damage; }
-	void addWeapon(Weapon weapon) { m_weapons.push_back(weapon); }
+	void addWeapon(Weapon weapon);
 	void updateWeapons();
 	void fireAllWeaponsAt(Unit* target);
 	void updateMods(Star* currentStar, Faction* faction);

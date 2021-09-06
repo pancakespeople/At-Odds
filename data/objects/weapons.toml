@@ -52,3 +52,8 @@ projectile = "LIGHTNING"
 projectile = "CRUSHER_BOLT"
 sound = "data/sound/gunshot1.wav"
 cooldownRecovery = 0.5
+
+[NUKE_LAUNCHER]
+projectile = "NUCLEAR_MISSILE"
+sound = "data/sound/rocket1.wav"
+cooldownRecovery = 0.25

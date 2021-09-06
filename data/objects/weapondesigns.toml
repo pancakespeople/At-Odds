@@ -45,3 +45,9 @@ type = "THE_CRUSHER"
 name = "The Crusher"
 weaponPoints = 2.0
 cost = [["COMMON_ORE", 50.0]]
+
+[NUKE_LAUNCHER]
+type = "NUKE_LAUNCHER"
+name = "Nuke Launcher"
+weaponPoints = 2.0
+cost = [["UNCOMMON_ORE", 70.0]]
