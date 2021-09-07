@@ -4,7 +4,7 @@
 #include "../Constellation.h"
 #include "../TOMLCache.h"
 
-void spawnShip(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 2) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		std::string type = command.args[0];
 		int allegiance = std::atoi(command.args[1].c_str());
@@ -21,7 +21,7 @@ void spawnShip(const DebugConsole::Command& command, DebugConsole::Goodies& good
 	}
 }
 
-void planetDebug(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void planetDebug(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		std::vector<Planet>& planets = goodies.state.getLocalViewStar()->getPlanets();
 		for (int i = 0; i < planets.size(); i++) {
@@ -34,7 +34,7 @@ void planetDebug(const DebugConsole::Command& command, DebugConsole::Goodies& go
 	}
 }
 
-void goPlanet(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void goPlanet(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 1) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		int index = std::atoi(command.args[0].c_str());
 		std::vector<Planet>& planets = goodies.state.getLocalViewStar()->getPlanets();
@@ -49,7 +49,7 @@ void goPlanet(const DebugConsole::Command& command, DebugConsole::Goodies& goodi
 	}
 }
 
-void mostHabitable(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void mostHabitable(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		if (goodies.state.getState() == GameState::State::LOCAL_VIEW) {
 			goodies.state.changeToWorldView();
@@ -82,7 +82,7 @@ void mostHabitable(const DebugConsole::Command& command, DebugConsole::Goodies& 
 	}
 }
 
-void listFactions(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void listFactions(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		int i = 0;
 		for (Faction& faction : goodies.constellation.getFactions()) {
@@ -92,7 +92,7 @@ void listFactions(const DebugConsole::Command& command, DebugConsole::Goodies& g
 	}
 }
 
-void possess(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void possess(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 1) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		Faction* faction = goodies.constellation.getFaction(std::atoi(command.args[0].c_str()));
 		if (faction != nullptr) {
@@ -110,7 +110,7 @@ void possess(const DebugConsole::Command& command, DebugConsole::Goodies& goodie
 	}
 }
 
-void spectate(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void spectate(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		goodies.state.getPlayer().setFaction(-1, sf::Color(175, 175, 175));
 		goodies.state.getPlayer().disableFogOfWar();
@@ -122,7 +122,7 @@ void spectate(const DebugConsole::Command& command, DebugConsole::Goodies& goodi
 	}
 }
 
-void giveWeapon(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void giveWeapon(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 1) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
 		if (playerFaction != nullptr) {
@@ -131,7 +131,7 @@ void giveWeapon(const DebugConsole::Command& command, DebugConsole::Goodies& goo
 	}
 }
 
-void giveResource(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void giveResource(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 2) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
 		if (playerFaction != nullptr) {
@@ -140,7 +140,7 @@ void giveResource(const DebugConsole::Command& command, DebugConsole::Goodies& g
 	}
 }
 
-void giveEverything(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void giveEverything(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		const toml::table& resources = TOMLCache::getTable("data/objects/resources.toml");
 		const toml::table& weaponDesigns = TOMLCache::getTable("data/objects/weapondesigns.toml");
@@ -157,7 +157,7 @@ void giveEverything(const DebugConsole::Command& command, DebugConsole::Goodies&
 	}
 }
 
-void ownPlanet(const DebugConsole::Command& command, DebugConsole::Goodies& goodies) {
+void ownPlanet(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 2) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		Planet& planet = goodies.state.getLocalViewStar()->getPlanets()[std::stoi(command.args[0])];
 		int allegiance = std::stoi(command.args[1]);

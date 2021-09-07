@@ -5,6 +5,7 @@
 #include "Mod.h"
 #include "Star.h"
 #include "Faction.h"
+#include "Projectile.h"
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
@@ -66,11 +67,34 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star,
 
 		window.draw(circle);
 	}
+
+	for (Projectile& proj : m_bombardProjectiles) {
+		proj.draw(window);
+	}
 }
 
 void Planet::update(Star* currentStar, Faction* faction) {
 	m_shape.setPosition(m_orbit.update());
 	m_colony.update(currentStar, faction, this);
+
+	// Bombard projectiles
+	for (int i = 0; i < m_bombardProjectiles.size(); i++) {
+		m_bombardProjectiles[i].setRotation(Math::angleBetween(m_bombardProjectiles[i].getPos(), getPos()));
+		m_bombardProjectiles[i].update(currentStar);
+
+		float dist = Math::distance(m_bombardProjectiles[i].getPos(), getPos());
+		if (dist < getRadius()) {
+			m_bombardProjectiles[i].onDeath(currentStar);
+
+			float deathPercent = Random::randFloat(0.0f, 0.05f);
+			float deathConstant = m_bombardProjectiles[i].getDamage();
+
+			m_colony.subtractPopulation(m_colony.getPopulation() * deathPercent + deathConstant);
+
+			m_bombardProjectiles.erase(m_bombardProjectiles.begin() + i);
+			i--;
+		}
+	}
 }
 
 void Planet::generateGasGiant(float baseTemperature) {
@@ -305,4 +329,3 @@ void Planet::generateResources() {
 		}
 	}
 }
-

@@ -16,12 +16,16 @@ public:
 	void fireAt(const Unit* source, const sf::Vector2f& target, Star* star);
 	void update();
 	void setAccuracy(float accuracy) { m_accuracy = accuracy; }
+	void triggerCooldown() { m_cooldownPercent = 100.0f; }
+	void playFireSound(const Unit* source, Star* star);
 
 	bool isOnCooldown();
 	bool canOrbitallyBombard() { return m_orbitalBombardment; }
 
 	float getRange() { return m_projectile.getRange(); }
 	float getAccuracy() { return m_accuracy; }
+
+	const Projectile& getProjectile() { return m_projectile; }
 
 private:
 	friend class boost::serialization::access;

@@ -39,10 +39,7 @@ void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
 		star->addProjectile(m_projectile);
 	}
 
-	if (m_soundPath != "" && m_soundCooldown == 0) {
-		Sounds::playSoundLocal(m_soundPath, star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
-		m_soundCooldown = m_baseSoundCooldown;
-	}
+	playFireSound(source, star);
 
 	m_cooldownPercent = 100.0f;
 }
@@ -73,4 +70,11 @@ bool Weapon::isOnCooldown() {
 void Weapon::fireAt(const Unit* source, const sf::Vector2f& target, Star* star) {
 	float angle = Math::angleBetween(source->getPos(), target);
 	fireAtAngle(source, angle, star);
+}
+
+void Weapon::playFireSound(const Unit* source, Star* star) {
+	if (m_soundPath != "" && m_soundCooldown == 0) {
+		Sounds::playSoundLocal(m_soundPath, star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+		m_soundCooldown = m_baseSoundCooldown;
+	}
 }

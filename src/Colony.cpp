@@ -140,6 +140,17 @@ ColonyBuilding* Colony::getBuildingOfType(const std::string& type) {
 	return nullptr;
 }
 
+void Colony::subtractPopulation(int pop) {
+	if (m_population - pop <= 0) {
+		m_population = 0;
+		m_allegiance = -1;
+		m_factionColor = Faction::neutralColor;
+	}
+	else {
+		m_population -= pop;
+	}
+}
+
 ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 

@@ -260,17 +260,27 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 			}
 			return true;
 		}
-		else {
-			// Orbital bombardment
+	}
 
-			auto& weapons = ship->getWeapons();
-			for (Weapon& weapon : weapons) {
-				if (weapon.canOrbitallyBombard() && !weapon.isOnCooldown()) {
-					weapon.fireAt(ship, m_planet->getPos(), currentStar);
-				}
+	if (!ship->isCivilian() && ship->getAllegiance() != m_planet->getColony().getAllegiance()) {
+		// Orbital bombardment
+
+		if (m_planet->getColony().getPopulation() == 0) return true;
+
+		auto& weapons = ship->getWeapons();
+		for (Weapon& weapon : weapons) {
+			float dist = Math::distance(ship->getPos(), m_planet->getPos());
+			if (weapon.canOrbitallyBombard() && !weapon.isOnCooldown() && dist < weapon.getRange()) {
+				Projectile newProj = weapon.getProjectile();
+				newProj.setPos(ship->getPos());
+
+				m_planet->addBombardProjectile(newProj);
+				weapon.triggerCooldown();
+				weapon.playFireSound(ship, currentStar);
 			}
 		}
 	}
+
 	return false;
 }
 

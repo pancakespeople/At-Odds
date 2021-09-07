@@ -12,6 +12,8 @@ class Faction {
 public:
 	Faction(int id);
 
+	static const sf::Color neutralColor;
+
 	void spawnAtRandomStar(Constellation* constellation);
 	void addOwnedSystem(Star* star);
 	void makeCapital(Star* star);

@@ -62,6 +62,7 @@ public:
 	void setFactionColonyLegality(int allegiance, bool legality);
 	void setTicksToNextBus(int ticks) { m_ticksToNextBus = ticks; }
 	void addPopulation(int pop);
+	void subtractPopulation(int pop);
 	void setAllegiance(int id) { m_allegiance = id; }
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
 	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }

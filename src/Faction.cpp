@@ -8,6 +8,8 @@
 #include "Building.h"
 #include "TOMLCache.h"
 
+const sf::Color Faction::neutralColor = sf::Color(175, 175, 175);
+
 Faction::Faction(int id) {
 	m_color = sf::Color(rand() % 255, rand() % 255, rand() % 255);
 
