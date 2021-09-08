@@ -45,3 +45,9 @@ description = "The profitable military industrial complex."
 name = "Exploration HQ"
 baseCost = [["UNCOMMON_ORE", 5]]
 description = "An organized planet exploration effort. They will surely discover useful things and not eldrich abominations."
+
+[BOMB_SHELTER]
+name = "Bomb Shelter"
+baseCost = [["COMMON_ORE", 40]]
+description = "A place for people to hide when someone decides to rain hellfire upon the planet."
+bombardDamageMultiplier = 0.75

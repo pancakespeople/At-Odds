@@ -1,6 +1,7 @@
 #pragma once
 #include "../GUI.h"
 #include "ShipDesigner.h"
+#include "PlanetGUI.h"
 
 struct PlayerGUI {
 	PlayerGUI() {}

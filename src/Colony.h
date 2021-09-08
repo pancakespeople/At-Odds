@@ -25,6 +25,7 @@ public:
 	float getHabitabilityModifier() const;
 	float getExploitationModifer() const;
 	float getPercentBuilt() const { return m_percentBuilt; }
+	float getBombardDamageMultipler() const;
 
 private:
 	friend class boost::serialization::access;
@@ -51,7 +52,8 @@ public:
 	int getAllegiance() { return m_allegiance; }
 
 	float getGrowthRate(float planetHabitability);
-	
+	float getBombardDamageMultipler() const;
+
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);
 	bool hasBuildingFlag(const std::string& flag);

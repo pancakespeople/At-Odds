@@ -151,6 +151,14 @@ void Colony::subtractPopulation(int pop) {
 	}
 }
 
+float Colony::getBombardDamageMultipler() const {
+	float mult = 1.0f;
+	for (const ColonyBuilding& building : m_buildings) {
+		mult *= building.getBombardDamageMultipler();
+	}
+	return mult;
+}
+
 ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
@@ -209,6 +217,7 @@ std::string ColonyBuilding::getEffectsString() const {
 
 	float habitabilityModifier = getHabitabilityModifier();
 	float exploitationModifier = getExploitationModifer();
+	float bombardDamageMultiplier = getBombardDamageMultipler();
 
 	if (habitabilityModifier != 1.0f) {
 		effects << "Habitability: " << Util::percentify(habitabilityModifier, 1) << "\n";
@@ -216,6 +225,10 @@ std::string ColonyBuilding::getEffectsString() const {
 
 	if (exploitationModifier != 1.0f) {
 		effects << "Resource Extraction Rate: " << Util::percentify(exploitationModifier, 1) << "\n";
+	}
+
+	if (bombardDamageMultiplier != 1.0f) {
+		effects << "Orbital Bombardment Damage Reduction: " << Util::percentify(bombardDamageMultiplier, 1) << "\n";
 	}
 
 	for (std::string& flag : getFlags()) {
@@ -253,4 +266,12 @@ std::vector<std::string> ColonyBuilding::getFlags() const {
 	}
 
 	return flags;
+}
+
+float ColonyBuilding::getBombardDamageMultipler() const {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+
+	float mult = table[getType()]["bombardDamageMultiplier"].value_or(1.0f);
+
+	return mult;
 }

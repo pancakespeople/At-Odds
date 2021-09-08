@@ -89,7 +89,7 @@ void Planet::update(Star* currentStar, Faction* faction) {
 			float deathPercent = Random::randFloat(0.0f, 0.05f);
 			float deathConstant = m_bombardProjectiles[i].getDamage();
 
-			m_colony.subtractPopulation(m_colony.getPopulation() * deathPercent + deathConstant);
+			m_colony.subtractPopulation((m_colony.getPopulation() * deathPercent + deathConstant) * m_colony.getBombardDamageMultipler());
 
 			m_bombardProjectiles.erase(m_bombardProjectiles.begin() + i);
 			i--;
