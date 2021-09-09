@@ -57,4 +57,8 @@ cooldownRecovery = 0.5
 projectile = "NUCLEAR_MISSILE"
 sound = "data/sound/rocket1.wav"
 cooldownRecovery = 0.25
-orbitalBombardment = true
+
+[INVASION_POD_LAUNCHER]
+projectile = "INVASION_POD"
+sound = "data/sound/rocket1.wav"
+cooldownRecovery = 0.5

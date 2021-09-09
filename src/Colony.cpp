@@ -27,6 +27,8 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 		m_ticksUntilNextGrowth--;
 	}
 
+	if (faction != nullptr) setFactionColor(faction->getColor());
+
 	// Spawn space bus
 	if (m_population >= 1000 && faction != nullptr) {
 		if (m_ticksToNextBus == 0) {

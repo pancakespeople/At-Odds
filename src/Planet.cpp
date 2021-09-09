@@ -86,10 +86,26 @@ void Planet::update(Star* currentStar, Faction* faction) {
 		if (dist < getRadius()) {
 			m_bombardProjectiles[i].onDeath(currentStar);
 
-			float deathPercent = Random::randFloat(0.0f, 0.05f);
-			float deathConstant = m_bombardProjectiles[i].getDamage();
+			if (m_bombardProjectiles[i].canOrbitallyBombard()) {
 
-			m_colony.subtractPopulation((m_colony.getPopulation() * deathPercent + deathConstant) * m_colony.getBombardDamageMultipler());
+				float deathPercent = Random::randFloat(0.0f, 0.05f);
+				float deathConstant = m_bombardProjectiles[i].getDamage();
+
+				m_colony.subtractPopulation((m_colony.getPopulation() * deathPercent + deathConstant) * m_colony.getBombardDamageMultipler());
+
+			}
+
+			if (m_bombardProjectiles[i].canInvadePlanets()) {
+				float deathConstant = Random::randInt(100, 1000);
+
+				m_colony.subtractPopulation(deathConstant);
+
+				if (m_colony.getPopulation() == 0) {
+					DEBUG_PRINT("Set allegiance to " << m_bombardProjectiles[i].getAllegiance());
+					m_colony.setAllegiance(m_bombardProjectiles[i].getAllegiance());
+					m_colony.addPopulation(Random::randInt(100, 1000));
+				}
+			}
 
 			m_bombardProjectiles.erase(m_bombardProjectiles.begin() + i);
 			i--;

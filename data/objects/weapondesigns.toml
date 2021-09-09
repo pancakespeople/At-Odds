@@ -51,3 +51,9 @@ type = "NUKE_LAUNCHER"
 name = "Nuke Launcher"
 weaponPoints = 2.0
 cost = [["UNCOMMON_ORE", 70.0]]
+
+[INVASION_POD_LAUNCHER]
+type = "INVASION_POD_LAUNCHER"
+name = "Invasion Pod Launcher"
+weaponPoints = 1.5
+cost = [["COMMON_ORE", 10.0]]

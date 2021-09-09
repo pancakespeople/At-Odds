@@ -22,7 +22,6 @@ Weapon::Weapon(const std::string& type) {
 	m_accuracy = table[type]["accuracy"].value_or(1.0f);
 	m_baseSoundCooldown = table[type]["baseSoundCooldown"].value_or(0);
 	m_numProjectiles = table[type]["numProjectiles"].value_or(1);
-	m_orbitalBombardment = table[type]["orbitalBombardment"].value_or(false);
 }
 
 void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {

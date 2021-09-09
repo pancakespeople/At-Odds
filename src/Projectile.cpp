@@ -37,6 +37,8 @@ Projectile::Projectile(const std::string& type) {
 	m_deathFunctionName = table[type]["deathFunction"].value_or("");
 	m_diesOnCollision = table[type]["diesOnCollision"].value_or(true);
 	m_collider.setRadius(table[type]["radius"].value_or(1.0f));
+	m_orbitalBombardment = table[type]["orbitalBombardment"].value_or(false);
+	m_planetaryInvasion = table[type]["planetaryInvasion"].value_or(false);
 
 	init(sf::Vector2f(0.0f, 0.0f), 90.0f, -1);
 }

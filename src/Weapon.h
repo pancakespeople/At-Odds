@@ -20,7 +20,6 @@ public:
 	void playFireSound(const Unit* source, Star* star);
 
 	bool isOnCooldown();
-	bool canOrbitallyBombard() { return m_orbitalBombardment; }
 
 	float getRange() { return m_projectile.getRange(); }
 	float getAccuracy() { return m_accuracy; }
@@ -39,7 +38,6 @@ private:
 		archive & m_baseSoundCooldown;
 		archive & m_soundPath;
 		archive & m_projectile;
-		archive & m_orbitalBombardment;
 	}
 
 	Weapon() {}
@@ -51,8 +49,6 @@ private:
 	int m_numProjectiles = 1;
 	int m_soundCooldown = 0;
 	int m_baseSoundCooldown = 0;
-
-	bool m_orbitalBombardment = false;
 
 	std::string m_soundPath;
 

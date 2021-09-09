@@ -270,9 +270,10 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 		auto& weapons = ship->getWeapons();
 		for (Weapon& weapon : weapons) {
 			float dist = Math::distance(ship->getPos(), m_planet->getPos());
-			if (weapon.canOrbitallyBombard() && !weapon.isOnCooldown() && dist < weapon.getRange()) {
+			if ((weapon.getProjectile().canOrbitallyBombard() || weapon.getProjectile().canInvadePlanets()) && !weapon.isOnCooldown() && dist < weapon.getRange()) {
 				Projectile newProj = weapon.getProjectile();
 				newProj.setPos(ship->getPos());
+				newProj.setAllegiance(ship->getAllegiance());
 
 				m_planet->addBombardProjectile(newProj);
 				weapon.triggerCooldown();

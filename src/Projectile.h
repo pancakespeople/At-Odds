@@ -33,9 +33,11 @@ public:
 	float getRange() { return m_life * m_speed; }
 	float getLife() { return m_life; }
 
-	bool isDead() { return m_life <= 0.0f; }
+	bool isDead() const { return m_life <= 0.0f; }
 	bool isCollidingWith(const Collider& collider);
-	bool diesOnCollision() { return m_diesOnCollision; }
+	bool diesOnCollision() const { return m_diesOnCollision; }
+	bool canOrbitallyBombard() const { return m_orbitalBombardment; }
+	bool canInvadePlanets() const { return m_planetaryInvasion; }
 
 	int getAllegiance() { return m_allegiance; }
 
@@ -56,6 +58,8 @@ private:
 		archive & m_collider;
 		archive & m_deathFunctionName;
 		archive & m_diesOnCollision;
+		archive & m_orbitalBombardment;
+		archive & m_planetaryInvasion;
 	}
 	
 	void init(const sf::Vector2f& pos, float angleDegrees, int allegiance);
@@ -69,6 +73,8 @@ private:
 	Collider m_collider;
 	std::string m_deathFunctionName;
 	bool m_diesOnCollision = true;
+	bool m_orbitalBombardment = false;
+	bool m_planetaryInvasion = false;
 };
 
 namespace DeathFunctions {

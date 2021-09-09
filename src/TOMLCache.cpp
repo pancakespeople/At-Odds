@@ -11,6 +11,7 @@ const toml::table& TOMLCache::getTable(const std::string& filePath) {
 		}
 		catch (const toml::parse_error& err) {
 			DEBUG_PRINT("Failed to parse TOML file " << filePath << ":\n" << err);
+			assert(false);
 			m_tables[filePath] = table;
 			return m_tables[filePath];
 		}
