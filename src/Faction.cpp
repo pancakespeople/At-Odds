@@ -32,6 +32,9 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	makeCapital(randStar);
 	randStar->factionTakeOwnership(this, true);
 
+	addWeapon(Spaceship::DesignerWeapon("NUKE_LAUNCHER"));
+	addWeapon(Spaceship::DesignerWeapon("INVASION_POD_LAUNCHER"));
+
 	// Add a random starter weapon
 	int rnd = Random::randInt(1, 3);
 	if (rnd == 1) {

@@ -85,6 +85,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 					m_window->add(weaponInfoGroup, "weaponInfoGroup");
 
 					Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(weaponsListBox->getSelectedItem().toStdString());
+					Weapon weaponObj(weapon.type);
 					
 					auto weaponNameLabel = tgui::Label::create(weapon.name);
 					weaponNameLabel->getRenderer()->setTextStyle(tgui::TextStyle::Underlined);
@@ -99,7 +100,19 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 					weaponCapacityLabel->setText(ss.str());
 					weaponInfoGroup->add(weaponCapacityLabel);
 
-					GUIUtil::displayResourceCost(weaponInfoGroup, weapon.resourceCost, 10);
+					auto planetAttackLabel = tgui::Label::create();
+					planetAttackLabel->setPosition("0%", "10%");
+
+					if (weaponObj.getProjectile().canOrbitallyBombard() || weaponObj.getProjectile().canInvadePlanets()) {
+						planetAttackLabel->setText("Attack Planets: Yes");
+					}
+					else {
+						planetAttackLabel->setText("Attack Planets: No");
+					}
+
+					weaponInfoGroup->add(planetAttackLabel);
+
+					GUIUtil::displayResourceCost(weaponInfoGroup, weapon.resourceCost, 15);
 				}
 			});
 			m_window->add(weaponsListBox, "weaponsListBox");
