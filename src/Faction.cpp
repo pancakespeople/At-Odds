@@ -228,7 +228,7 @@ std::vector<Building*> Faction::getAllOwnedBuildingsOfName(const std::string& na
 std::vector<Spaceship*> Faction::getAllCombatShips() {
 	std::vector<Spaceship*> ships;
 	for (Spaceship* ship : m_ships) {
-		if (!ship->isCivilian() && ship->getWeapons().size() > 0 && ship->getConstructionSpeed() == 0.0f) {
+		if (!ship->isCivilian() && ship->maxWeaponDamage() > 0.0f) {
 			ships.push_back(ship);
 		}
 	}
@@ -379,4 +379,26 @@ std::vector<Star*> Faction::getBorderStars() {
 		}
 	}
 	return stars;
+}
+
+std::vector<Spaceship*> Faction::getPlanetAttackShips() {
+	std::vector<Spaceship*> ships;
+	for (Spaceship* ship : m_ships) {
+		if (ship->isPlanetAttackShip()) {
+			ships.push_back(ship);
+		}
+	}
+	return ships;
+}
+
+std::vector<Planet*> Faction::getEnemyPlanets() {
+	std::vector<Planet*> planets;
+	for (Star* star : m_ownedSystems) {
+		for (Planet& planet : star->getPlanets()) {
+			if (planet.getColony().getAllegiance() != -1 && planet.getColony().getAllegiance() != m_id) {
+				planets.push_back(&planet);
+			}
+		}
+	}
+	return planets;
 }

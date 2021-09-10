@@ -521,3 +521,12 @@ void Spaceship::reinitOrdersAfterLoad(Constellation* constellation) {
 		order->reinitAfterLoad(constellation);
 	}
 }
+
+bool Spaceship::isPlanetAttackShip() const {
+	for (const Weapon& weapon : m_weapons) {
+		if (weapon.getProjectile().canInvadePlanets() || weapon.getProjectile().canOrbitallyBombard()) {
+			return true;
+		}
+	}
+	return false;
+}

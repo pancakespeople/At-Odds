@@ -118,13 +118,14 @@ public:
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
 	bool flyTo(const sf::Vector2f& pos);
-	bool isSelected() { return m_selected; }
-	bool isDisabled() { return m_disabled; }
-	bool canReceiveOrders() { return m_canReceiveOrders; }
-	bool canPlayerGiveOrders() { return m_playerCanGiveOrders; }
-	bool isCivilian() { return m_civilian; }
-	bool isConstructor() { return m_constructionSpeed > 0.0f; }
-	bool isHeavy() { return m_mass >= 125000; }
+	bool isSelected() const { return m_selected; }
+	bool isDisabled() const { return m_disabled; }
+	bool canReceiveOrders() const { return m_canReceiveOrders; }
+	bool canPlayerGiveOrders() const { return m_playerCanGiveOrders; }
+	bool isCivilian() const { return m_civilian; }
+	bool isConstructor() const { return m_constructionSpeed > 0.0f; }
+	bool isHeavy() const { return m_mass >= 125000; }
+	bool isPlanetAttackShip() const;
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);

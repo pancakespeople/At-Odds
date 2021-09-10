@@ -653,3 +653,13 @@ void Star::setDiscovered(bool isDiscovered, int allegiance) {
 		}
 	}
 }
+
+std::vector<Planet*> Star::getEnemyPlanets(int allegiance) {
+	std::vector<Planet*> planets;
+	for (Planet& planet : getPlanets()) {
+		if (planet.getColony().getAllegiance() != -1 && planet.getColony().getAllegiance() != allegiance) {
+			planets.push_back(&planet);
+		}
+	}
+	return planets;
+}

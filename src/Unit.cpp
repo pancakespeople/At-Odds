@@ -85,3 +85,11 @@ void Unit::addWeapon(Weapon weapon) {
 	}
 	m_weapons.push_back(weapon);
 }
+
+float Unit::maxWeaponDamage() const {
+	float max = 0.0f;
+	for (const Weapon& weapon : m_weapons) {
+		if (weapon.getDamage() > max) max = weapon.getDamage();
+	}
+	return max;
+}

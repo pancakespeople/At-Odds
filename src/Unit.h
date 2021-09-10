@@ -28,6 +28,7 @@ public:
 
 	float getLongestWeaponRange();
 	float getHealth() const { return m_health; }
+	float maxWeaponDamage() const;
 
 	bool isDead() const { return m_dead; }
 	

@@ -61,6 +61,10 @@ public:
 	std::vector<Spaceship::DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
 	std::vector<ColonyBuilding> getColonyBuildings();
 	std::vector<Star*> getBorderStars();
+	std::vector<Spaceship*> getPlanetAttackShips();
+	
+	// Gets all enemy planets that are in this faction's territory
+	std::vector<Planet*> getEnemyPlanets();
 
 	Spaceship::DesignerChassis getChassisByName(const std::string& name);
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);

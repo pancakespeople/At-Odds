@@ -82,6 +82,7 @@ public:
 	std::vector<Planet>& getPlanets() { return m_planets; }
 	std::vector<Derelict>& getDerelicts() { return m_derelicts; }
 	std::vector<Spaceship*> getAllShipsOfAllegiance(int allegiance);
+	std::vector<Planet*> getEnemyPlanets(int allegiance);
 
 	Unit* getUnitByID(unsigned int id);
 	Spaceship* getShipByID(unsigned int id);

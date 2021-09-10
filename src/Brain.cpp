@@ -211,6 +211,23 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 			for (Spaceship* ship : faction->getAllCombatShips()) {
 				ship->addOrder(TravelOrder(faction->getCapital()));
 			}
+
+			// Send planet attack ships to attack enemy planets
+			for (Star* star : faction->getOwnedStars()) {
+				std::vector<Planet*> enemyPlanets = star->getEnemyPlanets(faction->getID());
+				if (enemyPlanets.size() > 0) {
+					std::vector<Spaceship*> planetAttackShips = faction->getPlanetAttackShips();
+
+					for (Spaceship* ship : planetAttackShips) {
+						ship->addOrder(TravelOrder(star));
+						ship->addOrder(InteractWithPlanetOrder(enemyPlanets.front(), star));
+					}
+
+					if (planetAttackShips.size() > 0) AI_DEBUG_PRINT("Sent " << planetAttackShips.size() << " ships to attack a planet");
+
+					break;
+				}
+			}
 			
 			m_rallyTimer = 500;
 		}

@@ -21,10 +21,11 @@ public:
 
 	bool isOnCooldown();
 
-	float getRange() { return m_projectile.getRange(); }
-	float getAccuracy() { return m_accuracy; }
+	float getRange() const { return m_projectile.getRange(); }
+	float getAccuracy() const { return m_accuracy; }
+	float getDamage() const { return m_projectile.getDamage(); }
 
-	const Projectile& getProjectile() { return m_projectile; }
+	const Projectile& getProjectile() const { return m_projectile; }
 
 private:
 	friend class boost::serialization::access;

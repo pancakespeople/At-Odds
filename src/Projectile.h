@@ -29,9 +29,9 @@ public:
 	void setAllegiance(int allegiance);
 	void onDeath(Star* star);
 
-	float getDamage() { return m_damage; }
-	float getRange() { return m_life * m_speed; }
-	float getLife() { return m_life; }
+	float getDamage() const { return m_damage; }
+	float getRange() const { return m_life * m_speed; }
+	float getLife() const { return m_life; }
 
 	bool isDead() const { return m_life <= 0.0f; }
 	bool isCollidingWith(const Collider& collider);
