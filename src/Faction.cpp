@@ -402,3 +402,16 @@ std::vector<Planet*> Faction::getEnemyPlanets() {
 	}
 	return planets;
 }
+
+std::vector<Spaceship::DesignerWeapon> Faction::getBuildingWeapons() {
+	std::vector<Spaceship::DesignerWeapon> weapons;
+	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
+
+	for (Spaceship::DesignerWeapon& weapon : m_weapons) {
+		if (table[weapon.type]["allowedOnBuildings"].value_or(true)) {
+			weapons.push_back(weapon);
+		}
+	}
+
+	return weapons;
+}
