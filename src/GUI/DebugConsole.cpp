@@ -176,6 +176,23 @@ void ownPlanet(const DebugConsole::Command& command, const DebugConsole::Goodies
 	}
 }
 
+void spawnBuilding(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 2) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
+		int allegiance = std::atoi(command.args[1].c_str());
+		sf::Vector2f pos = goodies.window.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
+		Star* star = goodies.state.getLocalViewStar();
+		Faction* faction = goodies.constellation.getFaction(allegiance);
+		sf::Color color = faction->getColor();
+		
+		star->createBuilding(std::make_unique<Building>(command.args[0], star, pos, faction, true));
+
+		goodies.console->addLine("Created building at mouse cursor");
+	}
+	else {
+		goodies.console->addLine("usage: spawnbuilding {building type} {allegiance}");
+	}
+}
+
 void DebugConsole::open(tgui::Gui& gui) {
 	m_console = tgui::Group::create();
 	m_console->getRenderer()->setOpacity(0.75f);
@@ -208,6 +225,7 @@ void DebugConsole::open(tgui::Gui& gui) {
 	addCommand("giveresource", giveResource);
 	addCommand("giveeverything", giveEverything);
 	addCommand("ownplanet", ownPlanet);
+	addCommand("spawnbuilding", spawnBuilding);
 }
 
 void DebugConsole::close(tgui::Gui& gui) {

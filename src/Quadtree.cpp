@@ -106,7 +106,5 @@ void Quadtree::retrieve(std::vector<Unit*>& outObjects, const Collider& object) 
 	if (quadrant != -1 && m_subNodes.size() > 0) {
 		m_subNodes[quadrant].retrieve(outObjects, object);
 	}
-	else {
-		outObjects = m_objects;
-	}
+	outObjects.insert(outObjects.end(), m_objects.begin(), m_objects.end());
 }

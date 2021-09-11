@@ -17,7 +17,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 
 	m_sprite.setTexture(TextureCache::getTexture(table[type]["texturePath"].value_or("")));
 	m_sprite.setScale(table[type]["scale"].value_or(1.0f), table[type]["scale"].value_or(1.0f));
-	m_health = table[type]["health"].value_or(100.0f);
+	m_maxHealth = table[type]["health"].value_or(100.0f);
 	m_constructionSpeedMultiplier = table[type]["constructionSpeedMultiplier"].value_or(1.0f);
 	m_name = table[type]["name"].value_or("");
 	m_collider = Collider(pos, faction->getColor(), m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
@@ -66,9 +66,11 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	if (built) {
 		enableAllMods();
 		m_constructionPercent = 100.0f;
+		m_health = m_maxHealth;
 	}
 	else {
-		m_constructionPercent = 0.0f;
+		m_constructionPercent = 1.0f;
+		m_health = m_maxHealth * (m_constructionPercent / 100.0f);
 	}
 }
 
@@ -154,6 +156,8 @@ void Building::construct(const Spaceship* constructor) {
 
 	float percentIncrease = constructor->getConstructionSpeed() / m_health;
 	m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
+
+	m_health = m_maxHealth * (m_constructionPercent / 100.0f);
 }
 
 bool Building::checkBuildCondition(const std::string& type, const Star* star, int allegiance, bool player) {

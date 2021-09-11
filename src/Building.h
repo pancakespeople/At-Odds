@@ -46,6 +46,7 @@ private:
 		archive & m_constructionPercent;
 		archive & m_constructionSpeedMultiplier;
 		archive & m_name;
+		archive & m_maxHealth;
 	}
 
 	Building() {}
@@ -59,6 +60,7 @@ private:
 
 	float m_constructionPercent = 0.0f;
 	float m_constructionSpeedMultiplier = 1.0f;
+	float m_maxHealth = 100.0f;
 
 	std::string m_name;
 };
