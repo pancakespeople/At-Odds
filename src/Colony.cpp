@@ -59,7 +59,7 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 
 			for (ColonyBuilding& building : m_buildings) {
 				if (building.isBuilt()) {
-					multiplier *= building.getExploitationModifer();
+					multiplier *= building.getEffect("exploitationModifier", 1.0f);
 				}
 			}
 
@@ -103,7 +103,7 @@ float Colony::getGrowthRate(float planetHabitability) {
 	// Apply building modifiers
 	for (ColonyBuilding& building : m_buildings) {
 		if (building.isBuilt()) {
-			planetHabitability *= building.getHabitabilityModifier();
+			planetHabitability *= building.getEffect("habitabilityModifier", 1.0f);
 		}
 	}
 	
@@ -153,10 +153,10 @@ void Colony::subtractPopulation(int pop) {
 	}
 }
 
-float Colony::getBombardDamageMultipler() const {
+float Colony::getBuildingEffects(const std::string& effect) const {
 	float mult = 1.0f;
 	for (const ColonyBuilding& building : m_buildings) {
-		mult *= building.getBombardDamageMultipler();
+		if (building.isBuilt()) mult *= building.getEffect(effect, 1.0f);
 	}
 	return mult;
 }
@@ -197,40 +197,35 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& p
 	return cost;
 }
 
-float ColonyBuilding::getHabitabilityModifier() const {
-	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
-	return table[m_type]["habitabilityModifier"].value_or(1.0f);
-}
-
 void ColonyBuilding::update() {
 	if (!isBuilt()) {
 		m_percentBuilt += 0.01;
 	}
 }
 
-float ColonyBuilding::getExploitationModifer() const {
-	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
-	return table[m_type]["exploitationModifier"].value_or(1.0f);
-}
-
 std::string ColonyBuilding::getEffectsString() const {
 	std::stringstream effects;
 	effects << std::fixed << std::setprecision(1);
 
-	float habitabilityModifier = getHabitabilityModifier();
-	float exploitationModifier = getExploitationModifer();
-	float bombardDamageMultiplier = getBombardDamageMultipler();
+	float habitabilityModifier = getEffect("habitabilityModifier", 1.0f);
+	float exploitationModifier = getEffect("exploitationModifier", 1.0f);
+	float bombardDamageMultiplier = getEffect("bombardDamageMultiplier", 1.0f);
+	float invasionEffectiveness = getEffect("invasionEffectiveness", 1.0f);
 
 	if (habitabilityModifier != 1.0f) {
 		effects << "Habitability: " << Util::percentify(habitabilityModifier, 1) << "\n";
 	}
 
 	if (exploitationModifier != 1.0f) {
-		effects << "Resource Extraction Rate: " << Util::percentify(exploitationModifier, 1) << "\n";
+		effects << "Resource extraction rate: " << Util::percentify(exploitationModifier, 1) << "\n";
 	}
 
 	if (bombardDamageMultiplier != 1.0f) {
-		effects << "Orbital Bombardment Damage Reduction: " << Util::percentify(bombardDamageMultiplier, 1) << "\n";
+		effects << "Orbital bombardment damage: " << Util::percentify(bombardDamageMultiplier, 1) << "\n";
+	}
+
+	if (invasionEffectiveness != 1.0f) {
+		effects << "Invasion effectiveness: " << Util::percentify(invasionEffectiveness, 1) << "\n";
 	}
 
 	for (std::string& flag : getFlags()) {
@@ -242,7 +237,7 @@ std::string ColonyBuilding::getEffectsString() const {
 	return effects.str();
 }
 
-bool ColonyBuilding::hasFlag(const std::string& flag) {
+bool ColonyBuilding::hasFlag(const std::string& flag) const {
 	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
 	auto* arr = table[m_type]["flags"].as_array();
@@ -268,12 +263,4 @@ std::vector<std::string> ColonyBuilding::getFlags() const {
 	}
 
 	return flags;
-}
-
-float ColonyBuilding::getBombardDamageMultipler() const {
-	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
-
-	float mult = table[getType()]["bombardDamageMultiplier"].value_or(1.0f);
-
-	return mult;
 }

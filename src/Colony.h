@@ -19,13 +19,17 @@ public:
 	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
 	std::vector<std::string> getFlags() const;
 
-	bool isBuilt() { return m_percentBuilt >= 100.0f; }
-	bool hasFlag(const std::string& flag);
+	bool isBuilt() const { return m_percentBuilt >= 100.0f; }
+	bool hasFlag(const std::string& flag) const;
 
-	float getHabitabilityModifier() const;
-	float getExploitationModifer() const;
 	float getPercentBuilt() const { return m_percentBuilt; }
-	float getBombardDamageMultipler() const;
+
+	template<typename T> 
+	T getEffect(const std::string& val, T defaultVal) const {
+		const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+
+		return table[m_type][val].value_or(defaultVal);
+	}
 
 private:
 	friend class boost::serialization::access;
@@ -52,7 +56,7 @@ public:
 	int getAllegiance() { return m_allegiance; }
 
 	float getGrowthRate(float planetHabitability);
-	float getBombardDamageMultipler() const;
+	float getBuildingEffects(const std::string& effect) const;
 
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);

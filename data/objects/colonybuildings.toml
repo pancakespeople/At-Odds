@@ -1,22 +1,23 @@
 [INFRASTRUCTURE]
 name = "Infrastructure"
-description = "The vital systems needed to keep a society functioning."
+description = "Roads, electricity, plumbing, you know, stuff like that."
 habitabilityModifier = 1.2
 
 [FARMING]
 name = "Farms"
-description = "Produces food."
+description = "Produces food. Bet you would have never guessed what this does!"
 baseCost = [["COMMON_ORE", 25]]
 habitabilityModifier = 1.5
 
 [MILITARY_BASE]
 name = "Military Base"
-description = "Necessary for civil control if the populace gets a little bit unruly. Oh and for protecting against invasions from other empires."
+description = "When there are protests against your government in the streets, what do you do? That's right, you send in the army to, uh, "pacify" them. You may also want to send in the army when other armies invade your planet."
 baseCost = [["UNCOMMON_ORE", 20], ["RARE_ORE", 5]]
+invasionEffectiveness = 0.5
 
 [SPACEPORT]
 name = "Spaceport"
-description = "Having a proper spaceport will greatly increase the commercial activity of the colony."
+description = "No one is gonna visit your planet if the only place to land their spaceship is a tiny island in the middle of a scorching sea of lava. Come on now, build a real spaceport!"
 baseCost = [["COMMON_ORE", 35]]
 flags = ["ENABLE_SPACEBUS"]
 
@@ -29,7 +30,7 @@ exploitationModifier = 1.7
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"
 baseCost = [["COMMON_ORE", 10], ["UNCOMMON_ORE", 10], ["RARE_ORE", 10]]
-description = "Massive cannons that can be used to shoot any space invaders out of the sky."
+description = "What can we do if some unethical faction begins nuking our planet from orbit? To be honest, there's not much we can do but let's atleast shoot back with our Orbital Defense."
 
 [CONSUMER_GOODS_FACTORIES]
 name = "Consumer Goods Factory"
@@ -44,7 +45,7 @@ description = "The profitable military industrial complex."
 [EXPLORING]
 name = "Exploration HQ"
 baseCost = [["UNCOMMON_ORE", 5]]
-description = "An organized planet exploration effort. They will surely discover useful things and not eldrich abominations."
+description = "An organized planet exploration effort that will surely discover useful things and not eldrich abominations."
 
 [BOMB_SHELTER]
 name = "Bomb Shelter"
