@@ -27,7 +27,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 			auto val = weapon.value<std::string>();
 			if (val) {
 				if (val.value() == "$RAND_WEAPON") {
-					auto& weapons = faction->getBuildingWeapons();
+					auto weapons = faction->getBuildingWeapons();
 					if (weapons.size() > 0) {
 						int rndIndex = Random::randInt(0, weapons.size() - 1);
 						addWeapon(Weapon(weapons[rndIndex].type));
