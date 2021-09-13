@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "toml.hpp"
+#include "TOMLCache.h"
 #include "Weapon.h"
 
 class Star;
