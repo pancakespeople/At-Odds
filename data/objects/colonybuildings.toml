@@ -11,7 +11,7 @@ habitabilityModifier = 1.5
 
 [MILITARY_BASE]
 name = "Military Base"
-description = "When there are protests against your government in the streets, what do you do? That's right, you send in the army to, uh, "pacify" them. You may also want to send in the army when other armies invade your planet."
+description = "When there are protests against your government in the streets, what do you do? That's right, you send in the army to, uh, \"pacify\" them. You may also want to send in the army when other armies invade your planet."
 baseCost = [["UNCOMMON_ORE", 20], ["RARE_ORE", 5]]
 invasionEffectiveness = 0.5
 
@@ -31,6 +31,7 @@ exploitationModifier = 1.7
 name = "Orbital Defense"
 baseCost = [["COMMON_ORE", 10], ["UNCOMMON_ORE", 10], ["RARE_ORE", 10]]
 description = "What can we do if some unethical faction begins nuking our planet from orbit? To be honest, there's not much we can do but let's atleast shoot back with our Orbital Defense."
+flags = ["ENABLE_ORBITAL_CANNON"]
 
 [CONSUMER_GOODS_FACTORIES]
 name = "Consumer Goods Factory"

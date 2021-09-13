@@ -6,6 +6,7 @@
 #include "Star.h"
 #include "Faction.h"
 #include "Projectile.h"
+#include "Building.h"
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));

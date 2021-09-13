@@ -24,7 +24,7 @@ Weapon::Weapon(const std::string& type) {
 	m_numProjectiles = table[type]["numProjectiles"].value_or(1);
 }
 
-void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
+void Weapon::fireAtAngle(sf::Vector2f sourcePos, int allegiance, float angleDegrees, Star* star) {
 	if (isOnCooldown()) return;
 	
 	float variability = (1.0f - m_accuracy) * 100.0f;
@@ -32,13 +32,13 @@ void Weapon::fireAtAngle(const Unit* source, float angleDegrees, Star* star) {
 	for (int i = 0; i < m_numProjectiles; i++) {
 		float angleVary = Random::randFloat(-variability, variability);
 
-		m_projectile.setPos(source->getPos());
+		m_projectile.setPos(sourcePos);
 		m_projectile.setRotation(angleDegrees + angleVary);
-		m_projectile.setAllegiance(source->getAllegiance());
+		m_projectile.setAllegiance(allegiance);
 		star->addProjectile(m_projectile);
 	}
 
-	playFireSound(source, star);
+	playFireSound(sourcePos, star);
 
 	m_cooldownPercent = 100.0f;
 }
@@ -66,14 +66,25 @@ bool Weapon::isOnCooldown() {
 	}
 }
 
-void Weapon::fireAt(const Unit* source, const sf::Vector2f& target, Star* star) {
-	float angle = Math::angleBetween(source->getPos(), target);
-	fireAtAngle(source, angle, star);
+void Weapon::fireAt(sf::Vector2f sourcePos, int allegiance, const sf::Vector2f& target, Star* star) {
+	float angle = Math::angleBetween(sourcePos, target);
+	fireAtAngle(sourcePos, allegiance, angle, star);
 }
 
-void Weapon::playFireSound(const Unit* source, Star* star) {
+void Weapon::playFireSound(sf::Vector2f sourcePos, Star* star) {
 	if (m_soundPath != "" && m_soundCooldown == 0) {
-		Sounds::playSoundLocal(m_soundPath, star, source->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+		Sounds::playSoundLocal(m_soundPath, star, sourcePos, 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 		m_soundCooldown = m_baseSoundCooldown;
+	}
+}
+
+void Weapon::fireAtNearestEnemyCombatShip(sf::Vector2f sourcePos, int allegiance, Star* star) {
+	for (auto& ship : star->getSpaceships()) {
+		if (ship->getAllegiance() != allegiance && !ship->isCivilian()) {
+			if (Math::distance(sourcePos, ship->getPos()) < getRange()) {
+				fireAt(sourcePos, allegiance, ship->getPos(), star);
+				return;
+			}
+		}
 	}
 }

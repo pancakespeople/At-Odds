@@ -277,7 +277,7 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 
 				m_planet->addBombardProjectile(newProj);
 				weapon.triggerCooldown();
-				weapon.playFireSound(ship, currentStar);
+				weapon.playFireSound(ship->getPos(), currentStar);
 			}
 		}
 	}

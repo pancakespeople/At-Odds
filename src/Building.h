@@ -23,11 +23,13 @@ public:
 	};
 
 	Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built = true);
+	Building() {}
 
 	void draw(sf::RenderWindow& window);
 	void update(Star* currentStar);
 	void construct(const Spaceship* constructor);
 	void reinitAfterLoad(Star* star);
+	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 
 	static bool checkBuildCondition(const std::string& type, const Star* star, int allegiance, bool player = false);
 
@@ -49,8 +51,6 @@ private:
 		archive & m_maxHealth;
 	}
 
-	Building() {}
-	
 	void attackEnemies();
 
 	sf::Sprite m_sprite;

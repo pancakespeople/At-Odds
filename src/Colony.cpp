@@ -76,7 +76,17 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 
 	// Update colony buildings
 	for (ColonyBuilding& building : m_buildings) {
-		building.update();
+		building.update(*this);
+	}
+
+	// Orbital defense
+	if (faction != nullptr) {
+		if (m_defenseCannonEnabled) {
+			m_defenseCannon.update();
+			if (!m_defenseCannon.isOnCooldown()) {
+				m_defenseCannon.fireAtNearestEnemyCombatShip(planet->getPos(), faction->getID(), currentStar);
+			}
+		}
 	}
 }
 
@@ -161,6 +171,12 @@ float Colony::getBuildingEffects(const std::string& effect) const {
 	return mult;
 }
 
+void Colony::onBuildingBuild() {
+	if (hasBuildingFlag("ENABLE_ORBITAL_CANNON")) {
+		m_defenseCannonEnabled = true;
+	}
+}
+
 ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
@@ -197,9 +213,10 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& p
 	return cost;
 }
 
-void ColonyBuilding::update() {
+void ColonyBuilding::update(Colony& colony) {
 	if (!isBuilt()) {
 		m_percentBuilt += 0.01;
+		if (isBuilt()) colony.onBuildingBuild();
 	}
 }
 
@@ -230,7 +247,11 @@ std::string ColonyBuilding::getEffectsString() const {
 
 	for (std::string& flag : getFlags()) {
 		if (flag == "ENABLE_SPACEBUS") {
-			effects << "Enables Space Bus" << "\n";
+			effects << "Enables space bus" << "\n";
+		}
+		
+		if (flag == "ENABLE_ORBITAL_CANNON") {
+			effects << "Enables orbital cannon" << "\n";
 		}
 	}
 

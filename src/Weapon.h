@@ -12,12 +12,13 @@ class Weapon {
 public:
 	Weapon(const std::string& type);
 
-	void fireAtAngle(const Unit* source, float angleDegrees, Star* star);
-	void fireAt(const Unit* source, const sf::Vector2f& target, Star* star);
+	void fireAtAngle(sf::Vector2f sourcePos, int allegiance, float angleDegrees, Star* star);
+	void fireAt(sf::Vector2f sourcePos, int allegiance, const sf::Vector2f& target, Star* star);
+	void fireAtNearestEnemyCombatShip(sf::Vector2f sourcePos, int allegiance, Star* star);
 	void update();
 	void setAccuracy(float accuracy) { m_accuracy = accuracy; }
 	void triggerCooldown() { m_cooldownPercent = 100.0f; }
-	void playFireSound(const Unit* source, Star* star);
+	void playFireSound(sf::Vector2f sourcePos, Star* star);
 
 	bool isOnCooldown();
 

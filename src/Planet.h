@@ -7,6 +7,7 @@
 #include "Identifiable.h"
 #include "Colony.h"
 #include "Resource.h"
+#include "Weapon.h"
 
 class Star;
 class Faction;
@@ -37,7 +38,7 @@ public:
 	void createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet);
 	void generateResources();
 	void addBombardProjectile(const Projectile& proj) { m_bombardProjectiles.push_back(proj); }
-
+	
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
 	float getWater() const { return m_water; }
@@ -90,4 +91,5 @@ private:
 
 	std::vector<Resource> m_resources;
 	std::vector<Projectile> m_bombardProjectiles;
+
 };

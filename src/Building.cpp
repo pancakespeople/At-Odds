@@ -108,6 +108,7 @@ void Building::update(Star* currentStar) {
 	attackEnemies();
 
 	m_sprite.rotate(0.1f);
+	m_collider.update(getPos());
 }
 
 void Building::attackEnemies() {
@@ -124,7 +125,7 @@ void Building::attackEnemies() {
 			float dist = Math::distance(getPos(), m_attackTarget->getPos());
 			if (dist < weaponRange && m_attackTarget->getCurrentStar() == m_currentStar) {
 				for (Weapon& weapon : m_weapons) {
-					weapon.fireAt(this, m_attackTarget->getPos(), m_currentStar);
+					weapon.fireAt(getPos(), getAllegiance(), m_attackTarget->getPos(), m_currentStar);
 				}
 			}
 			else {

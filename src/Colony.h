@@ -1,49 +1,13 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "toml.hpp"
+#include "Weapon.h"
 
 class Star;
 class Faction;
 class Planet;
-
-class ColonyBuilding {
-public:
-	ColonyBuilding(const std::string& type);
-
-	void update();
-
-	std::string getName() const;
-	std::string getDescription() const;
-	std::string getType() const { return m_type; }
-	std::string getEffectsString() const;
-	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
-	std::vector<std::string> getFlags() const;
-
-	bool isBuilt() const { return m_percentBuilt >= 100.0f; }
-	bool hasFlag(const std::string& flag) const;
-
-	float getPercentBuilt() const { return m_percentBuilt; }
-
-	template<typename T> 
-	T getEffect(const std::string& val, T defaultVal) const {
-		const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
-
-		return table[m_type][val].value_or(defaultVal);
-	}
-
-private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_type;
-		archive & m_percentBuilt;
-	}
-	
-	ColonyBuilding() {}
-
-	std::string m_type;
-	float m_percentBuilt = 0.0f;
-};
+class ColonyBuilding;
 
 class Colony {
 public:
@@ -72,7 +36,7 @@ public:
 	void setAllegiance(int id) { m_allegiance = id; }
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
 	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }
-	
+	void onBuildingBuild();
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
@@ -90,6 +54,8 @@ private:
 		archive & m_factionColor;
 		archive & m_factionColonyLegality;
 		archive & m_buildings;
+		archive & m_defenseCannon;
+		archive & m_defenseCannonEnabled;
 	}
 
 	int m_population = 0;
@@ -98,8 +64,51 @@ private:
 	int m_ticksToNextBus = 500;
 	int m_ticksToNextResourceExploit = 1000;
 
+	bool m_defenseCannonEnabled = false;
+
 	sf::Color m_factionColor = sf::Color(175, 175, 175);
 
 	std::unordered_map<int, bool> m_factionColonyLegality;
 	std::vector<ColonyBuilding> m_buildings;
+
+	Weapon m_defenseCannon = Weapon("FLAK_CANNON");
+};
+
+class ColonyBuilding {
+public:
+	ColonyBuilding(const std::string& type);
+
+	void update(Colony& colony);
+
+	std::string getName() const;
+	std::string getDescription() const;
+	std::string getType() const { return m_type; }
+	std::string getEffectsString() const;
+	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
+	std::vector<std::string> getFlags() const;
+
+	bool isBuilt() const { return m_percentBuilt >= 100.0f; }
+	bool hasFlag(const std::string& flag) const;
+
+	float getPercentBuilt() const { return m_percentBuilt; }
+
+	template<typename T>
+	T getEffect(const std::string& val, T defaultVal) const {
+		const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+
+		return table[m_type][val].value_or(defaultVal);
+	}
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_type;
+		archive & m_percentBuilt;
+	}
+
+	ColonyBuilding() {}
+
+	std::string m_type;
+	float m_percentBuilt = 0.0f;
 };

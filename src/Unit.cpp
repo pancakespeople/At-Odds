@@ -49,7 +49,7 @@ std::vector<Unit*> Unit::findEnemyUnits() {
 
 void Unit::fireAllWeaponsAt(Unit* target) {
 	for (Weapon& weapon : m_weapons) {
-		weapon.fireAt(this, target->getPos(), m_currentStar);
+		weapon.fireAt(getPos(), getAllegiance(), target->getPos(), m_currentStar);
 	}
 }
 

@@ -354,7 +354,7 @@ std::vector<Spaceship*> Spaceship::findEnemyCombatShips() {
 }
 
 void Spaceship::fireAt(Spaceship* target, int weaponIdx) {
-	m_weapons[weaponIdx].fireAt(this, target->getPos(), m_currentStar);
+	m_weapons[weaponIdx].fireAt(getPos(), getAllegiance(), target->getPos(), m_currentStar);
 }
 
 void Spaceship::smartFireAt(Unit* target, int weaponIdx) {
@@ -367,7 +367,7 @@ void Spaceship::smartFireAt(Unit* target, int weaponIdx) {
 	
 	sf::Vector2f predictPos(targetPos.x + targetVel.x * (projectileSpeed * hyp), targetPos.y + targetVel.y * (projectileSpeed * hyp));
 
-	m_weapons[weaponIdx].fireAt(this, predictPos, m_currentStar);
+	m_weapons[weaponIdx].fireAt(getPos(), getAllegiance(), predictPos, m_currentStar);
 }
 
 void Spaceship::orbit(const sf::Vector2f& pos) {
