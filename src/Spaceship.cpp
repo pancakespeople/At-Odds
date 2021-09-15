@@ -58,6 +58,7 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	m_sprite.setScale(scale, scale);
 	m_mass = mass;
 	m_health = health;
+	m_maxHealth = health;
 	m_collider.setRadius(colliderRadius);
 	m_constructionSpeed = constructionSpeed;
 	m_canReceiveOrders = canReceiveOrders;
@@ -111,6 +112,8 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 				}
 			}
 		}
+
+		drawHealthBar(window);
 	}
 }
 
@@ -529,4 +532,23 @@ bool Spaceship::isPlanetAttackShip() const {
 		}
 	}
 	return false;
+}
+
+void Spaceship::drawHealthBar(sf::RenderWindow& window) {
+	sf::RectangleShape rect;
+
+	float healthPercent = m_health / m_maxHealth;
+	float sizeX = m_collider.getRadius() * 2.0f * healthPercent;
+	float sizeY = 25.0f;
+
+	rect.setSize(sf::Vector2f(sizeX, sizeY));
+	rect.setOrigin(sizeX / 2.0f, 0.0f);
+	rect.setPosition(sf::Vector2f(m_collider.getPosition().x, m_collider.getPosition().y + m_collider.getRadius() + m_collider.getOutlineThickness()));
+	
+	int colorR = 255 * std::clamp((healthPercent - 1.0f) * -2.0f, 0.0f, 1.0f);
+	int colorG = 255 * std::clamp(healthPercent * 2.0f, 0.0f, 1.0f);
+	
+	rect.setFillColor(sf::Color(colorR, colorG, 0));
+
+	window.draw(rect);
 }

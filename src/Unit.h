@@ -73,6 +73,7 @@ protected:
 		archive & m_dead;
 		archive & m_allegiance;
 		archive & m_mods;
+		archive & m_maxHealth;
 	}
 
 	Star* m_currentStar = nullptr;
@@ -85,6 +86,7 @@ protected:
 
 	int m_allegiance = 0;
 	float m_health = 100.0f;
+	float m_maxHealth = 100.0f;
 	bool m_dead = false;
 };
 
