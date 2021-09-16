@@ -89,6 +89,11 @@ void Building::draw(sf::RenderWindow& window) {
 		window.draw(m_sprite);
 	}
 	window.draw(m_collider);
+
+	if (m_selected) {
+		drawSelectionCircle(window);
+		drawHealthBar(window);
+	}
 }
 
 void Building::update(Star* currentStar) {

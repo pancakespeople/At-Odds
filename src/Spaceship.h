@@ -103,8 +103,6 @@ public:
 	void orbit(const sf::Vector2f& pos);
 	void captureCurrentStar(Faction* faction);
 	void attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent = false);
-	void onSelected();
-	void onDeselected();
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 	void clearOrders() { m_orders.clear(); }
 	void attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings);
@@ -114,12 +112,10 @@ public:
 	void setSilentDeath(bool flag) { m_diesSilently = flag; }
 	void setCanReceiveOrders(bool flag) { m_canReceiveOrders = flag; }
 	void reinitOrdersAfterLoad(Constellation* constellation);
-	void drawHealthBar(sf::RenderWindow& window);
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
 	bool flyTo(const sf::Vector2f& pos);
-	bool isSelected() const { return m_selected; }
 	bool isDisabled() const { return m_disabled; }
 	bool canReceiveOrders() const { return m_canReceiveOrders; }
 	bool canPlayerGiveOrders() const { return m_playerCanGiveOrders; }
@@ -188,7 +184,6 @@ private:
 	float m_rotationSpeed = 1.0;
 	float m_constructionSpeed = 0.0f;
 
-	bool m_selected = false;
 	bool m_canReceiveOrders = true;
 	bool m_playerCanGiveOrders = true;
 	bool m_disabled = false;

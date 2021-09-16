@@ -31,6 +31,7 @@ public:
 	float maxWeaponDamage() const;
 
 	bool isDead() const { return m_dead; }
+	bool isSelected() const { return m_selected; }
 	
 	void kill() { m_health = 0.0f; }
 	void takeDamage(float damage) { m_health -= damage; }
@@ -43,6 +44,10 @@ public:
 	void openModGUI(tgui::ChildWindow::Ptr window, Faction* faction);
 	void reinitAfterLoad(Star* star) { m_currentStar = star; }
 	void addVelocity(sf::Vector2f vel) { m_velocity += vel; }
+	void onSelected() { m_selected = true; }
+	void onDeselected() { m_selected = false; }
+	void drawSelectionCircle(sf::RenderWindow& window);
+	void drawHealthBar(sf::RenderWindow& window);
 	
 	int getAllegiance() const { return m_allegiance; }
 
@@ -85,8 +90,11 @@ protected:
 	std::vector<std::unique_ptr<Mod>> m_mods;
 
 	int m_allegiance = 0;
+	
 	float m_health = 100.0f;
 	float m_maxHealth = 100.0f;
+	
 	bool m_dead = false;
+	bool m_selected = false;
 };
 

@@ -82,16 +82,7 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 	}
 
 	if (m_selected) {
-		sf::CircleShape selectionIndicator;
-		
-		selectionIndicator.setOrigin(sf::Vector2f(m_collider.getRadius() * 2.0f, m_collider.getRadius() * 2.0f));
-		selectionIndicator.setPosition(getPos());
-		selectionIndicator.setFillColor(sf::Color::Transparent);
-		selectionIndicator.setOutlineColor(sf::Color::Yellow);
-		selectionIndicator.setOutlineThickness(25.0f);
-		selectionIndicator.setRadius(m_collider.getRadius() * 2.0f);
-
-		window.draw(selectionIndicator);
+		drawSelectionCircle(window);
 
 		// Visualizes orders when selected
 		for (int i = 0; i < m_orders.size(); i++) {
@@ -424,14 +415,6 @@ void Spaceship::attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent)
 	}
 }
 
-void Spaceship::onSelected() {
-	m_selected = true;
-}
-
-void Spaceship::onDeselected() {
-	m_selected = false;
-}
-
 std::vector<Building*> Spaceship::findEnemyBuildings() {
 	std::vector<Building*> buildings;
 	for (auto& b : m_currentStar->getBuildings()) {
@@ -532,23 +515,4 @@ bool Spaceship::isPlanetAttackShip() const {
 		}
 	}
 	return false;
-}
-
-void Spaceship::drawHealthBar(sf::RenderWindow& window) {
-	sf::RectangleShape rect;
-
-	float healthPercent = m_health / m_maxHealth;
-	float sizeX = m_collider.getRadius() * 2.0f * healthPercent;
-	float sizeY = 25.0f;
-
-	rect.setSize(sf::Vector2f(sizeX, sizeY));
-	rect.setOrigin(sizeX / 2.0f, 0.0f);
-	rect.setPosition(sf::Vector2f(m_collider.getPosition().x, m_collider.getPosition().y + m_collider.getRadius() + m_collider.getOutlineThickness()));
-	
-	int colorR = 255 * std::clamp((healthPercent - 1.0f) * -2.0f, 0.0f, 1.0f);
-	int colorG = 255 * std::clamp(healthPercent * 2.0f, 0.0f, 1.0f);
-	
-	rect.setFillColor(sf::Color(colorR, colorG, 0));
-
-	window.draw(rect);
 }

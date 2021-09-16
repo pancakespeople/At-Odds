@@ -2,6 +2,7 @@
 #include "../GUI.h"
 #include "ShipDesigner.h"
 #include "PlanetGUI.h"
+#include "UnitGUI.h"
 
 struct PlayerGUI {
 	PlayerGUI() {}
