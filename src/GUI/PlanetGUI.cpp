@@ -171,6 +171,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	}
 
 	createBuildingsButton(gui, planet, playerFaction);
+	createEventsButton(gui);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
@@ -575,4 +576,20 @@ void PlanetGUI::createBuildStatusLabel(Planet& planet, const ColonyBuilding& bui
 		statusLabel->setText("Under Construction");
 	}
 	m_sideWindow->get<tgui::Group>("infoGroup")->add(statusLabel);
+}
+
+void PlanetGUI::createEventsButton(tgui::Gui& gui) {
+	auto eventsButton = tgui::Button::create("Events");
+	eventsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 40.0%");
+	eventsButton->setSize("25%", "10%");
+	eventsButton->onPress([this, &gui]() {
+		switchSideWindow("Events", gui);
+
+		if (m_sideWindow == nullptr) return;
+
+		auto eventsBox = tgui::ListBox::create();
+		eventsBox->setSize("100%", "50%");
+		m_sideWindow->add(eventsBox);
+	});
+	m_planetInfoPanel->add(eventsButton);
 }
