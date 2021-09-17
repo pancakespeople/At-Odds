@@ -113,6 +113,8 @@ void Planet::update(Star* currentStar, Faction* faction) {
 			i--;
 		}
 	}
+
+	m_timeSinceCreaton += 1.0f / 60.0f; // Fixed timestep, 60 updates per second
 }
 
 void Planet::generateGasGiant(float baseTemperature) {
@@ -304,6 +306,7 @@ float Planet::getHabitability() const {
 void Planet::onColonization() {
 	m_colony.setTicksToNextBus(HabitatMod::calcBusTickTimer(m_colony.getPopulation()));
 	m_colony.addBuilding(ColonyBuilding("INFRASTRUCTURE"));
+	addEvent("COLONY_START");
 }
 
 void Planet::createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
@@ -346,4 +349,11 @@ void Planet::generateResources() {
 			m_resources.push_back(resource);
 		}
 	}
+}
+
+void Planet::addEvent(const std::string& type) {
+	PlanetEvent ev;
+	ev.type = type;
+	ev.timeSeconds = m_timeSinceCreaton;
+	m_events.push_back(ev);
 }

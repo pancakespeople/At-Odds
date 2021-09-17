@@ -27,6 +27,19 @@ public:
 		LAVA,
 		OCEAN
 	};
+
+	struct PlanetEvent {
+		std::string type;
+		float timeSeconds;
+
+	private:
+		friend class boost::serialization::access;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version) {
+			archive & type;
+			archive & timeSeconds;
+		}
+	};
 	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature);
 
@@ -38,6 +51,7 @@ public:
 	void createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet);
 	void generateResources();
 	void addBombardProjectile(const Projectile& proj) { m_bombardProjectiles.push_back(proj); }
+	void addEvent(const std::string& type);
 	
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
@@ -54,6 +68,9 @@ public:
 	PLANET_TYPE getType() const { return m_type; }
 	std::string getTypeString() const;
 	std::vector<Resource>& getResources() { return m_resources; }
+	const std::vector<PlanetEvent>& getEvents() const { return m_events; }
+
+	float getTimeSinceCreation() const { return m_timeSinceCreaton; }
 
 
 private:
@@ -72,6 +89,8 @@ private:
 		archive & m_colony;
 		archive & m_resources;
 		archive & m_bombardProjectiles;
+		archive & m_events;
+		archive & m_timeSinceCreaton;
 	}
 	
 	Planet() {}
@@ -82,6 +101,7 @@ private:
 	float m_temperature = 500.0f; // Kelvin
 	float m_atmosphere = 1.0f; // Atmospheric pressure in Earth atmospheres
 	float m_water = 0.0f; // Percent of planet covered in water from 0-1
+	float m_timeSinceCreaton = 0.0f; // Seconds
 	
 	bool m_gasGiant = false;
 
@@ -91,5 +111,5 @@ private:
 
 	std::vector<Resource> m_resources;
 	std::vector<Projectile> m_bombardProjectiles;
-
+	std::vector<PlanetEvent> m_events;
 };

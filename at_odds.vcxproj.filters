@@ -111,4 +111,7 @@
     <ClCompile Include="src\GUI\UnitGUI.cpp" />
     <ClCompile Include="src\GUI\BuildingGUI.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="data\objects\planetevents.toml" />
+  </ItemGroup>
 </Project>

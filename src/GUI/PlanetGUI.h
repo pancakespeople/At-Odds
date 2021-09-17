@@ -18,7 +18,7 @@ private:
 	void createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet);
 	void displayBuildingInfo(ColonyBuilding& building, Planet& planet, bool buildInfo);
 	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
-	void createEventsButton(tgui::Gui& gui);
+	void createEventsButton(tgui::Gui& gui, const Planet& planet);
 
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;

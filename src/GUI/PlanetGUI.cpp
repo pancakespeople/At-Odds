@@ -3,6 +3,8 @@
 #include "../Faction.h"
 #include "../Star.h"
 #include "../Math.h"
+#include "../TOMLCache.h"
+#include "../Util.h"
 
 void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 	if (m_planetPanel != nullptr) {
@@ -171,7 +173,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	}
 
 	createBuildingsButton(gui, planet, playerFaction);
-	createEventsButton(gui);
+	createEventsButton(gui, planet);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
@@ -578,18 +580,48 @@ void PlanetGUI::createBuildStatusLabel(Planet& planet, const ColonyBuilding& bui
 	m_sideWindow->get<tgui::Group>("infoGroup")->add(statusLabel);
 }
 
-void PlanetGUI::createEventsButton(tgui::Gui& gui) {
+void PlanetGUI::createEventsButton(tgui::Gui& gui, const Planet& planet) {
 	auto eventsButton = tgui::Button::create("Events");
 	eventsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 40.0%");
 	eventsButton->setSize("25%", "10%");
-	eventsButton->onPress([this, &gui]() {
+	eventsButton->onPress([this, &gui, &planet]() {
 		switchSideWindow("Events", gui);
 
 		if (m_sideWindow == nullptr) return;
 
+		const toml::table& table = TOMLCache::getTable("data/objects/planetevents.toml");
+
+		auto descriptionPanel = tgui::Panel::create();
+		descriptionPanel->setPosition("0%", "50%");
+		descriptionPanel->setSize("100%", "50%");
+		descriptionPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
+		m_sideWindow->add(descriptionPanel);
+
 		auto eventsBox = tgui::ListBox::create();
 		eventsBox->setSize("100%", "50%");
 		m_sideWindow->add(eventsBox);
+
+		for (const Planet::PlanetEvent& ev : planet.getEvents()) {
+			eventsBox->addItem(table[ev.type]["name"].value_or(std::string("???")) + " - " + Util::secondsToTime(ev.timeSeconds));
+			eventsBox->setItemData(eventsBox->getItemCount() - 1, ev.type);
+		}
+
+		eventsBox->onItemSelect([eventsBox, descriptionPanel]() {
+			auto descriptionText = descriptionPanel->get<tgui::Label>("descriptionText");
+			
+			if (eventsBox->getSelectedItemIndex() != -1) {
+				const toml::table& table = TOMLCache::getTable("data/objects/planetevents.toml");
+				std::string type = eventsBox->getItemData<std::string>(eventsBox->getSelectedItemIndex());
+
+				descriptionText->setText(table[type]["description"].value_or("???"));
+			}
+			else {
+				descriptionText->setText("");
+			}
+		});
+
+		auto descriptionText = tgui::Label::create();
+		descriptionPanel->add(descriptionText, "descriptionText");
 	});
 	m_planetInfoPanel->add(eventsButton);
 }
