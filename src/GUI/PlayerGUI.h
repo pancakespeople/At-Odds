@@ -3,6 +3,7 @@
 #include "ShipDesigner.h"
 #include "PlanetGUI.h"
 #include "UnitGUI.h"
+#include "BuildingGUI.h"
 
 struct PlayerGUI {
 	PlayerGUI() {}

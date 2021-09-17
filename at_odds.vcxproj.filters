@@ -60,6 +60,7 @@
     <ClInclude Include="src\GUI\MainMenu.h" />
     <ClInclude Include="src\GUI\PlanetGUI.h" />
     <ClInclude Include="src\GUI\UnitGUI.h" />
+    <ClInclude Include="src\GUI\BuildingGUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -108,5 +109,6 @@
     <ClCompile Include="src\GUI\MainMenu.cpp" />
     <ClCompile Include="src\GUI\PlanetGUI.cpp" />
     <ClCompile Include="src\GUI\UnitGUI.cpp" />
+    <ClCompile Include="src\GUI\BuildingGUI.cpp" />
   </ItemGroup>
 </Project>
