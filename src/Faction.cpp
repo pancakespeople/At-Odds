@@ -415,3 +415,27 @@ std::vector<Spaceship::DesignerWeapon> Faction::getBuildingWeapons() {
 
 	return weapons;
 }
+
+Spaceship::DesignerWeapon Faction::addRandomWeapon() {
+	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
+
+	std::vector<std::string> vals;
+
+	for (auto& elem : table) {
+		vals.push_back(elem.first);
+	}
+
+	int randIdx = Random::randInt(0, vals.size() - 1);
+	Spaceship::DesignerWeapon weapon(vals[randIdx]);
+
+	bool alreadyHas = false;
+	for (auto& w : getWeapons()) {
+		if (w.name == weapon.name) {
+			alreadyHas = true;
+			break;
+		}
+	}
+
+	if (!alreadyHas) addWeapon(weapon);
+	return weapon;
+}

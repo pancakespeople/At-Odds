@@ -613,7 +613,7 @@ void PlanetGUI::createEventsButton(tgui::Gui& gui, const Planet& planet) {
 				const toml::table& table = TOMLCache::getTable("data/objects/planetevents.toml");
 				std::string type = eventsBox->getItemData<std::string>(eventsBox->getSelectedItemIndex());
 
-				descriptionText->setText(table[type]["description"].value_or("???"));
+				descriptionText->setText(eventsBox->getSelectedItem() + " - " + table[type]["description"].value_or("???"));
 			}
 			else {
 				descriptionText->setText("");
@@ -621,6 +621,7 @@ void PlanetGUI::createEventsButton(tgui::Gui& gui, const Planet& planet) {
 		});
 
 		auto descriptionText = tgui::Label::create();
+		descriptionText->setSize("100%", "100%");
 		descriptionPanel->add(descriptionText, "descriptionText");
 	});
 	m_planetInfoPanel->add(eventsButton);

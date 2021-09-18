@@ -2,3 +2,11 @@
 [COLONY_START]
 name = "Colonization"
 description = "A faction colonized this planet."
+
+[EXPLORATION_RESOURCES]
+name = "[Exploration] Resources Found"
+description = "An exploration party found an area with several resources to exploit."
+
+[EXPLORATION_WEAPON]
+name = "[Exploration] Weapon Found"
+description = "A weapon design was found by a team of explorers."

@@ -47,6 +47,7 @@ description = "The profitable military industrial complex."
 name = "Exploration HQ"
 baseCost = [["UNCOMMON_ORE", 5]]
 description = "An organized planet exploration effort that will surely discover useful things and not eldrich abominations."
+flags = ["ENABLE_EXPLORATION"]
 
 [BOMB_SHELTER]
 name = "Bomb Shelter"

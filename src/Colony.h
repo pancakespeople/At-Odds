@@ -37,6 +37,7 @@ public:
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
 	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }
 	void onBuildingBuild();
+	void exploration(Planet* planet, Faction* faction);
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
@@ -56,6 +57,8 @@ private:
 		archive & m_buildings;
 		archive & m_defenseCannon;
 		archive & m_defenseCannonEnabled;
+		archive & m_explorationEnabled;
+		archive & m_explorationEventTimer;
 	}
 
 	int m_population = 0;
@@ -63,8 +66,10 @@ private:
 	int m_ticksUntilNextGrowth = growthTicks;
 	int m_ticksToNextBus = 500;
 	int m_ticksToNextResourceExploit = 1000;
+	int m_explorationEventTimer = 0;
 
 	bool m_defenseCannonEnabled = false;
+	bool m_explorationEnabled = false;
 
 	sf::Color m_factionColor = sf::Color(175, 175, 175);
 

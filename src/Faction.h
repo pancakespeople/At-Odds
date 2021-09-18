@@ -76,6 +76,7 @@ public:
 	Spaceship::DesignerChassis getChassisByName(const std::string& name);
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
 	Spaceship::DesignerShip getShipDesignByName(const std::string& name);
+	Spaceship::DesignerWeapon addRandomWeapon();
 
 	Star* getCapital() { return m_capital; }
 	Star* getRandomOwnedStar();

@@ -5,6 +5,7 @@
 #include "Faction.h"
 #include "TOMLCache.h"
 #include "Util.h"
+#include "Random.h"
 
 bool Colony::isColonizationLegal(int allegiance) {
 	if (m_factionColonyLegality.count(allegiance) == 0) return false;
@@ -88,6 +89,8 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 			}
 		}
 	}
+
+	if (m_explorationEnabled && faction != nullptr) exploration(planet, faction);
 }
 
 void Colony::addPopulation(int pop) {
@@ -125,7 +128,7 @@ float Colony::getGrowthRate(float planetHabitability) {
 
 bool Colony::hasBuildingFlag(const std::string& flag) {
 	for (ColonyBuilding& building : m_buildings) {
-		if (building.hasFlag(flag)) {
+		if (building.hasFlag(flag) && building.isBuilt()) {
 			return true;
 		}
 	}
@@ -174,6 +177,44 @@ float Colony::getBuildingEffects(const std::string& effect) const {
 void Colony::onBuildingBuild() {
 	if (hasBuildingFlag("ENABLE_ORBITAL_CANNON")) {
 		m_defenseCannonEnabled = true;
+	}
+
+	if (hasBuildingFlag("ENABLE_EXPLORATION")) {
+		m_explorationEnabled = true;
+		m_explorationEventTimer = Random::randInt(10000, 20000);
+	}
+}
+
+void Colony::exploration(Planet* planet, Faction* faction) {
+	if (m_explorationEventTimer == 0) {
+		float rnd = Random::randFloat(0.0f, 1.0f);
+
+		if (rnd < 0.75f) {
+			// Boring exploration event
+
+			// Gain resources
+			faction->addResource("COMMON_ORE", Random::randFloat(0.0f, 25.0f));
+			faction->addResource("UNCOMMON_ORE", Random::randFloat(0.0f, 25.0f));
+			faction->addResource("RARE_ORE", Random::randFloat(0.0f, 25.0f));
+			planet->addEvent("EXPLORATION_RESOURCES");
+			faction->addAnnouncementEvent("Explorers on one of your planets found some resources");
+		}
+		else if (rnd < 0.9f) {
+			// Interesting exploration event
+
+			// Found weapon
+			Spaceship::DesignerWeapon weapon = faction->addRandomWeapon();
+			planet->addEvent("EXPLORATION_WEAPON");
+			faction->addAnnouncementEvent("Your explorers found a " + weapon.name + " weapon design");
+		}
+		else {
+			// Exciting exploration event
+		}
+
+		m_explorationEventTimer = Random::randInt(10000, 20000);
+	}
+	else {
+		m_explorationEventTimer--;
 	}
 }
 

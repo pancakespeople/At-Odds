@@ -28,29 +28,8 @@ void Derelict::update(Star* star, std::vector<Faction>& factions) {
 				
 				for (Faction& faction : factions) {
 					if (faction.getID() == ship->getAllegiance()) {
-						const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
-						
-						if (table.size() > 0) {
-							std::vector<std::string> vals;
-
-							for (auto& elem : table) {
-								vals.push_back(elem.first);
-							}
-							
-							int randIdx = Random::randInt(0, vals.size() - 1);
-							Spaceship::DesignerWeapon weapon(vals[randIdx]);
-
-							bool alreadyHas = false;
-							for (auto& w : faction.getWeapons()) {
-								if (w.name == weapon.name) {
-									alreadyHas = true;
-									break;
-								}
-							}
-
-							if (!alreadyHas) faction.addWeapon(weapon);
-							faction.addAnnouncementEvent("You plundered a derelict and found a " + weapon.name + " design");
-						}
+						Spaceship::DesignerWeapon weapon = faction.addRandomWeapon();
+						faction.addAnnouncementEvent("You plundered a derelict and found a " + weapon.name + " design");
 					}
 				}
 				
