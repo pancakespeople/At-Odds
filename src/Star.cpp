@@ -134,7 +134,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 			s->draw(window, emitter);
 		}
 		for (std::unique_ptr<Building>& b : m_buildings) {
-			b->draw(window);
+			b->draw(window, emitter);
 		}
 		for (Derelict& d : m_derelicts) {
 			d.draw(window);

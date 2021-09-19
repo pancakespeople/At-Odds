@@ -134,6 +134,7 @@ int main(int argc, const char* argv[])
         }
 
         starShader.setUniform("time", time);
+        emitter.updateTime(time);
 
         window.clear();
         

@@ -113,5 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />
+    <None Include="data\shaders\selectionshader.shader" />
   </ItemGroup>
 </Project>

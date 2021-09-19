@@ -9,6 +9,7 @@ class Star;
 class Spaceship;
 class Faction;
 class Player;
+class EffectsEmitter;
 
 class Building : public Unit {
 public:
@@ -25,7 +26,7 @@ public:
 	Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built = true);
 	Building() {}
 
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
 	void update(Star* currentStar);
 	void construct(const Spaceship* constructor);
 	void reinitAfterLoad(Star* star);

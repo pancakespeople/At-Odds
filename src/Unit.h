@@ -9,6 +9,7 @@
 
 class Star;
 class Faction;
+class EffectsEmitter;
 
 class Unit : public Identifiable {
 public:
@@ -46,7 +47,7 @@ public:
 	void addVelocity(sf::Vector2f vel) { m_velocity += vel; }
 	void onSelected() { m_selected = true; }
 	void onDeselected() { m_selected = false; }
-	void drawSelectionCircle(sf::RenderWindow& window);
+	void drawSelectionCircle(sf::RenderWindow& window, EffectsEmitter& emitter);
 	void drawHealthBar(sf::RenderWindow& window);
 	
 	int getAllegiance() const { return m_allegiance; }

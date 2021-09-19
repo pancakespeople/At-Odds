@@ -82,7 +82,7 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 	}
 
 	if (m_selected) {
-		drawSelectionCircle(window);
+		drawSelectionCircle(window, emitter);
 
 		// Visualizes orders when selected
 		for (int i = 0; i < m_orders.size(); i++) {

@@ -294,6 +294,10 @@ std::string ColonyBuilding::getEffectsString() const {
 		if (flag == "ENABLE_ORBITAL_CANNON") {
 			effects << "Enables orbital cannon" << "\n";
 		}
+
+		if (flag == "ENABLE_EXPLORATION") {
+			effects << "Enables exploration events" << "\n";
+		}
 	}
 
 	return effects.str();

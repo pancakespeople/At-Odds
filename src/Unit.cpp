@@ -94,7 +94,7 @@ float Unit::maxWeaponDamage() const {
 	return max;
 }
 
-void Unit::drawSelectionCircle(sf::RenderWindow& window) {
+void Unit::drawSelectionCircle(sf::RenderWindow& window, EffectsEmitter& emitter) {
 	sf::CircleShape selectionIndicator;
 
 	selectionIndicator.setOrigin(sf::Vector2f(m_collider.getRadius() * 2.0f, m_collider.getRadius() * 2.0f));
@@ -104,7 +104,7 @@ void Unit::drawSelectionCircle(sf::RenderWindow& window) {
 	selectionIndicator.setOutlineThickness(25.0f);
 	selectionIndicator.setRadius(m_collider.getRadius() * 2.0f);
 
-	window.draw(selectionIndicator);
+	emitter.drawSelection(window, selectionIndicator);
 }
 
 void Unit::drawHealthBar(sf::RenderWindow& window) {

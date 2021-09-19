@@ -19,6 +19,8 @@ public:
 	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
 	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);
 	void drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed);
+	void drawSelection(sf::RenderWindow& window, const sf::CircleShape& shape);
+	void updateTime(float time);
 
 private:
 	void initShaders(sf::Vector2i resolution);
@@ -36,6 +38,7 @@ private:
 	sf::Shader m_planetShader;
 	sf::Shader m_glowShader;
 	sf::Shader m_nebulaShader;
+	sf::Shader m_selectionShader;
 
 	sf::Vector2i m_resolution;
 };

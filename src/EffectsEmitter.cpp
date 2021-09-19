@@ -40,6 +40,8 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 
 	m_nebulaShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/nebulashader.shader");
 	m_nebulaShader.setUniform("size", sf::Glsl::Vec2(resolution.x, resolution.y));
+
+	m_selectionShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/selectionshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -144,4 +146,13 @@ void EffectsEmitter::drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, fl
 	m_nebulaShader.setUniform("background", sf::Shader::CurrentTexture);
 	m_nebulaShader.setUniform("seed", seed);
 	window.draw(sprite, &m_nebulaShader);
+}
+
+void EffectsEmitter::drawSelection(sf::RenderWindow& window, const sf::CircleShape& shape) {
+	m_selectionShader.setUniform("size", sf::Glsl::Vec2(shape.getRadius(), shape.getRadius()));
+	window.draw(shape, &m_selectionShader);
+}
+
+void EffectsEmitter::updateTime(float time) {
+	m_selectionShader.setUniform("time", time);
 }

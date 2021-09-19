@@ -74,7 +74,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	}
 }
 
-void Building::draw(sf::RenderWindow& window) {
+void Building::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 	if (m_constructionPercent < 100.0f) {
 		sf::Color oldColor = m_sprite.getColor();
 		sf::Color newColor = oldColor;
@@ -91,7 +91,7 @@ void Building::draw(sf::RenderWindow& window) {
 	window.draw(m_collider);
 
 	if (m_selected) {
-		drawSelectionCircle(window);
+		drawSelectionCircle(window, emitter);
 		drawHealthBar(window);
 	}
 }
