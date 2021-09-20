@@ -215,6 +215,7 @@ float Constellation::findClosestStarDistance(sf::Vector2f& targetPos) {
 void Constellation::setupStars() {
     for (std::unique_ptr<Star>& s : m_stars) {
         s->setupJumpPoints();
+        s->setName(m_nameGenerator.generateName());
     }
 }
 

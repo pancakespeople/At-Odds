@@ -22,6 +22,7 @@
 #include "TextureCache.h"
 #include "GUI/DebugConsole.h"
 #include "GUI/MainMenu.h"
+#include "NameGenerator.h"
 
 int main(int argc, const char* argv[])
 {
@@ -71,7 +72,7 @@ int main(int argc, const char* argv[])
     EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
     SaveLoader saveLoader;
     DebugConsole console;
-    
+
     mainMenu.open(gui, constellation, state);
     
     Background background("data/art/spacebackground1.png", resolution.x, resolution.y);

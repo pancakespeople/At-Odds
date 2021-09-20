@@ -46,6 +46,7 @@ public:
 	void drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader);
 	void generateDerelicts();
 	void reinitAfterLoad(Constellation* constellation);
+	void setName(const std::string& name) { m_name = name; }
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
@@ -84,6 +85,8 @@ public:
 	std::vector<Spaceship*> getAllShipsOfAllegiance(int allegiance);
 	std::vector<Planet*> getEnemyPlanets(int allegiance);
 
+	std::string getName() { return m_name; }
+
 	Unit* getUnitByID(unsigned int id);
 	Spaceship* getShipByID(unsigned int id);
 	Building* getBuildingByID(unsigned int id);
@@ -116,6 +119,7 @@ private:
 		archive & m_derelicts;
 		archive & m_drawHidden;
 		archive & m_factionsDiscovered;
+		archive & m_name;
 	}
 	
 	void handleCollisions();
@@ -153,5 +157,7 @@ private:
 
 	ParticleSystem m_particleSystem;
 	Quadtree m_quadtree;
+
+	std::string m_name;
 };
 

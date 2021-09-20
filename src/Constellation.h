@@ -7,6 +7,7 @@
 #include "Spaceship.h"
 #include "Faction.h"
 #include "Animation.h"
+#include "NameGenerator.h"
 
 class GameState;
 class Player;
@@ -71,5 +72,6 @@ private:
 	std::vector<PurgatoryItem<Spaceship>> m_shipPurgatory;
 	std::vector<Faction> m_factions;
 	std::vector<std::pair<sf::Color, std::string>> m_availableFactionColors;
+	NameGenerator m_nameGenerator;
 };
 

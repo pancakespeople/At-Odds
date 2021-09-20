@@ -12,6 +12,7 @@
 #include "Unit.h"
 #include "Constellation.h"
 #include "Math.h"
+#include "Fonts.h"
 
 Star::Star(sf::Vector2f pos) {
 	init(pos);
@@ -70,6 +71,17 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction)
 		shader.setUniform("flashing", false);
 	}
 
+	// Floaty name text
+	sf::Text nameText;
+	nameText.setFont(Fonts::getFont("data/fonts/consola.ttf"));
+	nameText.setString(m_name);
+	nameText.setOrigin(nameText.getLocalBounds().width / 2.0f, 0.0f);
+	
+	sf::Vector2f pos = getCenter();
+	pos.y -= getRadius();
+
+	nameText.setPosition(pos);
+
 	if (isInShapeRadius(mouseCoordsWorld.x, mouseCoordsWorld.y)) {
 		sf::Vector2f oldPos = getPos();
 		
@@ -103,6 +115,8 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction)
 			window.draw(m_shape, &shader);
 		}
 	}
+
+	window.draw(nameText);
 }
 
 void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time) {
