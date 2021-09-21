@@ -42,6 +42,8 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_nebulaShader.setUniform("size", sf::Glsl::Vec2(resolution.x, resolution.y));
 
 	m_selectionShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/selectionshader.shader");
+	
+	m_borderShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/bordershader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -155,4 +157,12 @@ void EffectsEmitter::drawSelection(sf::RenderWindow& window, const sf::CircleSha
 
 void EffectsEmitter::updateTime(float time) {
 	m_selectionShader.setUniform("time", time);
+}
+
+void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color) {
+	m_borderShader.setUniformArray("points", points.data(), points.size());
+	m_borderShader.setUniform("numPoints", static_cast<int>(points.size()));
+	m_borderShader.setUniform("size", sf::Glsl::Vec2(shape.getSize().x, shape.getSize().y));
+	m_borderShader.setUniform("color", sf::Glsl::Vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
+	window.draw(shape, &m_borderShader);
 }

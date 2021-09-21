@@ -19,7 +19,7 @@ public:
 	void generateRecursiveConstellation(int sizeWidth, int sizeHeight, int numStars);
 	void generateRandomHyperlanes(int size, int numStars);
 	void generateRobustHyperlanes(int size, int numStars);
-	void draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction);
+	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, int playerFaction);
 	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state);
 	void setupStars();
 	void generateFactions(int numFactions);
@@ -47,6 +47,7 @@ private:
 		archive & m_factions;
 		archive & m_shipPurgatory;
 		archive & m_availableFactionColors;
+		archive & m_border;
 	}
 	
 	template <typename T>
@@ -73,5 +74,6 @@ private:
 	std::vector<Faction> m_factions;
 	std::vector<std::pair<sf::Color, std::string>> m_availableFactionColors;
 	NameGenerator m_nameGenerator;
+	sf::RectangleShape m_border;
 };
 

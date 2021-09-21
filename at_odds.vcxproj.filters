@@ -118,5 +118,6 @@
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />
     <None Include="data\shaders\selectionshader.shader" />
+    <None Include="data\shaders\bordershader.shader" />
   </ItemGroup>
 </Project>

@@ -146,7 +146,7 @@ int main(int argc, const char* argv[])
         Sounds::updateSounds(state.getPlayer(), state.getCamera());
 
         if (state.getState() == GameState::State::WORLD_VIEW) {
-            constellation.draw(window, starShader, state.getPlayer().getFaction());
+            constellation.draw(window, emitter, starShader, state.getPlayer().getFaction());
         }
         else if (state.getState() == GameState::State::LOCAL_VIEW) {
             state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);

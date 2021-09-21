@@ -20,6 +20,7 @@ public:
 	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);
 	void drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed);
 	void drawSelection(sf::RenderWindow& window, const sf::CircleShape& shape);
+	void drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color);
 	void updateTime(float time);
 
 private:
@@ -39,6 +40,7 @@ private:
 	sf::Shader m_glowShader;
 	sf::Shader m_nebulaShader;
 	sf::Shader m_selectionShader;
+	sf::Shader m_borderShader;
 
 	sf::Vector2i m_resolution;
 };

@@ -102,7 +102,20 @@ void Constellation::generateRecursiveConstellation(int sizeWidth, int sizeHeight
     DEBUG_PRINT("Generation finished with " << m_stars.size() << " stars");
 }
 
-void Constellation::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction) {
+void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, int playerFaction) {
+
+    for (Faction& faction : m_factions) {
+        std::vector<sf::Glsl::Vec2> points;
+        
+        for (auto& star : faction.getOwnedStars()) {
+            sf::Vector2f pos = star->getCenter() - m_border.getPosition();
+            points.push_back(pos);
+        }
+        
+        emitter.drawBorders(window, m_border, points, faction.getColor());
+        points.clear();
+    }
+    
     for (std::unique_ptr<Hyperlane>& h : m_hyperlanes) {
         h->draw(window, playerFaction);
     }
@@ -213,10 +226,23 @@ float Constellation::findClosestStarDistance(sf::Vector2f& targetPos) {
 }
 
 void Constellation::setupStars() {
+    sf::Vector2f leftmost = m_stars[0]->getPos();
+    sf::Vector2f rightmost = m_stars[0]->getPos();
+    sf::Vector2f bottommost = m_stars[0]->getPos();
+    sf::Vector2f topmost = m_stars[0]->getPos();
+    
     for (std::unique_ptr<Star>& s : m_stars) {
         s->setupJumpPoints();
         s->setName(m_nameGenerator.generateName());
+
+        if (s->getPos().x < leftmost.x) leftmost = s->getCenter();
+        if (s->getPos().x > rightmost.x) rightmost = s->getCenter();
+        if (s->getPos().y > bottommost.y) bottommost = s->getCenter();
+        if (s->getPos().y < topmost.y) topmost = s->getCenter();
     }
+
+    m_border.setPosition(leftmost.x - 1000.0f, topmost.y - 1000.0f);
+    m_border.setSize(sf::Vector2f(rightmost.x - leftmost.x + 2000.0f, bottommost.y - topmost.y + 2000.0f));
 }
 
 void Constellation::generateFactions(int numFactions) {
