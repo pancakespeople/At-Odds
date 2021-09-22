@@ -1,11 +1,11 @@
 # At-Odds
 Space 4x/rts game
 
-![gui](img/gui.png)
+![const](img/const1.png)
 
 ![battle 4](img/battle4.png)
 
-![derelict](img/derelict.png)
+![planet](img/planet5.png)
 
 ![battle](img/battle.png)
 
