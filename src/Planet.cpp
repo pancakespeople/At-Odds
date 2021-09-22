@@ -7,6 +7,7 @@
 #include "Faction.h"
 #include "Projectile.h"
 #include "Building.h"
+#include "Util.h"
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
@@ -356,4 +357,8 @@ void Planet::addEvent(const std::string& type) {
 	ev.type = type;
 	ev.timeSeconds = m_timeSinceCreaton;
 	m_events.push_back(ev);
+}
+
+std::string Planet::getName(const Star* star, int pos) {
+	return star->getName() + " " + Util::toRomanNumeral(pos);
 }

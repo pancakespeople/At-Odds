@@ -2,7 +2,7 @@
 
 uniform vec2 size;
 uniform int numPoints;
-uniform vec2 points[50];
+uniform vec2 points[512];
 uniform vec3 color;
 in vec4 vertPos;
 

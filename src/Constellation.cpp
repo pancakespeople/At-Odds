@@ -104,15 +104,16 @@ void Constellation::generateRecursiveConstellation(int sizeWidth, int sizeHeight
 
 void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, int playerFaction) {
 
+    // Draw empire borders
     for (Faction& faction : m_factions) {
         std::vector<sf::Glsl::Vec2> points;
         
         for (auto& star : faction.getOwnedStars()) {
             sf::Vector2f pos = star->getCenter() - m_border.getPosition();
-            points.push_back(pos);
+            if (star->isDiscovered(playerFaction)) points.push_back(pos);
         }
         
-        emitter.drawBorders(window, m_border, points, faction.getColor());
+        if (points.size() > 0) emitter.drawBorders(window, m_border, points, faction.getColor());
         points.clear();
     }
     

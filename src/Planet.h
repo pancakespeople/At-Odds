@@ -58,6 +58,7 @@ public:
 	float getWater() const { return m_water; }
 	float getRadius() const { return m_shape.getLocalBounds().width / 2.0; }
 	float getHabitability() const;
+	float getTimeSinceCreation() const { return m_timeSinceCreaton; }
 
 	Colony& getColony() { return m_colony; }
 
@@ -69,9 +70,7 @@ public:
 	std::string getTypeString() const;
 	std::vector<Resource>& getResources() { return m_resources; }
 	const std::vector<PlanetEvent>& getEvents() const { return m_events; }
-
-	float getTimeSinceCreation() const { return m_timeSinceCreaton; }
-
+	std::string getName(const Star* star, int pos);
 
 private:
 	friend class boost::serialization::access;

@@ -5,7 +5,7 @@ habitabilityModifier = 1.2
 
 [FARMING]
 name = "Farms"
-description = "Produces food. Bet you would have never guessed what this does!"
+description = "It produces food."
 baseCost = [["COMMON_ORE", 25]]
 habitabilityModifier = 1.5
 

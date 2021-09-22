@@ -61,7 +61,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 
 				if (state.getLocalViewStar()->isDiscovered(playerAllegiance)) {
 					for (int i = 0; i < planets.size(); i++) {
-						planetList->addItem(std::to_string(i + 1) + ": " + planets[i].getTypeString());
+						planetList->addItem(planets[i].getName(state.getLocalViewStar(), i + 1));
 					}
 				}
 

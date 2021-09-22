@@ -85,7 +85,7 @@ public:
 	std::vector<Spaceship*> getAllShipsOfAllegiance(int allegiance);
 	std::vector<Planet*> getEnemyPlanets(int allegiance);
 
-	std::string getName() { return m_name; }
+	std::string getName() const { return m_name; }
 
 	Unit* getUnitByID(unsigned int id);
 	Spaceship* getShipByID(unsigned int id);
