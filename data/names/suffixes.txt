@@ -38,3 +38,9 @@ thrax
 not
 begone
 lie
+station
+beware
+byte
+gun
+ia
+colony

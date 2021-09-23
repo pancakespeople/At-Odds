@@ -19,7 +19,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	m_sprite.setScale(table[type]["scale"].value_or(1.0f), table[type]["scale"].value_or(1.0f));
 	m_maxHealth = table[type]["health"].value_or(100.0f);
 	m_constructionSpeedMultiplier = table[type]["constructionSpeedMultiplier"].value_or(1.0f);
-	m_name = table[type]["name"].value_or("");
+	m_type = type;
 	m_collider = Collider(pos, faction->getColor(), m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
 
 	if (table[type].as_table()->contains("weapons")) {
@@ -179,7 +179,7 @@ bool Building::checkBuildCondition(const std::string& type, const Star* star, in
 	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
 	
 	if (table[type]["onePerStar"].value_or(false)) {
-		return !star->containsBuildingName(table[type]["name"].value_or(""), true, allegiance);
+		return !star->containsBuildingType(type, true, allegiance);
 	}
 
 	return true;
@@ -197,6 +197,11 @@ std::string Building::getInfoString() {
 void Building::reinitAfterLoad(Star* star) {
 	m_currentStar = star;
 	m_attackTarget = star->getUnitByID(m_attackTargetID);
+}
+
+std::string Building::getName() {
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+	return table[m_type]["name"].value_or("Unknown");
 }
 
 BuildingPrototype::BuildingPrototype(const std::string& type) {

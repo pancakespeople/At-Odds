@@ -39,7 +39,6 @@ private:
 		archive & m_attackFrustration;
 		archive & m_rallyTimer;
 	}
-	
 	MilitaryState m_state = MilitaryState::NONE;
 	int m_stateChangeTimer = 0;
 

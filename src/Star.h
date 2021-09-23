@@ -60,7 +60,7 @@ public:
 	bool isStarInRadius(Star& s, float radius) const;
 	bool isInShapeRadius(float x, float y) const;
 	bool isLocalViewActive() const { return m_localViewActive; }
-	bool containsBuildingName(const std::string& name, bool allegianceOnly = false, int allegiance = 0) const;
+	bool containsBuildingType(const std::string& type, bool allegianceOnly = false, int allegiance = 0) const;
 	bool isDiscovered(int allegiance) const { return m_factionsDiscovered.count(allegiance); }
 	bool isDrawingHidden() const { return m_drawHidden; }
 
@@ -84,6 +84,8 @@ public:
 	std::vector<Derelict>& getDerelicts() { return m_derelicts; }
 	std::vector<Spaceship*> getAllShipsOfAllegiance(int allegiance);
 	std::vector<Planet*> getEnemyPlanets(int allegiance);
+	std::vector<Spaceship*> getEnemyCombatShips(int allegiance);
+	std::vector<Building*> getBuildingsOfType(const std::string& type);
 
 	std::string getName() const { return m_name; }
 

@@ -536,15 +536,15 @@ int Star::numAllies(int allegiance) const {
 	return numAlliedShips(allegiance) + numAlliedBuildings(allegiance);
 }
 
-bool Star::containsBuildingName(const std::string& name, bool allegianceOnly, int allegiance) const {
+bool Star::containsBuildingType(const std::string& type, bool allegianceOnly, int allegiance) const {
 	for (auto& building : m_buildings) {
 		if (allegianceOnly) {
-			if (building->getName() == name && building->getAllegiance() == allegiance) {
+			if (building->getType() == type && building->getAllegiance() == allegiance) {
 				return true;
 			}
 		}
 		else {
-			if (building->getName() == name) {
+			if (building->getType() == type) {
 				return true;
 			}
 		}
@@ -676,4 +676,24 @@ std::vector<Planet*> Star::getEnemyPlanets(int allegiance) {
 		}
 	}
 	return planets;
+}
+
+std::vector<Spaceship*> Star::getEnemyCombatShips(int allegiance) {
+	std::vector<Spaceship*> ships;
+	for (auto& ship : m_localShips) {
+		if (ship->getAllegiance() != allegiance && !ship->isCivilian()) {
+			ships.push_back(ship.get());
+		}
+	}
+	return ships;
+}
+
+std::vector<Building*> Star::getBuildingsOfType(const std::string& type) {
+	std::vector<Building*> buildings;
+	for (auto& building : m_buildings) {
+		if (building->getType() == type) {
+			buildings.push_back(building.get());
+		}
+	}
+	return buildings;
 }

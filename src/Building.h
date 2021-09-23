@@ -36,7 +36,8 @@ public:
 
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }
 
-	std::string getName() { return m_name; }
+	std::string getName();
+	std::string getType() { return m_type; }
 	std::string getInfoString();
 
 private:
@@ -48,7 +49,7 @@ private:
 		archive & m_attackTargetID;
 		archive & m_constructionPercent;
 		archive & m_constructionSpeedMultiplier;
-		archive & m_name;
+		archive & m_type;
 	}
 
 	void attackEnemies();
@@ -61,7 +62,7 @@ private:
 	float m_constructionPercent = 0.0f;
 	float m_constructionSpeedMultiplier = 1.0f;
 
-	std::string m_name;
+	std::string m_type;
 };
 
 class BuildingPrototype {

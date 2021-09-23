@@ -51,7 +51,7 @@ public:
 	std::vector<Star*>& getOwnedStars() { return m_ownedSystems; }
 	std::unordered_map<std::string, float>& getResources() { return m_resources; }
 	std::vector<Building*> getAllOwnedBuildings();
-	std::vector<Building*> getAllOwnedBuildingsOfName(const std::string& name);
+	std::vector<Building*> getAllOwnedBuildingsOfType(const std::string& type);
 	std::vector<Spaceship*> getAllCombatShips();
 	std::vector<Spaceship::DesignerChassis>& getChassis() { return m_chassis; }
 	std::vector<Spaceship::DesignerWeapon>& getWeapons() { return m_weapons; }

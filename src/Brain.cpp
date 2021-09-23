@@ -187,6 +187,26 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 							m_attackFrustration++;
 						}
 						else {
+							if (m_attackTimer % 400 == 0) {
+								// Micromanage the battle
+								std::vector<Spaceship*> alliedShips = m_expansionTarget->getAllShipsOfAllegiance(faction->getID());
+								std::vector<Spaceship*> enemyShips = m_expansionTarget->getEnemyCombatShips(faction->getID());
+
+								if (alliedShips.size() > enemyShips.size() * 2) {
+									// Take out any outposts
+									std::vector<Building*> outposts = m_expansionTarget->getBuildingsOfType("OUTPOST");
+									for (Building* outpost : outposts) {
+										if (outpost->getAllegiance() != faction->getID()) {
+											for (Spaceship* ship : alliedShips) {
+												ship->addOrder(AttackOrder(outpost));
+											}
+											AI_DEBUG_PRINT("Attacking outpost");
+											break;
+										}
+									}
+								}
+							}
+							
 							m_attackFrustration = 0;
 						}
 
@@ -245,7 +265,7 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 	if (m_fortifyingTimer == 0) {
 		for (Star* star : faction->getOwnedStars()) {
 			if (Random::randBool()) {
-				if (!star->containsBuildingName("Outpost", true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
+				if (!star->containsBuildingType("OUTPOST", true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
 					// Build outpost
 
 					std::unique_ptr<Building> building = std::make_unique<Building>(
@@ -346,7 +366,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		bool builtShipFactory = false;
 
 		// Build ship factories
-		if (!star->containsBuildingName("Ship Factory", true, faction->getID()) && faction->numIdleConstructionShips() > 0 &&
+		if (!star->containsBuildingType("SHIP_FACTORY", true, faction->getID()) && faction->numIdleConstructionShips() > 0 &&
 			!builtShipFactory) {
 			std::unique_ptr<Building> factory = std::make_unique<Building>(
 				"SHIP_FACTORY", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
@@ -385,7 +405,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		buildShips = true;
 	}
 
-	for (Building* factory : faction->getAllOwnedBuildingsOfName("Ship Factory")) {
+	for (Building* factory : faction->getAllOwnedBuildingsOfType("SHIP_FACTORY")) {
 		FactoryMod* mod = factory->getMod<FactoryMod>();
 		mod->updateDesigns(faction);
 		mod->setBuildAll(buildShips);
@@ -501,6 +521,15 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 	sleep(1000);
 }
 
+void removeBuiltBuildings(Planet& planet, std::vector<std::string>& wantedBuildings) {
+	for (int i = 0; i < wantedBuildings.size(); i++) {
+		if (planet.getColony().hasBuildingOfType(wantedBuildings[i])) {
+			wantedBuildings.erase(wantedBuildings.begin() + i);
+			i--;
+		}
+	}
+}
+
 bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
 	std::vector<std::string> wantedBuildings = {
 				"FARMING",
@@ -508,13 +537,16 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
 				"SPACEPORT"
 	};
 
-	// Check if the wanted buildings are built
-	for (int i = 0; i < wantedBuildings.size(); i++) {
-		if (planet.getColony().hasBuildingOfType(wantedBuildings[i])) {
-			wantedBuildings.erase(wantedBuildings.begin() + i);
-			i--;
-		}
-	}
+	std::vector<std::string> lowPriorityBuildings = {
+		"EXPLORING",
+		"ORBITAL_DEFENSE",
+		"BOMB_SHELTER",
+		"MILITARY_BASE"
+	};
+
+	removeBuiltBuildings(planet, wantedBuildings);
+	if (wantedBuildings.size() == 0 ) wantedBuildings = lowPriorityBuildings;
+	removeBuiltBuildings(planet, wantedBuildings);
 
 	if (wantedBuildings.size() != 0) {
 		int rnd = Random::randInt(0, wantedBuildings.size() - 1);

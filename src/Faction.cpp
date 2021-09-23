@@ -215,10 +215,10 @@ std::vector<Building*> Faction::getAllOwnedBuildings() {
 	return buildings;
 }
 
-std::vector<Building*> Faction::getAllOwnedBuildingsOfName(const std::string& name) {
+std::vector<Building*> Faction::getAllOwnedBuildingsOfType(const std::string& type) {
 	std::vector<Building*> buildings;
 	for (Building* building : getAllOwnedBuildings()) {
-		if (building->getName() == name) {
+		if (building->getType() == type) {
 			buildings.push_back(building);
 		}
 	}
