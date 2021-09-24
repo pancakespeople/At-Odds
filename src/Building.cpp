@@ -166,7 +166,7 @@ void Building::construct(const Spaceship* constructor) {
 	m_health = m_maxHealth * (m_constructionPercent / 100.0f);
 }
 
-bool Building::checkBuildCondition(const std::string& type, const Star* star, int allegiance, bool player) {
+bool Building::checkBuildCondition(const std::string& type, sf::Vector2f pos, float radius, Star* star, int allegiance, bool player) {
 	if (star == nullptr) {
 		return false;
 	}
@@ -177,9 +177,18 @@ bool Building::checkBuildCondition(const std::string& type, const Star* star, in
 	}
 	
 	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
-	
-	if (table[type]["onePerStar"].value_or(false)) {
-		return !star->containsBuildingType(type, true, allegiance);
+
+	Collider collider(pos, sf::Color::Black, radius);
+
+	// Check collision
+	for (auto& building : star->getBuildings()) {
+		if (collider.isCollidingWith(building->getCollider())) {
+			return false;
+		}
+	}
+
+	if (table[type].as_table()->contains("numPerStar")) {
+		return star->numAlliedBuildings(allegiance, type) < table[type]["numPerStar"].value_or(1);
 	}
 
 	return true;
@@ -213,10 +222,12 @@ BuildingPrototype::BuildingPrototype(const std::string& type) {
 	sf::Texture& texture = TextureCache::getTexture(table[type]["texturePath"].value_or(""));
 	m_sprite.setTexture(texture);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
+	m_sprite.setScale(table[type]["scale"].value_or(1.0f), table[type]["scale"].value_or(1.0f));
+	m_radius = m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f;
 }
 
-void BuildingPrototype::draw(sf::RenderWindow& window, const Star* currentStar, const Player& player) {
-	if (Building::checkBuildCondition(m_type, currentStar, player.getFaction(), true)) {
+void BuildingPrototype::draw(sf::RenderWindow& window, Star* currentStar, const Player& player) {
+	if (Building::checkBuildCondition(m_type, m_sprite.getPosition(), m_radius, currentStar, player.getFaction(), true)) {
 		m_sprite.setColor(sf::Color(0, 200, 0));
 		window.draw(m_sprite);
 	}

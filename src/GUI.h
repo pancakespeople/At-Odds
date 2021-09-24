@@ -40,7 +40,7 @@ public:
 	BuildGUI() {}
 
 	void open(tgui::Gui& gui, Faction* playerFaction);
-	void draw(sf::RenderWindow& window, const Star* currentStar, const Player& player);
+	void draw(sf::RenderWindow& window, Star* currentStar, const Player& player);
 	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction, UnitGUI& unitGUI, tgui::Panel::Ptr mainPanel);
 
 private:

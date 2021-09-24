@@ -512,11 +512,12 @@ void Star::moveShipToOtherStar(Spaceship* ship, Star* other) {
 	}
 }
 
-int Star::numAlliedBuildings(int allegiance) const {
+int Star::numAlliedBuildings(int allegiance, const std::string& type) const {
 	int c = 0;
 	for (auto& building : m_buildings) {
 		if (building->getAllegiance() == allegiance) {
-			c++;
+			if (type != "" && building->getType() == type) c++;
+			else if (type == "") c++;
 		}
 	}
 	return c;

@@ -32,7 +32,7 @@ public:
 	void reinitAfterLoad(Star* star);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 
-	static bool checkBuildCondition(const std::string& type, const Star* star, int allegiance, bool player = false);
+	static bool checkBuildCondition(const std::string& type, sf::Vector2f pos, float radius, Star* star, int allegiance, bool player = false);
 
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }
 
@@ -74,13 +74,18 @@ public:
 
 	std::string getType() const { return m_type; }
 
-	void draw(sf::RenderWindow& window, const Star* currentStar, const Player& player);
+	void draw(sf::RenderWindow& window, Star* currentStar, const Player& player);
 	void setPos(const sf::Vector2f& pos) { m_sprite.setPosition(pos); }
 
 	static bool meetsDisplayRequirements(const std::string& type, Faction* faction);
 
+	float getRadius() { return m_radius; }
+	
+	sf::Vector2f getPos() { return m_sprite.getPosition(); }
+
 private:
 	std::string m_type;
 	sf::Sprite m_sprite;
+	float m_radius = 0.0f;
 };
 

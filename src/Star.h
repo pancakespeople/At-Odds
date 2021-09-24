@@ -66,7 +66,7 @@ public:
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;
-	int numAlliedBuildings(int allegiance) const;
+	int numAlliedBuildings(int allegiance, const std::string& type = "") const;
 	int numAllies(int allegiance) const;
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
