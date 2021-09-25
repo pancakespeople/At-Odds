@@ -239,8 +239,10 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 					std::vector<Spaceship*> planetAttackShips = faction->getPlanetAttackShips();
 
 					for (Spaceship* ship : planetAttackShips) {
-						ship->addOrder(TravelOrder(star));
-						ship->addOrder(InteractWithPlanetOrder(enemyPlanets.front(), star));
+						if (!ship->isHeavy()) {
+							ship->addOrder(TravelOrder(star));
+							ship->addOrder(InteractWithPlanetOrder(enemyPlanets.front(), star));
+						}
 					}
 
 					if (planetAttackShips.size() > 0) AI_DEBUG_PRINT("Sent " << planetAttackShips.size() << " ships to attack a planet");
