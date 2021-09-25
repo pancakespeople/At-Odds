@@ -645,6 +645,7 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 			listView->setSize("100%", "100%");
 			listView->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
 			listView->addColumn("Type    ");
+			listView->addColumn("Name");
 			listView->addColumn("Population");
 			listView->addColumn("Growth Rate");
 			listView->addColumn("Temperature");
@@ -654,10 +655,14 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 
 			int playerFaction = state.getPlayer().getFaction();
 			for (auto& star : constellation.getStars()) {
+				int maxNameLength = (star->getName().length() + 5) * 10;
+				listView->setColumnWidth(1, maxNameLength);
+				int pos = 1;
 				for (Planet& planet : star->getPlanets()) {
 					if (planet.getColony().getAllegiance() == playerFaction) {
 						std::vector<tgui::String> info;
 						info.push_back(planet.getTypeString());
+						info.push_back(planet.getName(star.get(), pos));
 						info.push_back(std::to_string(planet.getColony().getPopulation()));
 						info.push_back(std::to_string(planet.getColony().getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
 						info.push_back(std::to_string(planet.getTemperature()));
@@ -667,6 +672,7 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 						listView->addItem(info);
 						listView->setItemData(listView->getItemCount() - 1, std::pair<int, int>(star->getID(), planet.getID()));
 					}
+					pos++;
 				}
 			}
 
