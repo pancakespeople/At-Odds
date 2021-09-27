@@ -96,7 +96,7 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	state = GameState(camera);
 	constellation = Constellation();
 
-	constellation.generateRecursiveConstellation(800, 800, starsNum);
+	constellation.generateModernMegaRobustFinalConstellation(800, 800, starsNum);
 	constellation.setupStars();
 
 	auto& stars = constellation.getStars();

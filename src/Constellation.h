@@ -17,6 +17,7 @@ public:
 	Constellation();
 
 	void generateRecursiveConstellation(int sizeWidth, int sizeHeight, int numStars);
+	void generateModernMegaRobustFinalConstellation(int sizeWidth, int sizeHeight, int numStars);
 	void generateRandomHyperlanes(int size, int numStars);
 	void generateRobustHyperlanes(int size, int numStars);
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, int playerFaction);

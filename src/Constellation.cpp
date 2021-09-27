@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "Faction.h"
 #include "Random.h"
+#include "Math.h"
 
 Constellation::Constellation() {
     m_availableFactionColors = {
@@ -40,7 +41,7 @@ void Constellation::recursiveConstellation(std::unique_ptr<Star>& root, int maxS
         float randAngle = (rand() % 360) * (3.14159 / 180);
 
         sf::Vector2f nstarPos((std::cos(randAngle) * dist) + initialX, (std::sin(randAngle) * dist) + initialY);
-        
+
         // Try to keep some distance between stars
         int loops = 0; // Prevent infinite loop
         while (findClosestStarDistance(nstarPos) < minDistStar && loops < 10) {
@@ -100,6 +101,47 @@ void Constellation::generateRecursiveConstellation(int sizeWidth, int sizeHeight
     }
 
     DEBUG_PRINT("Generation finished with " << m_stars.size() << " stars");
+}
+
+void Constellation::generateModernMegaRobustFinalConstellation(int sizeWidth, int sizeHeight, int numStars) {
+    sf::Vector2f initialPos = sf::Vector2f(Random::randFloat(0.0f, sizeWidth), Random::randFloat(0.0f, sizeHeight));
+    const int minStarDist = 100;
+    const int maxStarDist = 500;
+
+    m_stars.push_back(std::make_unique<Star>(initialPos));
+    int starsToMake = numStars - 1;
+    int index = 0;
+
+    while (starsToMake > 0) {
+        int numConnections = 1;
+        if (Random::randFloat(0.0f, 1.0f) < 0.25f) {
+            numConnections = Random::randInt(1, 5);
+        }
+
+        for (int i = 0; i < numConnections && starsToMake > 0; i++) {
+            float dist = Random::randFloat(minStarDist, maxStarDist);
+            float angle = Random::randFloat(0, Math::pi * 2.0f);
+            sf::Vector2f pos(std::cos(angle) * dist + m_stars[index]->getPos().x, std::sin(angle) * dist + m_stars[index]->getPos().y);
+
+            // Try to keep some distance between stars
+            int loops = 0; // Prevent infinite loop
+            while (findClosestStarDistance(pos) < minStarDist && loops < 10) {
+                dist = Random::randFloat(minStarDist, maxStarDist);
+                angle = Random::randFloat(0, Math::pi * 2.0f);
+                pos = sf::Vector2f(std::cos(angle) * dist, std::sin(angle) * dist);
+                loops++;
+            }
+
+            m_stars.push_back(std::make_unique<Star>(pos));
+            m_hyperlanes.push_back(std::make_unique<Hyperlane>(m_stars[index].get(), m_stars[m_stars.size() - 1].get()));
+
+            starsToMake--;
+        }
+
+        index++;
+    }
+
+    DEBUG_PRINT("Modern mega robust final constellation generation finished with " << m_stars.size() << " stars");
 }
 
 void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, int playerFaction) {
