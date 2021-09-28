@@ -174,6 +174,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	createBuildingsButton(gui, planet, playerFaction);
 	createEventsButton(gui, planet);
+	createTradeButton(gui, planet);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
@@ -625,4 +626,19 @@ void PlanetGUI::createEventsButton(tgui::Gui& gui, const Planet& planet) {
 		descriptionPanel->add(descriptionText, "descriptionText");
 	});
 	m_planetInfoPanel->add(eventsButton);
+}
+
+void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
+	auto tradeButton = tgui::Button::create("Trade");
+	tradeButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 50.0%");
+	tradeButton->setSize("25%", "10%");
+	tradeButton->onPress([this, &gui, &planet]() {
+		switchSideWindow("Trade", gui);
+		
+		if (m_sideWindow == nullptr) return;
+
+		auto text = tgui::Label::create(planet.getColony().getTradeGoods().getContentString());
+		m_sideWindow->add(text);
+	});
+	m_planetInfoPanel->add(tradeButton);
 }

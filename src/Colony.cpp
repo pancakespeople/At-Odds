@@ -68,6 +68,11 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 				float amount = (m_population * resource.abundance / 1000.0f) * multiplier;
 				faction->addResource(resource.type, amount);
 			}
+
+			// Trade goods
+			float waterHarvest = m_population * 0.01f * planet->getWater();
+			m_tradeGoods.addItem("Water", waterHarvest);
+
 			m_ticksToNextResourceExploit = 1000;
 		}
 		else {

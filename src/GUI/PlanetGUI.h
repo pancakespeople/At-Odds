@@ -19,6 +19,7 @@ private:
 	void displayBuildingInfo(ColonyBuilding& building, Planet& planet, bool buildInfo);
 	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
 	void createEventsButton(tgui::Gui& gui, const Planet& planet);
+	void createTradeButton(tgui::Gui& gui, Planet& planet);
 
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;

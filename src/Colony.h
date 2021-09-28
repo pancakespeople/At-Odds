@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "TOMLCache.h"
 #include "Weapon.h"
+#include "TradeGoods.h"
 
 class Star;
 class Faction;
@@ -44,6 +45,8 @@ public:
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);
 
+	const TradeGoods& getTradeGoods() const { return m_tradeGoods; }
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -59,6 +62,7 @@ private:
 		archive & m_defenseCannonEnabled;
 		archive & m_explorationEnabled;
 		archive & m_explorationEventTimer;
+		archive & m_tradeGoods;
 	}
 
 	int m_population = 0;
@@ -77,6 +81,7 @@ private:
 	std::vector<ColonyBuilding> m_buildings;
 
 	Weapon m_defenseCannon = Weapon("FLAK_CANNON");
+	TradeGoods m_tradeGoods;
 };
 
 class ColonyBuilding {

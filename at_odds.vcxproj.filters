@@ -63,6 +63,7 @@
     <ClInclude Include="src\GUI\BuildingGUI.h" />
     <ClInclude Include="src\NameGenerator.h" />
     <ClInclude Include="src\Fonts.h" />
+    <ClInclude Include="src\TradeGoods.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -114,6 +115,7 @@
     <ClCompile Include="src\GUI\BuildingGUI.cpp" />
     <ClCompile Include="src\NameGenerator.cpp" />
     <ClCompile Include="src\Fonts.cpp" />
+    <ClCompile Include="src\TradeGoods.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />
