@@ -33,7 +33,7 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	guiWindow->add(numStarsLabel);
 
 	auto numStarsSlider = tgui::Slider::create(20.0f, 500.0f);
-	numStarsSlider->setValue(20.0f);
+	numStarsSlider->setValue(50.0f);
 	numStarsSlider->setStep(1.0f);
 	numStarsSlider->setPosition("5%", "5%");
 	numStarsSlider->onValueChange(&NewGameMenu::onStarsSliderChange, this, std::ref(gui));

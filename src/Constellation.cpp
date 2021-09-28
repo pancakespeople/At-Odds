@@ -105,8 +105,8 @@ void Constellation::generateRecursiveConstellation(int sizeWidth, int sizeHeight
 
 void Constellation::generateModernMegaRobustFinalConstellation(int sizeWidth, int sizeHeight, int numStars) {
     sf::Vector2f initialPos = sf::Vector2f(Random::randFloat(0.0f, sizeWidth), Random::randFloat(0.0f, sizeHeight));
-    const int minStarDist = 100;
-    const int maxStarDist = 500;
+    const int minStarDist = 250;
+    const int maxStarDist = 750;
 
     m_stars.push_back(std::make_unique<Star>(initialPos));
     int starsToMake = numStars - 1;
@@ -128,7 +128,7 @@ void Constellation::generateModernMegaRobustFinalConstellation(int sizeWidth, in
             while (findClosestStarDistance(pos) < minStarDist && loops < 10) {
                 dist = Random::randFloat(minStarDist, maxStarDist);
                 angle = Random::randFloat(0, Math::pi * 2.0f);
-                pos = sf::Vector2f(std::cos(angle) * dist, std::sin(angle) * dist);
+                pos = sf::Vector2f(std::cos(angle) * dist + m_stars[index]->getPos().x, std::sin(angle) * dist + m_stars[index]->getPos().y);
                 loops++;
             }
 
