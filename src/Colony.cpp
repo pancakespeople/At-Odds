@@ -68,11 +68,6 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 				float amount = (m_population * resource.abundance / 1000.0f) * multiplier;
 				faction->addResource(resource.type, amount);
 			}
-
-			// Trade goods
-			float waterHarvest = m_population * 0.01f * planet->getWater();
-			m_tradeGoods.addItem("Water", waterHarvest);
-
 			m_ticksToNextResourceExploit = 1000;
 		}
 		else {
@@ -96,6 +91,8 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	}
 
 	if (m_explorationEnabled && faction != nullptr) exploration(planet, faction);
+
+	m_tradeGoods.update(currentStar, faction, planet);
 }
 
 void Colony::addPopulation(int pop) {

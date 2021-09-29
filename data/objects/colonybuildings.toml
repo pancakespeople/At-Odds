@@ -8,6 +8,7 @@ name = "Farms"
 description = "It produces food."
 baseCost = [["COMMON_ORE", 25]]
 habitabilityModifier = 1.5
+foodProductionMultiplier = 2.5
 
 [MILITARY_BASE]
 name = "Military Base"
