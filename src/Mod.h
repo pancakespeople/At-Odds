@@ -154,3 +154,21 @@ private:
 
 	bool m_spawnsSpaceBus = false;
 };
+
+class TradeMod : public Mod {
+public:
+	TradeMod() {}
+
+	void addItem(const std::string& item, float num);
+	virtual void interactWithPlanet(Unit* unit, Planet* planet) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Mod>(*this);
+		archive & m_goods;
+	}
+
+	std::map<std::string, float> m_goods;
+};

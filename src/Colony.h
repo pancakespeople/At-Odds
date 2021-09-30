@@ -45,7 +45,7 @@ public:
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);
 
-	const TradeGoods& getTradeGoods() const { return m_tradeGoods; }
+	TradeGoods& getTradeGoods() { return m_tradeGoods; }
 
 private:
 	friend class boost::serialization::access;

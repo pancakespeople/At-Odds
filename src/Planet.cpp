@@ -307,6 +307,10 @@ float Planet::getHabitability() const {
 void Planet::onColonization() {
 	m_colony.setTicksToNextBus(HabitatMod::calcBusTickTimer(m_colony.getPopulation()));
 	m_colony.addBuilding(ColonyBuilding("INFRASTRUCTURE"));
+
+	m_colony.getTradeGoods().addSupply("Water", 100.0f);
+	m_colony.getTradeGoods().addSupply("Food", 100.0f);
+
 	addEvent("COLONY_START");
 }
 

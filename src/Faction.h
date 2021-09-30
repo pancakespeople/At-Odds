@@ -60,6 +60,7 @@ public:
 	std::string getName() { return m_name; }
 	std::vector<Spaceship::DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
 	std::vector<ColonyBuilding> getColonyBuildings();
+	std::vector<Planet*> getOwnedPlanets();
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();

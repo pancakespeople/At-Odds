@@ -29,6 +29,7 @@ public:
 
 	// Returns the deficit, if there is one
 	float removeSupply(const std::string& item, float num);
+	float getSupply(const std::string& item);
 
 	bool hasDeficits() const;
 

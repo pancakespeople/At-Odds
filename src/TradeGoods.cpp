@@ -43,7 +43,7 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		float foodHarvest = planet->getColony().getPopulation() * 0.01f * planet->getHabitability() * planet->getColony().getBuildingEffects("foodProductionMultiplier");
 		addSupply("Food", foodHarvest);
 
-		float foodConsumption = planet->getColony().getPopulation() * 0.05f;
+		float foodConsumption = planet->getColony().getPopulation() * 0.008f;
 		removeSupply("Food", foodConsumption);
 
 		if (faction != nullptr) {
@@ -87,22 +87,30 @@ bool TradeGoods::hasDeficits() const {
 }
 
 void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* planet) {
-	std::vector<Planet*> deficitPlanets;
-	for (Planet& p : currentStar->getPlanets()) {
-		if (p.getColony().getTradeGoods().hasDeficits() && p.getColony().getAllegiance() == faction->getID()) {
-			deficitPlanets.push_back(&p);
+	std::vector<std::pair<Planet*, Star*>> deficitPlanets;
+	for (Star* star : faction->getOwnedStars()) {
+		for (Planet& p : star->getPlanets()) {
+			if (p.getColony().getTradeGoods().hasDeficits() && p.getColony().getAllegiance() == faction->getID()) {
+				deficitPlanets.push_back(std::pair<Planet*, Star*>(&p, star));
+			}
 		}
 	}
 
 	while (deficitPlanets.size() > 0) {
 		int rndPlanetIndex = Random::randInt(0, deficitPlanets.size() - 1);
 		for (auto surplus : getSurplusGoods()) {
-			for (auto deficit : deficitPlanets[rndPlanetIndex]->getColony().getTradeGoods().getDeficitGoods()) {
+			for (auto deficit : deficitPlanets[rndPlanetIndex].first->getColony().getTradeGoods().getDeficitGoods()) {
 				if (deficit.first == surplus.first) {
 					Spaceship* truck = currentStar->createSpaceship(
 						std::make_unique<Spaceship>("SPACE_TRUCK", planet->getPos(), currentStar, faction->getID(), faction->getColor())
 					);
-					truck->addOrder(InteractWithPlanetOrder(deficitPlanets[rndPlanetIndex], currentStar));
+					TradeMod mod;
+					mod.addItem(surplus.first, std::min(surplus.second, 100.0f));
+					deficitPlanets[rndPlanetIndex].first->getColony().getTradeGoods().removeSupply(surplus.first, std::min(surplus.second, 100.0f));
+
+					truck->addMod(mod);
+					truck->addOrder(TravelOrder(deficitPlanets[rndPlanetIndex].second));
+					truck->addOrder(InteractWithPlanetOrder(deficitPlanets[rndPlanetIndex].first, deficitPlanets[rndPlanetIndex].second));
 					truck->addOrder(DieOrder(true));
 
 					DEBUG_PRINT("Spawned space truck in " << currentStar->getName());
@@ -112,4 +120,9 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 		}
 		deficitPlanets.erase(deficitPlanets.begin() + rndPlanetIndex);
 	}
+}
+
+float TradeGoods::getSupply(const std::string& item) {
+	if (m_items.count(item) == 0) return 0.0f;
+	return m_items[item].supply;
 }

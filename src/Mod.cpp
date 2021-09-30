@@ -13,6 +13,7 @@
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
 BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
+BOOST_CLASS_EXPORT_GUID(TradeMod, "TradeMod");
 
 void Mod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	auto text = tgui::Label::create();
@@ -555,4 +556,20 @@ void HabitatMod::createSpaceBus(sf::Vector2f pos, int allegiance, sf::Color colo
 
 void HabitatMod::createSpaceBus(Unit* unit, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
 	createSpaceBus(unit->getPos(), unit->getAllegiance(), unit->getFactionColor(), currentStar, targetStar, targetPlanet);
+}
+
+void TradeMod::addItem(const std::string& item, float num) {
+	if (m_goods.count(item) == 0) {
+		m_goods[item] = num;
+	}
+	else {
+		m_goods[item] += num;
+	}
+}
+
+void TradeMod::interactWithPlanet(Unit* unit, Planet* planet) {
+	for (auto& item : m_goods) {
+		planet->getColony().getTradeGoods().addSupply(item.first, item.second);
+	}
+	m_goods.clear();
 }

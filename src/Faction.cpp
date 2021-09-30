@@ -439,3 +439,13 @@ Spaceship::DesignerWeapon Faction::addRandomWeapon() {
 	if (!alreadyHas) addWeapon(weapon);
 	return weapon;
 }
+
+std::vector<Planet*> Faction::getOwnedPlanets() {
+	std::vector<Planet*> planets;
+	for (Star* star : m_ownedSystems) {
+		for (Planet& planet : star->getPlanets()) {
+			if (planet.getColony().getAllegiance() == m_id) planets.push_back(&planet);
+		}
+	}
+	return planets;
+}
