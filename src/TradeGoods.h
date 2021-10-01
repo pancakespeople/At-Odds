@@ -31,12 +31,12 @@ public:
 	float removeSupply(const std::string& item, float num);
 	float getSupply(const std::string& item);
 
-	bool hasDeficits() const;
+	bool hasDeficits(float demandMultiplier = 1.0f) const;
 
 	// Returns a pair with the item and the supply
 	std::vector<std::pair<std::string, float>> getSurplusGoods() const;
 	// Returns a pair with the item and the demand
-	std::vector<std::pair<std::string, float>> getDeficitGoods() const;
+	std::vector<std::pair<std::string, float>> getDeficitGoods(float demandMultiplier = 1.0f) const;
 	std::string getContentString() const;
 
 private:
@@ -45,10 +45,12 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & m_items;
 		archive & m_ticksUntilUpdate;
+		archive & m_spaceTruckTimer;
 	}
 
 	void spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* planet);
 
 	std::map<std::string, SupplyDemand> m_items;
 	int m_ticksUntilUpdate = 1000;
+	int m_spaceTruckTimer = 500;
 };

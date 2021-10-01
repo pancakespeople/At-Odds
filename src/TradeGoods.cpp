@@ -33,6 +33,16 @@ std::string TradeGoods::getContentString() const {
 }
 
 void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
+	if (faction != nullptr) {
+		if (m_spaceTruckTimer == 0) {
+			spawnSpaceTruck(currentStar, faction, planet);
+			m_spaceTruckTimer = 500;
+		}
+		else {
+			m_spaceTruckTimer--;
+		}
+	}
+	
 	if (m_ticksUntilUpdate == 0) {
 		float waterHarvest = planet->getColony().getPopulation() * 0.025f * planet->getWater();
 		addSupply("Water", waterHarvest);
@@ -46,9 +56,19 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		float foodConsumption = planet->getColony().getPopulation() * 0.008f;
 		removeSupply("Food", foodConsumption);
 
-		if (faction != nullptr) {
-			if (Random::randBool()) {
-				spawnSpaceTruck(currentStar, faction, planet);
+		// Production from resources
+		for (Resource& resource : planet->getResources()) {
+			if (resource.type == "COMMON_ORE") {
+				float industrialGoodsProduction = planet->getColony().getPopulation() * 0.02f * resource.abundance;
+				addSupply("Industrial Goods", industrialGoodsProduction);
+			}
+			if (resource.type == "UNCOMMON_ORE") {
+				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.01f * resource.abundance;
+				addSupply("Consumer Goods", consumerGoodsProduction);
+			}
+			if (resource.type == "RARE_ORE") {
+				float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.001f * resource.abundance;
+				addSupply("Luxury Goods", luxuryGoodsProduction);
 			}
 		}
 
@@ -67,19 +87,19 @@ std::vector<std::pair<std::string, float>> TradeGoods::getSurplusGoods() const {
 	return surplusGoods;
 }
 
-std::vector<std::pair<std::string, float>> TradeGoods::getDeficitGoods() const {
+std::vector<std::pair<std::string, float>> TradeGoods::getDeficitGoods(float demandMultiplier) const {
 	std::vector<std::pair<std::string, float>> deficitGoods;
 	for (auto& item : m_items) {
-		if (item.second.demand > item.second.supply) {
+		if (item.second.demand * demandMultiplier > item.second.supply) {
 			deficitGoods.push_back(std::pair<std::string, float>(item.first, item.second.demand));
 		}
 	}
 	return deficitGoods;
 }
 
-bool TradeGoods::hasDeficits() const {
+bool TradeGoods::hasDeficits(float demandMultiplier) const {
 	for (auto& item : m_items) {
-		if (item.second.demand > item.second.supply) {
+		if (item.second.demand * demandMultiplier > item.second.supply) {
 			return true;
 		}
 	}
@@ -90,7 +110,7 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 	std::vector<std::pair<Planet*, Star*>> deficitPlanets;
 	for (Star* star : faction->getOwnedStars()) {
 		for (Planet& p : star->getPlanets()) {
-			if (p.getColony().getTradeGoods().hasDeficits() && p.getColony().getAllegiance() == faction->getID()) {
+			if (p.getColony().getTradeGoods().hasDeficits(4.0f) && p.getColony().getAllegiance() == faction->getID()) {
 				deficitPlanets.push_back(std::pair<Planet*, Star*>(&p, star));
 			}
 		}
@@ -99,7 +119,7 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 	while (deficitPlanets.size() > 0) {
 		int rndPlanetIndex = Random::randInt(0, deficitPlanets.size() - 1);
 		for (auto surplus : getSurplusGoods()) {
-			for (auto deficit : deficitPlanets[rndPlanetIndex].first->getColony().getTradeGoods().getDeficitGoods()) {
+			for (auto deficit : deficitPlanets[rndPlanetIndex].first->getColony().getTradeGoods().getDeficitGoods(4.0f)) {
 				if (deficit.first == surplus.first) {
 					Spaceship* truck = currentStar->createSpaceship(
 						std::make_unique<Spaceship>("SPACE_TRUCK", planet->getPos(), currentStar, faction->getID(), faction->getColor())
@@ -113,7 +133,6 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 					truck->addOrder(InteractWithPlanetOrder(deficitPlanets[rndPlanetIndex].first, deficitPlanets[rndPlanetIndex].second));
 					truck->addOrder(DieOrder(true));
 
-					DEBUG_PRINT("Spawned space truck in " << currentStar->getName());
 					return;
 				}
 			}
