@@ -1,0 +1,20 @@
+
+[WATER]
+name = "Water"
+price = 1.0
+
+[FOOD]
+name = "Food"
+price = 2.0
+
+[INDUSTRIAL_GOODS]
+name = "Industrial Goods"
+price = 4.5
+
+[CONSUMER_GOODS]
+name = "Consumer Goods"
+price = 7.0
+
+[LUXURY_GOODS]
+name = "Luxury Goods"
+price = 15.0

@@ -25,4 +25,5 @@ private:
 	tgui::Panel::Ptr m_planetPanel;
 	tgui::Panel::Ptr m_planetInfoPanel;
 	tgui::ChildWindow::Ptr m_sideWindow;
+	std::function<void(Planet&)> m_updateFunction = nullptr;
 };

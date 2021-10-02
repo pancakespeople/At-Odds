@@ -188,6 +188,8 @@ void PlanetGUI::update(GameState& state) {
 
 			// Lock camera on planet
 			state.getCamera().setPos(planet.getPos());
+
+			if (m_updateFunction != nullptr) m_updateFunction(planet);
 		}
 
 		if (m_sideWindow != nullptr) {
@@ -220,6 +222,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 		m_sideWindow->setPositionLocked(true);
 		m_sideWindow->onClose([this]() {
 			m_sideWindow = nullptr;
+			m_updateFunction = nullptr;
 			});
 		gui.add(m_sideWindow);
 	}
@@ -233,6 +236,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 			m_sideWindow->close();
 		}
 	}
+	m_updateFunction = nullptr;
 }
 
 void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
@@ -634,11 +638,15 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 	tradeButton->setSize("25%", "10%");
 	tradeButton->onPress([this, &gui, &planet]() {
 		switchSideWindow("Trade", gui);
-		
+
 		if (m_sideWindow == nullptr) return;
 
-		auto text = tgui::Label::create(planet.getColony().getTradeGoods().getContentString());
+		auto text = tgui::Label::create(planet.getColony().getTradeGoods().getContentString(planet));
 		m_sideWindow->add(text);
+
+		m_updateFunction = [text](Planet& planet) {
+			text->setText(planet.getColony().getTradeGoods().getContentString(planet));
+		};
 	});
 	m_planetInfoPanel->add(tradeButton);
 }

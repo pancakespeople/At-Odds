@@ -30,6 +30,7 @@ public:
 	// Returns the deficit, if there is one
 	float removeSupply(const std::string& item, float num);
 	float getSupply(const std::string& item);
+	float calcPrice(const std::string& item, float planetPopulation) const;
 
 	bool hasDeficits(float demandMultiplier = 1.0f) const;
 
@@ -37,7 +38,7 @@ public:
 	std::vector<std::pair<std::string, float>> getSurplusGoods() const;
 	// Returns a pair with the item and the demand
 	std::vector<std::pair<std::string, float>> getDeficitGoods(float demandMultiplier = 1.0f) const;
-	std::string getContentString() const;
+	std::string getContentString(Planet& planet) const;
 
 private:
 	friend class boost::serialization::access;

@@ -50,4 +50,12 @@ namespace Util {
 
 		return result;
 	}
+
+	static std::string cutOffDecimal(float num, int numPoints) {
+		std::stringstream ss;
+		ss << std::fixed;
+		ss << std::setprecision(numPoints);
+		ss << num;
+		return ss.str();
+	}
 }
