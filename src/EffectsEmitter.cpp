@@ -42,8 +42,8 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_nebulaShader.setUniform("size", sf::Glsl::Vec2(resolution.x, resolution.y));
 
 	m_selectionShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/selectionshader.shader");
-	
 	m_borderShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/bordershader.shader");
+	m_terraPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/terraplanetshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -106,11 +106,34 @@ void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::RectangleSha
 	m_planetShader.setUniform("gasGiant", planet->isGasGiant());
 	m_planetShader.setUniform("water", planet->getWater());
 	m_planetShader.setUniform("frozen", planet->getTemperature() < 273.15f);
+	m_planetShader.setUniform("atmosphere", planet->getAtmosphericPressure() > 0.1f && 
+		planet->getType() != Planet::PLANET_TYPE::GAS_GIANT && planet->getType() != Planet::PLANET_TYPE::ICE_GIANT);
+
+	switch (planet->getType()) {
+	case Planet::PLANET_TYPE::GAS_GIANT:
+	case Planet::PLANET_TYPE::ICE_GIANT:
+	case Planet::PLANET_TYPE::TOXIC:
+		m_planetShader.setUniform("atmosSameColor", true);
+		break;
+	default:
+		m_planetShader.setUniform("atmosSameColor", false);
+	}
 
 	float angle = Math::angleBetween(planet->getPos(), star->getLocalViewCenter()) * Math::toRadians;
 	m_planetShader.setUniform("sunVec", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
 
 	window.draw(shape, &m_planetShader);
+}
+
+void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time) {
+	m_terraPlanetShader.setUniform("size", sf::Glsl::Vec2(planet->getRadius(), planet->getRadius()));
+	m_terraPlanetShader.setUniform("time", time);
+	m_terraPlanetShader.setUniform("seed", seed);
+
+	float angle = Math::angleBetween(planet->getPos(), star->getLocalViewCenter()) * Math::toRadians;
+	m_terraPlanetShader.setUniform("sun", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
+
+	window.draw(shape, &m_terraPlanetShader);
 }
 
 void EffectsEmitter::drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color) {

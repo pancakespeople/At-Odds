@@ -122,5 +122,6 @@
     <None Include="data\shaders\selectionshader.shader" />
     <None Include="data\shaders\bordershader.shader" />
     <None Include="data\objects\tradegoods.toml" />
+    <None Include="data\shaders\terraplanetshader.shader" />
   </ItemGroup>
 </Project>

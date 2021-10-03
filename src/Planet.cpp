@@ -53,8 +53,15 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 
 void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star, float time) {
 	m_orbit.draw(window);
-	emitter.drawGlow(window, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
-	emitter.drawPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
+	//emitter.drawGlow(window, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
+
+	switch (m_type) {
+	case PLANET_TYPE::TERRA:
+		emitter.drawTerraPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
+		break;
+	default:
+		emitter.drawPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
+	}
 
 	if (m_colony.getAllegiance() != -1) {
 		// Draw faction indicator circle

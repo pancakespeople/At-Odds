@@ -16,6 +16,7 @@ public:
 	void drawFogOfWar(sf::RenderWindow& window);
 	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time, float seed);
 	void drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
+	void drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
 	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
 	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);
 	void drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed);
@@ -41,6 +42,7 @@ private:
 	sf::Shader m_nebulaShader;
 	sf::Shader m_selectionShader;
 	sf::Shader m_borderShader;
+	sf::Shader m_terraPlanetShader;
 
 	sf::Vector2i m_resolution;
 };
