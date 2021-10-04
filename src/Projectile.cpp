@@ -137,7 +137,7 @@ void DeathFunctions::knockAll(Star* star, Projectile* proj) {
 	auto& spaceships = star->getSpaceships();
 	for (auto& ship : spaceships) {
 		float dist = Math::distance(proj->getPos(), ship->getPos());
-		float accel = 1000000000.0f / ship->getMass() / dist;
+		float accel = 1000000000.0f / ship->getMass() / (dist * 4.0f);
 		float angle = Math::angleBetween(proj->getPos(), ship->getPos()) + 180.0f;
 		ship->addVelocity(sf::Vector2f(std::cos(angle * Math::toRadians), std::sin(angle * Math::toRadians) * accel));
 	}

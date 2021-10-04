@@ -140,7 +140,7 @@ void giveResource(const DebugConsole::Command& command, const DebugConsole::Good
 	}
 }
 
-void giveEverything(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
+void cheats(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		const toml::table& resources = TOMLCache::getTable("data/objects/resources.toml");
 		const toml::table& weaponDesigns = TOMLCache::getTable("data/objects/weapondesigns.toml");
@@ -223,7 +223,7 @@ void DebugConsole::open(tgui::Gui& gui) {
 	addCommand("spectate", spectate);
 	addCommand("giveweapon", giveWeapon);
 	addCommand("giveresource", giveResource);
-	addCommand("giveeverything", giveEverything);
+	addCommand("cheats", cheats);
 	addCommand("ownplanet", ownPlanet);
 	addCommand("spawnbuilding", spawnBuilding);
 }
