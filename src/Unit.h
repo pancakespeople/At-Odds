@@ -44,7 +44,7 @@ public:
 	void onDeath(Star* currentStar);
 	void openModGUI(tgui::ChildWindow::Ptr window, Faction* faction);
 	void reinitAfterLoad(Star* star) { m_currentStar = star; }
-	void addVelocity(sf::Vector2f vel) { m_velocity += vel; }
+	void addVelocity(sf::Vector2f vel) { if (!m_stationary) m_velocity += vel; }
 	void onSelected() { m_selected = true; }
 	void onDeselected() { m_selected = false; }
 	void drawSelectionCircle(sf::RenderWindow& window, EffectsEmitter& emitter);
@@ -80,6 +80,7 @@ protected:
 		archive & m_allegiance;
 		archive & m_mods;
 		archive & m_maxHealth;
+		archive & m_stationary;
 	}
 
 	Star* m_currentStar = nullptr;
@@ -97,5 +98,6 @@ protected:
 	
 	bool m_dead = false;
 	bool m_selected = false;
+	bool m_stationary = false;
 };
 

@@ -33,11 +33,26 @@ void Brain::controlSubAI(Faction* faction, SubAI* subAI) {
 }
 
 void Brain::onStarTakeover(Faction* faction, Star* star) {
+	std::vector<Planet*> toBeColonized;
+	
 	for (Planet& planet : star->getPlanets()) {
-		if (!planet.getColony().isColonizationLegal(faction->getID()) && planet.getResources().size() > 0) {
-			planet.getColony().setFactionColonyLegality(faction->getID(), true);
-			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
+
+		if (!planet.getColony().isColonizationLegal(faction->getID())) {
+			if (planet.getResources().size() >= 2) {
+				toBeColonized.push_back(&planet);
+			}
+			else if (planet.getHabitability() > 0.5f) {
+				toBeColonized.push_back(&planet);
+			}
+			else if (planet.getWater() > 0.0f) {
+				toBeColonized.push_back(&planet);
+			}
 		}
+	}
+
+	for (Planet* planet : toBeColonized) {
+		planet->getColony().setFactionColonyLegality(faction->getID(), true);
+		AI_DEBUG_PRINT("Made colonization of " << planet->getTypeString() << " legal");
 	}
 
 	// Send a ship to plunder each derelict
@@ -381,24 +396,24 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		}
 
 		// Set colonization of planets to be legal
-		if (star->getPlanets().size() > 0) {
-			Planet& mostHabitable = star->getMostHabitablePlanet();
-			if (!mostHabitable.getColony().isColonizationLegal(faction->getID()) && mostHabitable.getResources().size() > 0) {
-				mostHabitable.getColony().setFactionColonyLegality(faction->getID(), true);
-				AI_DEBUG_PRINT("Made colonization of " << mostHabitable.getTypeString() << " legal");
-			}
+		//if (star->getPlanets().size() > 0) {
+		//	Planet& mostHabitable = star->getMostHabitablePlanet();
+		//	if (!mostHabitable.getColony().isColonizationLegal(faction->getID()) && mostHabitable.getResources().size() > 0) {
+		//		mostHabitable.getColony().setFactionColonyLegality(faction->getID(), true);
+		//		AI_DEBUG_PRINT("Made colonization of " << mostHabitable.getTypeString() << " legal");
+		//	}
 
-			// 50% to set another random other planet to legal
-			if (Random::randBool()) {
-				auto planets = star->getPlanets();
-				Planet& randPlanet = planets[Random::randInt(0, planets.size() - 1)];
+		//	// 50% to set another random other planet to legal
+		//	if (Random::randBool()) {
+		//		auto planets = star->getPlanets();
+		//		Planet& randPlanet = planets[Random::randInt(0, planets.size() - 1)];
 
-				if (!randPlanet.getColony().isColonizationLegal(faction->getID()) && randPlanet.getResources().size() > 0) {
-					randPlanet.getColony().setFactionColonyLegality(faction->getID(), true);
-					AI_DEBUG_PRINT("Made colonization of " << randPlanet.getTypeString() << " legal");
-				}
-			}
-		}
+		//		if (!randPlanet.getColony().isColonizationLegal(faction->getID()) && randPlanet.getResources().size() > 0) {
+		//			randPlanet.getColony().setFactionColonyLegality(faction->getID(), true);
+		//			AI_DEBUG_PRINT("Made colonization of " << randPlanet.getTypeString() << " legal");
+		//		}
+		//	}
+		//}
 	}
 
 	// Handle building ships

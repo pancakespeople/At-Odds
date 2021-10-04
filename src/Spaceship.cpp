@@ -53,6 +53,7 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	bool fighterAI = table[type]["fighterAI"].value_or(false);
 	bool playerCanGiveOrders = table[type]["playerCanGiveOrders"].value_or(true);
 	bool civilian = table[type]["civilian"].value_or(false);
+	bool stationary = table[type]["stationary"].value_or(false);
 
 	m_sprite.setTexture(TextureCache::getTexture(texturePath));
 	m_sprite.setScale(scale, scale);
@@ -65,6 +66,7 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	m_fighterAI = fighterAI;
 	m_playerCanGiveOrders = playerCanGiveOrders;
 	m_civilian = civilian;
+	m_stationary = stationary;
 
 	if (spriteTakesFactionColor) m_sprite.setColor(color);
 

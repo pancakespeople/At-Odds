@@ -19,6 +19,7 @@ mass = 1000.0
 health = 50.0
 colliderRadius = 300.0
 canReceiveOrders = false
+stationary = true
 
 [CONSTRUCTION_SHIP]
 texturePath = "data/art/constructionship.png"
@@ -49,6 +50,24 @@ texturePath = "data/art/spacetruck.png"
 mass = 75000.0
 health = 50.0
 colliderRadius = 150.0
+civilian = true
+playerCanGiveOrders = false
+
+[BIG_SPACE_TRUCK]
+texturePath = "data/art/spacetruck.png"
+mass = 100000.0
+scale = 2.0
+health = 100.0
+colliderRadius = 300.0
+civilian = true
+playerCanGiveOrders = false
+
+[FREIGHTER]
+texturePath = "data/art/spacetruck.png"
+mass = 250000.0
+scale = 6.0
+health = 1000.0
+colliderRadius = 300.0
 civilian = true
 playerCanGiveOrders = false
 

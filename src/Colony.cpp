@@ -123,8 +123,8 @@ float Colony::getGrowthRate(float planetHabitability) {
 	}
 	
 	// Food and water shortages affect habitability
-	float food = m_tradeGoods.getSupply("Food") == 0.0f ? 0.5f : 1.0f;
-	float water = m_tradeGoods.getSupply("Water") == 0.0f ? 0.5f : 1.0f;
+	float food = m_tradeGoods.getSupply("FOOD") == 0.0f ? 0.5f : 1.0f;
+	float water = m_tradeGoods.getSupply("WATER") == 0.0f ? 0.5f : 1.0f;
 	planetHabitability *= food * water;
 
 	// Negative growth rate if habitability is less than 1.0

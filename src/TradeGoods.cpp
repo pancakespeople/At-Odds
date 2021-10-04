@@ -12,7 +12,7 @@ void TradeGoods::addSupply(const std::string& item, float num) {
 
 float TradeGoods::removeSupply(const std::string& item, float num) {
 	m_items[item].supply -= num;
-	m_items[item].demand = num;
+	m_items[item].demand = (m_items[item].demand + num) / 2.0f;
 
 	if (m_items[item].supply < 0.0f) {
 		float deficit = std::abs(m_items[item].supply);
@@ -83,7 +83,7 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 std::vector<std::pair<std::string, float>> TradeGoods::getSurplusGoods() const {
 	std::vector<std::pair<std::string, float>> surplusGoods;
 	for (auto& item : m_items) {
-		if (item.second.supply > item.second.demand * 2.0f) {
+		if (item.second.supply > item.second.demand) {
 			surplusGoods.push_back(std::pair<std::string, float>(item.first, item.second.supply - item.second.demand));
 		}
 	}
@@ -124,19 +124,42 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 		for (auto surplus : getSurplusGoods()) {
 			for (auto deficit : deficitPlanets[rndPlanetIndex].first->getColony().getTradeGoods().getDeficitGoods(4.0f)) {
 				if (deficit.first == surplus.first) {
-					Spaceship* truck = currentStar->createSpaceship(
-						std::make_unique<Spaceship>("SPACE_TRUCK", planet->getPos(), currentStar, faction->getID(), faction->getColor())
-					);
-					TradeMod mod;
-					mod.addItem(surplus.first, std::min(surplus.second, 100.0f));
-					removeSupply(surplus.first, std::min(surplus.second, 100.0f));
+					Spaceship* truck;
+					float maxItems;
+					float wantedItems;
+					std::string truckType;
+					bool ready = false;
+					
+					// Decide which type of truck to spawn
+					if (surplus.second > 100.0f) {
+						truckType = "BIG_SPACE_TRUCK";
+						maxItems = 1000.0f;
+						wantedItems = std::min(surplus.second, maxItems);
+						ready = m_items[surplus.first].supply - wantedItems * 3.0f > m_items[surplus.first].demand;
+					}
+					// Fall back to smaller trucks if needed
+					if (!ready) {
+						truckType = "SPACE_TRUCK";
+						maxItems = 100.0f;
+						wantedItems = std::min(surplus.second, maxItems);
+						ready = m_items[surplus.first].supply - wantedItems * 3.0f > m_items[surplus.first].demand;
+					}
 
-					truck->addMod(mod);
-					truck->addOrder(TravelOrder(deficitPlanets[rndPlanetIndex].second));
-					truck->addOrder(InteractWithPlanetOrder(deficitPlanets[rndPlanetIndex].first, deficitPlanets[rndPlanetIndex].second));
-					truck->addOrder(DieOrder(true));
+					if (ready) {
+						truck = currentStar->createSpaceship(
+							std::make_unique<Spaceship>(truckType, planet->getPos(), currentStar, faction->getID(), faction->getColor())
+						);
+						TradeMod mod;
+						mod.addItem(surplus.first, std::min(surplus.second, maxItems));
+						removeSupply(surplus.first, std::min(surplus.second, maxItems));
 
-					return;
+						truck->addMod(mod);
+						truck->addOrder(TravelOrder(deficitPlanets[rndPlanetIndex].second));
+						truck->addOrder(InteractWithPlanetOrder(deficitPlanets[rndPlanetIndex].first, deficitPlanets[rndPlanetIndex].second));
+						truck->addOrder(DieOrder(true));
+
+						return;
+					}
 				}
 			}
 		}
