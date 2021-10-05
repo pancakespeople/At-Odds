@@ -11,7 +11,7 @@ public:
 
 	// Faction can be nullptr, others cant
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
-	virtual void interactWithPlanet(Unit*, Planet* planet) {}
+	virtual void interactWithPlanet(Unit*, Planet* planet, Star* star) {}
 	virtual void onUnitDeath(Star* currentStar) {}
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction);
 
@@ -120,7 +120,7 @@ public:
 	HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus);
 	
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
-	virtual void interactWithPlanet(Unit* unit, Planet* planet) override;
+	virtual void interactWithPlanet(Unit* unit, Planet* planet, Star* star) override;
 
 	virtual std::string getInfoString() override;
 
@@ -160,7 +160,7 @@ public:
 	TradeMod() {}
 
 	void addItem(const std::string& item, float num);
-	virtual void interactWithPlanet(Unit* unit, Planet* planet) override;
+	virtual void interactWithPlanet(Unit* unit, Planet* planet, Star* star) override;
 
 private:
 	friend class boost::serialization::access;
@@ -168,7 +168,9 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_goods;
+		archive & m_money;
 	}
 
 	std::map<std::string, float> m_goods;
+	float m_money = 0.0f;
 };

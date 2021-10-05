@@ -30,7 +30,7 @@ public:
 	// Returns the deficit, if there is one
 	float removeSupply(const std::string& item, float num);
 	float getSupply(const std::string& item);
-	float calcPrice(const std::string& item, float planetPopulation) const;
+	float calcPrice(const std::string& item) const;
 
 	bool hasDeficits(float demandMultiplier = 1.0f) const;
 

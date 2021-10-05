@@ -256,7 +256,7 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 		// Mods interact if civilian or friendly planet
 		if (ship->isCivilian() || ship->getAllegiance() == m_planet->getColony().getAllegiance()) {
 			for (auto& mod : ship->getMods()) {
-				mod->interactWithPlanet(ship, m_planet);
+				mod->interactWithPlanet(ship, m_planet, currentStar);
 			}
 			return true;
 		}
@@ -281,6 +281,9 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 			}
 		}
 	}
+
+	// No interaction for combat ships on friendly planets yet
+	if (m_planet->getColony().getAllegiance() == ship->getAllegiance() && !ship->isCivilian()) return true;
 
 	return false;
 }

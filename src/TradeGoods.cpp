@@ -30,7 +30,7 @@ std::string TradeGoods::getContentString(Planet& planet) const {
 	std::string str;
 	for (auto& pair : m_items) {
 		str += table[pair.first]["name"].value_or(std::string("Unknown")) + " - " + Util::cutOffDecimal(pair.second.supply, 2) + " - " + Util::cutOffDecimal(pair.second.demand, 2)
-			+ " - $" + Util::cutOffDecimal(calcPrice(pair.first, planet.getColony().getPopulation()), 2) + "\n";
+			+ " - $" + Util::cutOffDecimal(calcPrice(pair.first), 2) + "\n";
 	}
 	return str;
 }
@@ -156,6 +156,8 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 						truck->addMod(mod);
 						truck->addOrder(TravelOrder(deficitPlanets[rndPlanetIndex].second));
 						truck->addOrder(InteractWithPlanetOrder(deficitPlanets[rndPlanetIndex].first, deficitPlanets[rndPlanetIndex].second));
+						truck->addOrder(TravelOrder(currentStar));
+						truck->addOrder(InteractWithPlanetOrder(planet, currentStar));
 						truck->addOrder(DieOrder(true));
 
 						return;
@@ -172,7 +174,7 @@ float TradeGoods::getSupply(const std::string& item) {
 	return m_items[item].supply;
 }
 
-float TradeGoods::calcPrice(const std::string& item, float planetPopulation) const {
+float TradeGoods::calcPrice(const std::string& item) const {
 	const toml::table& table = TOMLCache::getTable("data/objects/tradegoods.toml");
 	float price = table[item]["price"].value_or(1.0f);
 

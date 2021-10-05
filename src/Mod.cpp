@@ -9,6 +9,7 @@
 #include "Planet.h"
 #include "GUI.h"
 #include "GUI/ShipDesigner.h"
+#include "Sounds.h"
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
@@ -460,7 +461,7 @@ std::string HabitatMod::getInfoString() {
 	return info;
 }
 
-void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet) {
+void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	// Transfer passengers to planet
 	
 	bool firstTime = planet->getColony().getPopulation() == 0;
@@ -567,9 +568,18 @@ void TradeMod::addItem(const std::string& item, float num) {
 	}
 }
 
-void TradeMod::interactWithPlanet(Unit* unit, Planet* planet) {
-	for (auto& item : m_goods) {
-		planet->getColony().getTradeGoods().addSupply(item.first, item.second);
+void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
+	if (m_goods.size() == 0) {
+		planet->getColony().addWealth(m_money / 1000.0f);
+		m_money = 0.0f;
+		Sounds::playSoundLocal("data/sound/money.wav", star, unit->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
-	m_goods.clear();
+	else {
+		for (auto& item : m_goods) {
+			m_money += planet->getColony().getTradeGoods().calcPrice(item.first) * item.second;
+			planet->getColony().getTradeGoods().addSupply(item.first, item.second);
+		}
+		m_goods.clear();
+		Sounds::playSoundLocal("data/sound/cargo.wav", star, unit->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+	}
 }

@@ -303,6 +303,10 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 			auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
 			growthRateLabel->setPosition("0%", "20%");
 			m_sideWindow->add(growthRateLabel);
+
+			auto wealthLabel = tgui::Label::create("Wealth: " + Util::cutOffDecimal(colony.getWealth(), 2));
+			wealthLabel->setPosition("0%", "30%");
+			m_sideWindow->add(wealthLabel);
 		}
 	};
 	colonyInfoButton->onClick(openColonyInfo);

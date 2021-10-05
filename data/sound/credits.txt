@@ -9,3 +9,5 @@ gunshot3 - https://freesound.org/people/malatestinic.com/sounds/481584/
 rocket1 - https://freesound.org/people/ReadeOnly/sounds/186956/
 boom2 - https://freesound.org/people/Aiwha/sounds/250712/
 gunshot4 - https://freesound.org/people/Rudmer_Rotteveel/sounds/336011/
+cargo - https://freesound.org/people/joedeshon/sounds/368737/
+money - https://freesound.org/people/Zott820/sounds/209578/

@@ -22,6 +22,7 @@ public:
 
 	float getGrowthRate(float planetHabitability);
 	float getBuildingEffects(const std::string& effect) const;
+	float getWealth() { return m_wealth; }
 
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);
@@ -39,6 +40,7 @@ public:
 	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }
 	void onBuildingBuild();
 	void exploration(Planet* planet, Faction* faction);
+	void addWealth(float wealth) { m_wealth += wealth; }
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
@@ -71,6 +73,8 @@ private:
 	int m_ticksToNextBus = 500;
 	int m_ticksToNextResourceExploit = 1000;
 	int m_explorationEventTimer = 0;
+
+	float m_wealth = 0.0f;
 
 	bool m_defenseCannonEnabled = false;
 	bool m_explorationEnabled = false;
