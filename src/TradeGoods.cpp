@@ -66,14 +66,25 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 				addSupply("INDUSTRIAL_GOODS", industrialGoodsProduction);
 			}
 			if (resource.type == "UNCOMMON_ORE") {
-				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.01f * resource.abundance;
-				addSupply("CONSUMER_GOODS", consumerGoodsProduction);
+				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;
+				float deficit = removeSupply("INDUSTRIAL_GOODS", consumerGoodsProduction);
+				addSupply("CONSUMER_GOODS", consumerGoodsProduction - deficit);
 			}
 			if (resource.type == "RARE_ORE") {
-				float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.001f * resource.abundance;
-				addSupply("LUXURY_GOODS", luxuryGoodsProduction);
+				float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.01f * resource.abundance;
+				float deficit = removeSupply("INDUSTRIAL_GOODS", luxuryGoodsProduction * 2.0f);
+				addSupply("LUXURY_GOODS", luxuryGoodsProduction - deficit);
 			}
 		}
+
+		float wealthFactor = std::clamp((1000.0f / std::abs(planet->getColony().getWealth() - 100.0f)) - 9.0f, 1.0f, 30.0f);
+		float consumerGoodsConsumption = planet->getColony().getPopulation() * 0.01f * wealthFactor;
+
+		wealthFactor = std::min(std::pow(2.0f, (planet->getColony().getWealth() - 100.0f) / 30.0f), 100.0f);
+		float luxuryGoodsConsumption = planet->getColony().getPopulation() * 0.01f * wealthFactor;
+
+		removeSupply("CONSUMER_GOODS", consumerGoodsConsumption);
+		removeSupply("LUXURY_GOODS", luxuryGoodsConsumption);
 
 		m_ticksUntilUpdate = 1000;
 	}
