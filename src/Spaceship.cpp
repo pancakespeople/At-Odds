@@ -315,8 +315,8 @@ Spaceship::JumpState Spaceship::jump(JumpPoint* point) {
 		if (m_percentJumpDriveCharged >= 100.0f) {
 			point->jumpShipThrough(this, m_currentStar);
 			m_percentJumpDriveCharged = 0.0f;
-			Sounds::playSoundLocal("data/sound/woosh1.wav", m_currentStar, getPos(), 100, 1.0f + Random::randFloat(-0.5f, 0.5f), true);
-			Sounds::playSoundLocal("data/sound/woosh4.wav", point->getConnectedOtherStar(), getPos(), 100, 1.0f + Random::randFloat(-0.5f, 0.5f), true);
+			Sounds::playSoundLocal("data/sound/woosh1.wav", m_currentStar, getPos(), 100, 1.0f + Random::randFloat(-0.5f, 0.5f));
+			Sounds::playSoundLocal("data/sound/woosh4.wav", point->getConnectedOtherStar(), getPos(), 100, 1.0f + Random::randFloat(-0.5f, 0.5f));
 			m_currentStar = point->getConnectedOtherStar();
 			return Spaceship::JumpState::DONE;
 		}
