@@ -127,6 +127,9 @@ float Colony::getGrowthRate(float planetHabitability) {
 	float water = m_tradeGoods.getSupply("WATER") == 0.0f ? 0.5f : 1.0f;
 	planetHabitability *= food * water;
 
+	// Stability effect
+	planetHabitability *= m_stability;
+
 	// Negative growth rate if habitability is less than 1.0
 	float growthRate = (planetHabitability - 1.0f) / 10.0f;
 
@@ -223,6 +226,16 @@ void Colony::exploration(Planet* planet, Faction* faction) {
 	else {
 		m_explorationEventTimer--;
 	}
+}
+
+void Colony::addStability(float stab) {
+	if (m_stability + stab > 1.0f) m_stability = 1.0f;
+	else m_stability += stab;
+}
+
+void Colony::removeStability(float stab) {
+	if (m_stability - stab < 0.0f) m_stability = 0.0f;
+	else m_stability -= stab;
 }
 
 ColonyBuilding::ColonyBuilding(const std::string& type) {

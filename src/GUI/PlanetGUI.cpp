@@ -307,6 +307,10 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 			auto wealthLabel = tgui::Label::create("Wealth: " + Util::cutOffDecimal(colony.getWealth(), 2));
 			wealthLabel->setPosition("0%", "30%");
 			m_sideWindow->add(wealthLabel);
+
+			auto stabilityLabel = tgui::Label::create("Stability: " + Util::cutOffDecimal(colony.getStability(), 2));
+			stabilityLabel->setPosition("0%", "40%");
+			m_sideWindow->add(stabilityLabel);
 		}
 	};
 	colonyInfoButton->onClick(openColonyInfo);

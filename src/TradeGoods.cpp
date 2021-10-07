@@ -78,14 +78,19 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		}
 
 		float wealthFactor = std::clamp((1000.0f / std::abs(planet->getColony().getWealth() - 100.0f)) - 9.0f, 1.0f, 30.0f);
-		float consumerGoodsConsumption = planet->getColony().getPopulation() * 0.01f * wealthFactor;
+		float consumerGoodsConsumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
 
 		wealthFactor = std::min(std::pow(2.0f, (planet->getColony().getWealth() - 100.0f) / 30.0f), 100.0f);
-		float luxuryGoodsConsumption = planet->getColony().getPopulation() * 0.01f * wealthFactor;
+		float luxuryGoodsConsumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
 
-		removeSupply("CONSUMER_GOODS", consumerGoodsConsumption);
-		removeSupply("LUXURY_GOODS", luxuryGoodsConsumption);
+		float deficit = removeSupply("CONSUMER_GOODS", consumerGoodsConsumption);
+		if (deficit > 0.0f) planet->getColony().removeStability(deficit / 20000.0f);
+		else planet->getColony().addStability(0.05f);
 
+		deficit = removeSupply("LUXURY_GOODS", luxuryGoodsConsumption);
+		if (deficit > 0.0f) planet->getColony().removeStability(deficit / 20000.0f);
+		else planet->getColony().addStability(0.05f);
+		
 		m_ticksUntilUpdate = 1000;
 	}
 	else m_ticksUntilUpdate--;
@@ -121,6 +126,8 @@ bool TradeGoods::hasDeficits(float demandMultiplier) const {
 }
 
 void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* planet) {
+	
+	// Get any planets that have any sort of deficit
 	std::vector<std::pair<Planet*, Star*>> deficitPlanets;
 	for (Star* star : faction->getOwnedStars()) {
 		for (Planet& p : star->getPlanets()) {
@@ -130,53 +137,51 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 		}
 	}
 
-	while (deficitPlanets.size() > 0) {
-		int rndPlanetIndex = Random::randInt(0, deficitPlanets.size() - 1);
+	// Sort so that planets with a higher population are first
+	std::sort(deficitPlanets.begin(), deficitPlanets.end(), [](std::pair<Planet*, Star*>& a, std::pair<Planet*, Star*>& b) {
+		return a.first->getColony().getPopulation() > b.first->getColony().getPopulation();
+	});
+
+	for (auto& deficitPlanet : deficitPlanets) {
 		for (auto surplus : getSurplusGoods()) {
-			for (auto deficit : deficitPlanets[rndPlanetIndex].first->getColony().getTradeGoods().getDeficitGoods(4.0f)) {
+			for (auto deficit : deficitPlanet.first->getColony().getTradeGoods().getDeficitGoods(4.0f)) {
 				if (deficit.first == surplus.first) {
 					Spaceship* truck;
 					float maxItems;
 					float wantedItems;
 					std::string truckType;
-					bool ready = false;
 					
 					// Decide which type of truck to spawn
-					if (surplus.second > 100.0f) {
+					if (surplus.second > 1000.0f) {
 						truckType = "BIG_SPACE_TRUCK";
-						maxItems = 1000.0f;
-						wantedItems = std::min(surplus.second, maxItems);
-						ready = m_items[surplus.first].supply - wantedItems * 3.0f > m_items[surplus.first].demand;
+						maxItems = 10000.0f;
+						wantedItems = std::min(surplus.second / 2.0f, maxItems);
 					}
 					// Fall back to smaller trucks if needed
-					if (!ready) {
+					else {
 						truckType = "SPACE_TRUCK";
-						maxItems = 100.0f;
-						wantedItems = std::min(surplus.second, maxItems);
-						ready = m_items[surplus.first].supply - wantedItems * 3.0f > m_items[surplus.first].demand;
+						maxItems = 1000.0f;
+						wantedItems = std::min(surplus.second / 2.0f, maxItems);
 					}
 
-					if (ready) {
-						truck = currentStar->createSpaceship(
-							std::make_unique<Spaceship>(truckType, planet->getPos(), currentStar, faction->getID(), faction->getColor())
-						);
-						TradeMod mod;
-						mod.addItem(surplus.first, std::min(surplus.second, maxItems));
-						removeSupply(surplus.first, std::min(surplus.second, maxItems));
+					truck = currentStar->createSpaceship(
+						std::make_unique<Spaceship>(truckType, planet->getPos(), currentStar, faction->getID(), faction->getColor())
+					);
+					TradeMod mod;
+					mod.addItem(surplus.first, std::min(surplus.second, maxItems));
+					removeSupply(surplus.first, std::min(surplus.second, maxItems));
 
-						truck->addMod(mod);
-						truck->addOrder(TravelOrder(deficitPlanets[rndPlanetIndex].second));
-						truck->addOrder(InteractWithPlanetOrder(deficitPlanets[rndPlanetIndex].first, deficitPlanets[rndPlanetIndex].second));
-						truck->addOrder(TravelOrder(currentStar));
-						truck->addOrder(InteractWithPlanetOrder(planet, currentStar));
-						truck->addOrder(DieOrder(true));
+					truck->addMod(mod);
+					truck->addOrder(TravelOrder(deficitPlanet.second));
+					truck->addOrder(InteractWithPlanetOrder(deficitPlanet.first, deficitPlanet.second));
+					truck->addOrder(TravelOrder(currentStar));
+					truck->addOrder(InteractWithPlanetOrder(planet, currentStar));
+					truck->addOrder(DieOrder(true));
 
-						return;
-					}
+					return;
 				}
 			}
 		}
-		deficitPlanets.erase(deficitPlanets.begin() + rndPlanetIndex);
 	}
 }
 
