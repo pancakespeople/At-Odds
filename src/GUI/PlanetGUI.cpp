@@ -304,11 +304,57 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 			growthRateLabel->setPosition("0%", "20%");
 			m_sideWindow->add(growthRateLabel);
 
-			auto wealthLabel = tgui::Label::create("Wealth: " + Util::cutOffDecimal(colony.getWealth(), 2));
+			std::string wealthFlavor;
+			float wealth = colony.getWealth();
+			if (wealth > 1000.0f) {
+				wealthFlavor = "Monstrously Wealthy";
+			}
+			else if (wealth > 500.0f) {
+				wealthFlavor = "Lavish";
+			}
+			else if (wealth > 250.0f) {
+				wealthFlavor = "Well Off";
+			}
+			else if (wealth > 100.0f) {
+				wealthFlavor = "Middling";
+			}
+			else if (wealth > 50.0f) {
+				wealthFlavor = "Poor";
+			}
+			else if (wealth > 25.0f) {
+				wealthFlavor = "Dirt Poor";
+			}
+			else {
+				wealthFlavor = "Destitute";
+			}
+
+			auto wealthLabel = tgui::Label::create("Wealth: " + Util::cutOffDecimal(wealth, 2) + " (" + wealthFlavor + ")");
 			wealthLabel->setPosition("0%", "30%");
 			m_sideWindow->add(wealthLabel);
 
-			auto stabilityLabel = tgui::Label::create("Stability: " + Util::cutOffDecimal(colony.getStability(), 2));
+			std::string stabilityFlavor;
+			float stability = colony.getStability();
+
+			if (stability == 1.0f) {
+				stabilityFlavor = "Under Control";
+			}
+			else if (stability > 0.75f) {
+				stabilityFlavor = "This Is Fine";
+			}
+			else if (stability > 0.5f) {
+				stabilityFlavor = "Protests";
+			}
+			else if (stability > 0.25f) {
+				stabilityFlavor = "Riots";
+			}
+			else if (stability > 0.0f) {
+				stabilityFlavor = "Civil War";
+			}
+			else {
+				stabilityFlavor = "Government Collapsed";
+			}
+
+			auto stabilityLabel = tgui::Label::create("Stability: " + Util::cutOffDecimal(stability, 2) + " (" + stabilityFlavor + ")");
 			stabilityLabel->setPosition("0%", "40%");
 			m_sideWindow->add(stabilityLabel);
 		}

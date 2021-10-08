@@ -28,7 +28,7 @@ public:
 	void update(Star* currentStar, Faction* faction, Planet* planet);
 
 	// Returns the deficit, if there is one
-	float removeSupply(const std::string& item, float num);
+	float removeSupply(const std::string& item, float num, bool noDemand = false);
 	float getSupply(const std::string& item);
 	float calcPrice(const std::string& item) const;
 

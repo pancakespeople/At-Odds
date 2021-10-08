@@ -42,8 +42,9 @@ public:
 	void onBuildingBuild();
 	void exploration(Planet* planet, Faction* faction);
 	void addWealth(float wealth) { m_wealth += wealth; }
-	void removeStability(float stab);
+	void removeWealth(float wealth);
 	void addStability(float stab);
+	void removeStability(float stab);
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
@@ -69,6 +70,7 @@ private:
 		archive & m_explorationEventTimer;
 		archive & m_tradeGoods;
 		archive & m_stability;
+		archive & m_wealth;
 	}
 
 	int m_population = 0;

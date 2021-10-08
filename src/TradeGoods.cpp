@@ -10,15 +10,15 @@ void TradeGoods::addSupply(const std::string& item, float num) {
 	m_items[item].supply += num;
 }
 
-float TradeGoods::removeSupply(const std::string& item, float num) {
+float TradeGoods::removeSupply(const std::string& item, float num, bool noDemand) {
 	m_items[item].supply -= num;
-	m_items[item].demand = (m_items[item].demand + num) / 2.0f;
+	if (!noDemand) m_items[item].demand = (m_items[item].demand + num) / 2.0f;
 
 	if (m_items[item].supply < 0.0f) {
 		float deficit = std::abs(m_items[item].supply);
 		
 		m_items[item].supply = 0.0f;
-		m_items[item].demand += deficit;
+		if (!noDemand) m_items[item].demand += deficit;
 		
 		return deficit;
 	}
@@ -88,7 +88,10 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		else planet->getColony().addStability(0.05f);
 
 		deficit = removeSupply("LUXURY_GOODS", luxuryGoodsConsumption);
-		if (deficit > 0.0f) planet->getColony().removeStability(deficit / 20000.0f);
+		if (deficit > 0.0f) {
+			planet->getColony().removeStability(deficit / 30000.0f);
+			planet->getColony().removeWealth(deficit / 50.0f);
+		}
 		else planet->getColony().addStability(0.05f);
 		
 		m_ticksUntilUpdate = 1000;
@@ -131,7 +134,7 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 	std::vector<std::pair<Planet*, Star*>> deficitPlanets;
 	for (Star* star : faction->getOwnedStars()) {
 		for (Planet& p : star->getPlanets()) {
-			if (p.getColony().getTradeGoods().hasDeficits(4.0f) && p.getColony().getAllegiance() == faction->getID()) {
+			if (p.getColony().getTradeGoods().hasDeficits(4.0f) && p.getColony().getAllegiance() == faction->getID() && &p != planet) {
 				deficitPlanets.push_back(std::pair<Planet*, Star*>(&p, star));
 			}
 		}
@@ -168,8 +171,8 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 						std::make_unique<Spaceship>(truckType, planet->getPos(), currentStar, faction->getID(), faction->getColor())
 					);
 					TradeMod mod;
-					mod.addItem(surplus.first, std::min(surplus.second, maxItems));
-					removeSupply(surplus.first, std::min(surplus.second, maxItems));
+					mod.addItem(surplus.first, wantedItems);
+					removeSupply(surplus.first, wantedItems, true);
 
 					truck->addMod(mod);
 					truck->addOrder(TravelOrder(deficitPlanet.second));

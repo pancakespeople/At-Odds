@@ -238,6 +238,11 @@ void Colony::removeStability(float stab) {
 	else m_stability -= stab;
 }
 
+void Colony::removeWealth(float wealth) {
+	if (m_wealth - wealth < 0.0f) m_wealth = 0.0f;
+	else m_wealth -= wealth;
+}
+
 ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
