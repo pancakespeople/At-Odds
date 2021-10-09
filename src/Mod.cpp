@@ -559,24 +559,33 @@ void HabitatMod::createSpaceBus(Unit* unit, Star* currentStar, Star* targetStar,
 	createSpaceBus(unit->getPos(), unit->getAllegiance(), unit->getFactionColor(), currentStar, targetStar, targetPlanet);
 }
 
-void TradeMod::addItem(const std::string& item, float num) {
+void TradeMod::addItem(const std::string& item, float num, float price) {
 	if (m_goods.count(item) == 0) {
 		m_goods[item] = num;
 	}
 	else {
 		m_goods[item] += num;
 	}
+	m_money -= num * price;
 }
 
 void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	if (m_goods.size() == 0) {
-		planet->getColony().addWealth(m_money / 1000.0f);
+		// Returning journey
+		if (m_money > 0.0f) {
+			planet->getColony().addWealth(m_money / 1000.0f);
+		}
+		else {
+			planet->getColony().removeWealth(-m_money / 1000.0f);
+		}
 		m_money = 0.0f;
 		Sounds::playSoundLocal("data/sound/money.wav", star, unit->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
 	else {
 		for (auto& item : m_goods) {
-			m_money += planet->getColony().getTradeGoods().calcPrice(item.first) * item.second;
+			float soldMoney = planet->getColony().getTradeGoods().calcPrice(item.first) * item.second;
+			m_money += soldMoney;
+			planet->getColony().addWealth(soldMoney / 1000.0f);
 			planet->getColony().getTradeGoods().addSupply(item.first, item.second);
 		}
 		m_goods.clear();

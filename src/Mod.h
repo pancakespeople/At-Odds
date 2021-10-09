@@ -159,7 +159,7 @@ class TradeMod : public Mod {
 public:
 	TradeMod() {}
 
-	void addItem(const std::string& item, float num);
+	void addItem(const std::string& item, float num, float price);
 	virtual void interactWithPlanet(Unit* unit, Planet* planet, Star* star) override;
 
 private:

@@ -62,35 +62,40 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		// Production from resources
 		for (Resource& resource : planet->getResources()) {
 			if (resource.type == "COMMON_ORE") {
-				float industrialGoodsProduction = planet->getColony().getPopulation() * 0.02f * resource.abundance;
+				float industrialGoodsProduction = planet->getColony().getPopulation() * 0.1f * resource.abundance;
 				addSupply("INDUSTRIAL_GOODS", industrialGoodsProduction);
 			}
 			if (resource.type == "UNCOMMON_ORE") {
-				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;
+				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.085f * resource.abundance;
 				float deficit = removeSupply("INDUSTRIAL_GOODS", consumerGoodsProduction);
 				addSupply("CONSUMER_GOODS", consumerGoodsProduction - deficit);
 			}
 			if (resource.type == "RARE_ORE") {
-				float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.01f * resource.abundance;
+				float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;
 				float deficit = removeSupply("INDUSTRIAL_GOODS", luxuryGoodsProduction * 2.0f);
 				addSupply("LUXURY_GOODS", luxuryGoodsProduction - deficit);
 			}
 		}
 
-		float wealthFactor = std::clamp((1000.0f / std::abs(planet->getColony().getWealth() - 100.0f)) - 9.0f, 1.0f, 30.0f);
+		//float wealthFactor = std::clamp((1000.0f / std::abs(planet->getColony().getWealth() - 100.0f)) - 9.0f, 1.0f, 30.0f);
+		float wealthFactor = planet->getColony().getWealth() / 100.0f;
 		float consumerGoodsConsumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
 
-		wealthFactor = std::min(std::pow(2.0f, (planet->getColony().getWealth() - 100.0f) / 30.0f), 100.0f);
+		//wealthFactor = std::min(std::pow(2.0f, (planet->getColony().getWealth() - 100.0f) / 30.0f), 100.0f);
+		wealthFactor = planet->getColony().getWealth() / 500.0f;
 		float luxuryGoodsConsumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
 
 		float deficit = removeSupply("CONSUMER_GOODS", consumerGoodsConsumption);
-		if (deficit > 0.0f) planet->getColony().removeStability(deficit / 20000.0f);
+		if (deficit > 0.0f) {
+			planet->getColony().removeStability(deficit / 20000.0f);
+			planet->getColony().removeWealth(deficit / 10.0f);
+		}
 		else planet->getColony().addStability(0.05f);
 
 		deficit = removeSupply("LUXURY_GOODS", luxuryGoodsConsumption);
 		if (deficit > 0.0f) {
 			planet->getColony().removeStability(deficit / 30000.0f);
-			planet->getColony().removeWealth(deficit / 50.0f);
+			planet->getColony().removeWealth(deficit);
 		}
 		else planet->getColony().addStability(0.05f);
 		
@@ -134,7 +139,7 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 	std::vector<std::pair<Planet*, Star*>> deficitPlanets;
 	for (Star* star : faction->getOwnedStars()) {
 		for (Planet& p : star->getPlanets()) {
-			if (p.getColony().getTradeGoods().hasDeficits(4.0f) && p.getColony().getAllegiance() == faction->getID() && &p != planet) {
+			if (p.getColony().getTradeGoods().hasDeficits() && p.getColony().getAllegiance() == faction->getID() && &p != planet) {
 				deficitPlanets.push_back(std::pair<Planet*, Star*>(&p, star));
 			}
 		}
@@ -145,15 +150,19 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 		return a.first->getColony().getPopulation() > b.first->getColony().getPopulation();
 	});
 
-	for (auto& deficitPlanet : deficitPlanets) {
-		for (auto surplus : getSurplusGoods()) {
-			for (auto deficit : deficitPlanet.first->getColony().getTradeGoods().getDeficitGoods(4.0f)) {
+	auto surplusGoods = getSurplusGoods();
+	
+	if (surplusGoods.size() > 0) {
+		auto surplus = getSurplusGoods()[Random::randInt(0, surplusGoods.size() - 1)];
+
+		for (auto& deficitPlanet : deficitPlanets) {
+			for (auto deficit : deficitPlanet.first->getColony().getTradeGoods().getDeficitGoods()) {
 				if (deficit.first == surplus.first) {
 					Spaceship* truck;
 					float maxItems;
 					float wantedItems;
 					std::string truckType;
-					
+
 					// Decide which type of truck to spawn
 					if (surplus.second > 1000.0f) {
 						truckType = "BIG_SPACE_TRUCK";
@@ -171,7 +180,7 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 						std::make_unique<Spaceship>(truckType, planet->getPos(), currentStar, faction->getID(), faction->getColor())
 					);
 					TradeMod mod;
-					mod.addItem(surplus.first, wantedItems);
+					mod.addItem(surplus.first, wantedItems, calcPrice(surplus.first));
 					removeSupply(surplus.first, wantedItems, true);
 
 					truck->addMod(mod);
