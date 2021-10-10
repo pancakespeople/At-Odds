@@ -449,3 +449,13 @@ std::vector<Planet*> Faction::getOwnedPlanets() {
 	}
 	return planets;
 }
+
+std::vector<Star*> Faction::getUnderAttackStars() {
+	std::vector<Star*> stars;
+	for (Star* star : m_ownedSystems) {
+		if (star->getEnemyCombatShips(m_id).size() > 0) {
+			stars.push_back(star);
+		}
+	}
+	return stars;
+}

@@ -119,33 +119,6 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 		if (m_expansionTarget == nullptr) {
 			// Choose expansion target
 			
-			// Secure stars connected to capital
-			//for (Star* s : faction->getCapital()->getConnectedStars()) {
-			//	if (s->getAllegiance() != faction->getID()) {
-			//		m_expansionTarget = s;
-			//		m_expansionTargetID = s->getID();
-			//		//AI_DEBUG_PRINT("Expansion target (near capital) chosen");
-			//		break;
-			//	}
-			//}
-
-			//if (m_expansionTarget == nullptr) {
-			//	std::vector<Star*>& ownedStars = faction->getOwnedStars();
-			//	for (int i = faction->getOwnedStars().size() - 1; i > 0; i--) {
-			//		for (Star* adj : ownedStars[i]->getConnectedStars()) {
-			//			if (adj->getAllegiance() != faction->getID()) {
-			//				m_expansionTarget = adj;
-			//				m_expansionTargetID = adj->getID();
-			//				//AI_DEBUG_PRINT("Expansion target chosen");
-			//				break;
-			//			}
-			//		}
-			//		if (m_expansionTarget != nullptr) {
-			//			break;
-			//		}
-			//	}
-			//}
-
 			std::vector<Star*> borderStars = faction->getBorderStars();
 
 			// Prioritize undiscovered stars first
@@ -182,7 +155,7 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 		}
 		else {
 			if (!m_launchingAttack) {
-				faction->giveAllCombatShipsOrder(TravelOrder(m_expansionTarget));
+				faction->giveAllCombatShipsOrder(TravelOrder(m_expansionTarget), true);
 				m_launchingAttack = true;
 				m_attackTimer = 1600;
 				//AI_DEBUG_PRINT("Begun attack");
@@ -213,6 +186,7 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 									for (Building* outpost : outposts) {
 										if (outpost->getAllegiance() != faction->getID()) {
 											for (Spaceship* ship : alliedShips) {
+												ship->clearOrders();
 												ship->addOrder(AttackOrder(outpost));
 											}
 											AI_DEBUG_PRINT("Attacking outpost");
@@ -242,9 +216,21 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 	}
 	else if (m_state == MilitaryState::RALLYING) {
 		if (m_rallyTimer == 0) {
-			// Send an order to all combat ships to travel to the capital
-			for (Spaceship* ship : faction->getAllCombatShips()) {
-				ship->addOrder(TravelOrder(faction->getCapital()));
+			std::vector<Star*> underAttackStars = faction->getUnderAttackStars();
+
+			if (underAttackStars.size() == 0) {
+				// Send an order to all combat ships to travel to the most recently conquered star
+				for (Spaceship* ship : faction->getAllCombatShips()) {
+					ship->clearOrders();
+					ship->addOrder(TravelOrder(faction->getOwnedStars().back()));
+				}
+			}
+			else {
+				// Defend the nation
+				for (Spaceship* ship : faction->getAllCombatShips()) {
+					ship->clearOrders();
+					ship->addOrder(TravelOrder(underAttackStars.front()));
+				}
 			}
 
 			// Send planet attack ships to attack enemy planets
@@ -255,6 +241,7 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 
 					for (Spaceship* ship : planetAttackShips) {
 						if (!ship->isHeavy()) {
+							ship->clearOrders();
 							ship->addOrder(TravelOrder(star));
 							ship->addOrder(InteractWithPlanetOrder(enemyPlanets.front(), star));
 						}

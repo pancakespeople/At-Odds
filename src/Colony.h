@@ -22,7 +22,7 @@ public:
 
 	float getGrowthRate(float planetHabitability);
 	float getBuildingEffects(const std::string& effect) const;
-	float getWealth() { return m_wealth; }
+	float getWealth() { return m_wealth * m_stability; }
 	float getStability() { return m_stability; }
 
 	bool isColonizationLegal(int allegiance);

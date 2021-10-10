@@ -61,6 +61,7 @@ public:
 	std::vector<Spaceship::DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
 	std::vector<ColonyBuilding> getColonyBuildings();
 	std::vector<Planet*> getOwnedPlanets();
+	std::vector<Star*> getUnderAttackStars();
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();
@@ -92,9 +93,10 @@ public:
 	}
 
 	template<typename T>
-	void giveAllCombatShipsOrder(const T order) {
+	void giveAllCombatShipsOrder(const T order, bool clearOrders = false) {
 		for (Spaceship* s : m_ships) {
 			if (s->getConstructionSpeed() == 0.0f) {
+				if (clearOrders) s->clearOrders();
 				s->addOrder(order);
 			}
 		}

@@ -573,10 +573,10 @@ void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	if (m_goods.size() == 0) {
 		// Returning journey
 		if (m_money > 0.0f) {
-			planet->getColony().addWealth(m_money / 1000.0f);
+			planet->getColony().addWealth(m_money / 10000.0f);
 		}
 		else {
-			planet->getColony().removeWealth(-m_money / 1000.0f);
+			planet->getColony().removeWealth(-m_money / 10000.0f);
 		}
 		m_money = 0.0f;
 		Sounds::playSoundLocal("data/sound/money.wav", star, unit->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
@@ -585,7 +585,7 @@ void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 		for (auto& item : m_goods) {
 			float soldMoney = planet->getColony().getTradeGoods().calcPrice(item.first) * item.second;
 			m_money += soldMoney;
-			planet->getColony().addWealth(soldMoney / 1000.0f);
+			planet->getColony().addWealth(soldMoney / 10000.0f);
 			planet->getColony().getTradeGoods().addSupply(item.first, item.second);
 		}
 		m_goods.clear();
