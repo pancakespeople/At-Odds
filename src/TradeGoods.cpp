@@ -22,6 +22,7 @@ float TradeGoods::removeSupply(const std::string& item, float num, bool noDemand
 		
 		return deficit;
 	}
+
 	return 0.0f;
 }
 
@@ -99,6 +100,17 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		}
 		else planet->getColony().addStability(0.05f);
 		
+		// Set prices and trends
+		for (auto& good : m_items) {
+			good.second.price = calcPrice(good.first);
+			good.second.supplyChange = good.second.supply - m_oldItems[good.first].supply;
+			good.second.demandChange = good.second.demand - m_oldItems[good.first].demand;
+			good.second.priceChange = good.second.price - m_oldItems[good.first].price;
+			if (good.second.supplyChange != 0.0f) DEBUG_PRINT(currentStar->getName() << " " << good.first << " " << good.second.supplyChange);
+		}
+
+		m_oldItems = m_items;
+
 		m_ticksUntilUpdate = 1000;
 	}
 	else m_ticksUntilUpdate--;

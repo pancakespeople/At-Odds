@@ -1,4 +1,4 @@
-#include "gamepch.h"
+﻿#include "gamepch.h"
 #include "PlanetGUI.h"
 #include "../Faction.h"
 #include "../Star.h"
@@ -695,11 +695,89 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 
 		if (m_sideWindow == nullptr) return;
 
-		auto text = tgui::Label::create(planet.getColony().getTradeGoods().getContentString(planet));
-		m_sideWindow->add(text);
+		m_sideWindow->setSize(m_sideWindow->getSize().x * 2.0f, m_sideWindow->getSize().y);
 
-		m_updateFunction = [text](Planet& planet) {
-			text->setText(planet.getColony().getTradeGoods().getContentString(planet));
+		auto goodLabel = tgui::Label::create("Good");
+		m_sideWindow->add(goodLabel);
+
+		auto supplyLabel = tgui::Label::create("Supply");
+		supplyLabel->setPosition("25%", "0%");
+		m_sideWindow->add(supplyLabel);
+
+		auto demandLabel = tgui::Label::create("Demand");
+		demandLabel->setPosition("50%", "0%");
+		m_sideWindow->add(demandLabel);
+
+		auto priceLabel = tgui::Label::create("Price");
+		priceLabel->setPosition("75%", "0%");
+		m_sideWindow->add(priceLabel);
+
+		/*auto text = tgui::Label::create(planet.getColony().getTradeGoods().getContentString(planet));
+		text->setPosition("0%", "10%");
+		m_sideWindow->add(text);*/
+
+		auto infoGroup = tgui::Group::create();
+		m_sideWindow->add(infoGroup);
+
+		m_updateFunction = [infoGroup](Planet& planet) {
+			int yPos = 10;
+			for (auto& good : planet.getColony().getTradeGoods().getGoods()) {
+				const toml::table& table = TOMLCache::getTable("data/objects/tradegoods.toml");
+
+				auto nameLabel = infoGroup->get<tgui::Label>(good.first + "name");
+				if (nameLabel == nullptr) {
+					nameLabel = tgui::Label::create();
+					infoGroup->add(nameLabel, good.first + "name");
+				}
+				nameLabel->setText(table[good.first]["name"].value_or("Unknown"));
+				nameLabel->setPosition("0%", tgui::String(std::to_string(yPos) + "%"));
+
+				auto supplyLabel = infoGroup->get<tgui::Label>(good.first + "supply");
+				auto supplyTrendLabel = infoGroup->get<tgui::Label>(good.first + "supplyTrend");
+				if (supplyLabel == nullptr) {
+					supplyLabel = tgui::Label::create();
+					infoGroup->add(supplyLabel, good.first + "supply");
+				}
+				if (supplyTrendLabel == nullptr) {
+					supplyTrendLabel = tgui::Label::create();
+					infoGroup->add(supplyTrendLabel, good.first + "supplyTrend");
+				}
+				
+				supplyTrendLabel->setPosition("25%", tgui::String(std::to_string(yPos) + "%"));
+				if (good.second.supplyChange > 0.0f) {
+					supplyTrendLabel->setText("▲");
+					supplyTrendLabel->getRenderer()->setTextColor(tgui::Color::Green);
+				}
+				else if (good.second.supplyChange < 0.0f) {
+					supplyTrendLabel->setText("▼");
+					supplyTrendLabel->getRenderer()->setTextColor(tgui::Color::Red);
+				}
+				else {
+					supplyTrendLabel->setText("~");
+					supplyTrendLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
+				}
+
+				supplyLabel->setText(Util::cutOffDecimal(good.second.supply, 2) + " " + Util::cutOffDecimal(good.second.supplyChange, 2));
+				supplyLabel->setPosition("27%", tgui::String(std::to_string(yPos) + "%"));
+
+				auto demandLabel = infoGroup->get<tgui::Label>(good.first + "demand");
+				if (demandLabel == nullptr) {
+					demandLabel = tgui::Label::create();
+					infoGroup->add(demandLabel, good.first + "demand");
+				}
+				demandLabel->setText(Util::cutOffDecimal(good.second.demand, 2));
+				demandLabel->setPosition("50%", tgui::String(std::to_string(yPos) + "%"));
+
+				auto priceLabel = infoGroup->get<tgui::Label>(good.first + "price");
+				if (priceLabel == nullptr) {
+					priceLabel = tgui::Label::create();
+					infoGroup->add(priceLabel, good.first + "price");
+				}
+				priceLabel->setText("$" + Util::cutOffDecimal(planet.getColony().getTradeGoods().calcPrice(good.first), 2));
+				priceLabel->setPosition("75%", tgui::String(std::to_string(yPos) + "%"));
+
+				yPos += 10;
+			}
 		};
 	});
 	m_planetInfoPanel->add(tradeButton);
