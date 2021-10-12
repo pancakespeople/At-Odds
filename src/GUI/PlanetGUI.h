@@ -20,6 +20,7 @@ private:
 	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
 	void createEventsButton(tgui::Gui& gui, const Planet& planet);
 	void createTradeButton(tgui::Gui& gui, Planet& planet);
+	static void updateTrendWidget(tgui::Label::Ptr& label, float trend);
 
 	tgui::Panel::Ptr m_planetIconPanel;
 	tgui::Panel::Ptr m_planetPanel;

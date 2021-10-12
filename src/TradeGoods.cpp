@@ -106,7 +106,6 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 			good.second.supplyChange = good.second.supply - m_oldItems[good.first].supply;
 			good.second.demandChange = good.second.demand - m_oldItems[good.first].demand;
 			good.second.priceChange = good.second.price - m_oldItems[good.first].price;
-			if (good.second.supplyChange != 0.0f) DEBUG_PRINT(currentStar->getName() << " " << good.first << " " << good.second.supplyChange);
 		}
 
 		m_oldItems = m_items;

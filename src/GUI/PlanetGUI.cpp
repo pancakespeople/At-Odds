@@ -712,10 +712,6 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 		priceLabel->setPosition("75%", "0%");
 		m_sideWindow->add(priceLabel);
 
-		/*auto text = tgui::Label::create(planet.getColony().getTradeGoods().getContentString(planet));
-		text->setPosition("0%", "10%");
-		m_sideWindow->add(text);*/
-
 		auto infoGroup = tgui::Group::create();
 		m_sideWindow->add(infoGroup);
 
@@ -729,8 +725,8 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 					nameLabel = tgui::Label::create();
 					infoGroup->add(nameLabel, good.first + "name");
 				}
+
 				nameLabel->setText(table[good.first]["name"].value_or("Unknown"));
-				nameLabel->setPosition("0%", tgui::String(std::to_string(yPos) + "%"));
 
 				auto supplyLabel = infoGroup->get<tgui::Label>(good.first + "supply");
 				auto supplyTrendLabel = infoGroup->get<tgui::Label>(good.first + "supplyTrend");
@@ -743,42 +739,68 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 					infoGroup->add(supplyTrendLabel, good.first + "supplyTrend");
 				}
 				
-				supplyTrendLabel->setPosition("25%", tgui::String(std::to_string(yPos) + "%"));
-				if (good.second.supplyChange > 0.0f) {
-					supplyTrendLabel->setText("▲");
-					supplyTrendLabel->getRenderer()->setTextColor(tgui::Color::Green);
-				}
-				else if (good.second.supplyChange < 0.0f) {
-					supplyTrendLabel->setText("▼");
-					supplyTrendLabel->getRenderer()->setTextColor(tgui::Color::Red);
-				}
-				else {
-					supplyTrendLabel->setText("~");
-					supplyTrendLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
-				}
+				updateTrendWidget(supplyTrendLabel, good.second.supplyChange);
 
-				supplyLabel->setText(Util::cutOffDecimal(good.second.supply, 2) + " " + Util::cutOffDecimal(good.second.supplyChange, 2));
-				supplyLabel->setPosition("27%", tgui::String(std::to_string(yPos) + "%"));
+				supplyLabel->setText(Util::cutOffDecimal(good.second.supply, 2));
 
 				auto demandLabel = infoGroup->get<tgui::Label>(good.first + "demand");
+				auto demandTrendLabel = infoGroup->get<tgui::Label>(good.first + "demandTrend");
 				if (demandLabel == nullptr) {
 					demandLabel = tgui::Label::create();
 					infoGroup->add(demandLabel, good.first + "demand");
+					demandTrendLabel = tgui::Label::create();
+					infoGroup->add(demandTrendLabel, good.first + "demandTrend");
 				}
+				
+				updateTrendWidget(demandTrendLabel, good.second.demandChange);
+				
 				demandLabel->setText(Util::cutOffDecimal(good.second.demand, 2));
-				demandLabel->setPosition("50%", tgui::String(std::to_string(yPos) + "%"));
 
 				auto priceLabel = infoGroup->get<tgui::Label>(good.first + "price");
+				auto priceTrendLabel = infoGroup->get<tgui::Label>(good.first + "priceTrend");
 				if (priceLabel == nullptr) {
 					priceLabel = tgui::Label::create();
 					infoGroup->add(priceLabel, good.first + "price");
+					priceTrendLabel = tgui::Label::create();
+					infoGroup->add(priceTrendLabel, good.first + "priceTrend");
 				}
+
+				updateTrendWidget(priceTrendLabel, good.second.priceChange);
+
 				priceLabel->setText("$" + Util::cutOffDecimal(planet.getColony().getTradeGoods().calcPrice(good.first), 2));
-				priceLabel->setPosition("75%", tgui::String(std::to_string(yPos) + "%"));
+				
+				tgui::String yPosStr = std::to_string(yPos) + "%";
+				bool yChanged = false;
+				if (yPosStr != nameLabel->getPositionLayout().y.toString()) yChanged = true;
+
+				if (yChanged) {
+					nameLabel->setPosition("0%", yPosStr);
+					supplyTrendLabel->setPosition("25%", yPosStr);
+					supplyLabel->setPosition("27%", yPosStr);
+					demandTrendLabel->setPosition("50%", yPosStr);
+					demandLabel->setPosition("52%", yPosStr);
+					priceTrendLabel->setPosition("75%", yPosStr);
+					priceLabel->setPosition("77%", yPosStr);
+				}
 
 				yPos += 10;
 			}
 		};
 	});
 	m_planetInfoPanel->add(tradeButton);
+}
+
+void PlanetGUI::updateTrendWidget(tgui::Label::Ptr& label, float trend) {
+	if (trend > 0.0f) {
+		label->setText(L"▲");
+		label->getRenderer()->setTextColor(tgui::Color::Green);
+	}
+	else if (trend < 0.0f) {
+		label->setText(L"▼");
+		label->getRenderer()->setTextColor(tgui::Color::Red);
+	}
+	else {
+		label->setText("~");
+		label->getRenderer()->setTextColor(tgui::Color::Yellow);
+	}
 }
