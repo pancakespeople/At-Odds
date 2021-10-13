@@ -730,15 +730,26 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 
 				auto supplyLabel = infoGroup->get<tgui::Label>(good.first + "supply");
 				auto supplyTrendLabel = infoGroup->get<tgui::Label>(good.first + "supplyTrend");
+				auto supplyShortageLabel = infoGroup->get<tgui::Label>(good.first + "supplyShortage");
 				if (supplyLabel == nullptr) {
 					supplyLabel = tgui::Label::create();
 					infoGroup->add(supplyLabel, good.first + "supply");
-				}
-				if (supplyTrendLabel == nullptr) {
+					
 					supplyTrendLabel = tgui::Label::create();
 					infoGroup->add(supplyTrendLabel, good.first + "supplyTrend");
+
+					supplyShortageLabel = tgui::Label::create();
+					supplyShortageLabel->getRenderer()->setTextColor(tgui::Color::Red);
+					infoGroup->add(supplyShortageLabel, good.first + "supplyShortage");
 				}
 				
+				if (good.second.supply < good.second.demand) {
+					supplyShortageLabel->setText("SHORTAGE");
+				}
+				else {
+					supplyShortageLabel->setText("");
+				}
+
 				updateTrendWidget(supplyTrendLabel, good.second.supplyChange);
 
 				supplyLabel->setText(Util::cutOffDecimal(good.second.supply, 2));
@@ -777,6 +788,7 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 					nameLabel->setPosition("0%", yPosStr);
 					supplyTrendLabel->setPosition("25%", yPosStr);
 					supplyLabel->setPosition("27%", yPosStr);
+					supplyShortageLabel->setPosition(tgui::String(good.first + "supply.x + " + good.first + "supply.width"), yPosStr);
 					demandTrendLabel->setPosition("50%", yPosStr);
 					demandLabel->setPosition("52%", yPosStr);
 					priceTrendLabel->setPosition("75%", yPosStr);

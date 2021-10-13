@@ -52,13 +52,15 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		addSupply("WATER", waterHarvest);
 
 		float waterConsumption = planet->getColony().getPopulation() * 0.01f;
-		removeSupply("WATER", waterConsumption);
+		float waterDeficit = removeSupply("WATER", waterConsumption);
+		if (waterDeficit > 0.0f) planet->getColony().removeStability(waterDeficit / 2000.0f);
 
 		float foodHarvest = planet->getColony().getPopulation() * 0.01f * planet->getHabitability() * planet->getColony().getBuildingEffects("foodProductionMultiplier");
 		addSupply("FOOD", foodHarvest);
 
 		float foodConsumption = planet->getColony().getPopulation() * 0.008f;
-		removeSupply("FOOD", foodConsumption);
+		float foodDeficit = removeSupply("FOOD", foodConsumption);
+		if (foodDeficit > 0.0f) planet->getColony().removeStability(foodDeficit / 3000.0f);
 
 		// Production from resources
 		for (Resource& resource : planet->getResources()) {
@@ -213,10 +215,16 @@ float TradeGoods::getSupply(const std::string& item) {
 	return m_items[item].supply;
 }
 
-float TradeGoods::calcPrice(const std::string& item) const {
+float TradeGoods::calcPrice(const std::string& item, float supplyAddition) const {
 	const toml::table& table = TOMLCache::getTable("data/objects/tradegoods.toml");
 	float price = table[item]["price"].value_or(1.0f);
 
-	price *= m_items.at(item).demand / std::max(m_items.at(item).supply, 1.0f) + price;
+	price *= m_items.at(item).demand / std::max(m_items.at(item).supply + supplyAddition, 1.0f) + price;
 	return price;
+}
+
+float TradeGoods::sellGoods(const std::string& item, float num) {
+	float revenue = (calcPrice(item) * num + calcPrice(item, num) * num) / 2.0f;
+	addSupply(item, num);
+	return revenue;
 }
