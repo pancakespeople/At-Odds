@@ -147,6 +147,7 @@ public:
 	std::vector<Building*> findEnemyBuildings();
 	std::vector<Spaceship*> findEnemyShips();
 	std::vector<Spaceship*> findEnemyCombatShips();
+	Spaceship* findClosestEnemyCombatShip(Star* star);
 
 private:
 	friend class boost::serialization::access;

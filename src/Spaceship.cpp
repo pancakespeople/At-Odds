@@ -189,9 +189,9 @@ void Spaceship::update(Star* currentStar) {
 	else if (m_weapons.size() > 0) {
 		// Attack enemies in system
 		
-		std::vector<Spaceship*> enemies = findEnemyCombatShips();
-		if (enemies.size() > 0) {
-			attackRandomEnemy(enemies);
+		Spaceship* enemy = findClosestEnemyCombatShip(currentStar);
+		if (enemy != nullptr) {
+			addOrder(AttackOrder(enemy, m_fighterAI));
 		}
 		else {
 			std::vector<Building*> enemyBuildings = findEnemyBuildings();
@@ -517,4 +517,17 @@ bool Spaceship::isPlanetAttackShip() const {
 		}
 	}
 	return false;
+}
+
+Spaceship* Spaceship::findClosestEnemyCombatShip(Star* star) {
+	Spaceship* closest = nullptr;
+	float closestDist = 0.0f;
+	for (Spaceship* ship : star->getEnemyCombatShips(m_allegiance)) {
+		float dist = Math::distance(getPos(), ship->getPos());
+		if (dist < closestDist || closest == nullptr) {
+			closest = ship;
+			closestDist = dist;
+		}
+	}
+	return closest;
 }
