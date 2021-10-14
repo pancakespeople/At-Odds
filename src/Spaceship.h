@@ -123,6 +123,7 @@ public:
 	bool isConstructor() const { return m_constructionSpeed > 0.0f; }
 	bool isHeavy() const { return m_mass >= 125000; }
 	bool isPlanetAttackShip() const;
+	bool hasFighterAI() const { return m_fighterAI; }
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);

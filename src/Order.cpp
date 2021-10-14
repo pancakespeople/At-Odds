@@ -42,10 +42,10 @@ bool JumpOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 	
 	if (m_attackEnemies) {
-		std::vector<Spaceship*> enemies = ship->findEnemyCombatShips();
+		Spaceship* enemy = ship->findClosestEnemyCombatShip(currentStar);
 
-		if (enemies.size() > 0) {
-			ship->attackRandomEnemy(enemies, true);
+		if (enemy != nullptr) {
+			ship->addOrderFront(AttackOrder(enemy, ship->hasFighterAI()));
 			return false;
 		}
 
@@ -162,7 +162,7 @@ bool TravelOrder::execute(Spaceship* ship, Star* currentStar) {
 	else {
 		for (JumpPoint& j : ship->getCurrentStar()->getJumpPoints()) {
 			if (j.getConnectedOtherStar() == m_path.front()) {
-				ship->addOrderFront(JumpOrder(&j, !ship->isCivilian()));
+				ship->addOrderFront(JumpOrder(&j, false));
 				return false;
 			}
 		}
