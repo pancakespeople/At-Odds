@@ -541,11 +541,16 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
 				"SPACEPORT"
 	};
 
+	if (planet.hasResource("UNCOMMON_ORE")) {
+		wantedBuildings.push_back("CONSUMER_GOODS_FACTORIES");
+	}
+
 	std::vector<std::string> lowPriorityBuildings = {
 		"EXPLORING",
 		"ORBITAL_DEFENSE",
 		"BOMB_SHELTER",
-		"MILITARY_BASE"
+		"MILITARY_BASE",
+		"WEAPONS_FACTORIES"
 	};
 
 	removeBuiltBuildings(planet, wantedBuildings);

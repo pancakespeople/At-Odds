@@ -63,6 +63,7 @@ public:
 	Colony& getColony() { return m_colony; }
 
 	bool isGasGiant() const { return m_gasGiant; }
+	bool hasResource(const std::string& resource);
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 

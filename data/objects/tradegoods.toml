@@ -18,3 +18,7 @@ price = 7.0
 [LUXURY_GOODS]
 name = "Luxury Goods"
 price = 15.0
+
+[ARMAMENTS]
+name = "Armaments"
+price = 12.5

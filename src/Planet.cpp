@@ -373,3 +373,10 @@ void Planet::addEvent(const std::string& type) {
 std::string Planet::getName(const Star* star, int pos) {
 	return star->getName() + " " + Util::toRomanNumeral(pos);
 }
+
+bool Planet::hasResource(const std::string& resource) {
+	for (Resource& r : m_resources) {
+		if (r.type == resource) return true;
+	}
+	return false;
+}

@@ -69,9 +69,13 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 				addSupply("INDUSTRIAL_GOODS", industrialGoodsProduction);
 			}
 			if (resource.type == "UNCOMMON_ORE") {
-				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.085f * resource.abundance;
+				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.085f * resource.abundance * planet->getColony().getBuildingEffects("consumerGoodsMultiplier");
 				float deficit = removeSupply("INDUSTRIAL_GOODS", consumerGoodsProduction);
 				addSupply("CONSUMER_GOODS", consumerGoodsProduction - deficit);
+
+				float armamentsProduction = planet->getColony().getPopulation() * 0.005f * resource.abundance * planet->getColony().getBuildingEffects("armamentsMultiplier");
+				deficit = removeSupply("INDUSTRIAL_GOODS", armamentsProduction);
+				addSupply("ARMAMENTS", armamentsProduction - deficit);
 			}
 			if (resource.type == "RARE_ORE") {
 				float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;

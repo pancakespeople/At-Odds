@@ -294,6 +294,8 @@ std::string ColonyBuilding::getEffectsString() const {
 	float exploitationModifier = getEffect("exploitationModifier", 1.0f);
 	float bombardDamageMultiplier = getEffect("bombardDamageMultiplier", 1.0f);
 	float invasionEffectiveness = getEffect("invasionEffectiveness", 1.0f);
+	float cgMultiplier = getEffect("consumerGoodsMultiplier", 1.0f);
+	float armsMultiplier = getEffect("armamentsMultiplier", 1.0f);
 
 	if (habitabilityModifier != 1.0f) {
 		effects << "Habitability: " << Util::percentify(habitabilityModifier, 1) << "\n";
@@ -309,6 +311,14 @@ std::string ColonyBuilding::getEffectsString() const {
 
 	if (invasionEffectiveness != 1.0f) {
 		effects << "Invasion effectiveness: " << Util::percentify(invasionEffectiveness, 1) << "\n";
+	}
+
+	if (cgMultiplier != 1.0f) {
+		effects << "Consumer goods production: " << Util::percentify(cgMultiplier, 1) << "\n";
+	}
+
+	if (armsMultiplier != 1.0f) {
+		effects << "Armaments production: " << Util::percentify(armsMultiplier, 1) << "\n";
 	}
 
 	for (std::string& flag : getFlags()) {
