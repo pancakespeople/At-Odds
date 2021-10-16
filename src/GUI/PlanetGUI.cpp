@@ -198,9 +198,10 @@ void PlanetGUI::update(GameState& state) {
 
 				if (buildingsBox->getSelectedItemIndex() != -1) {
 					Planet& planet = state.getLocalViewStar()->getPlanets()[planetList->getSelectedItemIndex()];
+					const std::string& type = buildingsBox->getItemData<const std::string&>(buildingsBox->getSelectedItemIndex());
 
 					for (ColonyBuilding& building : planet.getColony().getBuildings()) {
-						if (building.getName() == buildingsBox->getSelectedItem()) {
+						if (building.getType() == type) {
 							// Update progress bar
 							m_sideWindow->get<tgui::ProgressBar>("buildProgressBar")->setValue(building.getPercentBuilt());
 						}
@@ -464,8 +465,14 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 
 		auto buildings = planet.getColony().getBuildings();
 
+		int buildQueuePos = 1;
 		for (ColonyBuilding& building : buildings) {
-			buildingsBox->addItem(building.getName());
+			if (!building.isBuilt()) {
+				buildingsBox->addItem(building.getName() + " (" + std::to_string(buildQueuePos) + ")");
+				buildQueuePos++;
+			}
+			else buildingsBox->addItem(building.getName());
+			buildingsBox->setItemData(buildingsBox->getItemCount() - 1, building.getType());
 		}
 
 		buildingsBox->onItemSelect([this, buildingsBox, &planet]() {
@@ -475,9 +482,10 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 			}
 
 			if (buildingsBox->getSelectedItemIndex() != -1) {
+				std::string type = buildingsBox->getItemData<std::string>(buildingsBox->getSelectedItemIndex());
 				auto& allBuildings = planet.getColony().getBuildings();
 				for (ColonyBuilding& building : allBuildings) {
-					if (building.getName() == buildingsBox->getSelectedItem()) {
+					if (building.getType() == type) {
 						displayBuildingInfo(building, planet, false);
 						break;
 					}

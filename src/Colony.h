@@ -99,7 +99,7 @@ class ColonyBuilding {
 public:
 	ColonyBuilding(const std::string& type);
 
-	void update(Colony& colony);
+	void build(Colony& colony);
 
 	std::string getName() const;
 	std::string getDescription() const;

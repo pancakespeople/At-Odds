@@ -75,9 +75,12 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 		}
 	}
 
-	// Update colony buildings
+	// Build colony buildings
 	for (ColonyBuilding& building : m_buildings) {
-		building.update(*this);
+		if (!building.isBuilt()) {
+			building.build(*this);
+			break; // Only build buildings one at a time
+		}
 	}
 
 	// Orbital defense
@@ -279,7 +282,7 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& p
 	return cost;
 }
 
-void ColonyBuilding::update(Colony& colony) {
+void ColonyBuilding::build(Colony& colony) {
 	if (!isBuilt()) {
 		m_percentBuilt += 0.01;
 		if (isBuilt()) colony.onBuildingBuild();
