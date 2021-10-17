@@ -64,6 +64,7 @@
     <ClInclude Include="src\NameGenerator.h" />
     <ClInclude Include="src\Fonts.h" />
     <ClInclude Include="src\TradeGoods.h" />
+    <ClInclude Include="src\SmoothCircle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />

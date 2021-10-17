@@ -28,7 +28,7 @@ void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Co
 	m_currentStar = star;
 
 	m_collider.setPosition(pos);
-	m_collider.setOutlineColor(color);
+	m_collider.setColor(color);
 
 	m_allegiance = allegiance;
 
@@ -386,7 +386,7 @@ void Spaceship::captureCurrentStar(Faction* faction) {
 	if (m_currentStar->getAllegiance() != m_allegiance) {
 		if (findEnemyCombatShips().size() == 0) {
 			m_currentStar->factionTakeOwnership(faction);
-			m_currentStar->createSpaceship(std::make_unique<Spaceship>("CLAIM_SHIP", getPos(), m_currentStar, m_allegiance, m_collider.getOutlineColor()));
+			m_currentStar->createSpaceship(std::make_unique<Spaceship>("CLAIM_SHIP", getPos(), m_currentStar, m_allegiance, m_collider.getColor()));
 		}
 	}
 }

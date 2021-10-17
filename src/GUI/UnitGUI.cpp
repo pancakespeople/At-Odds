@@ -125,7 +125,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 			sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
 
 			for (auto& s : currentStar->getSpaceships()) {
-				if (s->getCollider().getGlobalBounds().contains(worldClick)) {
+				if (s->getCollider().contains(worldClick)) {
 					if (s->getAllegiance() == playerFaction) {
 						m_selectedShips.push_back(s.get());
 						s->onSelected();
@@ -135,7 +135,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 			}
 
 			for (auto& building : currentStar->getBuildings()) {
-				if (building->getCollider().getGlobalBounds().contains(worldClick) && building->getAllegiance() == playerFaction) {
+				if (building->getCollider().contains(worldClick) && building->getAllegiance() == playerFaction) {
 					m_selectedBuildings.push_back(building.get());
 					building->onSelected();
 					break;
@@ -196,7 +196,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 					// Check if click was on an enemy ship
 					for (auto& s : state.getLocalViewStar()->getSpaceships()) {
 						if (s->getAllegiance() != m_selectedShips[0]->getAllegiance()) {
-							if (s->getCollider().getGlobalBounds().contains(worldClick)) {
+							if (s->getCollider().contains(worldClick)) {
 								attackTarget = s.get();
 								break;
 							}
@@ -205,7 +205,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 
 					// Check if click was on a building
 					for (auto& building : state.getLocalViewStar()->getBuildings()) {
-						if (building->getCollider().getGlobalBounds().contains(worldClick)) {
+						if (building->getCollider().contains(worldClick)) {
 							buildingClick = building.get();
 						}
 					}

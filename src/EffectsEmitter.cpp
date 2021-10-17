@@ -173,8 +173,8 @@ void EffectsEmitter::drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, fl
 	window.draw(sprite, &m_nebulaShader);
 }
 
-void EffectsEmitter::drawSelection(sf::RenderWindow& window, const sf::CircleShape& shape) {
-	m_selectionShader.setUniform("size", sf::Glsl::Vec2(shape.getRadius(), shape.getRadius()));
+void EffectsEmitter::drawSelection(sf::RenderWindow& window, const sf::RectangleShape& shape) {
+	m_selectionShader.setUniform("size", sf::Glsl::Vec2(shape.getSize()));
 	window.draw(shape, &m_selectionShader);
 }
 

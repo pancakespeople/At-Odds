@@ -2,6 +2,7 @@
 #include "Unit.h"
 #include "Star.h"
 #include "Faction.h"
+#include "SmoothCircle.h"
 
 std::vector<Spaceship*> Unit::findEnemyShips() {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
@@ -95,14 +96,12 @@ float Unit::maxWeaponDamage() const {
 }
 
 void Unit::drawSelectionCircle(sf::RenderWindow& window, EffectsEmitter& emitter) {
-	sf::CircleShape selectionIndicator;
+	sf::RectangleShape selectionIndicator;
 
 	selectionIndicator.setOrigin(sf::Vector2f(m_collider.getRadius() * 2.0f, m_collider.getRadius() * 2.0f));
 	selectionIndicator.setPosition(getPos());
-	selectionIndicator.setFillColor(sf::Color::Transparent);
-	selectionIndicator.setOutlineColor(sf::Color::Yellow);
-	selectionIndicator.setOutlineThickness(25.0f);
-	selectionIndicator.setRadius(m_collider.getRadius() * 2.0f);
+	selectionIndicator.setFillColor(sf::Color::Yellow);
+	selectionIndicator.setSize(sf::Vector2f(m_collider.getRadius() * 4.0f, m_collider.getRadius() * 4.0f));
 
 	emitter.drawSelection(window, selectionIndicator);
 }

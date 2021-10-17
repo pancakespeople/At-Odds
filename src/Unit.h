@@ -20,7 +20,7 @@ public:
 	sf::Vector2f getPos() const { return m_collider.getPosition(); }
 	sf::Vector2f getVelocity() { return m_velocity; }
 
-	sf::Color getFactionColor() const { return m_collider.getOutlineColor(); }
+	sf::Color getFactionColor() const { return m_collider.getColor(); }
 
 	std::vector<Weapon>& getWeapons() { return m_weapons; }
 	std::vector<Spaceship*> findEnemyShips();

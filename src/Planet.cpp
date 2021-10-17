@@ -8,6 +8,7 @@
 #include "Projectile.h"
 #include "Building.h"
 #include "Util.h"
+#include "SmoothCircle.h"
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
@@ -66,11 +67,10 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star,
 	if (m_colony.getAllegiance() != -1) {
 		// Draw faction indicator circle
 
-		sf::CircleShape circle;
+		SmoothCircle circle;
 		circle.setRadius(getRadius() + 100.0f);
-		circle.setFillColor(sf::Color::Transparent);
-		circle.setOutlineColor(m_colony.getFactionColor());
-		circle.setOutlineThickness(50.0f);
+		circle.setColor(m_colony.getFactionColor());
+		circle.setOutlineThickness(25.0f);
 		circle.setOrigin(sf::Vector2f(circle.getRadius(), circle.getRadius()));
 		circle.setPosition(m_shape.getPosition());
 
