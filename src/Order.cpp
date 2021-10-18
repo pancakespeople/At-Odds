@@ -18,7 +18,8 @@ BOOST_CLASS_EXPORT_GUID(AttackOrder, "AttackOrder")
 BOOST_CLASS_EXPORT_GUID(TravelOrder, "TravelOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithBuildingOrder, "InteractWithBuildingOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithPlanetOrder, "InteractWithPlanetOrder")
-BOOST_CLASS_EXPORT_GUID(DieOrder, "DieOrder");
+BOOST_CLASS_EXPORT_GUID(DieOrder, "DieOrder")
+BOOST_CLASS_EXPORT_GUID(InteractWithUnitOrder, "InteractWithUnitOrder")
 
 bool FlyToOrder::execute(Spaceship* ship, Star* currentStar) {
 	return ship->flyTo(m_pos);
@@ -312,4 +313,46 @@ bool DieOrder::execute(Spaceship* ship, Star* currentStar) {
 	ship->kill();
 	if (m_dieSilently) ship->setSilentDeath(true);
 	return true;
+}
+
+InteractWithUnitOrder::InteractWithUnitOrder(Unit* unit) {
+	m_unitID = unit->getID();
+}
+
+bool InteractWithUnitOrder::execute(Spaceship* ship, Star* currentStar) {
+	if (m_unit == nullptr) {
+		m_unit = currentStar->getUnitByID(m_unitID);
+		if (m_unit == nullptr) {
+			return true;
+		}
+	}
+
+	if (m_unit->getCurrentStar() != ship->getCurrentStar() || m_unit->isDead()) {
+		return true;
+	}
+
+	if (ship->flyTo(m_unit->getPos())) {
+		for (auto& mod : m_unit->getMods()) {
+			mod->onShipInteract(ship);
+		}
+		return true;
+	}
+
+	return false;
+}
+
+void InteractWithUnitOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+	m_unit = currentStar->getBuildingByID(m_unitID);
+	if (m_unit != nullptr)
+		emitter.drawLine(window, shipPos, m_unit->getPos(), sf::Color(100, 100, 255));
+}
+
+std::pair<bool, sf::Vector2f> InteractWithUnitOrder::getDestinationPos(Star* currentStar) {
+	m_unit = currentStar->getUnitByID(m_unitID);
+	if (m_unit != nullptr) {
+		return std::pair<bool, sf::Vector2f>(true, m_unit->getPos());
+	}
+	else {
+		return std::pair<bool, sf::Vector2f>(false, sf::Vector2f());
+	}
 }

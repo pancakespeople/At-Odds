@@ -193,3 +193,25 @@ private:
 
 	bool m_dieSilently = false;
 };
+
+class InteractWithUnitOrder : public Order {
+public:
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
+	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) override;
+	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar);
+
+	InteractWithUnitOrder(Unit* unit);
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Order>(*this);
+		archive & m_unitID;
+	}
+
+	InteractWithUnitOrder() {}
+
+	uint32_t m_unitID = 0;
+	Unit* m_unit = nullptr;
+};

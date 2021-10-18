@@ -4,6 +4,7 @@ class Unit;
 class Star;
 class Faction;
 class Planet;
+class Spaceship;
 
 class Mod {
 public:
@@ -14,6 +15,7 @@ public:
 	virtual void interactWithPlanet(Unit*, Planet* planet, Star* star) {}
 	virtual void onUnitDeath(Star* currentStar) {}
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction);
+	virtual void onShipInteract(Spaceship* ship) {}
 
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
@@ -38,6 +40,7 @@ public:
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
 	virtual std::string getInfoString() override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
+	virtual void onShipInteract(Spaceship* ship);
 
 	void updateDesigns(Faction* faction);
 	void setBuildAll(bool build);
@@ -49,6 +52,8 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_shipBuildData;
+		archive & m_weaponsStockpile;
+		archive & m_checkForWeaponsTimer;
 	}
 	
 	struct ShipBuildData {
@@ -75,6 +80,9 @@ private:
 	std::unordered_map<std::string, ShipBuildData> m_shipBuildData;
 	tgui::ProgressBar::Ptr m_buildProgressBar;
 	tgui::Group::Ptr m_shipWidgets;
+
+	float m_weaponsStockpile = 0.0f;
+	int m_checkForWeaponsTimer = 1000;
 };
 
 class FighterBayMod : public Mod {
@@ -160,7 +168,10 @@ public:
 	TradeMod() {}
 
 	void addItem(const std::string& item, float num, float price);
+	void setItem(const std::string& item, float num) { m_goods[item] = num; }
 	virtual void interactWithPlanet(Unit* unit, Planet* planet, Star* star) override;
+
+	const std::map<std::string, float>& getGoods() const { return m_goods; }
 
 private:
 	friend class boost::serialization::access;

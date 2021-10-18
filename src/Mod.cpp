@@ -10,6 +10,7 @@
 #include "GUI.h"
 #include "GUI/ShipDesigner.h"
 #include "Sounds.h"
+#include "TradeGoods.h"
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
@@ -103,6 +104,59 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 					m_buildProgressBar->setValue(build.second.progressPercent);
 				}
 			}
+		}
+	}
+
+	// Stockpile weapons
+	if (m_checkForWeaponsTimer == 0) {
+		if (m_weaponsStockpile < 100.0f) {
+			Planet* mostSupplyPlanet = nullptr;
+			float mostSupply = 0.0f;
+			
+			for (Planet& planet : currentStar->getPlanets()) {
+				auto& goods = planet.getColony().getTradeGoods().getGoods();
+
+				if (planet.getColony().getAllegiance() == faction->getID()) {
+					if (goods.count("ARMAMENTS") > 0) {
+						
+
+						if (goods.at("ARMAMENTS").supply > mostSupply) {
+							mostSupplyPlanet = &planet;
+							mostSupply = goods.at("ARMAMENTS").supply;
+						}
+					}
+				}
+			}
+
+			if (mostSupply > 0.0f) {
+				// Send space truck
+
+				Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>("SPACE_TRUCK", mostSupplyPlanet->getPos(), currentStar, faction->getID(), faction->getColor()));
+				ship->addOrder(InteractWithUnitOrder(unit));
+				ship->addOrder(DieOrder(true));
+
+				TradeMod mod;
+				mod.addItem("ARMAMENTS", std::min(100.0f, mostSupply), 0.0f);
+				mostSupplyPlanet->getColony().getTradeGoods().removeSupply("ARMAMENTS", std::min(100.0f, mostSupply), true);
+
+				ship->addMod(mod);
+
+				DEBUG_PRINT("Sent space truck to arm ship factory in " << currentStar->getName());
+			}
+		}
+		
+		m_checkForWeaponsTimer = 1000;
+	}
+	else m_checkForWeaponsTimer--;
+}
+
+void FactoryMod::onShipInteract(Spaceship* ship) {
+	TradeMod* tradeMod = ship->getMod<TradeMod>();
+	if (tradeMod != nullptr) {
+		if (tradeMod->getGoods().count("ARMAMENTS") > 0) {
+			m_weaponsStockpile += tradeMod->getGoods().at("ARMAMENTS");
+			tradeMod->setItem("ARMAMENTS", 0.0f);
+			DEBUG_PRINT("New weapon stockpile: " << m_weaponsStockpile);
 		}
 	}
 }
