@@ -46,6 +46,8 @@ public:
 	void setBuildAll(bool build);
 	void setBuild(const std::string& name, bool build);
 
+	float getBuildSpeedMultiplier();
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -80,6 +82,8 @@ private:
 	std::unordered_map<std::string, ShipBuildData> m_shipBuildData;
 	tgui::ProgressBar::Ptr m_buildProgressBar;
 	tgui::Group::Ptr m_shipWidgets;
+	tgui::Label::Ptr m_armamentsLabel;
+	tgui::Label::Ptr m_buildSpeedLabel;
 
 	float m_weaponsStockpile = 0.0f;
 	int m_checkForWeaponsTimer = 1000;

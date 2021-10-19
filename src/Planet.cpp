@@ -53,7 +53,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 }
 
 void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star, float time) {
-	m_orbit.draw(window);
+	//m_orbit.draw(window);
 	//emitter.drawGlow(window, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
 
 	switch (m_type) {

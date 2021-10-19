@@ -11,6 +11,7 @@
 #include "GUI/ShipDesigner.h"
 #include "Sounds.h"
 #include "TradeGoods.h"
+#include "Util.h"
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
@@ -93,16 +94,21 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 					// Update gui
 					if (m_shipWidgets != nullptr && build.second.selected) {
 						auto amountEditBox = m_shipWidgets->get<tgui::EditBox>("amountEditBox");
-						amountEditBox->setText(std::to_string(build.second.amount));
+						if (amountEditBox != nullptr) amountEditBox->setText(std::to_string(build.second.amount));
 					}
 				}
 			}
 			else {
-				build.second.progressPercent += 0.05f / build.second.buildTimeMultiplier;
+				build.second.progressPercent += 0.05f / build.second.buildTimeMultiplier * getBuildSpeedMultiplier();
+				if (m_weaponsStockpile > 0.0f) m_weaponsStockpile -= 0.01f * getBuildSpeedMultiplier();
+				if (m_weaponsStockpile < 0.0f) m_weaponsStockpile = 0.0f;
 
 				if (m_buildProgressBar != nullptr && build.second.selected) {
 					m_buildProgressBar->setValue(build.second.progressPercent);
 				}
+
+				if (m_armamentsLabel != nullptr) m_armamentsLabel->setText("Armaments: " + Util::cutOffDecimal(m_weaponsStockpile, 2) + "/100");
+				if (m_buildSpeedLabel != nullptr) m_buildSpeedLabel->setText("Additional build speed: " + Util::percentify(getBuildSpeedMultiplier(), 2));
 			}
 		}
 	}
@@ -166,11 +172,11 @@ std::string FactoryMod::getInfoString() {
 }
 
 void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
-	window->setSize("25%", "25%");
+	window->setSize("50%", "50%");
 
 	auto designsListBox = tgui::ListBox::create();
-	designsListBox->setPosition("2.5%", "10%");
-	designsListBox->setSize("33% - 2.5%", "90% - 2.5%");
+	designsListBox->setPosition("2.5%", "5%");
+	designsListBox->setSize("33% - 2.5%", "50% - 2.5%");
 	designsListBox->onItemSelect([this ,designsListBox, window, faction]() {
 		auto shipWidgets = window->get<tgui::Group>("shipWidgets");
 		
@@ -272,6 +278,14 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	
 	m_shipWidgets = tgui::Group::create();
 	window->add(m_shipWidgets, "shipWidgets");
+
+	m_armamentsLabel = tgui::Label::create("Armaments: " + Util::cutOffDecimal(m_weaponsStockpile, 2) + "/100");
+	m_armamentsLabel->setPosition("2.5%", "55%");
+	window->add(m_armamentsLabel);
+
+	m_buildSpeedLabel = tgui::Label::create("Additional build speed: " + Util::percentify(getBuildSpeedMultiplier(), 2));
+	m_buildSpeedLabel->setPosition("2.5%", "60%");
+	window->add(m_buildSpeedLabel);
 }
 
 void FactoryMod::updateDesigns(Faction* faction) {
@@ -298,6 +312,10 @@ void FactoryMod::setBuild(const std::string& name, bool build) {
 			break;
 		}
 	}
+}
+
+float FactoryMod::getBuildSpeedMultiplier() {
+	return std::min(100.0f, m_weaponsStockpile) / 100.0f + 1.0f;
 }
 
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {
