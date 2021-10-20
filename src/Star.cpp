@@ -22,34 +22,47 @@ void Star::init(const sf::Vector2f& pos) {
 	m_shape.setRadius(50);
 	m_shape.setPosition(pos);
 	//m_localViewSprite.setTexture(TextureCache::getTexture("data/art/star1.png"));
-	m_localViewSprite.setPosition(pos);
+	m_localViewRect.setPosition(pos);
+	m_localViewRect.setSize(sf::Vector2f(2048.0f, 2048.0f));
+	m_localViewRect.setOrigin(sf::Vector2f(2048.0f/2.0f, 2048/2.0f));
 	m_quadtree = Quadtree(getLocalViewCenter(), 1000000);
 	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
 
-	int starColorRand = Random::randInt(0, 8);
+	int starColorRand = Random::randInt(0, 9);
 	if (starColorRand <= 3) { // 0, 1, 2, 3
 		// Red star
-		m_localViewSprite.setColor(sf::Color::Red);
+		m_localViewRect.setFillColor(sf::Color::Red);
 		m_temperature = Random::randFloat(3000.0f, 5000.0f);
+
+		if (Random::randInt(0, 4) == 4) {
+			m_localViewRect.setScale(4.0f, 4.0f);
+		}
 	}
 	else if (starColorRand <= 6) { // 4, 5, 6
 		// Yellow star
-		m_localViewSprite.setColor(sf::Color::Yellow);
+		m_localViewRect.setFillColor(sf::Color::Yellow);
 		m_temperature = Random::randFloat(5000.0f, 10000.0f);
 
 	}
 	else if (starColorRand <= 8) { // 7, 8
 		if (Random::randBool()) {
 			// Blue star
-			m_localViewSprite.setColor(sf::Color(0, 255, 255));
+			m_localViewRect.setFillColor(sf::Color(0, 255, 255));
 			m_temperature = Random::randFloat(10000.0f, 45000.0f);
 		}
 		else {
 			// White star
-			m_localViewSprite.setColor(sf::Color::White);
-			m_localViewSprite.setScale(sf::Vector2f(0.5f, 0.5f));
+			m_localViewRect.setFillColor(sf::Color::White);
+			m_localViewRect.setScale(sf::Vector2f(0.5f, 0.5f));
 			m_temperature = Random::randFloat(15000.0f, 35000.0f);
 		}
+	}
+	else if (starColorRand == 9) {
+		// Black hole
+
+		m_blackHole = true;
+		m_localViewRect.setScale(8.0f, 8.0f);
+		m_temperature = Random::randFloat(50000.0f, 100000.0f);
 	}
 
 	generatePlanets();
@@ -129,8 +142,8 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		}
 	}
 	
-	//window.draw(m_localViewSprite);
-	emitter.drawLocalStar(window, m_localViewSprite, time, m_shaderRandomSeed);
+	if (m_blackHole) emitter.drawBlackHole(window, m_localViewRect, time, m_shaderRandomSeed);
+	else emitter.drawLocalStar(window, m_localViewRect, time, m_shaderRandomSeed);
 	
 	for (JumpPoint& j : m_jumpPoints) {
 		j.draw(window, emitter);
@@ -166,7 +179,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 
 void Star::setPos(sf::Vector2f pos) {
 	m_shape.setPosition(pos);
-	m_localViewSprite.setPosition(pos);
+	m_localViewRect.setPosition(pos);
 }
 
 float Star::distBetweenStar(Star& s) {
@@ -260,13 +273,14 @@ void Star::setupJumpPoints() {
 }
 
 sf::Vector2f Star::getLocalViewCenter() const {
-	sf::IntRect rect = m_localViewSprite.getTextureRect();
+	/*sf::IntRect rect = m_localViewSprite.getTextureRect();
 	sf::Vector2f pos = getPos();
 
 	pos.x += rect.width / 2.0f;
 	pos.y += rect.height / 2.0f;
 
-	return pos;
+	return pos;*/
+	return m_localViewRect.getPosition();
 }
 
 void Star::addProjectile(Projectile proj) {
@@ -555,13 +569,14 @@ bool Star::containsBuildingType(const std::string& type, bool allegianceOnly, in
 
 void Star::generatePlanets() {
 	int numPlanets = Random::randInt(0, 15);
-	float latestRadius = Random::randFloat(1000.0f, 10000.0f);
+	float starRadius = m_localViewRect.getSize().x / 2.0f * m_localViewRect.getScale().x;
+	float latestRadius = Random::randFloat(1000.0f + starRadius, 10000.0f + starRadius);
 
 	for (int i = 0; i < numPlanets; i++) {
 		float angle = Random::randFloat(0.0f, 2.0f * Math::pi);
 		sf::Vector2f pos(latestRadius * std::cos(angle) + getLocalViewCenter().x, latestRadius * std::sin(angle) + getLocalViewCenter().y);
 
-		Planet planet(pos, getLocalViewCenter(), m_temperature * m_localViewSprite.getScale().x);
+		Planet planet(pos, getLocalViewCenter(), m_temperature * m_localViewRect.getScale().x);
 		m_planets.push_back(planet);
 
 		latestRadius += Random::randFloat(500.0f, 20000.0f);

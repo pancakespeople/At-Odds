@@ -44,6 +44,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_selectionShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/selectionshader.shader");
 	m_borderShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/bordershader.shader");
 	m_terraPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/terraplanetshader.shader");
+	m_blackHoleShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/blackholeshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -88,15 +89,11 @@ void EffectsEmitter::drawFogOfWar(sf::RenderWindow& window) {
 	window.setView(oldView);
 }
 
-void EffectsEmitter::drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starSprite, float time, float seed) {
-	m_starLocalView.setFillColor(starSprite.getColor());
-	m_starLocalView.setPosition(starSprite.getPosition());
-	m_starLocalView.setScale(starSprite.getScale());
-
+void EffectsEmitter::drawLocalStar(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed) {
 	m_starLocalViewShader.setUniform("time", time);
 	m_starLocalViewShader.setUniform("randSeed", seed);
 
-	window.draw(m_starLocalView, &m_starLocalViewShader);
+	window.draw(starRect, &m_starLocalViewShader);
 }
 
 void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time) {
@@ -188,4 +185,12 @@ void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleSh
 	m_borderShader.setUniform("size", sf::Glsl::Vec2(shape.getSize().x, shape.getSize().y));
 	m_borderShader.setUniform("color", sf::Glsl::Vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
 	window.draw(shape, &m_borderShader);
+}
+
+void EffectsEmitter::drawBlackHole(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed) {
+	m_blackHoleShader.setUniform("time", time);
+	m_blackHoleShader.setUniform("randSeed", seed);
+	m_blackHoleShader.setUniform("size", starRect.getSize());
+
+	window.draw(starRect, &m_blackHoleShader);
 }

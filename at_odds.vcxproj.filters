@@ -124,5 +124,6 @@
     <None Include="data\shaders\bordershader.shader" />
     <None Include="data\objects\tradegoods.toml" />
     <None Include="data\shaders\terraplanetshader.shader" />
+    <None Include="data\shaders\blackholeshader.shader" />
   </ItemGroup>
 </Project>

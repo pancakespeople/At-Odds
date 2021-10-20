@@ -14,7 +14,7 @@ public:
 	void drawLine(sf::RenderWindow& window, const sf::Vector2f& begin, const sf::Vector2f& end, const sf::Color& color);
 	void drawWithDistanceShader(sf::RenderWindow& window, sf::Shape& s, const sf::Vector2i& pos);
 	void drawFogOfWar(sf::RenderWindow& window);
-	void drawLocalStar(sf::RenderWindow& window, const sf::Sprite& starShape, float time, float seed);
+	void drawLocalStar(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed);
 	void drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
 	void drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
 	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
@@ -22,6 +22,7 @@ public:
 	void drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed);
 	void drawSelection(sf::RenderWindow& window, const sf::RectangleShape& shape);
 	void drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color);
+	void drawBlackHole(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed);
 	void updateTime(float time);
 
 private:
@@ -43,6 +44,7 @@ private:
 	sf::Shader m_selectionShader;
 	sf::Shader m_borderShader;
 	sf::Shader m_terraPlanetShader;
+	sf::Shader m_blackHoleShader;
 
 	sf::Vector2i m_resolution;
 

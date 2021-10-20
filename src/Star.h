@@ -105,7 +105,7 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Identifiable>(*this);
 		archive & m_shape;
-		archive & m_localViewSprite;
+		archive & m_localViewRect;
 		archive & m_hyperlaneIDs;
 		archive & m_jumpPoints;
 		archive & m_localShips;
@@ -122,6 +122,7 @@ private:
 		archive & m_drawHidden;
 		archive & m_factionsDiscovered;
 		archive & m_name;
+		archive & m_blackHole;
 	}
 	
 	void handleCollisions();
@@ -135,7 +136,7 @@ private:
 	friend void GameState::changeToWorldView();
 	
 	sf::CircleShape m_shape;
-	sf::Sprite m_localViewSprite;
+	sf::RectangleShape m_localViewRect;
 
 	std::vector<Hyperlane*> m_hyperlanes;
 	std::vector<uint32_t> m_hyperlaneIDs;
@@ -151,6 +152,7 @@ private:
 	bool m_localViewActive = false;
 	bool m_multipleFactionsPresent = false;
 	bool m_drawHidden = true;
+	bool m_blackHole = false;
 
 	int m_allegiance = -1;
 
