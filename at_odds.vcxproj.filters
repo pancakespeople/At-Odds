@@ -65,6 +65,8 @@
     <ClInclude Include="src\Fonts.h" />
     <ClInclude Include="src\TradeGoods.h" />
     <ClInclude Include="src\SmoothCircle.h" />
+    <ClInclude Include="src\GUI\TechGUI.h" />
+    <ClInclude Include="src\Tech.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -117,6 +119,8 @@
     <ClCompile Include="src\NameGenerator.cpp" />
     <ClCompile Include="src\Fonts.cpp" />
     <ClCompile Include="src\TradeGoods.cpp" />
+    <ClCompile Include="src\GUI\TechGUI.cpp" />
+    <ClCompile Include="src\Tech.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />
@@ -125,5 +129,6 @@
     <None Include="data\objects\tradegoods.toml" />
     <None Include="data\shaders\terraplanetshader.shader" />
     <None Include="data\shaders\blackholeshader.shader" />
+    <None Include="data\objects\tech.toml" />
   </ItemGroup>
 </Project>

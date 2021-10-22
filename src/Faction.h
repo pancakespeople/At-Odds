@@ -3,6 +3,7 @@
 #include "Brain.h"
 #include "Planet.h"
 #include "Building.h"
+#include "Tech.h"
 
 class Constellation;
 class Player;
@@ -62,6 +63,7 @@ public:
 	std::vector<ColonyBuilding> getColonyBuildings();
 	std::vector<Planet*> getOwnedPlanets();
 	std::vector<Star*> getUnderAttackStars();
+	const std::vector<Tech>& getAvailableTechs() { return m_availableTechs; }
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();
@@ -143,6 +145,7 @@ private:
 	std::deque<std::string> m_announcementEvents;
 	std::string m_name = "Unnamed";
 	std::vector<std::string> m_availableColonyBuildings;
+	std::vector<Tech> m_availableTechs;
 	
 	Brain m_ai;
 	

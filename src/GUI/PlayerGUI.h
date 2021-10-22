@@ -4,6 +4,7 @@
 #include "PlanetGUI.h"
 #include "UnitGUI.h"
 #include "BuildingGUI.h"
+#include "TechGUI.h"
 
 struct PlayerGUI {
 	PlayerGUI() {}
@@ -23,4 +24,5 @@ struct PlayerGUI {
 	AnnouncerGUI announcerGUI;
 	MinimapGUI minimapGUI;
 	ColonyListGUI colonyListGUI;
+	TechGUI techGUI;
 };

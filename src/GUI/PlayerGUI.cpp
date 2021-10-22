@@ -22,6 +22,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		shipDesignerGUI.open(gui, playerFaction);
 		announcerGUI.open(gui);
 		colonyListGUI.open(gui, state, constellation);
+		techGUI.open(gui, playerFaction);
 	}
 	else {
 		unitGUI.open(gui);

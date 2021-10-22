@@ -89,6 +89,8 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 		addColonyBuilding(val.first);
 	}
 
+	m_availableTechs.push_back(Tech("WEAPONS_RESEARCH"));
+
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
 
