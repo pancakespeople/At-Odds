@@ -34,6 +34,7 @@ public:
 	void setName(const std::string& name) { m_name = name; }
 	void reinitAfterLoad(Constellation* constellation);
 	void addColonyBuilding(const std::string& type);
+	void setResearchingTech(const std::string& type, bool research);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -63,7 +64,7 @@ public:
 	std::vector<ColonyBuilding> getColonyBuildings();
 	std::vector<Planet*> getOwnedPlanets();
 	std::vector<Star*> getUnderAttackStars();
-	const std::vector<Tech>& getAvailableTechs() { return m_availableTechs; }
+	const std::vector<Tech>& getTechs() { return m_techs; }
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();
@@ -123,6 +124,7 @@ private:
 		archive & m_announcementEvents;
 		archive & m_name;
 		archive & m_availableColonyBuildings;
+		archive & m_techs;
 	}
 	
 	Faction() {}
@@ -145,7 +147,8 @@ private:
 	std::deque<std::string> m_announcementEvents;
 	std::string m_name = "Unnamed";
 	std::vector<std::string> m_availableColonyBuildings;
-	std::vector<Tech> m_availableTechs;
+	
+	std::vector<Tech> m_techs;
 	
 	Brain m_ai;
 	

@@ -89,7 +89,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 		addColonyBuilding(val.first);
 	}
 
-	m_availableTechs.push_back(Tech("WEAPONS_RESEARCH"));
+	m_techs.push_back(Tech("WEAPONS_RESEARCH"));
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -460,4 +460,12 @@ std::vector<Star*> Faction::getUnderAttackStars() {
 		}
 	}
 	return stars;
+}
+
+void Faction::setResearchingTech(const std::string& type, bool research) {
+	for (Tech& tech : m_techs) {
+		if (tech.getType() == type && !tech.isResearched()) {
+			tech.setResearching(research);
+		}
+	}
 }

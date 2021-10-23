@@ -10,4 +10,5 @@ public:
 
 private:
 	GameWidget::Icon m_icon;
+	tgui::ChildWindow::Ptr m_window = nullptr;
 };
