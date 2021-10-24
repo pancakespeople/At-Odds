@@ -30,3 +30,14 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		timescaleGUI.open(gui);
 	}
 }
+
+void PlayerGUI::update(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
+	Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
+
+	unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel);
+	planetGUI.update(state);
+	resourceGUI.update(constellation, state.getPlayer());
+	announcerGUI.update(gui, playerFaction);
+	buildingGUI.update();
+	techGUI.update(playerFaction);
+}

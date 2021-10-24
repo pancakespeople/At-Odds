@@ -10,6 +10,7 @@ struct PlayerGUI {
 	PlayerGUI() {}
 
 	void open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator);
+	void update(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui);
 
 	tgui::Panel::Ptr mainPanel;
 

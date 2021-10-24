@@ -46,6 +46,8 @@ public:
 	bool canSubtractResources(const std::unordered_map<std::string, float>& resources);
 	bool hasWeapon(const std::string& type);
 	
+	const Tech* getTech(const std::string& type) const;
+
 	sf::Color getColor() { return m_color; }
 
 	std::vector<Spaceship*>& getShips() { return m_ships; }

@@ -90,6 +90,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	}
 
 	m_techs.push_back(Tech("WEAPONS_RESEARCH"));
+	m_techs.push_back(Tech("TEST"));
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -139,6 +140,16 @@ void Faction::update() {
 			m_ships.erase(m_ships.begin() + i);
 			m_shipIDs.erase(m_shipIDs.begin() + i);
 			i--;
+		}
+	}
+
+	// Research techs
+	for (Tech& tech : m_techs) {
+		if (tech.isResearching()) {
+			if (tech.isResearched()) tech.setResearching(false);
+			else {
+				tech.addResearchPoints(0.1f);
+			}
 		}
 	}
 }
@@ -468,4 +479,13 @@ void Faction::setResearchingTech(const std::string& type, bool research) {
 			tech.setResearching(research);
 		}
 	}
+}
+
+const Tech* Faction::getTech(const std::string& type) const {
+	for (const Tech& tech : m_techs) {
+		if (tech.getType() == type) {
+			return &tech;
+		}
+	}
+	return nullptr;
 }

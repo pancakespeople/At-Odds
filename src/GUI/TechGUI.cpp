@@ -52,6 +52,12 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 		descriptionLabel->setPosition("2.5%", "62.5%");
 		m_window->add(descriptionLabel);
 
+		m_progressBar = tgui::ProgressBar::create();
+		m_progressBar->setPosition("2.5%", "75%");
+		m_progressBar->setSize("95%", "10%");
+		m_progressBar->setVisible(false);
+		m_window->add(m_progressBar);
+
 		for (const Tech& tech : playerFaction->getTechs()) {
 			if (!tech.isResearched() && !tech.isResearching()) {
 				researchableTechs->addItem(tech.getName(), tech.getType());
@@ -66,13 +72,15 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				Tech tech = Tech(researchableTechs->getSelectedItemId().toStdString());
 				std::string techType = tech.getType();
 				descriptionLabel->setText(tech.getDescription());
+
+				techQueue->deselectItem();
 				
 				researchButton->setVisible(true);
 				researchButton->onClick.disconnectAll();
 				researchButton->onClick([tech, researchableTechs, techQueue, playerFaction]() {
 					playerFaction->setResearchingTech(tech.getType(), true);
 					researchableTechs->removeItem(researchableTechs->getSelectedItem());
-					techQueue->addItem(tech.getName());
+					techQueue->addItem(tech.getName(), tech.getType());
 				});
 			}
 			else {
@@ -80,5 +88,30 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				researchButton->setVisible(false);
 			}
 		});
+
+		techQueue->onItemSelect([researchableTechs, techQueue, this, playerFaction](int index) {
+			if (index != -1) {
+				researchableTechs->deselectItem();
+				m_progressBar->setVisible(true);
+				m_progressBar->setValue(playerFaction->getTech(techQueue->getSelectedItemId().toStdString())->getResearchPercent());
+				m_progressBarTech = techQueue->getSelectedItemId().toStdString();
+			}
+			else {
+				m_progressBar->setVisible(false);
+				m_progressBarTech = "";
+			}
+		});
+
+		m_progressBar->onFull([techQueue]() {
+			techQueue->removeItem(techQueue->getSelectedItem());
+		});
 	});
+}
+
+void TechGUI::update(Faction* playerFaction) {
+	if (playerFaction != nullptr) {
+		if (m_progressBar != nullptr && m_progressBarTech != "") {
+			m_progressBar->setValue(playerFaction->getTech(m_progressBarTech)->getResearchPercent());
+		}
+	}
 }
