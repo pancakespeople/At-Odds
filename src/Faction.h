@@ -35,6 +35,7 @@ public:
 	void reinitAfterLoad(Constellation* constellation);
 	void addColonyBuilding(const std::string& type);
 	void setResearchingTech(const std::string& type, bool research);
+	void onResearchFinish(const Tech& tech);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -84,6 +85,7 @@ public:
 	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
 	Spaceship::DesignerShip getShipDesignByName(const std::string& name);
 	Spaceship::DesignerWeapon addRandomWeapon();
+	Spaceship::DesignerWeapon addRandomUndiscoveredWeapon();
 
 	Star* getCapital() { return m_capital; }
 	Star* getRandomOwnedStar();

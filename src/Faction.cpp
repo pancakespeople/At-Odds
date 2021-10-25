@@ -146,7 +146,10 @@ void Faction::update() {
 	// Research techs
 	for (Tech& tech : m_techs) {
 		if (tech.isResearching()) {
-			if (tech.isResearched()) tech.setResearching(false);
+			if (tech.isResearched()) {
+				tech.setResearching(false);
+				onResearchFinish(tech);
+			}
 			else {
 				tech.addResearchPoints(0.1f);
 			}
@@ -453,6 +456,26 @@ Spaceship::DesignerWeapon Faction::addRandomWeapon() {
 	return weapon;
 }
 
+Spaceship::DesignerWeapon Faction::addRandomUndiscoveredWeapon() {
+	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
+
+	std::vector<std::string> vals;
+
+	for (auto& elem : table) {
+		if (!hasWeapon(elem.first)) vals.push_back(elem.first);
+	}
+
+	if (vals.size() > 0) {
+		int randIdx = Random::randInt(0, vals.size() - 1);
+		Spaceship::DesignerWeapon weapon(vals[randIdx]);
+		addWeapon(weapon);
+		return weapon;
+	}
+	else {
+		return Spaceship::DesignerWeapon();
+	}
+}
+
 std::vector<Planet*> Faction::getOwnedPlanets() {
 	std::vector<Planet*> planets;
 	for (Star* star : m_ownedSystems) {
@@ -488,4 +511,16 @@ const Tech* Faction::getTech(const std::string& type) const {
 		}
 	}
 	return nullptr;
+}
+
+void Faction::onResearchFinish(const Tech& tech) {
+	if (tech.hasFlag("unlockRandomWeapon")) {
+		Spaceship::DesignerWeapon weapon = addRandomUndiscoveredWeapon();
+		if (weapon.type != "") {
+			addAnnouncementEvent("Our engineers have designed us the " + weapon.name + " weapon");
+		}
+		else {
+			addAnnouncementEvent("Our engineers failed to come up with a new weapon design");
+		}
+	}
 }

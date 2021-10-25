@@ -13,5 +13,6 @@ private:
 	GameWidget::Icon m_icon;
 	tgui::ChildWindow::Ptr m_window = nullptr;
 	tgui::ProgressBar::Ptr m_progressBar = nullptr;
+	tgui::ListBox::Ptr m_techQueue = nullptr;
 	std::string m_progressBarTech = "";
 };

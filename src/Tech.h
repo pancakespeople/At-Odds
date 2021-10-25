@@ -15,6 +15,7 @@ public:
 	
 	bool isResearched() const { return m_researchPoints >= m_researchPointsRequired; }
 	bool isResearching() const { return m_researching; }
+	bool hasFlag(const std::string& flag) const;
 
 private:
 	friend class boost::serialization::access;
