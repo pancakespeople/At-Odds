@@ -35,9 +35,13 @@ void PlayerGUI::update(sf::RenderWindow& window, GameState& state, Constellation
 	Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
 
 	unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel);
-	planetGUI.update(state);
 	resourceGUI.update(constellation, state.getPlayer());
 	announcerGUI.update(gui, playerFaction);
 	buildingGUI.update();
 	techGUI.update(playerFaction);
+}
+
+void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
+	timescaleGUI.restartUpdateClock();
+	planetGUI.update(state);
 }

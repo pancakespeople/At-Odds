@@ -41,6 +41,9 @@ public:
 	int numUnbuiltBuildings(Star* star);
 	int numIdleConstructionShips();
 
+	float getResourceCount(const std::string& type) const;
+	float getResourceExploitation(const std::string& type) const;
+
 	bool isDead() { return m_dead; }
 	// Returns false if unsuccessful (if subtracting would lead to a negative resource amount)
 	bool canSubtractResource(const std::string& type, float num);
@@ -65,7 +68,7 @@ public:
 	std::string getName() { return m_name; }
 	std::vector<Spaceship::DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
 	std::vector<ColonyBuilding> getColonyBuildings();
-	std::vector<Planet*> getOwnedPlanets();
+	std::vector<Planet*> getOwnedPlanets() const;
 	std::vector<Star*> getUnderAttackStars();
 	const std::vector<Tech>& getTechs() { return m_techs; }
 	

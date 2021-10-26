@@ -214,9 +214,9 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 	}
 }
 
-float TradeGoods::getSupply(const std::string& item) {
+float TradeGoods::getSupply(const std::string& item) const {
 	if (m_items.count(item) == 0) return 0.0f;
-	return m_items[item].supply;
+	return m_items.at(item).supply;
 }
 
 float TradeGoods::calcPrice(const std::string& item, float supplyAddition) const {

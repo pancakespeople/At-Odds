@@ -479,51 +479,6 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui) {
 	}
 }
 
-void ResourceGUI::open(tgui::Gui& gui) {
-	m_resourceGroup = tgui::Group::create();
-	m_resourceGroup->setPosition("0%", "0%");
-	m_resourceGroup->setSize("33%", "33%");
-	m_resourceGroup->setFocusable(false);
-	gui.add(m_resourceGroup);
-}
-
-void ResourceGUI::update(Constellation& constellation, Player& player) {
-	if (m_resourceGroup != nullptr) {
-		if (player.getFaction() != -1) {
-			Faction* faction = constellation.getFaction(player.getFaction());
-			auto& resources = faction->getResources();
-
-			if (m_resourceGroup->get<tgui::Label>("resourceLabel") == nullptr) {
-				auto resourceLabel = tgui::Label::create("Resources");
-				resourceLabel->setTextSize(20);
-				m_resourceGroup->add(resourceLabel, "resourceLabel");
-			}
-
-			int pos = 15;
-
-			for (auto& resource : resources) {
-				Resource r;
-				r.type = resource.first;
-				
-				auto label = m_resourceGroup->get<tgui::Label>(r.getName());
-
-				if (label == nullptr) {
-					label = tgui::Label::create();
-					label->setPosition("0%", (std::to_string(pos) + "%").c_str());
-					label->setTextSize(20);
-					m_resourceGroup->add(label, r.getName());
-				}
-
-				std::stringstream ss;
-				ss << r.getName() << ": " << std::fixed << std::setprecision(1) << resource.second;
-
-				label->setText(ss.str());
-				pos += 15;
-			}
-		}
-	}
-}
-
 void GameWidget::Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath) {
 	panel = tgui::Panel::create();
 	panel->setPosition(pos);

@@ -59,11 +59,12 @@ public:
 	float getRadius() const { return m_shape.getLocalBounds().width / 2.0; }
 	float getHabitability() const;
 	float getTimeSinceCreation() const { return m_timeSinceCreaton; }
+	float getResourceAbundance(const std::string& type) const;
 
 	Colony& getColony() { return m_colony; }
 
 	bool isGasGiant() const { return m_gasGiant; }
-	bool hasResource(const std::string& resource);
+	bool hasResource(const std::string& resource) const;
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 

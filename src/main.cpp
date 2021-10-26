@@ -127,7 +127,7 @@ int main(int argc, const char* argv[])
         updateStep = playerGui.timescaleGUI.getUpdatesPerSecondTarget() / (1.0f / playerGui.timescaleGUI.getUpdateClock().getElapsedTime().asSeconds());
         for (int i = 0; i < std::round(updateStep); i++) {
             constellation.update(state.getPlayer());
-            playerGui.timescaleGUI.restartUpdateClock();
+            playerGui.updateSync(window, state, constellation, gui);
         }
 
         starShader.setUniform("time", time);

@@ -79,15 +79,6 @@ private:
 	sf::Clock m_updateClock;
 };
 
-class ResourceGUI {
-public:
-	void open(tgui::Gui& gui);
-	void update(Constellation& constellation, Player& player);
-
-private:
-	tgui::Group::Ptr m_resourceGroup;
-};
-
 namespace GameWidget {
 
 	struct Icon {

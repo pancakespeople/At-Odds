@@ -17,13 +17,14 @@ public:
 
 	void update(Star* currentStar, Faction* faction, Planet* planet);
 
-	int getPopulation() { return m_population; }
-	int getAllegiance() { return m_allegiance; }
+	int getPopulation() const { return m_population; }
+	int getAllegiance() const { return m_allegiance; }
 
-	float getGrowthRate(float planetHabitability);
+	float getGrowthRate(float planetHabitability) const;
 	float getBuildingEffects(const std::string& effect) const;
-	float getWealth() { return m_wealth * m_stability; }
-	float getStability() { return m_stability; }
+	float getWealth() const { return m_wealth * m_stability; }
+	float getStability() const { return m_stability; }
+	float getResourceExploitation(const std::string& type, const Planet& planet) const;
 
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);

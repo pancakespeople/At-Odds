@@ -374,9 +374,16 @@ std::string Planet::getName(const Star* star, int pos) {
 	return star->getName() + " " + Util::toRomanNumeral(pos);
 }
 
-bool Planet::hasResource(const std::string& resource) {
-	for (Resource& r : m_resources) {
+bool Planet::hasResource(const std::string& resource) const {
+	for (const Resource& r : m_resources) {
 		if (r.type == resource) return true;
 	}
 	return false;
+}
+
+float Planet::getResourceAbundance(const std::string& type) const {
+	for (const Resource& r : m_resources) {
+		if (r.type == type) return r.abundance;
+	}
+	return 0.0f;
 }

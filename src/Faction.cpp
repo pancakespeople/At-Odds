@@ -476,7 +476,7 @@ Spaceship::DesignerWeapon Faction::addRandomUndiscoveredWeapon() {
 	}
 }
 
-std::vector<Planet*> Faction::getOwnedPlanets() {
+std::vector<Planet*> Faction::getOwnedPlanets() const {
 	std::vector<Planet*> planets;
 	for (Star* star : m_ownedSystems) {
 		for (Planet& planet : star->getPlanets()) {
@@ -523,4 +523,19 @@ void Faction::onResearchFinish(const Tech& tech) {
 			addAnnouncementEvent("Our engineers failed to come up with a new weapon design");
 		}
 	}
+}
+
+float Faction::getResourceCount(const std::string& type) const {
+	for (auto& resource : m_resources) {
+		if (resource.first == type) return resource.second;
+	}
+	return 0.0f;
+}
+
+float Faction::getResourceExploitation(const std::string& type) const {
+	float exploitation = 0.0f;
+	for (Planet* planet : getOwnedPlanets()) {
+		exploitation += planet->getColony().getResourceExploitation(type, *planet);
+	}
+	return exploitation;
 }

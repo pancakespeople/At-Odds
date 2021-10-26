@@ -37,7 +37,7 @@ public:
 
 	// Returns the deficit, if there is one
 	float removeSupply(const std::string& item, float num, bool noDemand = false);
-	float getSupply(const std::string& item);
+	float getSupply(const std::string& item) const;
 	float calcPrice(const std::string& item, float supplyAddition = 0.0f) const;
 	float sellGoods(const std::string& item, float num);
 

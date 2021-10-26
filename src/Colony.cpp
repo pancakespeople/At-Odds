@@ -56,16 +56,8 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	// Resource exploitation
 	if (faction != nullptr) {
 		if (m_ticksToNextResourceExploit == 0) {
-			float multiplier = 1.0f;
-
-			for (ColonyBuilding& building : m_buildings) {
-				if (building.isBuilt()) {
-					multiplier *= building.getEffect("exploitationModifier", 1.0f);
-				}
-			}
-
 			for (Resource& resource : planet->getResources()) {
-				float amount = (m_population * resource.abundance / 1000.0f) * multiplier;
+				float amount = getResourceExploitation(resource.type, *planet);
 				faction->addResource(resource.type, amount);
 			}
 			m_ticksToNextResourceExploit = 1000;
@@ -117,9 +109,9 @@ bool Colony::hasBuildingOfType(const std::string& string) {
 	return false;
 }
 
-float Colony::getGrowthRate(float planetHabitability) {
+float Colony::getGrowthRate(float planetHabitability) const {
 	// Apply building modifiers
-	for (ColonyBuilding& building : m_buildings) {
+	for (const ColonyBuilding& building : m_buildings) {
 		if (building.isBuilt()) {
 			planetHabitability *= building.getEffect("habitabilityModifier", 1.0f);
 		}
@@ -367,4 +359,16 @@ std::vector<std::string> ColonyBuilding::getFlags() const {
 	}
 
 	return flags;
+}
+
+float Colony::getResourceExploitation(const std::string& type, const Planet& planet) const {
+	float multiplier = 1.0f;
+
+	for (const ColonyBuilding& building : m_buildings) {
+		if (building.isBuilt()) {
+			multiplier *= building.getEffect("exploitationModifier", 1.0f);
+		}
+	}
+
+	return (m_population * planet.getResourceAbundance(type) / 1000.0f) * multiplier;
 }
