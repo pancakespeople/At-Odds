@@ -49,6 +49,7 @@ public:
 	bool canSubtractResource(const std::string& type, float num);
 	bool canSubtractResources(const std::unordered_map<std::string, float>& resources);
 	bool hasWeapon(const std::string& type);
+	bool hasResearchedTech(const std::string& type) const;
 	
 	const Tech* getTech(const std::string& type) const;
 

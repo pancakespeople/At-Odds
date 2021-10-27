@@ -84,13 +84,23 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	constructor.chassis = Spaceship::DesignerChassis("CONSTRUCTOR");
 	addShipDesign(constructor);
 
-	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	/*const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	for (auto& val : table) {
 		addColonyBuilding(val.first);
-	}
+	}*/
+	addColonyBuilding("INFRASTRUCTURE");
+	addColonyBuilding("MILITARY_BASE");
+	addColonyBuilding("SPACEPORT");
+	addColonyBuilding("MINING");
+	addColonyBuilding("ORBITAL_DEFENSE");
+	addColonyBuilding("CONSUMER_GOODS_FACTORIES");
+	addColonyBuilding("WEAPONS_FACTORIES");
+	addColonyBuilding("EXPLORING");
+	addColonyBuilding("BOMB_SHELTER");
 
 	m_techs.push_back(Tech("WEAPONS_RESEARCH"));
 	m_techs.push_back(Tech("TEST"));
+	m_techs.push_back(Tech("FARMING"));
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -514,6 +524,9 @@ const Tech* Faction::getTech(const std::string& type) const {
 }
 
 void Faction::onResearchFinish(const Tech& tech) {
+	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
+
+	// Process flags
 	if (tech.hasFlag("unlockRandomWeapon")) {
 		Spaceship::DesignerWeapon weapon = addRandomUndiscoveredWeapon();
 		if (weapon.type != "") {
@@ -521,6 +534,15 @@ void Faction::onResearchFinish(const Tech& tech) {
 		}
 		else {
 			addAnnouncementEvent("Our engineers failed to come up with a new weapon design");
+		}
+	}
+
+	// Unlock colony buildings
+	auto* colonyBuildings = table[tech.getType()]["addsColonyBuildings"].as_array();
+	if (colonyBuildings != nullptr) {
+		for (auto& building : *colonyBuildings) {
+			std::string type = building.value_or("");
+			if (type != "") addColonyBuilding(type);
 		}
 	}
 }
@@ -538,4 +560,11 @@ float Faction::getResourceExploitation(const std::string& type) const {
 		exploitation += planet->getColony().getResourceExploitation(type, *planet);
 	}
 	return exploitation;
+}
+
+bool Faction::hasResearchedTech(const std::string& type) const {
+	for (auto& tech : m_techs) {
+		if (tech.getType() == type && tech.isResearched()) return true;
+	}
+	return false;
 }

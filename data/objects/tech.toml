@@ -9,3 +9,9 @@ unlockRandomWeapon = true
 name = "Test Tech"
 description = "This is a test."
 researchRequired = 100.0
+
+[FARMING]
+name = "Biodomes"
+description = "Even in the harshest conditions, we can find a way to grow crops."
+researchRequired = 1500.0
+addsColonyBuildings = ["FARMING"]
