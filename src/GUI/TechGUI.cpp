@@ -114,15 +114,21 @@ void TechGUI::update(Faction* playerFaction) {
 			m_progressBar->setValue(playerFaction->getTech(m_progressBarTech)->getResearchPercent());
 		}
 		if (m_techQueue != nullptr) {
-			// Remove researched items from tech queue
+			int idx = 0;
 			for (auto item : m_techQueue->getItemIds()) {
 				const Tech* tech = playerFaction->getTech(item.toStdString());
 				if (tech != nullptr) {
+					// Remove researched items from tech queue
 					if (tech->isResearched()) m_techQueue->removeItemById(item);
+					else if (tech->isResearching()) {
+						// Set name
+						m_techQueue->changeItemById(item, tech->getName() + " (" + std::to_string(idx + 1) + ")");
+					}
 				}
 				else {
 					m_techQueue->removeItemById(item);
 				}
+				idx++;
 			}
 		}
 	}

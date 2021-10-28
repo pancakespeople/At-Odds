@@ -89,18 +89,15 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 		addColonyBuilding(val.first);
 	}*/
 	addColonyBuilding("INFRASTRUCTURE");
-	addColonyBuilding("MILITARY_BASE");
 	addColonyBuilding("SPACEPORT");
-	addColonyBuilding("MINING");
-	addColonyBuilding("ORBITAL_DEFENSE");
-	addColonyBuilding("CONSUMER_GOODS_FACTORIES");
-	addColonyBuilding("WEAPONS_FACTORIES");
-	addColonyBuilding("EXPLORING");
-	addColonyBuilding("BOMB_SHELTER");
 
 	m_techs.push_back(Tech("WEAPONS_RESEARCH"));
-	m_techs.push_back(Tech("TEST"));
 	m_techs.push_back(Tech("FARMING"));
+	m_techs.push_back(Tech("DEFENSE"));
+	m_techs.push_back(Tech("EXPLORATION"));
+	m_techs.push_back(Tech("MANUFACTURING"));
+	m_techs.push_back(Tech("MINING"));
+	m_techs.push_back(Tech("MILITARY"));
 
 	if (m_aiEnabled) m_ai.onSpawn(this);
 }
@@ -163,6 +160,7 @@ void Faction::update() {
 			else {
 				tech.addResearchPoints(0.1f);
 			}
+			return; // Only work on the first in the queue
 		}
 	}
 }
@@ -507,9 +505,16 @@ std::vector<Star*> Faction::getUnderAttackStars() {
 }
 
 void Faction::setResearchingTech(const std::string& type, bool research) {
-	for (Tech& tech : m_techs) {
-		if (tech.getType() == type && !tech.isResearched()) {
-			tech.setResearching(research);
+	int end = m_techs.size();
+	for (int i = 0; i < end; i++) {
+		if (m_techs[i].getType() == type && !m_techs[i].isResearched()) {
+			m_techs[i].setResearching(research);
+			if (research) {
+				// Move tech to back of research queue
+				m_techs.push_back(m_techs[i]);
+				m_techs.erase(m_techs.begin() + i);
+				end--;
+			}
 		}
 	}
 }

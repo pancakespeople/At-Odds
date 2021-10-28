@@ -5,13 +5,38 @@ description = "Fund the research and development of a new and unheard of weapon 
 researchRequired = 1000.0
 unlockRandomWeapon = true
 
-[TEST]
-name = "Test Tech"
-description = "This is a test."
-researchRequired = 100.0
-
 [FARMING]
 name = "Biodomes"
 description = "Even in the harshest conditions, we can find a way to grow crops."
 researchRequired = 1500.0
 addsColonyBuildings = ["FARMING"]
+
+[DEFENSE]
+name = "Planetary Defense Systems"
+description = "We must find new ways of defending our planets... Otherwise they will cease to be our planets."
+addsColonyBuildings = ["ORBITAL_DEFENSE", "BOMB_SHELTER"]
+researchRequired = 1250.0
+
+[EXPLORATION]
+name = "The Exploration of Planets"
+description = "It's a big universe out there, but most of it is uninteresting. However, through careful observation, we may find something worth taking a look at..."
+researchRequired = 1000.0
+addsColonyBuildings = ["EXPLORING"]
+
+[MANUFACTURING]
+name = "Production Networks"
+description = "No empire can thrive without a solid manufacturing base."
+researchRequired = 1600.0
+addsColonyBuildings = ["CONSUMER_GOODS_FACTORIES", "WEAPONS_FACTORIES"]
+
+[MINING]
+name = "Mining Methods"
+description = "Specialized technology can allow us to more efficiently extract ores from our planets."
+researchRequired = 1500.0
+addsColonyBuildings = ["MINING"]
+
+[MILITARY]
+name = "Army Training"
+description = "The first commandment of space empires: Might makes right."
+researchRequired = 1100.0
+addsColonyBuildings = ["MILITARY_BASE"]
