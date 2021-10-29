@@ -160,7 +160,7 @@ void Faction::update() {
 			else {
 				tech.addResearchPoints(0.1f);
 			}
-			return; // Only work on the first in the queue
+			break; // Only work on the first in the queue
 		}
 	}
 }

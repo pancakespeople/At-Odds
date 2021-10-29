@@ -1,15 +1,22 @@
 #pragma once
 #include <string>
 
+class Faction;
+
 class Tech {
 public:
 	Tech(const std::string& type);
 	std::string getName() const;
 	std::string getDescription() const;
+	std::string getExtendedDescription(Faction* faction) const;
 	std::string getType() const { return m_type; }
+	std::vector<std::string> getUnlockedBuildings() const;
 	
 	float getResearchPercent() const { return m_researchPoints / m_researchPointsRequired * 100.0f; }
-	
+	float getRequiredResearchPoints() const { return m_researchPointsRequired; }
+	float getResearchPoints() const { return m_researchPoints; }
+	float getTimeToResearch(Faction* faction) const;
+
 	void addResearchPoints(float research);
 	void setResearching(bool researching) { m_researching = researching; }
 	

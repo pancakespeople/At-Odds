@@ -1,6 +1,7 @@
 #include "gamepch.h"
 #include "TechGUI.h"
 #include "../Faction.h"
+#include "../Util.h"
 
 void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 	m_icon.open(gui, tgui::Layout2d("0%", "70%"), tgui::Layout2d("2.5%", "5%"), "data/art/techicon.png");
@@ -48,9 +49,9 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 		researchButton->setVisible(false);
 		m_window->add(researchButton);
 
-		auto descriptionLabel = tgui::Label::create();
-		descriptionLabel->setPosition("2.5%", "62.5%");
-		m_window->add(descriptionLabel);
+		m_description = tgui::Label::create();
+		m_description->setPosition("2.5%", "62.5%");
+		m_window->add(m_description);
 
 		m_progressBar = tgui::ProgressBar::create();
 		m_progressBar->setPosition("2.5%", "75%");
@@ -67,13 +68,14 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			}
 		}
 
-		researchableTechs->onItemSelect([researchableTechs, this, descriptionLabel, researchButton, playerFaction](int index) {
+		researchableTechs->onItemSelect([researchableTechs, this, researchButton, playerFaction](int index) {
 			if (index != -1) {
 				Tech tech = Tech(researchableTechs->getSelectedItemId().toStdString());
 				std::string techType = tech.getType();
-				descriptionLabel->setText(tech.getDescription());
-
+				
 				m_techQueue->deselectItem();
+
+				m_description->setText(tech.getExtendedDescription(playerFaction));
 				
 				researchButton->setVisible(true);
 				researchButton->onClick.disconnectAll();
@@ -84,7 +86,7 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				});
 			}
 			else {
-				descriptionLabel->setText("");
+				m_description->setText("");
 				researchButton->setVisible(false);
 			}
 		});
@@ -99,6 +101,7 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			else {
 				m_progressBar->setVisible(false);
 				m_progressBarTech = "";
+				m_description->setText("");
 			}
 		});
 
@@ -130,6 +133,10 @@ void TechGUI::update(Faction* playerFaction) {
 				}
 				idx++;
 			}
+		}
+		if (m_description != nullptr && m_techQueue->getSelectedItemIndex() != -1) {
+			const Tech* tech = playerFaction->getTech(m_techQueue->getSelectedItemId().toStdString());
+			m_description->setText(tech->getExtendedDescription(playerFaction));
 		}
 	}
 }

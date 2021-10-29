@@ -15,4 +15,5 @@ private:
 	tgui::ProgressBar::Ptr m_progressBar = nullptr;
 	tgui::ListBox::Ptr m_techQueue = nullptr;
 	std::string m_progressBarTech = "";
+	tgui::Label::Ptr m_description = nullptr;
 };
