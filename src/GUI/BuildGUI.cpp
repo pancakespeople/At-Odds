@@ -32,8 +32,6 @@ void BuildGUI::onBuildIconMouseExit() {
 	m_buildIconPanel->getRenderer()->setOpacity(0.75f);
 }
 
-#define addBuildingSelectorIfChecked(X) if (BuildingPrototype::meetsDisplayRequirements(X, playerFaction)) addBuildingSelector(X);
-
 void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 	if (m_buildPanel == nullptr) {
 		m_buildPanel = tgui::Panel::create();
@@ -42,14 +40,14 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 		m_buildPanel->setSize("20%", "29%");
 		gui.add(m_buildPanel);
 
-		addBuildingSelectorIfChecked("OUTPOST")
-		addBuildingSelectorIfChecked("SHIP_FACTORY")
-		addBuildingSelectorIfChecked("LASER_TURRET")
-		addBuildingSelectorIfChecked("MACHINE_GUN_TURRET")
-		addBuildingSelectorIfChecked("GAUSS_TURRET")
-		addBuildingSelectorIfChecked("ROCKET_TURRET")
-		addBuildingSelectorIfChecked("FLAK_TURRET")
-		addBuildingSelectorIfChecked("SCIENCE_LAB")
+		const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+		for (auto& type : table) {
+			if (!table[type.first]["cannotBuild"].value_or(false)) {
+				if (BuildingPrototype::meetsDisplayRequirements(type.first, playerFaction)) {
+					addBuildingSelector(type.first);
+				}
+			}
+		}
 
 		m_selectedBuildingIdx = -1;
 	}

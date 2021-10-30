@@ -61,6 +61,7 @@ texturePath = "data/art/spacehabitat.png"
 scale = 2.0
 health = 1000.0
 mods = ["Habitat"]
+cannotBuild = true
 
 [SCIENCE_LAB]
 name = "Science Lab"
