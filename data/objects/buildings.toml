@@ -61,3 +61,9 @@ texturePath = "data/art/spacehabitat.png"
 scale = 2.0
 health = 1000.0
 mods = ["Habitat"]
+
+[SCIENCE_LAB]
+name = "Science Lab"
+texturePath = "data/art/sciencelab.png"
+scale = 2.0
+health = 500.0

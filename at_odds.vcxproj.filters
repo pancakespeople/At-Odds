@@ -68,6 +68,7 @@
     <ClInclude Include="src\GUI\TechGUI.h" />
     <ClInclude Include="src\Tech.h" />
     <ClInclude Include="src\GUI\ResourceGUI.h" />
+    <ClInclude Include="src\GUI\BuildGUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -123,6 +124,7 @@
     <ClCompile Include="src\GUI\TechGUI.cpp" />
     <ClCompile Include="src\Tech.cpp" />
     <ClCompile Include="src\GUI\ResourceGUI.cpp" />
+    <ClCompile Include="src\GUI\BuildGUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />

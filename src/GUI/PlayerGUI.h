@@ -6,6 +6,7 @@
 #include "BuildingGUI.h"
 #include "TechGUI.h"
 #include "ResourceGUI.h"
+#include "BuildGUI.h"
 
 struct PlayerGUI {
 	PlayerGUI() {}
