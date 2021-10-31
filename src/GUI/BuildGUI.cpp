@@ -120,13 +120,13 @@ void BuildGUI::onBuildingSelectorClick(int selectorIdx) {
 	}
 }
 
-void BuildGUI::draw(sf::RenderWindow& window, Star* currentStar, const Player& player) {
+void BuildGUI::draw(sf::RenderWindow& window, Star* currentStar, Faction* playerFaction) {
 	if (m_selectedBuildingIdx > -1 && m_buildingSelectors.size() > 0) {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 		sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
 		m_buildingSelectors[m_selectedBuildingIdx].prototype.setPos(worldPos);
-		m_buildingSelectors[m_selectedBuildingIdx].prototype.draw(window, currentStar, player);
+		m_buildingSelectors[m_selectedBuildingIdx].prototype.draw(window, currentStar, playerFaction);
 	}
 }
 
@@ -142,7 +142,7 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 
 				Building* buildingPtr = nullptr;
 
-				if (Building::checkBuildCondition(selector.prototype.getType(), selector.prototype.getPos(), selector.prototype.getRadius(), currentLocalStar, playerFaction->getID(), true)) {
+				if (Building::checkBuildCondition(selector.prototype.getType(), selector.prototype.getPos(), selector.prototype.getRadius(), currentLocalStar, playerFaction, true)) {
 					std::unique_ptr<Building> building = std::make_unique<Building>(selector.prototype.getType(), currentLocalStar, worldPos, playerFaction, false);
 
 					buildingPtr = currentLocalStar->createBuilding(building);

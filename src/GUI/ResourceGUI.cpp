@@ -18,41 +18,59 @@ void ResourceGUI::open(tgui::Gui& gui) {
 
 	tgui::ToolTip::setInitialDelay(0);
 
-	auto commonPicture = tgui::Picture::create("data/art/squareicon.png");
+	auto commonPicture = tgui::Picture::create("data/art/kicon.png");
 	commonPicture->setPosition("0%", "50%");
-	commonPicture->setSize("5%", "5%");
+	commonPicture->setOrigin(0.0, 0.5);
+	commonPicture->setScale(0.5f);
 	m_panel->add(commonPicture, "commonPicture");
 
 	m_commonLabel = tgui::Label::create();
 	m_commonLabel->setPosition("commonPicture.right", "50%");
 	m_commonLabel->setOrigin(0.0, 0.5);
 	m_commonLabel->setToolTip(tgui::Label::create("Kathium"));
+	m_commonLabel->getRenderer()->setTextColor(tgui::Color::Red);
 	m_panel->add(m_commonLabel);
 
-	auto uncommonPicture = tgui::Picture::create("data/art/circleicon.png");
-	uncommonPicture->setPosition("33%", "50%");
-	uncommonPicture->setSize("5%", "5%");
+	auto uncommonPicture = tgui::Picture::create("data/art/oicon.png");
+	uncommonPicture->setPosition("25%", "50%");
+	uncommonPicture->setOrigin(0.0, 0.5);
+	uncommonPicture->setScale(0.5f);
 	m_panel->add(uncommonPicture, "uncommonPicture");
 
 	m_uncommonLabel = tgui::Label::create();
 	m_uncommonLabel->setPosition("uncommonPicture.right", "50%");
 	m_uncommonLabel->setOrigin(0.0, 0.5);
 	m_uncommonLabel->setToolTip(tgui::Label::create("Oscillite"));
+	m_uncommonLabel->getRenderer()->setTextColor(tgui::Color::Cyan);
 	m_panel->add(m_uncommonLabel);
 
-	auto rarePicture = tgui::Picture::create("data/art/staricon.png");
-	rarePicture->setPosition("66%", "50%");
-	rarePicture->setSize("5%", "5%");
+	auto rarePicture = tgui::Picture::create("data/art/vicon.png");
+	rarePicture->setPosition("50%", "50%");
+	rarePicture->setOrigin(0.0, 0.5);
+	rarePicture->setScale(0.5f);
 	m_panel->add(rarePicture, "rarePicture");
 
 	m_rareLabel = tgui::Label::create();
 	m_rareLabel->setPosition("rarePicture.right", "50%");
 	m_rareLabel->setOrigin(0.0, 0.5);
 	m_rareLabel->setToolTip(tgui::Label::create("Valkrosium"));
+	m_rareLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
 	m_panel->add(m_rareLabel);
+
+	auto scienceIcon = tgui::Picture::create("data/art/scienceicon2.png");
+	scienceIcon->setPosition("75%", "50%");
+	scienceIcon->setOrigin(0.0, 0.5);
+	scienceIcon->setScale(0.5f);
+	m_panel->add(scienceIcon, "scienceIcon");
+
+	m_labCounter = tgui::Label::create();
+	m_labCounter->setPosition("scienceIcon.right", "50%");
+	m_labCounter->setOrigin(0.0, 0.5);
+	m_labCounter->setToolTip(tgui::Label::create("Science Labs"));
+	m_panel->add(m_labCounter);
 }
 
-void ResourceGUI::update(Constellation& constellation, Player& player) {
+void ResourceGUI::update(Constellation& constellation, Player& player, Star* currentStar) {
 	if (m_resourceGroup != nullptr) {
 		if (player.getFaction() != -1) {
 			Faction* faction = constellation.getFaction(player.getFaction());
@@ -71,6 +89,18 @@ void ResourceGUI::update(Constellation& constellation, Player& player) {
 				m_commonLabel->setText(Util::cutOffDecimal(faction->getResourceCount("COMMON_ORE"), 2) + " (+" + Util::cutOffDecimal(m_commonChange, 2) + ")");
 				m_uncommonLabel->setText(Util::cutOffDecimal(faction->getResourceCount("UNCOMMON_ORE"), 2) + " (+" + Util::cutOffDecimal(m_uncommonChange, 2) + ")");
 				m_rareLabel->setText(Util::cutOffDecimal(faction->getResourceCount("RARE_ORE"), 2) + " (+" + Util::cutOffDecimal(m_rareChange, 2) + ")");
+				
+				if (currentStar != nullptr) {
+					if (currentStar->isDiscovered(faction->getID())) {
+						m_labCounter->setText(std::to_string(currentStar->numAlliedBuildings(faction->getID(), "SCIENCE_LAB")) + "/" + std::to_string(faction->getScienceLabMax(currentStar)));
+					}
+					else {
+						m_labCounter->setText("");
+					}
+				}
+				else {
+					m_labCounter->setText("");
+				}
 			}
 
 			/*if (m_resourceGroup->get<tgui::Label>("resourceLabel") == nullptr) {

@@ -150,7 +150,7 @@ int main(int argc, const char* argv[])
         
         console.runCommands(constellation, state, window, gui, playerGui);
 
-        buildGui.draw(window, state.getLocalViewStar(), player);
+        buildGui.draw(window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()));
         unitGui.draw(window);
         playerGui.minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction());
         gui.draw();

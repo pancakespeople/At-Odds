@@ -166,12 +166,12 @@ void Building::construct(const Spaceship* constructor) {
 	m_health = m_maxHealth * (m_constructionPercent / 100.0f);
 }
 
-bool Building::checkBuildCondition(const std::string& type, sf::Vector2f pos, float radius, Star* star, int allegiance, bool player) {
+bool Building::checkBuildCondition(const std::string& type, sf::Vector2f pos, float radius, Star* star, Faction* faction, bool player) {
 	if (star == nullptr) {
 		return false;
 	}
 	else if (player) {
-		if (star->numAllies(allegiance) == 0) {
+		if (star->numAllies(faction->getID()) == 0) {
 			return false;
 		}
 	}
@@ -188,7 +188,11 @@ bool Building::checkBuildCondition(const std::string& type, sf::Vector2f pos, fl
 	}
 
 	if (table[type].as_table()->contains("numPerStar")) {
-		return star->numAlliedBuildings(allegiance, type) < table[type]["numPerStar"].value_or(1);
+		return star->numAlliedBuildings(faction->getID(), type) < table[type]["numPerStar"].value_or(1);
+	}
+
+	if (table[type]["scienceLab"].value_or(false)) {
+		return star->numAlliedBuildings(faction->getID(), type) < faction->getScienceLabMax(star);
 	}
 
 	return true;
@@ -226,8 +230,8 @@ BuildingPrototype::BuildingPrototype(const std::string& type) {
 	m_radius = m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f;
 }
 
-void BuildingPrototype::draw(sf::RenderWindow& window, Star* currentStar, const Player& player) {
-	if (Building::checkBuildCondition(m_type, m_sprite.getPosition(), m_radius, currentStar, player.getFaction(), true)) {
+void BuildingPrototype::draw(sf::RenderWindow& window, Star* currentStar, Faction* playerFaction) {
+	if (Building::checkBuildCondition(m_type, m_sprite.getPosition(), m_radius, currentStar, playerFaction, true)) {
 		m_sprite.setColor(sf::Color(0, 200, 0));
 		window.draw(m_sprite);
 	}

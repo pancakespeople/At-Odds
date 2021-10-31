@@ -1,6 +1,8 @@
 #pragma once
 #include "../GUI.h"
 
+class Faction;
+
 class BuildGUI {
 public:
 	struct BuildingSelector {
@@ -12,7 +14,7 @@ public:
 	BuildGUI() {}
 
 	void open(tgui::Gui& gui, Faction* playerFaction);
-	void draw(sf::RenderWindow& window, Star* currentStar, const Player& player);
+	void draw(sf::RenderWindow& window, Star* currentStar, Faction* playerFaction);
 	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction, UnitGUI& unitGUI, tgui::Panel::Ptr mainPanel);
 
 private:

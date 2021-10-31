@@ -573,3 +573,7 @@ bool Faction::hasResearchedTech(const std::string& type) const {
 	}
 	return false;
 }
+
+int Faction::getScienceLabMax(Star* star) const {
+	return star->getPlanets().size() / 3;
+}

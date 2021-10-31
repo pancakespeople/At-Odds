@@ -40,6 +40,7 @@ public:
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
 	int numIdleConstructionShips();
+	int getScienceLabMax(Star* star) const;
 
 	float getResourceCount(const std::string& type) const;
 	float getResourceExploitation(const std::string& type) const;

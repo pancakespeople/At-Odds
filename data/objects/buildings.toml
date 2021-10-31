@@ -68,3 +68,4 @@ name = "Science Lab"
 texturePath = "data/art/sciencelab.png"
 scale = 2.0
 health = 500.0
+scienceLab = true
