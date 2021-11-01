@@ -53,6 +53,9 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 			else if (val == "Habitat") {
 				addMod(HabitatMod(100000, 1000000, true));
 			}
+			else if (val == "Science") {
+				addMod(ScienceMod());
+			}
 		}
 	}
 

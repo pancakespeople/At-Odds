@@ -3,6 +3,7 @@
 #include "TOMLCache.h"
 #include "Util.h"
 #include "Colony.h"
+#include "Faction.h"
 
 Tech::Tech(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
@@ -32,7 +33,9 @@ bool Tech::hasFlag(const std::string& flag) const {
 }
 
 float Tech::getTimeToResearch(Faction* faction) const {
-	return (m_researchPointsRequired - m_researchPoints) / 0.1f / 60.0f; // todo change this later
+	float researchPointProduction = faction->getResearchPointProduction();
+	if (researchPointProduction == 0.0f) return -1.0f;
+	return (m_researchPointsRequired - m_researchPoints) / researchPointProduction / 60.0f;
 }
 
 std::string Tech::getExtendedDescription(Faction* faction) const {
@@ -40,7 +43,11 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 
 	text += "\n";
 	text += "Research Points: " + Util::cutOffDecimal(getRequiredResearchPoints(), 2) + "\n";
-	text += "Time to research: " + Util::secondsToTime(getTimeToResearch(faction)) + "\n";
+	
+	float timeToResearch = getTimeToResearch(faction);
+
+	if (timeToResearch == -1.0f) text += "Time to research: Infinity (You have no research point production)";
+	else text += "Time to research: " + Util::secondsToTime(timeToResearch) + "\n";
 	
 	auto buildings = getUnlockedBuildings();
 

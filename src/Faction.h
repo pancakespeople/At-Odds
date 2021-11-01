@@ -36,6 +36,7 @@ public:
 	void addColonyBuilding(const std::string& type);
 	void setResearchingTech(const std::string& type, bool research);
 	void onResearchFinish(const Tech& tech);
+	void addResearchPoints(float points) { m_currentResearchPoints += points; }
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -44,6 +45,7 @@ public:
 
 	float getResourceCount(const std::string& type) const;
 	float getResourceExploitation(const std::string& type) const;
+	float getResearchPointProduction() const { return m_researchPointProduction; }
 
 	bool isDead() { return m_dead; }
 	// Returns false if unsuccessful (if subtracting would lead to a negative resource amount)
@@ -134,6 +136,8 @@ private:
 		archive & m_name;
 		archive & m_availableColonyBuildings;
 		archive & m_techs;
+		archive & m_currentResearchPoints;
+		archive & m_researchPointProduction;
 	}
 	
 	Faction() {}
@@ -165,5 +169,8 @@ private:
 	
 	bool m_aiEnabled = true;
 	bool m_dead = false;
+
+	float m_currentResearchPoints = 0.0f;
+	float m_researchPointProduction = 0.0f;
 };
 

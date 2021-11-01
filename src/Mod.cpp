@@ -17,6 +17,7 @@ BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
 BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
 BOOST_CLASS_EXPORT_GUID(TradeMod, "TradeMod");
+BOOST_CLASS_EXPORT_GUID(ScienceMod, "ScienceMod");
 
 void Mod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	auto text = tgui::Label::create();
@@ -662,4 +663,10 @@ void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 		m_goods.clear();
 		Sounds::playSoundLocal("data/sound/cargo.wav", star, unit->getPos(), 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 	}
+}
+
+void ScienceMod::update(Unit* unit, Star* currentStar, Faction* faction) {
+	if (!isEnabled()) return;
+	if (faction == nullptr) return;
+	faction->addResearchPoints(m_research);
 }

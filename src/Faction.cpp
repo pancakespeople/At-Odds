@@ -158,7 +158,9 @@ void Faction::update() {
 				onResearchFinish(tech);
 			}
 			else {
-				tech.addResearchPoints(0.1f);
+				tech.addResearchPoints(0.1f * m_currentResearchPoints);
+				m_researchPointProduction = 0.1f * m_currentResearchPoints;
+				m_currentResearchPoints = 0.0f;
 			}
 			break; // Only work on the first in the queue
 		}

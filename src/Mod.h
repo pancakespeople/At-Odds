@@ -189,3 +189,20 @@ private:
 	std::map<std::string, float> m_goods;
 	float m_money = 0.0f;
 };
+
+class ScienceMod : public Mod {
+public:
+	ScienceMod() = default;
+
+	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Mod>(*this);
+		archive & m_research;
+	}
+
+	float m_research = 0.1f;
+};
