@@ -7,6 +7,7 @@
 #include "Random.h"
 #include "Building.h"
 #include "Derelict.h"
+#include "Tech.h"
 
 void SubAI::sleep(uint32_t ticks) {
 	m_sleepTime = ticks;
@@ -87,10 +88,16 @@ void Brain::onSpawn(Faction* faction) {
 			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
 		}
 	}
+
+	economyAI.researchRandomTech(faction);
 }
 
 void Brain::reinitAfterLoad(Constellation* constellation) {
 	militaryAI.reinitAfterLoad(constellation);
+}
+
+void Brain::onResearchComplete(Faction* faction) {
+	economyAI.researchRandomTech(faction);
 }
 
 void MilitaryAI::update(Faction* faction, Brain* brain) {
@@ -367,6 +374,18 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 	
 	for (Star* star : faction->getOwnedStars()) {
 
+		// Build science labs
+		if (star->numAlliedBuildings(faction->getID(), "SCIENCE_LAB") < faction->getScienceLabMax(star) && faction->numIdleConstructionShips() > 0) {
+			int numToBuild = faction->getScienceLabMax(star) - star->numAlliedBuildings(faction->getID(), "SCIENCE_LAB");
+			for (int i = 0; i < numToBuild && faction->numIdleConstructionShips() > 0; i++) {
+				std::unique_ptr<Building> lab = std::make_unique<Building>("SCIENCE_LAB", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
+				Building* ptr = star->createBuilding(lab);
+				faction->orderConstructionShipsBuild(ptr, true, true);
+
+				AI_DEBUG_PRINT("Building science lab");
+			}
+		}
+
 		bool builtShipFactory = false;
 
 		// Build ship factories
@@ -382,25 +401,6 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 			builtShipFactory = true;
 		}
 
-		// Set colonization of planets to be legal
-		//if (star->getPlanets().size() > 0) {
-		//	Planet& mostHabitable = star->getMostHabitablePlanet();
-		//	if (!mostHabitable.getColony().isColonizationLegal(faction->getID()) && mostHabitable.getResources().size() > 0) {
-		//		mostHabitable.getColony().setFactionColonyLegality(faction->getID(), true);
-		//		AI_DEBUG_PRINT("Made colonization of " << mostHabitable.getTypeString() << " legal");
-		//	}
-
-		//	// 50% to set another random other planet to legal
-		//	if (Random::randBool()) {
-		//		auto planets = star->getPlanets();
-		//		Planet& randPlanet = planets[Random::randInt(0, planets.size() - 1)];
-
-		//		if (!randPlanet.getColony().isColonizationLegal(faction->getID()) && randPlanet.getResources().size() > 0) {
-		//			randPlanet.getColony().setFactionColonyLegality(faction->getID(), true);
-		//			AI_DEBUG_PRINT("Made colonization of " << randPlanet.getTypeString() << " legal");
-		//		}
-		//	}
-		//}
 	}
 
 	// Handle building ships
@@ -525,9 +525,9 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 	sleep(1000);
 }
 
-void removeBuiltBuildings(Planet& planet, std::vector<std::string>& wantedBuildings) {
+void removeBuildings(Planet& planet, std::vector<std::string>& wantedBuildings, Faction* faction) {
 	for (int i = 0; i < wantedBuildings.size(); i++) {
-		if (planet.getColony().hasBuildingOfType(wantedBuildings[i])) {
+		if (planet.getColony().hasBuildingOfType(wantedBuildings[i]) || !faction->hasColonyBuilding(wantedBuildings[i])) {
 			wantedBuildings.erase(wantedBuildings.begin() + i);
 			i--;
 		}
@@ -553,9 +553,9 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
 		"WEAPONS_FACTORIES"
 	};
 
-	removeBuiltBuildings(planet, wantedBuildings);
+	removeBuildings(planet, wantedBuildings, faction);
 	if (wantedBuildings.size() == 0 ) wantedBuildings = lowPriorityBuildings;
-	removeBuiltBuildings(planet, wantedBuildings);
+	removeBuildings(planet, wantedBuildings, faction);
 
 	if (wantedBuildings.size() != 0) {
 		int rnd = Random::randInt(0, wantedBuildings.size() - 1);
@@ -569,5 +569,14 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
 	else {
 		// All wanted buildings built
 		return true;
+	}
+}
+
+void EconomyAI::researchRandomTech(Faction* faction) {
+	std::vector<Tech> unresearched = faction->getUnresearchedTechs();
+	if (unresearched.size() > 0) {
+		std::string type = unresearched[Random::randInt(0, unresearched.size() - 1)].getType();
+		faction->setResearchingTech(type, true);
+		AI_DEBUG_PRINT("Started researching " << type);
 	}
 }

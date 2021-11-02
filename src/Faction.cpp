@@ -552,6 +552,10 @@ void Faction::onResearchFinish(const Tech& tech) {
 			if (type != "") addColonyBuilding(type);
 		}
 	}
+
+	DEBUG_PRINT(getName() << " completed research " << tech.getName());
+
+	if (m_aiEnabled) m_ai.onResearchComplete(this);
 }
 
 float Faction::getResourceCount(const std::string& type) const {
@@ -578,4 +582,19 @@ bool Faction::hasResearchedTech(const std::string& type) const {
 
 int Faction::getScienceLabMax(Star* star) const {
 	return star->getPlanets().size() / 3;
+}
+
+std::vector<Tech> Faction::getUnresearchedTechs() {
+	std::vector<Tech> techs;
+	for (Tech& tech : m_techs) {
+		if (!tech.isResearched()) techs.push_back(tech);
+	}
+	return techs;
+}
+
+bool Faction::hasColonyBuilding(const std::string& type) const {
+	for (const std::string& buildingType : m_availableColonyBuildings) {
+		if (type == buildingType) return true;
+	}
+	return false;
 }

@@ -53,6 +53,7 @@ public:
 	bool canSubtractResources(const std::unordered_map<std::string, float>& resources);
 	bool hasWeapon(const std::string& type);
 	bool hasResearchedTech(const std::string& type) const;
+	bool hasColonyBuilding(const std::string& type) const;
 	
 	const Tech* getTech(const std::string& type) const;
 
@@ -75,6 +76,7 @@ public:
 	std::vector<Planet*> getOwnedPlanets() const;
 	std::vector<Star*> getUnderAttackStars();
 	const std::vector<Tech>& getTechs() { return m_techs; }
+	std::vector<Tech> getUnresearchedTechs();
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();

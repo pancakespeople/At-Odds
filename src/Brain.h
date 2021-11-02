@@ -76,6 +76,7 @@ public:
 	};
 	
 	virtual void update(Faction* faction, Brain* brain) override;
+	void researchRandomTech(Faction* faction);
 
 private:
 	friend class boost::serialization::access;
@@ -97,6 +98,7 @@ public:
 	void onStart(Faction* faction);
 	void onSpawn(Faction* faction);
 	void onStarTakeover(Faction* faction, Star* star);
+	void onResearchComplete(Faction* faction);
 	void controlFaction(Faction* faction);
 	void controlSubAI(Faction* faction, SubAI* subAI);
 	void reinitAfterLoad(Constellation* constellation);
