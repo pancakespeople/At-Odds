@@ -40,7 +40,7 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 	if (faction != nullptr) {
 		if (m_spaceTruckTimer == 0) {
 			spawnSpaceTruck(currentStar, faction, planet);
-			m_spaceTruckTimer = 500;
+			m_spaceTruckTimer = 4000 * planet->getColony().getBuildingEffects("truckSpawnTimeMultiplier");
 		}
 		else {
 			m_spaceTruckTimer--;

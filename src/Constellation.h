@@ -28,6 +28,7 @@ public:
 	void generateNeutralSquatters();
 	void moveShipToPurgatory(std::unique_ptr<Spaceship>& ship);
 	void reinitAfterLoad();
+	void onStart();
 
 	std::vector<std::unique_ptr<Star>>& getStars() { return m_stars; }
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }

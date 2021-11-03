@@ -37,6 +37,7 @@ public:
 	void setResearchingTech(const std::string& type, bool research);
 	void onResearchFinish(const Tech& tech);
 	void addResearchPoints(float points) { m_currentResearchPoints += points; }
+	void onStart();
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);

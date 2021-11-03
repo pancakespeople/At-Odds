@@ -18,9 +18,10 @@ invasionEffectiveness = 0.5
 
 [SPACEPORT]
 name = "Spaceport"
-description = "No one is gonna visit your planet if the only place to land their spaceship is a tiny island in the middle of a scorching sea of lava. Come on now, build a real spaceport!"
+description = "No one is gonna visit your planet if the only place to land their spaceship is a tiny island in the middle of a scorching sea of lava. The only way to fix that problem is to build a spaceport!"
 baseCost = [["COMMON_ORE", 35]]
-flags = ["ENABLE_SPACEBUS"]
+truckSpawnTimeMultiplier = 0.5
+busSpawnTimeMultiplier = 0.5
 
 [MINING]
 name = "Mine"

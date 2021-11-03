@@ -400,3 +400,9 @@ Spaceship* Constellation::getShipByID(uint32_t id) {
     }
     return nullptr;
 }
+
+void Constellation::onStart() {
+    for (Faction& faction : m_factions) {
+        faction.onStart();
+    }
+}

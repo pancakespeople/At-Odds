@@ -46,7 +46,7 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 	
 	float timeToResearch = getTimeToResearch(faction);
 
-	if (timeToResearch == -1.0f) text += "Time to research: Infinity (You have no research point production)";
+	if (timeToResearch == -1.0f) text += "Time to research: Infinity (You have no research point production)\n";
 	else text += "Time to research: " + Util::secondsToTime(timeToResearch) + "\n";
 	
 	auto buildings = getUnlockedBuildings();

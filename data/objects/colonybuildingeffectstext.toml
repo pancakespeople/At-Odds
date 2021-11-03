@@ -1,0 +1,14 @@
+
+[MODIFIERS]
+habitabilityModifier = "Habitability"
+exploitationModifier = "Resource extraction rate"
+bombardDamageMultiplier = "Orbital bombardment damage"
+invasionEffectiveness = "Invasion effectiveness"
+consumerGoodsMultiplier = "Consumer goods production"
+armamentsMultiplier = "Armaments production"
+truckSpawnTimeMultiplier = "Space Truck time to spawn"
+busSpawnTimeMultiplier = "Space Bus time to spawn"
+
+[FLAGS]
+ENABLE_ORBITAL_CANNON = "Enables orbital cannon"
+ENABLE_EXPLORATION_EVENTS = "Enables exploration events"

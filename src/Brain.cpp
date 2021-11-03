@@ -20,7 +20,14 @@ bool SubAI::sleepCheck() {
 }
 
 void Brain::onStart(Faction* faction) {
-	
+	for (Planet& planet : faction->getCapital()->getPlanets()) {
+		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
+			planet.getColony().setFactionColonyLegality(faction->getID(), true);
+			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
+		}
+	}
+
+	economyAI.researchRandomTech(faction);
 }
 
 void Brain::controlFaction(Faction* faction) {
@@ -79,17 +86,6 @@ void Brain::onStarTakeover(Faction* faction, Star* star) {
 			}
 		}
 	}
-}
-
-void Brain::onSpawn(Faction* faction) {
-	for (Planet& planet : faction->getCapital()->getPlanets()) {
-		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
-			planet.getColony().setFactionColonyLegality(faction->getID(), true);
-			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
-		}
-	}
-
-	economyAI.researchRandomTech(faction);
 }
 
 void Brain::reinitAfterLoad(Constellation* constellation) {

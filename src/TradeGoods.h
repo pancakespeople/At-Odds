@@ -65,5 +65,5 @@ private:
 	std::map<std::string, SupplyDemand> m_items;
 	std::map<std::string, SupplyDemand> m_oldItems;
 	int m_ticksUntilUpdate = 1000;
-	int m_spaceTruckTimer = 500;
+	int m_spaceTruckTimer = 4000;
 };

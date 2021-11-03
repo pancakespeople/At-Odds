@@ -14,8 +14,6 @@ Faction::Faction(int id) {
 	m_color = sf::Color(rand() % 255, rand() % 255, rand() % 255);
 
 	m_id = id;
-
-	if (m_aiEnabled) m_ai.onStart(this);
 }
 
 void Faction::spawnAtRandomStar(Constellation* constellation) {
@@ -84,10 +82,6 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	constructor.chassis = Spaceship::DesignerChassis("CONSTRUCTOR");
 	addShipDesign(constructor);
 
-	/*const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
-	for (auto& val : table) {
-		addColonyBuilding(val.first);
-	}*/
 	addColonyBuilding("INFRASTRUCTURE");
 	addColonyBuilding("SPACEPORT");
 
@@ -98,8 +92,6 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	m_techs.push_back(Tech("MANUFACTURING"));
 	m_techs.push_back(Tech("MINING"));
 	m_techs.push_back(Tech("MILITARY"));
-
-	if (m_aiEnabled) m_ai.onSpawn(this);
 }
 
 void Faction::addOwnedSystem(Star* star) {
@@ -597,4 +589,8 @@ bool Faction::hasColonyBuilding(const std::string& type) const {
 		if (type == buildingType) return true;
 	}
 	return false;
+}
+
+void Faction::onStart() {
+	if (m_aiEnabled) m_ai.onStart(this);
 }

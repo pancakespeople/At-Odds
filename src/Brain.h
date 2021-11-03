@@ -96,7 +96,6 @@ private:
 class Brain {
 public:
 	void onStart(Faction* faction);
-	void onSpawn(Faction* faction);
 	void onStarTakeover(Faction* faction, Star* star);
 	void onResearchComplete(Faction* faction);
 	void controlFaction(Faction* faction);

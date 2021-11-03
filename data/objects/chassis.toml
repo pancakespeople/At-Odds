@@ -15,7 +15,7 @@ buildTimeMultiplier = 1.25
 type = "CONSTRUCTION_SHIP"
 name = "Constructor"
 maxWeaponCapacity = 0.0
-cost = [["COMMON_ORE", 33.0]]
+cost = [["COMMON_ORE", 10.0]]
 
 [CRUISER]
 type = "CRUISER"

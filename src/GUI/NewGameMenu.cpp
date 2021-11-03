@@ -126,6 +126,8 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 		m_playerGui.open(gui, state, constellation, true);
 	}
 
+	constellation.onStart();
+
 	for (auto& func : m_gameStartCallbacks) {
 		func();
 	}

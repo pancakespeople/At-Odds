@@ -33,20 +33,18 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	// Spawn space bus
 	if (m_population >= 1000 && faction != nullptr) {
 		if (m_ticksToNextBus == 0) {
-			if (hasBuildingFlag("ENABLE_SPACEBUS")) {
-				Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
+			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
 
-				if (targetStar->getPlanets().size() > 0) {
-					Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_allegiance, targetStar, planet);
+			if (targetStar->getPlanets().size() > 0) {
+				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_allegiance, targetStar, planet);
 
-					if (targetPlanet != nullptr) {
-						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
+				if (targetPlanet != nullptr) {
+					planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
 
-						m_population -= 1000;
-					}
+					m_population -= 1000;
 				}
 			}
-			m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population);
+			m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population) * getBuildingEffects("busSpawnTimeMultiplier");
 		}
 		else {
 			m_ticksToNextBus--;
@@ -285,48 +283,18 @@ std::string ColonyBuilding::getEffectsString() const {
 	std::stringstream effects;
 	effects << std::fixed << std::setprecision(1);
 
-	float habitabilityModifier = getEffect("habitabilityModifier", 1.0f);
-	float exploitationModifier = getEffect("exploitationModifier", 1.0f);
-	float bombardDamageMultiplier = getEffect("bombardDamageMultiplier", 1.0f);
-	float invasionEffectiveness = getEffect("invasionEffectiveness", 1.0f);
-	float cgMultiplier = getEffect("consumerGoodsMultiplier", 1.0f);
-	float armsMultiplier = getEffect("armamentsMultiplier", 1.0f);
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildingeffectstext.toml");
 
-	if (habitabilityModifier != 1.0f) {
-		effects << "Habitability: " << Util::percentify(habitabilityModifier, 1) << "\n";
-	}
-
-	if (exploitationModifier != 1.0f) {
-		effects << "Resource extraction rate: " << Util::percentify(exploitationModifier, 1) << "\n";
-	}
-
-	if (bombardDamageMultiplier != 1.0f) {
-		effects << "Orbital bombardment damage: " << Util::percentify(bombardDamageMultiplier, 1) << "\n";
-	}
-
-	if (invasionEffectiveness != 1.0f) {
-		effects << "Invasion effectiveness: " << Util::percentify(invasionEffectiveness, 1) << "\n";
-	}
-
-	if (cgMultiplier != 1.0f) {
-		effects << "Consumer goods production: " << Util::percentify(cgMultiplier, 1) << "\n";
-	}
-
-	if (armsMultiplier != 1.0f) {
-		effects << "Armaments production: " << Util::percentify(armsMultiplier, 1) << "\n";
-	}
-
-	for (std::string& flag : getFlags()) {
-		if (flag == "ENABLE_SPACEBUS") {
-			effects << "Enables space bus" << "\n";
+	for (auto& item : *table["MODIFIERS"].as_table()) {
+		float modifier = getEffect(item.first, 1.0f);
+		if (modifier != 1.0f) {
+			effects << item.second.value_or("") << ": " << Util::percentify(modifier, 1) << "\n";
 		}
-		
-		if (flag == "ENABLE_ORBITAL_CANNON") {
-			effects << "Enables orbital cannon" << "\n";
-		}
+	}
 
-		if (flag == "ENABLE_EXPLORATION") {
-			effects << "Enables exploration events" << "\n";
+	for (auto& item : *table["FLAGS"].as_table()) {
+		if (hasFlag(item.first)) {
+			effects << item.second.value_or("") << "\n";
 		}
 	}
 
