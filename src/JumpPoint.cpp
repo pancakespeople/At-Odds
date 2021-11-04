@@ -5,6 +5,7 @@
 #include "Hyperlane.h"
 #include "Star.h"
 #include "Debug.h"
+#include "Random.h"
 
 JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing) {
 	m_sprite.setTexture(TextureCache::getTexture("data/art/swirly2.png"));
@@ -72,6 +73,9 @@ void JumpPoint::jumpShipThrough(Spaceship* ship, Star* currentStar) {
 	
 	Star* nextStar = getConnectedOtherStar();
 	currentStar->moveShipToOtherStar(ship, nextStar);
+
+	sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
+	ship->addVelocity(randVel);
 }
 
 bool JumpPoint::isPointInRadius(sf::Vector2f point) {

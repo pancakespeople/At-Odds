@@ -338,5 +338,5 @@ float Colony::getResourceExploitation(const std::string& type, const Planet& pla
 		}
 	}
 
-	return (m_population * planet.getResourceAbundance(type) / 1000.0f) * multiplier;
+	return (m_population * planet.getResourceAbundance(type) / 250.0f) * multiplier;
 }

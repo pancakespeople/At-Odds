@@ -27,7 +27,7 @@ void Brain::onStart(Faction* faction) {
 		}
 	}
 
-	economyAI.researchRandomTech(faction);
+	onResearchComplete(faction);
 }
 
 void Brain::controlFaction(Faction* faction) {
@@ -93,7 +93,9 @@ void Brain::reinitAfterLoad(Constellation* constellation) {
 }
 
 void Brain::onResearchComplete(Faction* faction) {
-	economyAI.researchRandomTech(faction);
+	if (economyAI.researchStarterTechs(faction)) {
+		economyAI.researchRandomTech(faction);
+	}
 }
 
 void MilitaryAI::update(Faction* faction, Brain* brain) {
@@ -574,5 +576,27 @@ void EconomyAI::researchRandomTech(Faction* faction) {
 		std::string type = unresearched[Random::randInt(0, unresearched.size() - 1)].getType();
 		faction->setResearchingTech(type, true);
 		AI_DEBUG_PRINT("Started researching " << type);
+	}
+}
+
+bool EconomyAI::researchStarterTechs(Faction* faction) {
+	std::vector<std::string> starterTechs = {
+		"FARMING",
+		"MINING"
+	};
+	
+	for (int i = 0; i < starterTechs.size(); i++) {
+		if (faction->hasResearchedTech(starterTechs[i])) {
+			starterTechs.erase(starterTechs.begin() + i);
+			i--;
+		}
+	}
+
+	if (starterTechs.size() == 0) return true;
+	else {
+		std::string tech = starterTechs[Random::randInt(0, starterTechs.size() - 1)];
+		faction->setResearchingTech(tech, true);
+		AI_DEBUG_PRINT("Started researching " << tech);
+		return false;
 	}
 }

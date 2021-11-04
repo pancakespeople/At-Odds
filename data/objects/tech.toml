@@ -8,7 +8,7 @@ unlockRandomWeapon = true
 [FARMING]
 name = "Biodomes"
 description = "Even in the harshest conditions, we can find a way to grow crops."
-researchRequired = 1500.0
+researchRequired = 500.0
 addsColonyBuildings = ["FARMING"]
 
 [DEFENSE]
@@ -32,7 +32,7 @@ addsColonyBuildings = ["CONSUMER_GOODS_FACTORIES", "WEAPONS_FACTORIES"]
 [MINING]
 name = "Mining Methods"
 description = "Specialized technology can allow us to more efficiently extract ores from our planets."
-researchRequired = 1500.0
+researchRequired = 500.0
 addsColonyBuildings = ["MINING"]
 
 [MILITARY]

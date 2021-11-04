@@ -105,7 +105,7 @@ public:
 	void attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent = false);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 	void clearOrders() { m_orders.clear(); }
-	void attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings);
+	void attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings, bool urgent = false);
 	void fireAt(Spaceship* target, int weaponIdx);
 	void disable() { m_disabled = true; }
 	void enable() { m_disabled = false; }
@@ -124,6 +124,9 @@ public:
 	bool isHeavy() const { return m_mass >= 125000; }
 	bool isPlanetAttackShip() const;
 	bool hasFighterAI() const { return m_fighterAI; }
+	
+	// Returns false if there is nothing to attack
+	bool attack(Star* star, bool urgent = false);
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);

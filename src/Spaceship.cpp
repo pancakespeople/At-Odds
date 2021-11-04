@@ -189,16 +189,7 @@ void Spaceship::update(Star* currentStar) {
 	else if (m_weapons.size() > 0) {
 		// Attack enemies in system
 		
-		Spaceship* enemy = findClosestEnemyCombatShip(currentStar);
-		if (enemy != nullptr) {
-			addOrder(AttackOrder(enemy, m_fighterAI));
-		}
-		else {
-			std::vector<Building*> enemyBuildings = findEnemyBuildings();
-			if (enemyBuildings.size() > 0) {
-				attackRandomEnemyBuilding(enemyBuildings);
-			}
-		}
+		attack(currentStar);
 	}
 	
 	m_velocity.x *= 0.99f;
@@ -427,7 +418,7 @@ std::vector<Building*> Spaceship::findEnemyBuildings() {
 	return buildings;
 }
 
-void Spaceship::attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings) {
+void Spaceship::attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings, bool urgent) {
 	int randIndex;
 	if (enemyBuildings.size() > 1) {
 		randIndex = Random::randInt(0, enemyBuildings.size() - 1);
@@ -436,7 +427,8 @@ void Spaceship::attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings
 		randIndex = 0;
 	}
 	if (enemyBuildings.size() > 0) {
-		addOrder(AttackOrder(enemyBuildings[randIndex]));
+		if (urgent) addOrderFront(AttackOrder(enemyBuildings[randIndex]));
+		else addOrder(AttackOrder(enemyBuildings[randIndex]));
 	}
 }
 
@@ -530,4 +522,23 @@ Spaceship* Spaceship::findClosestEnemyCombatShip(Star* star) {
 		}
 	}
 	return closest;
+}
+
+bool Spaceship::attack(Star* star, bool urgent) {
+	Spaceship* enemy = findClosestEnemyCombatShip(star);
+	if (enemy != nullptr) {
+		if (urgent) addOrderFront(AttackOrder(enemy, m_fighterAI));
+		else addOrder(AttackOrder(enemy, m_fighterAI));
+		return true;
+	}
+	else {
+		std::vector<Building*> enemyBuildings = findEnemyBuildings();
+		if (enemyBuildings.size() > 0) {
+			attackRandomEnemyBuilding(enemyBuildings, urgent);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

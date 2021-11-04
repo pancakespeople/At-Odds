@@ -77,6 +77,7 @@ public:
 	
 	virtual void update(Faction* faction, Brain* brain) override;
 	void researchRandomTech(Faction* faction);
+	bool researchStarterTechs(Faction* faction);
 
 private:
 	friend class boost::serialization::access;
