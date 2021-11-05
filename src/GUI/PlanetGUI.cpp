@@ -397,12 +397,12 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 		m_sideWindow->add(resourceListBox, "resourceListBox");
 	};
 
-	if (planet.getColony().getPopulation() > 0) {
+	/*if (planet.getColony().getPopulation() > 0) {
 		openColonyInfo();
 	}
 	else {
 		openResourceInfo();
-	}
+	}*/
 
 	resourceInfoButton->onClick(openResourceInfo);
 	m_planetInfoPanel->add(resourceInfoButton);
