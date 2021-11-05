@@ -24,6 +24,7 @@ void Star::init(const sf::Vector2f& pos) {
 	//m_localViewSprite.setTexture(TextureCache::getTexture("data/art/star1.png"));
 	m_localViewRect.setPosition(pos);
 	m_localViewRect.setSize(sf::Vector2f(2048.0f, 2048.0f));
+	m_localViewRect.setScale(16.0, 16.0);
 	m_localViewRect.setOrigin(sf::Vector2f(2048.0f/2.0f, 2048/2.0f));
 	m_quadtree = Quadtree(getLocalViewCenter(), 1000000);
 	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
@@ -35,7 +36,7 @@ void Star::init(const sf::Vector2f& pos) {
 		m_temperature = Random::randFloat(3000.0f, 5000.0f);
 
 		if (Random::randInt(0, 4) == 4) {
-			m_localViewRect.setScale(4.0f, 4.0f);
+			m_localViewRect.setScale(32.0f, 32.0f);
 		}
 	}
 	else if (starColorRand <= 6) { // 4, 5, 6
@@ -53,7 +54,7 @@ void Star::init(const sf::Vector2f& pos) {
 		else {
 			// White star
 			m_localViewRect.setFillColor(sf::Color::White);
-			m_localViewRect.setScale(sf::Vector2f(0.5f, 0.5f));
+			m_localViewRect.setScale(sf::Vector2f(8.0f, 8.0f));
 			m_temperature = Random::randFloat(15000.0f, 35000.0f);
 		}
 	}

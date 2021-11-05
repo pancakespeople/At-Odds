@@ -135,5 +135,6 @@
     <None Include="data\shaders\blackholeshader.shader" />
     <None Include="data\objects\tech.toml" />
     <None Include="data\objects\colonybuildingeffectstext.toml" />
+    <None Include="data\shaders\lavaplanetshader.shader" />
   </ItemGroup>
 </Project>

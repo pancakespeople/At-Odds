@@ -45,6 +45,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_borderShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/bordershader.shader");
 	m_terraPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/terraplanetshader.shader");
 	m_blackHoleShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/blackholeshader.shader");
+	m_lavaPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/lavaplanetshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -131,6 +132,16 @@ void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::Rectang
 	m_terraPlanetShader.setUniform("sun", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
 
 	window.draw(shape, &m_terraPlanetShader);
+}
+
+void EffectsEmitter::drawLavaPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed) {
+	m_lavaPlanetShader.setUniform("size", sf::Glsl::Vec2(planet->getRadius(), planet->getRadius()));
+	m_lavaPlanetShader.setUniform("seed", seed);
+
+	float angle = Math::angleBetween(planet->getPos(), star->getLocalViewCenter()) * Math::toRadians;
+	m_lavaPlanetShader.setUniform("sun", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
+
+	window.draw(shape, &m_lavaPlanetShader);
 }
 
 void EffectsEmitter::drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color) {

@@ -60,6 +60,9 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star,
 	case PLANET_TYPE::TERRA:
 		emitter.drawTerraPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
 		break;
+	case PLANET_TYPE::LAVA:
+		emitter.drawLavaPlanet(window, m_shape, this, star, m_shaderRandomSeed);
+		break;
 	default:
 		emitter.drawPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
 	}
