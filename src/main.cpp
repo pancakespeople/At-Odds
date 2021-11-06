@@ -23,6 +23,7 @@
 #include "GUI/DebugConsole.h"
 #include "GUI/MainMenu.h"
 #include "NameGenerator.h"
+#include "MusicPlayer.h"
 
 int main(int argc, const char* argv[])
 {
@@ -72,6 +73,7 @@ int main(int argc, const char* argv[])
     EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
     SaveLoader saveLoader;
     DebugConsole console;
+    MusicPlayer musicPlayer;
 
     mainMenu.open(gui, constellation, state);
     
@@ -140,6 +142,7 @@ int main(int argc, const char* argv[])
         state.getCamera().update(window, gui.getFocusedLeaf());
 
         Sounds::updateSounds(state.getPlayer(), state.getCamera());
+        musicPlayer.playMusic();
 
         if (state.getState() == GameState::State::WORLD_VIEW) {
             constellation.draw(window, emitter, starShader, state.getPlayer().getFaction());
