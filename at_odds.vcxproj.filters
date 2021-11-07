@@ -70,6 +70,7 @@
     <ClInclude Include="src\GUI\ResourceGUI.h" />
     <ClInclude Include="src\GUI\BuildGUI.h" />
     <ClInclude Include="src\MusicPlayer.h" />
+    <ClInclude Include="src\GUI\OptionsMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -127,6 +128,7 @@
     <ClCompile Include="src\GUI\ResourceGUI.cpp" />
     <ClCompile Include="src\GUI\BuildGUI.cpp" />
     <ClCompile Include="src\MusicPlayer.cpp" />
+    <ClCompile Include="src\GUI\OptionsMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />

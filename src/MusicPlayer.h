@@ -8,6 +8,7 @@ public:
 	MusicPlayer();
 
 	void playMusic();
+	void setVolume(float volume) { m_music.setVolume(volume); }
 
 private:
 	std::vector<std::string> m_musicFilePathsUnplayed;

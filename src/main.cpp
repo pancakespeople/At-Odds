@@ -24,6 +24,7 @@
 #include "GUI/MainMenu.h"
 #include "NameGenerator.h"
 #include "MusicPlayer.h"
+#include "GUI/OptionsMenu.h"
 
 int main(int argc, const char* argv[])
 {
@@ -93,7 +94,7 @@ int main(int argc, const char* argv[])
     Sounds::loadSound("data/sound/woosh1.ogg");
     Sounds::loadSound("data/sound/pew1.wav");
 
-    optionsMenu.updateGameSettings(window, background, gui, emitter, true);
+    optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, true);
 
     sf::Clock fpsClock;
     float fps = 60;
@@ -119,7 +120,7 @@ int main(int argc, const char* argv[])
             playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, state.getLocalViewStar(), playerGui.mainPanel);
         }
 
-        optionsMenu.updateGameSettings(window, background, gui, emitter);
+        optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer);
         if (state.getState() != GameState::State::MAIN_MENU) {
             // Update GUIs
             playerGui.update(window, state, constellation, gui);

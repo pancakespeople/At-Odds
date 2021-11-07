@@ -73,7 +73,7 @@ void main()
     //col += vec3(0.1 / abs(uv.y)) * smoothstep(2.0, -5.0, dist) * vec3(0.7, 0.9, 1.0);
 
     // Glow
-    col += vec3(smoothstep(1.1, 0.0, dist / 4.0) / 3.0) * color.xyz * smoothstep(0.15, 0.16, dist);
+    col += vec3(smoothstep(1.0, 0.0, dist / 4.0) / 3.0) * color.xyz * smoothstep(0.15, 0.16, dist);
 
     // Stars
     //col += vec3(0.01 / length(gv));

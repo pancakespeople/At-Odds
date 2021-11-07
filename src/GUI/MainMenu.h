@@ -1,6 +1,7 @@
 #pragma once
 #include "../GUI.h"
 #include "NewGameMenu.h"
+#include "OptionsMenu.h"
 
 class MainMenu {
 public:
