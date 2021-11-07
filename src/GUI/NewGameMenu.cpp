@@ -113,14 +113,25 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	state.clearCallbacks();
 	Sounds::clearSounds();
 
+	std::vector<Faction>& factions = constellation.getFactions();
+
 	if (!spectate) {
-		constellation.getFactions()[0].controlByPlayer(state.getPlayer());
-		state.changeToLocalView(constellation.getFactions()[0].getCapital());
-		state.getCamera().setPos(constellation.getFactions()[0].getCapital()->getLocalViewCenter());
+		factions[0].controlByPlayer(state.getPlayer());
+
+		for (int i = 1; i < factions.size(); i++) {
+			factions[i].setAIEnabled(true);
+		}
+
+		state.changeToLocalView(factions[0].getCapital());
+		state.getCamera().setPos(factions[0].getCapital()->getLocalViewCenter());
 
 		m_playerGui.open(gui, state, constellation, false);
 	}
 	else {
+		for (int i = 0; i < factions.size(); i++) {
+			factions[i].setAIEnabled(true);
+		}
+
 		state.changeToWorldView();
 
 		m_playerGui.open(gui, state, constellation, true);

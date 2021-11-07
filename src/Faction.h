@@ -38,6 +38,7 @@ public:
 	void onResearchFinish(const Tech& tech);
 	void addResearchPoints(float points) { m_currentResearchPoints += points; }
 	void onStart();
+	void setAIEnabled(bool enabled) { m_aiEnabled = enabled; }
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -170,7 +171,7 @@ private:
 	
 	int m_id = 0;
 	
-	bool m_aiEnabled = true;
+	bool m_aiEnabled = false;
 	bool m_dead = false;
 
 	float m_currentResearchPoints = 0.0f;
