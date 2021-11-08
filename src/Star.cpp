@@ -74,27 +74,16 @@ void Star::draw(sf::RenderWindow& window) {
 	window.draw(m_shape);
 }
 
-void Star::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction) {
+void Star::draw(sf::RenderWindow& window, sf::Shader& shader, Constellation& constellation, Player& player) {
 	sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
 	sf::Vector2f mouseCoordsWorld = window.mapPixelToCoords(mouseCoords);
 
-	if (m_multipleFactionsPresent && isDiscovered(playerFaction)) {
+	if (m_multipleFactionsPresent && isDiscovered(player.getFaction())) {
 		shader.setUniform("flashing", true);
 	}
 	else {
 		shader.setUniform("flashing", false);
 	}
-
-	// Floaty name text
-	sf::Text nameText;
-	nameText.setFont(Fonts::getFont("data/fonts/consola.ttf"));
-	nameText.setString(m_name);
-	nameText.setOrigin(nameText.getLocalBounds().width / 2.0f, 0.0f);
-	
-	sf::Vector2f pos = getCenter();
-	pos.y -= getRadius();
-
-	nameText.setPosition(pos);
 
 	if (isInShapeRadius(mouseCoordsWorld.x, mouseCoordsWorld.y)) {
 		sf::Vector2f oldPos = getPos();
@@ -109,7 +98,7 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction)
 
 		shader.setUniform("radius", getRadius());
 
-		if (!isDiscovered(playerFaction)) {
+		if (!isDiscovered(player.getFaction())) {
 			drawUndiscovered(window, shader);
 		}
 		else {
@@ -122,7 +111,7 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction)
 		shader.setUniform("radius", getRadius());
 	}
 	else {
-		if (!isDiscovered(playerFaction)) {
+		if (!isDiscovered(player.getFaction())) {
 			drawUndiscovered(window, shader);
 		}
 		else {
@@ -130,7 +119,36 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction)
 		}
 	}
 
-	window.draw(nameText);
+	// Floaty name text
+	sf::Text text;
+	text.setFont(Fonts::getFont("data/fonts/consola.ttf"));
+	text.setString(m_name);
+	text.setOrigin(text.getLocalBounds().width / 2.0f, 0.0f);
+
+	sf::Vector2f pos = getCenter();
+	pos.y -= getRadius();
+
+	text.setPosition(pos);
+	
+	window.draw(text);
+
+	// Draw number of ships text
+	if (isDiscovered(player.getFaction())) {
+		if (!player.hasFogOfWar() || numAllies(player.getFaction()) > 0) {
+			std::unordered_map<int, int> numFactionShips = countNumFactionShips();
+			for (auto& ships : numFactionShips) {
+				Faction* faction = constellation.getFaction(ships.first);
+				if (faction != nullptr) {
+					pos.y -= text.getCharacterSize();
+					text.setPosition(pos);
+					text.setString(std::to_string(ships.second));
+					text.setOrigin(text.getLocalBounds().width / 2.0f, 0.0f);
+					text.setFillColor(faction->getColor());
+					window.draw(text);
+				}
+			}
+		}
+	}
 }
 
 void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time) {
@@ -713,4 +731,17 @@ std::vector<Building*> Star::getBuildingsOfType(const std::string& type) {
 		}
 	}
 	return buildings;
+}
+
+std::unordered_map<int, int> Star::countNumFactionShips() {
+	std::unordered_map<int, int> numFactionShips;
+	for (auto& ship : m_localShips) {
+		if (numFactionShips.count(ship->getAllegiance()) > 0) {
+			numFactionShips[ship->getAllegiance()]++;
+		}
+		else {
+			numFactionShips[ship->getAllegiance()] = 1;
+		}
+	}
+	return numFactionShips;
 }

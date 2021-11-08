@@ -25,7 +25,7 @@ public:
 	Star(sf::Vector2f pos);
 
 	void draw(sf::RenderWindow& window);
-	void draw(sf::RenderWindow& window, sf::Shader& shader, int playerFaction);
+	void draw(sf::RenderWindow& window, sf::Shader& shader, Constellation& constellation, Player& player);
 	void drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time);
 	void setPos(sf::Vector2f pos);
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
@@ -86,6 +86,9 @@ public:
 	std::vector<Planet*> getEnemyPlanets(int allegiance);
 	std::vector<Spaceship*> getEnemyCombatShips(int allegiance);
 	std::vector<Building*> getBuildingsOfType(const std::string& type);
+	
+	// First = allegiance, second = num ships
+	std::unordered_map<int, int> countNumFactionShips();
 
 	std::string getName() const { return m_name; }
 

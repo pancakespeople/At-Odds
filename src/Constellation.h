@@ -20,7 +20,7 @@ public:
 	void generateModernMegaRobustFinalConstellation(int sizeWidth, int sizeHeight, int numStars);
 	void generateRandomHyperlanes(int size, int numStars);
 	void generateRobustHyperlanes(int size, int numStars);
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, int playerFaction);
+	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, Player& player);
 	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state);
 	void setupStars();
 	void generateFactions(int numFactions);

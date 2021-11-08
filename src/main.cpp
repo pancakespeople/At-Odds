@@ -146,7 +146,7 @@ int main(int argc, const char* argv[])
         musicPlayer.playMusic();
 
         if (state.getState() == GameState::State::WORLD_VIEW) {
-            constellation.draw(window, emitter, starShader, state.getPlayer().getFaction());
+            constellation.draw(window, emitter, starShader, state.getPlayer());
         }
         else if (state.getState() == GameState::State::LOCAL_VIEW) {
             state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
