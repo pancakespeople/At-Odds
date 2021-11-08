@@ -1,7 +1,0 @@
-[audio]
-music = 50.0
-volume = 100.0
-
-[video]
-fullscreen = false
-resolution = '1366x768'

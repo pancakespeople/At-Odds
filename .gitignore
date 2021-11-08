@@ -352,3 +352,5 @@ MigrationBackup/
 *.sln
 *.vcxproj
 data/saves/*.save
+
+data/config/config.toml

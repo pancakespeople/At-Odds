@@ -577,7 +577,7 @@ void Star::generatePlanets() {
 		float angle = Random::randFloat(0.0f, 2.0f * Math::pi);
 		sf::Vector2f pos(latestRadius * std::cos(angle) + getLocalViewCenter().x, latestRadius * std::sin(angle) + getLocalViewCenter().y);
 
-		Planet planet(pos, getLocalViewCenter(), m_temperature * m_localViewRect.getScale().x);
+		Planet planet(pos, getLocalViewCenter(), m_temperature);
 		m_planets.push_back(planet);
 
 		latestRadius += Random::randFloat(500.0f, 20000.0f);
