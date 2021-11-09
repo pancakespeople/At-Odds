@@ -13,6 +13,7 @@ struct PlayerGUI {
 
 	void open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator);
 	void update(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui);
+	void onEvent(const sf::Event& ev, tgui::Gui& gui);
 	
 	// This update function is to be called in sync with game time (wont be called when game is paused)
 	void updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui);
@@ -31,4 +32,7 @@ struct PlayerGUI {
 	MinimapGUI minimapGUI;
 	ColonyListGUI colonyListGUI;
 	TechGUI techGUI;
+
+private:
+	bool m_visible = true;
 };

@@ -118,6 +118,7 @@ int main(int argc, const char* argv[])
             console.onEvent(event, gui, state);
             playerGui.timescaleGUI.onEvent(event, gui);
             playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, state.getLocalViewStar(), playerGui.mainPanel);
+            playerGui.onEvent(event, gui);
         }
 
         optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer);

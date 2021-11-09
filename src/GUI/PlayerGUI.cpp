@@ -45,3 +45,18 @@ void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constella
 	timescaleGUI.restartUpdateClock();
 	planetGUI.update(state);
 }
+
+void PlayerGUI::onEvent(const sf::Event& ev, tgui::Gui& gui) {
+	if (ev.type == sf::Event::KeyReleased) {
+		if (ev.key.code == sf::Keyboard::F2) {
+			if (m_visible) {
+				gui.setRelativeViewport(tgui::FloatRect(0.0f, 0.0f, 0.0f, 0.0f));
+				m_visible = false;
+			}
+			else {
+				gui.setRelativeViewport(tgui::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
+				m_visible = true;
+			}
+		}
+	}
+}
