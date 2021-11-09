@@ -15,18 +15,24 @@ void SaveLoader::saveGame(std::string filePath, const Constellation& constellati
 	archive << background.getNebulaSeed();
 }
 
-void SaveLoader::loadGame(std::string filePath, Constellation& constellation, GameState& state, Background& background) {
+bool SaveLoader::loadGame(std::string filePath, Constellation& constellation, GameState& state, Background& background) {
 	std::ifstream file(filePath, std::ios::binary);
-	boost::archive::binary_iarchive archive(file);
+	
+	if (file.is_open()) {
+		boost::archive::binary_iarchive archive(file);
 
-	archive >> constellation;
-	archive >> Identifiable::numObjects;
-	archive >> state;
+		archive >> constellation;
+		archive >> Identifiable::numObjects;
+		archive >> state;
 
-	float nebulaSeed;
-	archive >> nebulaSeed;
+		float nebulaSeed;
+		archive >> nebulaSeed;
 
-	background.setNebulaSeed(nebulaSeed);
-	constellation.reinitAfterLoad();
-	state.reinitAfterLoad(constellation);
+		background.setNebulaSeed(nebulaSeed);
+		constellation.reinitAfterLoad();
+		state.reinitAfterLoad(constellation);
+
+		return true;
+	}
+	return false;
 }

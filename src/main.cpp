@@ -169,23 +169,29 @@ int main(int argc, const char* argv[])
         fpsClock.restart();
 
         if (state.getMetaState() == GameState::MetaState::LOAD_GAME) {
-            saveLoader.loadGame("data/saves/game.save", constellation, state, background);
-            mainMenu.close(gui);
-            
-            state.resetMetaState();
-            state.clearCallbacks();
-            Sounds::clearSounds();
-            gui.removeAllWidgets();
+            if (saveLoader.loadGame("data/saves/game.save", constellation, state, background)) {
+                mainMenu.close(gui);
 
-            if (player.getFaction() != -1) {
-                playerGui.open(gui, state, constellation, false);
-                playerGui.helpWindow.close();
+                state.resetMetaState();
+                state.clearCallbacks();
+                Sounds::clearSounds();
+                gui.removeAllWidgets();
+
+                if (player.getFaction() != -1) {
+                    playerGui.open(gui, state, constellation, false);
+                    playerGui.helpWindow.close();
+                }
+                else {
+                    playerGui.open(gui, state, constellation, true);
+                }
+
+                DEBUG_PRINT("Loaded game");
             }
             else {
-                playerGui.open(gui, state, constellation, true);
-            }
+                state.resetMetaState();
 
-            DEBUG_PRINT("Loaded game");
+                DEBUG_PRINT("Failed to load game");
+            }
         }
     }
 

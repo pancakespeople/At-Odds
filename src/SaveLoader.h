@@ -193,5 +193,5 @@ public:
 	SaveLoader() {}
 
 	void saveGame(std::string filePath, const Constellation& constellation, const GameState& state, const Background& background);
-	void loadGame(std::string filePath, Constellation& constellation, GameState& state, Background& background);
+	bool loadGame(std::string filePath, Constellation& constellation, GameState& state, Background& background);
 };
