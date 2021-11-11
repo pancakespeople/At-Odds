@@ -144,7 +144,7 @@ void Constellation::generateModernMegaRobustFinalConstellation(int sizeWidth, in
     DEBUG_PRINT("Modern mega robust final constellation generation finished with " << m_stars.size() << " stars");
 }
 
-void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::Shader& shader, Player& player) {
+void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player) {
 
     // Draw empire borders
     for (Faction& faction : m_factions) {
@@ -163,7 +163,7 @@ void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, sf::
         h->draw(window, player.getFaction());
     }
     for (std::unique_ptr<Star>& s : m_stars) {
-        s->draw(window, shader, *this, player);
+        s->draw(window, emitter, *this, player);
     }
 }
 

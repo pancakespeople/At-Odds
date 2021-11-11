@@ -74,15 +74,13 @@ void Star::draw(sf::RenderWindow& window) {
 	window.draw(m_shape);
 }
 
-void Star::draw(sf::RenderWindow& window, sf::Shader& shader, Constellation& constellation, Player& player) {
+void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation& constellation, Player& player) {
 	sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
 	sf::Vector2f mouseCoordsWorld = window.mapPixelToCoords(mouseCoords);
+	bool flashing = false;
 
 	if (m_multipleFactionsPresent && isDiscovered(player.getFaction())) {
-		shader.setUniform("flashing", true);
-	}
-	else {
-		shader.setUniform("flashing", false);
+		flashing = true;
 	}
 
 	if (isInShapeRadius(mouseCoordsWorld.x, mouseCoordsWorld.y)) {
@@ -96,26 +94,22 @@ void Star::draw(sf::RenderWindow& window, sf::Shader& shader, Constellation& con
 		
 		setPos(newPos);
 
-		shader.setUniform("radius", getRadius());
-
 		if (!isDiscovered(player.getFaction())) {
-			drawUndiscovered(window, shader);
+			drawUndiscovered(window, emitter);
 		}
 		else {
-			window.draw(m_shape, &shader);
+			emitter.drawMapStar(window, m_shape, flashing);
 		}
 		
 		setRadius(getRadius() / 2);
 		setPos(oldPos);
-
-		shader.setUniform("radius", getRadius());
 	}
 	else {
 		if (!isDiscovered(player.getFaction())) {
-			drawUndiscovered(window, shader);
+			drawUndiscovered(window, emitter);
 		}
 		else {
-			window.draw(m_shape, &shader);
+			emitter.drawMapStar(window, m_shape, flashing);
 		}
 	}
 
@@ -623,11 +617,11 @@ Planet& Star::getMostHabitablePlanet() {
 	return m_planets[index];
 }
 
-void Star::drawUndiscovered(sf::RenderWindow& window, sf::Shader& shader) {
+void Star::drawUndiscovered(sf::RenderWindow& window, EffectsEmitter& emitter) {
 	sf::Color oldColor;
 	oldColor = m_shape.getFillColor();
 	m_shape.setFillColor(sf::Color(166, 166, 166));
-	window.draw(m_shape, &shader);
+	emitter.drawMapStar(window, m_shape, false);
 	m_shape.setFillColor(oldColor);
 }
 

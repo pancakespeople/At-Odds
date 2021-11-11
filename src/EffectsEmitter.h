@@ -14,6 +14,7 @@ public:
 	void drawLine(sf::RenderWindow& window, const sf::Vector2f& begin, const sf::Vector2f& end, const sf::Color& color);
 	void drawWithDistanceShader(sf::RenderWindow& window, sf::Shape& s, const sf::Vector2i& pos);
 	void drawFogOfWar(sf::RenderWindow& window);
+	void drawMapStar(sf::RenderWindow& window, const sf::CircleShape& shape, bool flashing);
 	void drawLocalStar(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed);
 	void drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
 	void drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
@@ -47,6 +48,7 @@ private:
 	sf::Shader m_terraPlanetShader;
 	sf::Shader m_blackHoleShader;
 	sf::Shader m_lavaPlanetShader;
+	sf::Shader m_mapStarShader;
 
 	sf::Vector2i m_resolution;
 

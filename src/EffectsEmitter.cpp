@@ -46,6 +46,9 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_terraPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/terraplanetshader.shader");
 	m_blackHoleShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/blackholeshader.shader");
 	m_lavaPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/lavaplanetshader.shader");
+
+	m_mapStarShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/fragmentshader3.shader");
+	m_mapStarShader.setUniform("resolution", sf::Glsl::Vec2(resolution.x, resolution.y));
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -188,6 +191,7 @@ void EffectsEmitter::drawSelection(sf::RenderWindow& window, const sf::Rectangle
 
 void EffectsEmitter::updateTime(float time) {
 	m_selectionShader.setUniform("time", time);
+	m_mapStarShader.setUniform("time", time);
 }
 
 void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color) {
@@ -204,4 +208,10 @@ void EffectsEmitter::drawBlackHole(sf::RenderWindow& window, const sf::Rectangle
 	m_blackHoleShader.setUniform("size", starRect.getSize());
 
 	window.draw(starRect, &m_blackHoleShader);
+}
+
+void EffectsEmitter::drawMapStar(sf::RenderWindow& window, const sf::CircleShape& shape, bool flashing) {
+	m_mapStarShader.setUniform("radius", shape.getRadius());
+	m_mapStarShader.setUniform("flashing", flashing);
+	window.draw(shape, &m_mapStarShader);
 }

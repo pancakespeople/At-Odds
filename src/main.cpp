@@ -84,16 +84,9 @@ int main(int argc, const char* argv[])
         DEBUG_PRINT("Randomized nebula seed");
     });
 
-    sf::Shader starShader;
-    starShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/fragmentshader3.shader");
-    starShader.setUniform("resolution", sf::Glsl::Vec2(resolution.x, resolution.y));
-
     float time = 0;
     int ticks = 0;
     
-    Sounds::loadSound("data/sound/woosh1.ogg");
-    Sounds::loadSound("data/sound/pew1.wav");
-
     optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, state.getCamera(), true);
 
     sf::Clock fpsClock;
@@ -134,7 +127,6 @@ int main(int argc, const char* argv[])
             playerGui.updateSync(window, state, constellation, gui);
         }
 
-        starShader.setUniform("time", time);
         emitter.updateTime(time);
 
         window.clear();
@@ -147,7 +139,7 @@ int main(int argc, const char* argv[])
         musicPlayer.playMusic();
 
         if (state.getState() == GameState::State::WORLD_VIEW) {
-            constellation.draw(window, emitter, starShader, state.getPlayer());
+            constellation.draw(window, emitter, state.getPlayer());
         }
         else if (state.getState() == GameState::State::LOCAL_VIEW) {
             state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
