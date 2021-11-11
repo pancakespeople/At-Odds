@@ -67,6 +67,7 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	m_playerCanGiveOrders = playerCanGiveOrders;
 	m_civilian = civilian;
 	m_stationary = stationary;
+	m_name = table[type]["name"].value_or("");
 
 	if (spriteTakesFactionColor) m_sprite.setColor(color);
 

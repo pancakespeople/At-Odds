@@ -153,6 +153,8 @@ public:
 	std::vector<Spaceship*> findEnemyCombatShips();
 	Spaceship* findClosestEnemyCombatShip(Star* star);
 
+	std::string getName() { return m_name; }
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -172,6 +174,7 @@ private:
 		archive & m_fighterAI;
 		archive & m_diesSilently;
 		archive & m_civilian;
+		archive & m_name;
 	}
 
 	Spaceship() {}
@@ -182,6 +185,8 @@ private:
 	
 	std::deque<std::unique_ptr<Order>> m_orders;
 	
+	std::string m_name;
+
 	float m_mass = 100.0; // kg
 	float m_maxAcceleration = 10.0;
 	float m_percentJumpDriveCharged = 0.0f;

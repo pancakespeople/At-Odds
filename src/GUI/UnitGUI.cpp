@@ -12,15 +12,26 @@ UnitGUI::UnitGUI() {
 
 void UnitGUI::open(tgui::Gui& gui) {
 	m_panel = tgui::Panel::create();
-	m_panel->setPosition("90%", "90%");
-	m_panel->setSize("7.5%", "5%");
+	m_panel->setPosition("85%", "70%");
+	m_panel->setSize("15%", "5%");
 	m_panel->getRenderer()->setOpacity(0.75f);
 	m_panel->setVisible(false);
 	gui.add(m_panel);
 
 	m_label = tgui::Label::create();
-	m_label->setSize("100%", "100%");
-	m_label->setText(std::to_string(m_selectedShips.size()) + "x " + "selected");
+	m_label->setOrigin(0.5f, 0.5f);
+	m_label->setPosition("50%", "50%");
+	m_label->setAutoSize(true);
+
+	std::string text;
+	if (m_selectedShips.size() > 1) {
+		text = std::to_string(m_selectedShips.size()) + "x " + "selected";
+	}
+	else if (m_selectedShips.size() == 1) {
+		text = "Selected: " + m_selectedShips.front()->getName();
+	}
+
+	m_label->setText(text);
 	m_panel->add(m_label);
 }
 
@@ -149,7 +160,16 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 
 	if (m_selectedShips.size() > 0) {
 		m_panel->setVisible(true);
-		m_label->setText(std::to_string(m_selectedShips.size()) + "x " + "selected");
+		
+		std::string text;
+		if (m_selectedShips.size() > 1) {
+			text = std::to_string(m_selectedShips.size()) + "x " + "selected";
+		}
+		else if (m_selectedShips.size() == 1) {
+			text = "Selected: " + m_selectedShips.front()->getName();
+		}
+
+		m_label->setText(text);
 	}
 	else {
 		m_panel->setVisible(false);

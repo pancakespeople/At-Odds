@@ -1,11 +1,13 @@
 
 [FRIGATE_1]
+name = "Frigate"
 texturePath = "data/art/SpaceShipNormal.png"
 mass = 50000.0
 health = 100.0
 colliderRadius = 100.0
 
 [DESTROYER_1]
+name = "Destroyer"
 texturePath = "data/art/bgspeedship.png"
 scale = 2.0
 mass = 100000.0
@@ -13,6 +15,7 @@ health = 250.0
 colliderRadius = 125.0
 
 [CLAIM_SHIP]
+name = "Flag"
 texturePath = "data/art/flag.png"
 spriteTakesFactionColor = true
 mass = 1000.0
@@ -22,6 +25,7 @@ canReceiveOrders = false
 stationary = true
 
 [CONSTRUCTION_SHIP]
+name = "Constructor"
 texturePath = "data/art/constructionship.png"
 mass = 150000.0
 health = 50.0
@@ -29,6 +33,7 @@ colliderRadius = 350.0
 constructionSpeed = 10.0
 
 [FIGHTER]
+name = "Fighter"
 texturePath = "data/art/SpaceShipNormal.png"
 scale = 0.5
 mass = 25000.0
@@ -38,6 +43,7 @@ fighterAI = true
 playerCanGiveOrders = false
 
 [SPACE_BUS]
+name = "Space Bus"
 texturePath = "data/art/spacebus.png"
 mass = 75000.0
 health = 50.0
@@ -46,6 +52,7 @@ civilian = true
 playerCanGiveOrders = false
 
 [SPACE_TRUCK]
+name = "Space Truck"
 texturePath = "data/art/spacetruck.png"
 mass = 75000.0
 health = 50.0
@@ -54,6 +61,7 @@ civilian = true
 playerCanGiveOrders = false
 
 [BIG_SPACE_TRUCK]
+name = "Big Space Truck"
 texturePath = "data/art/spacetruck.png"
 mass = 100000.0
 scale = 2.0
@@ -63,6 +71,7 @@ civilian = true
 playerCanGiveOrders = false
 
 [FREIGHTER]
+name = "Freighter"
 texturePath = "data/art/spacetruck.png"
 mass = 250000.0
 scale = 6.0
@@ -72,6 +81,7 @@ civilian = true
 playerCanGiveOrders = false
 
 [CRUISER]
+name = "Cruiser"
 texturePath = "data/art/medfighter.png"
 scale = 6.0
 mass = 250000
