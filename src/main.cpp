@@ -94,7 +94,7 @@ int main(int argc, const char* argv[])
     Sounds::loadSound("data/sound/woosh1.ogg");
     Sounds::loadSound("data/sound/pew1.wav");
 
-    optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, true);
+    optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, state.getCamera(), true);
 
     sf::Clock fpsClock;
     float fps = 60;
@@ -121,7 +121,7 @@ int main(int argc, const char* argv[])
             playerGui.onEvent(event, gui);
         }
 
-        optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer);
+        optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, state.getCamera());
         if (state.getState() != GameState::State::MAIN_MENU) {
             // Update GUIs
             playerGui.update(window, state, constellation, gui);

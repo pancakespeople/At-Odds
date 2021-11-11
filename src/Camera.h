@@ -14,6 +14,7 @@ public:
 	void zoom(float factor);
 	void setAbsoluteZoom(float factor);
 	void resetZoom();
+	void setScreenSize(sf::Vector2f size);
 
 	sf::FloatRect getInitialRect() const { return m_initialRect; }
 	sf::Vector2f getInitialWidthHeight() const { return sf::Vector2f(m_initialRect.width, m_initialRect.height); }

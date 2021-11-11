@@ -16,7 +16,7 @@ public:
 
 	void open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
 	void close(tgui::Gui& gui);
-	void updateGameSettings(sf::RenderWindow& window, Background& background, tgui::Gui& gui, EffectsEmitter& emitter, MusicPlayer& musicPlayer, bool force = false);
+	void updateGameSettings(sf::RenderWindow& window, Background& background, tgui::Gui& gui, EffectsEmitter& emitter, MusicPlayer& musicPlayer, Camera& camera, bool force = false);
 
 	sf::Vector2i getResolution();
 

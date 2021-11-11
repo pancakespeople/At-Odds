@@ -77,3 +77,7 @@ void Camera::setAbsoluteZoom(float factor) {
 	resetZoom();
 	zoom(factor);
 }
+
+void Camera::setScreenSize(sf::Vector2f size) {
+	m_view.setSize(size * m_camZoomFactor);
+}

@@ -157,7 +157,7 @@ void OptionsMenu::changeSettings(tgui::Gui& gui) {
 	m_updateGameSettings = true;
 }
 
-void OptionsMenu::updateGameSettings(sf::RenderWindow& window, Background& background, tgui::Gui& gui, EffectsEmitter& emitter, MusicPlayer& musicPlayer, bool force) {
+void OptionsMenu::updateGameSettings(sf::RenderWindow& window, Background& background, tgui::Gui& gui, EffectsEmitter& emitter, MusicPlayer& musicPlayer, Camera& camera, bool force) {
 	if (m_updateGameSettings || force) {
 		if (m_displayChanged) {
 			sf::Vector2i res = getResolution();
@@ -178,6 +178,8 @@ void OptionsMenu::updateGameSettings(sf::RenderWindow& window, Background& backg
 			background.setNebulaSeed(nebulaSeed);
 
 			emitter.init(res);
+
+			camera.setScreenSize(sf::Vector2f(res.x, res.y));
 
 			m_displayChanged = false;
 		}
