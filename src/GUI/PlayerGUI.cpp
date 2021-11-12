@@ -39,6 +39,7 @@ void PlayerGUI::update(sf::RenderWindow& window, GameState& state, Constellation
 	announcerGUI.update(gui, playerFaction);
 	buildingGUI.update();
 	techGUI.update(playerFaction);
+	minimapGUI.update(window, state);
 }
 
 void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {

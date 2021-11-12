@@ -68,13 +68,6 @@ private:
 	tgui::Label::Ptr m_label;
 };
 
-class MinimapGUI {
-public:
-	MinimapGUI() {}
-
-	void draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance);
-};
-
 class ColonyListGUI {
 public:
 	ColonyListGUI() {}

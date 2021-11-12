@@ -7,6 +7,7 @@
 #include "TechGUI.h"
 #include "ResourceGUI.h"
 #include "BuildGUI.h"
+#include "MinimapGUI.h"
 
 struct PlayerGUI {
 	PlayerGUI() {}

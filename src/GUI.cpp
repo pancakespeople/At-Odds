@@ -168,61 +168,6 @@ void AnnouncerGUI::update(tgui::Gui& gui, Faction* playerFaction) {
 	}
 }
 
-void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance) {
-	if (currentStar != nullptr) {
-		sf::View oldView = window.getView();
-		float ratio = oldView.getSize().x / oldView.getSize().y;
-
-		sf::View view;
-		view.setCenter(currentStar->getPos());
-		view.setSize(50000.0f * ratio, 50000.0f);
-		view.setViewport(sf::FloatRect(0.8f, 0.75f, 0.25f, 0.25f));
-
-		window.setView(view);
-
-		sf::CircleShape dot;
-		dot.setFillColor(sf::Color(125, 125, 125, 125));
-		dot.setPosition(currentStar->getPos());
-		dot.setRadius(25000.0f);
-		dot.setOrigin(25000.0f, 25000.0f);
-		window.draw(dot);
-
-		dot.setFillColor(sf::Color::Yellow);
-		dot.setPosition(currentStar->getPos());
-		dot.setRadius(500.0f);
-		dot.setOrigin(500.0f, 500.0f);
-
-		window.draw(dot);
-
-		if ((currentStar->isDrawingHidden() && currentStar->isDiscovered(playerAllegiance)) || playerAllegiance == -1) {
-			for (auto& ship : currentStar->getSpaceships()) {
-				dot.setPosition(ship->getPos());
-				if (playerAllegiance == -1) {
-					dot.setFillColor(ship->getFactionColor());
-				}
-				else {
-					if (ship->getAllegiance() == playerAllegiance) {
-						dot.setFillColor(sf::Color::Blue);
-					}
-					else {
-						dot.setFillColor(sf::Color::Red);
-					}
-				}
-
-				window.draw(dot);
-			}
-		}
-
-		for (auto& jumpPoint : currentStar->getJumpPoints()) {
-			dot.setPosition(jumpPoint.getPos());
-			dot.setFillColor(sf::Color(128, 0, 128));
-			window.draw(dot);
-		}
-
-		window.setView(oldView);
-	}
-}
-
 void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation) {
 	m_icon.open(gui, tgui::Layout2d("0%", "75%"), tgui::Layout2d("2.5%", "5%"), "data/art/colonyicon.png");
 	
