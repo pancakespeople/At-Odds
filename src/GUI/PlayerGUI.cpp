@@ -34,12 +34,12 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 void PlayerGUI::update(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
 	Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
 
-	unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel);
+	unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel, minimapGUI);
 	resourceGUI.update(constellation, state.getPlayer(), state.getLocalViewStar());
 	announcerGUI.update(gui, playerFaction);
 	buildingGUI.update();
 	techGUI.update(playerFaction);
-	minimapGUI.update(window, state);
+	minimapGUI.update(window, state, unitGUI);
 }
 
 void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {

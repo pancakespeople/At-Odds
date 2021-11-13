@@ -5,6 +5,7 @@
 #include "../Math.h"
 #include "../Pathfinder.h"
 #include "../Hyperlane.h"
+#include "MinimapGUI.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -35,7 +36,7 @@ void UnitGUI::open(tgui::Gui& gui) {
 	m_panel->add(m_label);
 }
 
-void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel) {
+void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
 	static bool mouseHeld = false;
 
 	// Remove dead or unselected stuff
@@ -48,6 +49,13 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 	if (!mouseHeld && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		sf::Vector2i mpos = sf::Mouse::getPosition(window);
 		m_mouseSelectionBox.setPosition(sf::Vector2f(mpos.x, mpos.y));
+		
+		if (minimap.isMouseInMinimap(window)) {
+			m_selecting = false;
+			return;
+		}
+		
+		m_selecting = true;
 	}
 
 	// Mouse held - Create selection area
@@ -57,6 +65,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 
 		sf::Vector2f newSize = sf::Vector2f(mpos.x - selectionOriginPos.x, mpos.y - selectionOriginPos.y);
 		m_mouseSelectionBox.setSize(newSize);
+		m_selecting = true;
 	}
 
 	// Mouse let go - select ships
@@ -65,6 +74,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 		&& std::abs(m_mouseSelectionBox.getSize().y) >= 5.0f) {
 		bool allowConstructionShips = true;
 
+		m_selecting = false;
 		m_selectedShips.clear();
 
 		if (currentStar != nullptr) {

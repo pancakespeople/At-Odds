@@ -2,8 +2,9 @@
 #include "MinimapGUI.h"
 #include "../Star.h"
 #include "../Math.h"
+#include "UnitGUI.h"
 
-void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance) {
+void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance, Camera& camera) {
 	if (currentStar != nullptr) {
 		sf::View oldView = window.getView();
 		float ratio = oldView.getSize().x / oldView.getSize().y; // 1.7786
@@ -20,6 +21,15 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 		m_minimapCircle.setOrigin(25000.0f, 25000.0f);
 		m_minimapCircle.setPointCount(100);
 		window.draw(m_minimapCircle);
+
+		sf::FloatRect cameraRect = camera.getRect();
+		std::array<sf::Vertex, 5> rectVertices;
+		rectVertices[0] = sf::Vertex{ sf::Vector2f(cameraRect.left, cameraRect.top) };
+		rectVertices[1] = sf::Vertex{ sf::Vector2f(cameraRect.left + cameraRect.width, cameraRect.top) };
+		rectVertices[2] = sf::Vertex{ sf::Vector2f(cameraRect.left + cameraRect.width, cameraRect.top + cameraRect.height) };
+		rectVertices[3] = sf::Vertex{ sf::Vector2f(cameraRect.left, cameraRect.top + cameraRect.height) };
+		rectVertices[4] = sf::Vertex{ sf::Vector2f(cameraRect.left, cameraRect.top) };
+		window.draw(&rectVertices[0], rectVertices.size(), sf::PrimitiveType::LineStrip);
 
 		sf::CircleShape dot;
 		dot.setFillColor(sf::Color::Yellow);
@@ -60,8 +70,8 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 	}
 }
 
-void MinimapGUI::update(const sf::RenderWindow& window, GameState& state) {
-	if (state.getState() == GameState::State::LOCAL_VIEW) {
+void MinimapGUI::update(const sf::RenderWindow& window, GameState& state, const UnitGUI& unitGUI) {
+	if (state.getState() == GameState::State::LOCAL_VIEW && !unitGUI.isSelecting()) {
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 			sf::Vector2i pos = sf::Mouse::getPosition(window);
 			sf::Vector2u windowSize = window.getSize();
@@ -75,4 +85,9 @@ void MinimapGUI::update(const sf::RenderWindow& window, GameState& state) {
 			}
 		}
 	}
+}
+
+bool MinimapGUI::isMouseInMinimap(const sf::RenderWindow& window) {
+	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+	return m_view.getViewport().contains(sf::Vector2f(static_cast<float>(mousePos.x) / window.getSize().x, static_cast<float>(mousePos.y) / window.getSize().y));
 }

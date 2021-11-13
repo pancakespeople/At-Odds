@@ -81,3 +81,12 @@ void Camera::setAbsoluteZoom(float factor) {
 void Camera::setScreenSize(sf::Vector2f size) {
 	m_view.setSize(size * m_camZoomFactor);
 }
+
+sf::FloatRect Camera::getRect() const {
+	sf::FloatRect rect;
+	rect.left = m_view.getCenter().x - m_view.getSize().x / 2.0f;
+	rect.top = m_view.getCenter().y - m_view.getSize().y / 2.0f;
+	rect.width = m_view.getSize().x;
+	rect.height = m_view.getSize().y;
+	return rect;
+}
