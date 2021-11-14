@@ -13,8 +13,8 @@ UnitGUI::UnitGUI() {
 
 void UnitGUI::open(tgui::Gui& gui) {
 	m_panel = tgui::Panel::create();
-	m_panel->setPosition("85%", "70%");
-	m_panel->setSize("15%", "5%");
+	m_panel->setPosition("60%", "55%");
+	m_panel->setSize("40%", "5%");
 	m_panel->getRenderer()->setOpacity(0.75f);
 	m_panel->setVisible(false);
 	gui.add(m_panel);
@@ -180,6 +180,20 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 		}
 
 		m_label->setText(text);
+
+		sf::FloatRect minimapViewport = minimap.getViewport();
+		sf::Vector2f pos = sf::Vector2f(minimapViewport.left, minimapViewport.top - 0.05f);
+		sf::Vector2f size = sf::Vector2f(minimapViewport.width, 0.05f);
+
+		if (m_panel->getPosition().x != pos.x * window.getSize().x || m_panel->getPosition().y != pos.y * window.getSize().y) {
+			tgui::String posLayoutX = std::to_string(pos.x * 100.0f) + "%";
+			tgui::String posLayoutY = std::to_string(pos.y * 100.0f) + "%";
+			tgui::String sizeLayoutX = std::to_string(size.x * 100.0f) + "%";
+			tgui::String sizeLayoutY = std::to_string(size.y * 100.0f) + "%";
+
+			m_panel->setPosition(posLayoutX, posLayoutY);
+			m_panel->setSize(sizeLayoutX, sizeLayoutY);
+		}
 	}
 	else {
 		m_panel->setVisible(false);

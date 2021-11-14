@@ -12,6 +12,8 @@ public:
 
 	bool isMouseInMinimap(const sf::RenderWindow& window);
 
+	sf::FloatRect getViewport() { return m_view.getViewport(); }
+
 private:
 	sf::CircleShape m_minimapCircle;
 	sf::View m_view;
