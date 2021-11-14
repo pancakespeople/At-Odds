@@ -7,18 +7,23 @@
 void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance, Camera& camera) {
 	if (currentStar != nullptr) {
 		sf::View oldView = window.getView();
-		float ratio = oldView.getSize().x / oldView.getSize().y; // 1.7786
+		float ratio = oldView.getSize().x / oldView.getSize().y;
+
+		float mapRadius = 50000.0f;
+		if (currentStar->getPlanets().size() > 0) {
+			mapRadius = Math::distance(currentStar->getPlanets().back().getPos(), currentStar->getLocalViewCenter()) * 2.0f + 100.0f;
+		}
 
 		m_view.setCenter(currentStar->getPos());
-		m_view.setSize(50000.0f, 50000.0f);
+		m_view.setSize(mapRadius, mapRadius);
 		m_view.setViewport(sf::FloatRect(1.0f - 0.4f / ratio, 0.6f, 0.4f / ratio, 0.4f));
 
 		window.setView(m_view);
 
 		m_minimapCircle.setFillColor(sf::Color(125, 125, 125, 125));
 		m_minimapCircle.setPosition(currentStar->getPos());
-		m_minimapCircle.setRadius(25000.0f);
-		m_minimapCircle.setOrigin(25000.0f, 25000.0f);
+		m_minimapCircle.setRadius(mapRadius / 2.0f);
+		m_minimapCircle.setOrigin(mapRadius / 2.0f, mapRadius / 2.0f);
 		m_minimapCircle.setPointCount(100);
 		window.draw(m_minimapCircle);
 
@@ -34,8 +39,8 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 		sf::CircleShape dot;
 		dot.setFillColor(sf::Color::Yellow);
 		dot.setPosition(currentStar->getPos());
-		dot.setRadius(500.0f);
-		dot.setOrigin(500.0f, 500.0f);
+		dot.setRadius(mapRadius / 100.0f);
+		dot.setOrigin(mapRadius / 100.0f, mapRadius / 100.0f);
 
 		window.draw(dot);
 
@@ -55,6 +60,44 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 						}
 					}
 
+					window.draw(dot);
+				}
+			}
+
+			for (Planet& planet : currentStar->getPlanets()) {
+				if (Math::distance(planet.getPos(), currentStar->getLocalViewCenter()) < m_minimapCircle.getRadius()) {
+					dot.setPosition(planet.getPos());
+					switch (planet.getType()) {
+					case Planet::PLANET_TYPE::TERRA:
+						dot.setFillColor(sf::Color(0, 255, 0));
+						break;
+					case Planet::PLANET_TYPE::BARREN:
+						dot.setFillColor(sf::Color(125, 125, 125));
+						break;
+					case Planet::PLANET_TYPE::DESERT:
+						dot.setFillColor(sf::Color(200, 150, 100));
+						break;
+					case Planet::PLANET_TYPE::GAS_GIANT:
+						dot.setFillColor(sf::Color(255, 125, 125));
+						break;
+					case Planet::PLANET_TYPE::ICE_GIANT:
+						dot.setFillColor(sf::Color::Blue);
+						break;
+					case Planet::PLANET_TYPE::LAVA:
+						dot.setFillColor(sf::Color(255, 200, 200));
+						break;
+					case Planet::PLANET_TYPE::OCEAN:
+						dot.setFillColor(sf::Color(125, 125, 255));
+						break;
+					case Planet::PLANET_TYPE::TOXIC:
+						dot.setFillColor(sf::Color::Yellow);
+						break;
+					case Planet::PLANET_TYPE::TUNDRA:
+						dot.setFillColor(sf::Color::White);
+						break;
+					default:
+						dot.setFillColor(sf::Color(255, 0, 255));
+					}
 					window.draw(dot);
 				}
 			}
