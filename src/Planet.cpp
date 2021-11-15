@@ -83,6 +83,8 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star,
 	for (Projectile& proj : m_bombardProjectiles) {
 		proj.draw(window);
 	}
+
+	if (m_rings) emitter.drawRings(window, getPos(), getRadius() * 8.0f, m_shaderRandomSeed);
 }
 
 void Planet::update(Star* currentStar, Faction* faction) {
@@ -154,6 +156,7 @@ void Planet::generateGasGiant(float baseTemperature) {
 	m_temperature = baseTemperature;
 
 	m_gasGiant = true;
+	if (Random::randFloat(0.0f, 1.0f) < 0.33f) m_rings = true;
 }
 
 void Planet::generateTerrestrial(float baseTemperature) {
@@ -269,6 +272,8 @@ void Planet::generateTerrestrial(float baseTemperature) {
 			m_type = PLANET_TYPE::DESERT;
 		}
 	}
+
+	if (Random::randFloat(0.0f, 1.0f) < 0.1f) m_rings = true;
 }
 
 std::string Planet::getTypeString() const {

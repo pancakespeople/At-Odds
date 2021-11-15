@@ -27,28 +27,30 @@ void EffectsEmitter::init(sf::Vector2i resolution) {
 }
 
 void EffectsEmitter::initShaders(sf::Vector2i resolution) {
-	m_distanceShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/distfragshader.shader");
+	m_distanceShader.loadFromFile(m_vertexShaderPath, "data/shaders/distfragshader.shader");
 	m_distanceShader.setUniform("resolution", sf::Glsl::Vec2(resolution.x, resolution.y));
 	
-	m_starLocalViewShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/starlocalview.shader");
+	m_starLocalViewShader.loadFromFile(m_vertexShaderPath, "data/shaders/starlocalview.shader");
 	m_starLocalViewShader.setUniform("size", sf::Glsl::Vec2(2048, 2048));
 
-	m_planetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/planetshader.shader");
+	m_planetShader.loadFromFile(m_vertexShaderPath, "data/shaders/planetshader.shader");
 	m_planetShader.setUniform("size", sf::Glsl::Vec2(2048, 2048));
 
-	m_glowShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/glow.shader");
+	m_glowShader.loadFromFile(m_vertexShaderPath, "data/shaders/glow.shader");
 
-	m_nebulaShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/nebulashader.shader");
+	m_nebulaShader.loadFromFile(m_vertexShaderPath, "data/shaders/nebulashader.shader");
 	m_nebulaShader.setUniform("size", sf::Glsl::Vec2(resolution.x, resolution.y));
 
-	m_selectionShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/selectionshader.shader");
-	m_borderShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/bordershader.shader");
-	m_terraPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/terraplanetshader.shader");
-	m_blackHoleShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/blackholeshader.shader");
-	m_lavaPlanetShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/lavaplanetshader.shader");
+	m_selectionShader.loadFromFile(m_vertexShaderPath, "data/shaders/selectionshader.shader");
+	m_borderShader.loadFromFile(m_vertexShaderPath, "data/shaders/bordershader.shader");
+	m_terraPlanetShader.loadFromFile(m_vertexShaderPath, "data/shaders/terraplanetshader.shader");
+	m_blackHoleShader.loadFromFile(m_vertexShaderPath, "data/shaders/blackholeshader.shader");
+	m_lavaPlanetShader.loadFromFile(m_vertexShaderPath, "data/shaders/lavaplanetshader.shader");
 
-	m_mapStarShader.loadFromFile("data/shaders/vertexshader.shader", "data/shaders/fragmentshader3.shader");
+	m_mapStarShader.loadFromFile(m_vertexShaderPath, "data/shaders/fragmentshader3.shader");
 	m_mapStarShader.setUniform("resolution", sf::Glsl::Vec2(resolution.x, resolution.y));
+
+	m_ringsShader.loadFromFile(m_vertexShaderPath, "data/shaders/ringsshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -192,6 +194,7 @@ void EffectsEmitter::drawSelection(sf::RenderWindow& window, const sf::Rectangle
 void EffectsEmitter::updateTime(float time) {
 	m_selectionShader.setUniform("time", time);
 	m_mapStarShader.setUniform("time", time);
+	m_ringsShader.setUniform("time", time);
 }
 
 void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color) {
@@ -214,4 +217,16 @@ void EffectsEmitter::drawMapStar(sf::RenderWindow& window, const sf::CircleShape
 	m_mapStarShader.setUniform("radius", shape.getRadius());
 	m_mapStarShader.setUniform("flashing", flashing);
 	window.draw(shape, &m_mapStarShader);
+}
+
+void EffectsEmitter::drawRings(sf::RenderWindow& window, sf::Vector2f pos, float radius, float seed) {
+	m_ringsShader.setUniform("seed", seed);
+	m_ringsShader.setUniform("size", sf::Glsl::Vec2(radius, radius));
+
+	sf::RectangleShape shape;
+	shape.setSize(sf::Vector2f(radius, radius));
+	shape.setOrigin(sf::Vector2f(radius / 2.0f, radius / 2.0f));
+	shape.setPosition(pos);
+
+	window.draw(shape, &m_ringsShader);
 }

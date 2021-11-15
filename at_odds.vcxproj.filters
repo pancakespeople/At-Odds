@@ -142,5 +142,6 @@
     <None Include="data\objects\tech.toml" />
     <None Include="data\objects\colonybuildingeffectstext.toml" />
     <None Include="data\shaders\lavaplanetshader.shader" />
+    <None Include="data\shaders\ringsshader.shader" />
   </ItemGroup>
 </Project>

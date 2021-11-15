@@ -25,6 +25,7 @@ public:
 	void drawSelection(sf::RenderWindow& window, const sf::RectangleShape& shape);
 	void drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color);
 	void drawBlackHole(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed);
+	void drawRings(sf::RenderWindow& window, sf::Vector2f pos, float radius, float seed);
 	void updateTime(float time);
 
 private:
@@ -49,9 +50,12 @@ private:
 	sf::Shader m_blackHoleShader;
 	sf::Shader m_lavaPlanetShader;
 	sf::Shader m_mapStarShader;
+	sf::Shader m_ringsShader;
 
 	sf::Vector2i m_resolution;
 
 	sf::RenderTexture m_renderTexture;
+
+	inline static const std::string m_vertexShaderPath = "data/shaders/vertexshader.shader";
 };
 

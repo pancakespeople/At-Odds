@@ -92,6 +92,7 @@ private:
 		archive & m_bombardProjectiles;
 		archive & m_events;
 		archive & m_timeSinceCreaton;
+		archive & m_rings;
 	}
 	
 	Planet() {}
@@ -105,6 +106,7 @@ private:
 	float m_timeSinceCreaton = 0.0f; // Seconds
 	
 	bool m_gasGiant = false;
+	bool m_rings = false;
 
 	Orbit m_orbit;
 	PLANET_TYPE m_type = PLANET_TYPE::UNKNOWN;
