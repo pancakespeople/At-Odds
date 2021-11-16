@@ -133,6 +133,7 @@ public:
 	float getSpeed();
 	float getConstructionSpeed() const { return m_constructionSpeed; }
 	float getMass() const { return m_mass; }
+	float getFacingAngle() const { return m_facingAngle; }
 
 	int numOrders() { return m_orders.size(); }
 

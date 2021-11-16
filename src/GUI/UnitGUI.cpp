@@ -12,6 +12,8 @@ UnitGUI::UnitGUI() {
 }
 
 void UnitGUI::open(tgui::Gui& gui) {
+	m_selectedShips.clear();
+
 	m_panel = tgui::Panel::create();
 	m_panel->setPosition("60%", "55%");
 	m_panel->setSize("40%", "5%");

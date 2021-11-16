@@ -45,15 +45,21 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 		window.draw(dot);
 
 		if ((currentStar->isDrawingHidden() && currentStar->isDiscovered(playerAllegiance)) || playerAllegiance == -1) {
+			
+			// Ships
+			dot.setPointCount(3);
+
 			for (auto& ship : currentStar->getSpaceships()) {
 				if (Math::distance(ship->getPos(), currentStar->getLocalViewCenter()) < m_minimapCircle.getRadius()) {
 					dot.setPosition(ship->getPos());
+					dot.setRotation(-ship->getFacingAngle() + 90.0f);
+
 					if (playerAllegiance == -1) {
 						dot.setFillColor(ship->getFactionColor());
 					}
 					else {
 						if (ship->getAllegiance() == playerAllegiance) {
-							dot.setFillColor(sf::Color::Blue);
+							dot.setFillColor(sf::Color::Green);
 						}
 						else {
 							dot.setFillColor(sf::Color::Red);
@@ -64,9 +70,14 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 				}
 			}
 
+			// Planets
+			dot.setPointCount(30);
+			dot.setRotation(0.0f);
+
 			for (Planet& planet : currentStar->getPlanets()) {
 				if (Math::distance(planet.getPos(), currentStar->getLocalViewCenter()) < m_minimapCircle.getRadius()) {
 					dot.setPosition(planet.getPos());
+
 					switch (planet.getType()) {
 					case Planet::PLANET_TYPE::TERRA:
 						dot.setFillColor(sf::Color(0, 255, 0));
@@ -102,10 +113,12 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 				}
 			}
 		}
+		
+		// Jump points
+		dot.setFillColor(sf::Color(128, 0, 128));
 
 		for (auto& jumpPoint : currentStar->getJumpPoints()) {
 			dot.setPosition(jumpPoint.getPos());
-			dot.setFillColor(sf::Color(128, 0, 128));
 			window.draw(dot);
 		}
 
