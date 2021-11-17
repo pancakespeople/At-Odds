@@ -44,6 +44,10 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 
 		window.draw(dot);
 
+		//sf::RectangleShape rect;
+		//rect.setSize(sf::Vector2f(mapRadius / 100.0f, mapRadius / 100.0f));
+		//rect.setOrigin(mapRadius / 200.0f, mapRadius / 200.0f);
+
 		if ((currentStar->isDrawingHidden() && currentStar->isDiscovered(playerAllegiance)) || playerAllegiance == -1) {
 			
 			// Ships
@@ -59,6 +63,30 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 					}
 					else {
 						if (ship->getAllegiance() == playerAllegiance) {
+							dot.setFillColor(sf::Color::Green);
+						}
+						else {
+							dot.setFillColor(sf::Color::Red);
+						}
+					}
+
+					window.draw(dot);
+				}
+			}
+
+			// Buildings
+			dot.setPointCount(4);
+			dot.setRotation(45.0f);
+
+			for (auto& building : currentStar->getBuildings()) {
+				if (Math::distance(building->getPos(), currentStar->getLocalViewCenter()) < m_minimapCircle.getRadius()) {
+					dot.setPosition(building->getPos());
+
+					if (playerAllegiance == -1) {
+						dot.setFillColor(building->getFactionColor());
+					}
+					else {
+						if (building->getAllegiance() == playerAllegiance) {
 							dot.setFillColor(sf::Color::Green);
 						}
 						else {
