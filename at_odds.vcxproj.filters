@@ -72,6 +72,7 @@
     <ClInclude Include="src\MusicPlayer.h" />
     <ClInclude Include="src\GUI\OptionsMenu.h" />
     <ClInclude Include="src\GUI\MinimapGUI.h" />
+    <ClInclude Include="src\AsteroidBelt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -143,5 +144,6 @@
     <None Include="data\objects\colonybuildingeffectstext.toml" />
     <None Include="data\shaders\lavaplanetshader.shader" />
     <None Include="data\shaders\ringsshader.shader" />
+    <None Include="data\shaders\asteroidbeltshader.shader" />
   </ItemGroup>
 </Project>

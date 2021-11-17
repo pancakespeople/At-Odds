@@ -12,6 +12,7 @@
 #include "Derelict.h"
 #include "Identifiable.h"
 #include "Quadtree.h"
+#include "AsteroidBelt.h"
 
 class Hyperlane;
 class Faction;
@@ -47,6 +48,7 @@ public:
 	void generateDerelicts();
 	void reinitAfterLoad(Constellation* constellation);
 	void setName(const std::string& name) { m_name = name; }
+	void generateAsteroidBelts();
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
@@ -126,6 +128,7 @@ private:
 		archive & m_factionsDiscovered;
 		archive & m_name;
 		archive & m_blackHole;
+		archive & m_asteroidBelts;
 	}
 	
 	void handleCollisions();
@@ -150,6 +153,7 @@ private:
 	std::vector<Animation> m_localViewAnimations;	
 	std::vector<Planet> m_planets;
 	std::vector<Derelict> m_derelicts;
+	std::vector<AsteroidBelt> m_asteroidBelts;
 	std::unordered_set<int> m_factionsDiscovered = {-1};
 
 	bool m_localViewActive = false;

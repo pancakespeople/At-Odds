@@ -68,6 +68,7 @@ void Star::init(const sf::Vector2f& pos) {
 
 	generatePlanets();
 	generateDerelicts();
+	generateAsteroidBelts();
 }
 
 void Star::draw(sf::RenderWindow& window) {
@@ -162,8 +163,6 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		j.draw(window, emitter);
 	}
 
-	//emitter.drawHabitableZone(window, getLocalViewCenter(), m_temperature);
-
 	if (m_drawHidden) {
 
 		for (Planet& planet : m_planets) {
@@ -186,7 +185,10 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 			a.draw(window);
 		}
 		m_particleSystem.drawParticles(window);
-		//m_quadtree.draw(window);
+
+		for (AsteroidBelt& ab : m_asteroidBelts) {
+			emitter.drawAsteroidBelt(window, getLocalViewCenter(), ab.radius, ab.seed);
+		}
 	}
 }
 
@@ -738,4 +740,17 @@ std::unordered_map<int, int> Star::countNumFactionShips() {
 		}
 	}
 	return numFactionShips;
+}
+
+void Star::generateAsteroidBelts() {
+	int numBelts = Random::randInt(0, 3);
+	float radius = Random::randFloat(5000.0f, 100000.0f);
+	for (int i = 0; i < numBelts; i++) {
+		AsteroidBelt ab;
+		ab.radius = radius;
+		ab.seed = Random::randFloat(0.0f, 0.75f);
+		m_asteroidBelts.push_back(ab);
+		
+		radius += Random::randFloat(5000.0f, 100000.0f);
+	}
 }

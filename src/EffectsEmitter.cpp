@@ -51,6 +51,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_mapStarShader.setUniform("resolution", sf::Glsl::Vec2(resolution.x, resolution.y));
 
 	m_ringsShader.loadFromFile(m_vertexShaderPath, "data/shaders/ringsshader.shader");
+	m_asteroidBeltShader.loadFromFile(m_vertexShaderPath, "data/shaders/asteroidbeltshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -195,6 +196,7 @@ void EffectsEmitter::updateTime(float time) {
 	m_selectionShader.setUniform("time", time);
 	m_mapStarShader.setUniform("time", time);
 	m_ringsShader.setUniform("time", time);
+	m_asteroidBeltShader.setUniform("time", time);
 }
 
 void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color) {
@@ -229,4 +231,16 @@ void EffectsEmitter::drawRings(sf::RenderWindow& window, sf::Vector2f pos, float
 	shape.setPosition(pos);
 
 	window.draw(shape, &m_ringsShader);
+}
+
+void EffectsEmitter::drawAsteroidBelt(sf::RenderWindow& window, sf::Vector2f pos, float radius, float seed) {
+	m_asteroidBeltShader.setUniform("seed", seed);
+	m_asteroidBeltShader.setUniform("size", sf::Glsl::Vec2(radius, radius));
+
+	sf::RectangleShape shape;
+	shape.setSize(sf::Vector2f(radius, radius));
+	shape.setOrigin(sf::Vector2f(radius / 2.0f, radius / 2.0f));
+	shape.setPosition(pos);
+
+	window.draw(shape, &m_asteroidBeltShader);
 }
