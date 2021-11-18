@@ -39,7 +39,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 				// Update gui
 				if (m_shipWidgets != nullptr && build.second.selected) {
 					auto buildCheckbox = m_shipWidgets->get<tgui::CheckBox>("buildCheckbox");
-					buildCheckbox->setChecked(false);
+					if (buildCheckbox != nullptr) buildCheckbox->setChecked(false);
 				}
 
 				break;
@@ -174,6 +174,12 @@ std::string FactoryMod::getInfoString() {
 
 void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	window->setSize("50%", "50%");
+	window->onClose([this]() {
+		m_shipWidgets = nullptr;
+		for (auto& data : m_shipBuildData) {
+			data.second.selected = false;
+		}
+	});
 
 	auto designsListBox = tgui::ListBox::create();
 	designsListBox->setPosition("2.5%", "5%");
