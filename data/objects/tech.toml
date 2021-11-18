@@ -37,6 +37,12 @@ addsColonyBuildings = ["MINING"]
 
 [MILITARY]
 name = "Army Training"
-description = "The first commandment of space empires: Might makes right."
+description = "Might makes right."
 researchRequired = 1100.0
 addsColonyBuildings = ["MILITARY_BASE"]
+
+[CRUISER_HULL]
+name = "Cruiser Hull"
+description = "It's bigger and badder than destroyers, that's for sure."
+researchRequired = 2000.0
+addsChassis = ["CRUISER"]

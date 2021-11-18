@@ -68,7 +68,6 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	
 	addChassis(Spaceship::DesignerChassis("FRIGATE"));
 	addChassis(Spaceship::DesignerChassis("DESTROYER"));
-	addChassis(Spaceship::DesignerChassis("CRUISER"));
 	addChassis(Spaceship::DesignerChassis("CONSTRUCTOR"));
 
 	Spaceship::DesignerShip starterFrig;
@@ -92,6 +91,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	m_techs.push_back(Tech("MANUFACTURING"));
 	m_techs.push_back(Tech("MINING"));
 	m_techs.push_back(Tech("MILITARY"));
+	m_techs.push_back(Tech("CRUISER_HULL"));
 }
 
 void Faction::addOwnedSystem(Star* star) {
@@ -542,6 +542,15 @@ void Faction::onResearchFinish(const Tech& tech) {
 		for (auto& building : *colonyBuildings) {
 			std::string type = building.value_or("");
 			if (type != "") addColonyBuilding(type);
+		}
+	}
+
+	// Add hulls
+	auto* hulls = table[tech.getType()]["addsChassis"].as_array();
+	if (hulls != nullptr) {
+		for (auto& chassis : *hulls) {
+			std::string type = chassis.value_or("");
+			if (type != "") addChassis(Spaceship::DesignerChassis(type));
 		}
 	}
 
