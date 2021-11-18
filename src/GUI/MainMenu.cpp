@@ -1,5 +1,6 @@
 #include "gamepch.h"
 #include "MainMenu.h"
+#include "../Random.h"
 
 void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state) {
 	auto panel = tgui::Panel::create();
@@ -15,7 +16,7 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 	m_title->setText("At Odds");
 	m_title->setTextSize(250);
 	m_title->getRenderer()->setTextColor(tgui::Color::Red);
-	m_title->getRenderer()->setFont("data/fonts/segoesc.ttf");
+	m_title->getRenderer()->setFont("data/fonts/LCALLIG.TTF");
 	gui.add(m_title);
 
 	auto newGameButton = tgui::Button::create("New Game");
@@ -51,6 +52,31 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 	m_panel->add(exitButton);
 
 	m_opened = true;
+	m_starSeed = Random::randFloat(0.0f, 1.0f);
+
+	m_starRect.setPosition(500.0f, 500.0f);
+	m_starRect.setSize(sf::Vector2f(2048.0f, 2840.0f));
+	m_starRect.setOrigin(sf::Vector2f(2048.0f / 2.0f, 2840.0f / 2.0f));
+
+	int starColor = Random::randInt(0, 3);
+	switch (starColor) {
+	case 0:
+		m_starRect.setFillColor(sf::Color::Red);
+		break;
+	case 1:
+		m_starRect.setFillColor(sf::Color::Yellow);
+		break;
+	case 2:
+		m_starRect.setFillColor(sf::Color(0, 255, 255));
+		break;
+	case 3:
+		m_starRect.setFillColor(sf::Color::White);
+		break;
+	}
+
+	m_planetRect.setPosition(800.0f, 600.0f);
+	m_planetRect.setSize(sf::Vector2f(250.0f, 250.0f));
+	m_planetRect.setOrigin(sf::Vector2f(250.0f / 2.0f, 250.0f / 2.0f));
 }
 
 void MainMenu::close(tgui::Gui& gui) {
@@ -75,5 +101,12 @@ void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellati
 		else if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && m_opened) {
 			close(gui);
 		}
+	}
+}
+
+void MainMenu::drawPreview(sf::RenderWindow& window, EffectsEmitter& emitter, const GameState& state, float time) {
+	if (state.getState() == GameState::State::MAIN_MENU) {
+		emitter.drawLocalStar(window, m_starRect, time, m_starSeed);
+		emitter.drawTerraPlanet(window, m_planetRect, m_planetRect.getSize().x / 2.0f, m_planetRect.getPosition(), m_starRect.getPosition(), m_starSeed, time);
 	}
 }

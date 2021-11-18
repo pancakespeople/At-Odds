@@ -18,6 +18,7 @@ public:
 	void drawLocalStar(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed);
 	void drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
 	void drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
+	void drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, float planetRadius, sf::Vector2f planetPos, sf::Vector2f sunPos, float seed, float time);
 	void drawLavaPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed);
 	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
 	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);

@@ -140,6 +140,17 @@ void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::Rectang
 	window.draw(shape, &m_terraPlanetShader);
 }
 
+void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, float planetRadius, sf::Vector2f planetPos, sf::Vector2f sunPos, float seed, float time) {
+	m_terraPlanetShader.setUniform("size", sf::Glsl::Vec2(planetRadius, planetRadius));
+	m_terraPlanetShader.setUniform("time", time);
+	m_terraPlanetShader.setUniform("seed", seed);
+
+	float angle = Math::angleBetween(planetPos, sunPos) * Math::toRadians;
+	m_terraPlanetShader.setUniform("sun", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
+
+	window.draw(shape, &m_terraPlanetShader);
+}
+
 void EffectsEmitter::drawLavaPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed) {
 	m_lavaPlanetShader.setUniform("size", sf::Glsl::Vec2(planet->getRadius(), planet->getRadius()));
 	m_lavaPlanetShader.setUniform("seed", seed);

@@ -150,6 +150,7 @@ int main(int argc, const char* argv[])
         buildGui.draw(window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()));
         unitGui.draw(window);
         playerGui.minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera());
+        mainMenu.drawPreview(window, emitter, state, time);
         gui.draw();
 
         window.display();

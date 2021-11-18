@@ -10,6 +10,7 @@ public:
 	void open(tgui::Gui& gui, Constellation& constellation, GameState& state);
 	void close(tgui::Gui& gui);
 	void onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state);
+	void drawPreview(sf::RenderWindow& window, EffectsEmitter& emitter, const GameState& state, float time);
 	OptionsMenu& getOptionsMenu() { return m_optionsMenu; }
 	NewGameMenu& getNewGameMenu() { return m_newGameMenu; }
 
@@ -21,4 +22,7 @@ private:
 	NewGameMenu m_newGameMenu;
 	OptionsMenu m_optionsMenu;
 	bool m_opened = false;
+	float m_starSeed = 0.0f;
+	sf::RectangleShape m_starRect;
+	sf::RectangleShape m_planetRect;
 };
