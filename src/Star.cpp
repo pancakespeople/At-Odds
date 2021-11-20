@@ -754,3 +754,10 @@ void Star::generateAsteroidBelts() {
 		radius += Random::randFloat(5000.0f, 100000.0f);
 	}
 }
+
+bool Star::hasHyperlaneConnectionTo(const Star* star) const {
+	for (Hyperlane* lane : m_hyperlanes) {
+		if (lane->getBeginStar() == star || lane->getEndStar() == star) return true;
+	}
+	return false;
+}

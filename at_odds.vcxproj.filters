@@ -53,7 +53,7 @@
     <ClInclude Include="src\pch\gamepch.h">
       <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="src\toml.hpp" />
+    <ClInclude Include="src\ext\toml.hpp" />
     <ClInclude Include="src\GUI\ShipDesigner.h" />
     <ClInclude Include="src\GUI\PlayerGUI.h" />
     <ClInclude Include="src\GUI\NewGameMenu.h" />
@@ -73,6 +73,7 @@
     <ClInclude Include="src\GUI\OptionsMenu.h" />
     <ClInclude Include="src\GUI\MinimapGUI.h" />
     <ClInclude Include="src\AsteroidBelt.h" />
+    <ClInclude Include="src\ext\delaunator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />

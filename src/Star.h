@@ -65,6 +65,7 @@ public:
 	bool containsBuildingType(const std::string& type, bool allegianceOnly = false, int allegiance = 0) const;
 	bool isDiscovered(int allegiance) const { return m_factionsDiscovered.count(allegiance); }
 	bool isDrawingHidden() const { return m_drawHidden; }
+	bool hasHyperlaneConnectionTo(const Star* star) const;
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;

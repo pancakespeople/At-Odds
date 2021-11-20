@@ -6,6 +6,7 @@
 #include "Faction.h"
 #include "Random.h"
 #include "Math.h"
+#include "ext/delaunator.hpp"
 
 Constellation::Constellation() {
     m_availableFactionColors = {
@@ -142,6 +143,44 @@ void Constellation::generateModernMegaRobustFinalConstellation(int sizeWidth, in
     }
 
     DEBUG_PRINT("Modern mega robust final constellation generation finished with " << m_stars.size() << " stars");
+}
+
+void Constellation::generateTheReallyFinalRobustConstellationIMeanItReally(int sizeWidth, int sizeHeight, int numStars) {
+    // Generate random points
+    std::vector<double> coords;
+
+    for (int i = 0; i < numStars; i++) {
+        coords.push_back(Random::randFloat(0.0f, sizeWidth));
+        coords.push_back(Random::randFloat(0.0f, sizeHeight));
+    }
+
+    delaunator::Delaunator d(coords);
+    std::map<std::pair<float, float>, Star*> stars;
+
+    for (int i = 0; i < coords.size(); i += 2) {
+        sf::Vector2f pos(coords[i], coords[i + 1]);
+        m_stars.push_back(std::make_unique<Star>(pos));
+        stars[std::pair<float, float>(pos.x, pos.y)] = m_stars.back().get();
+    }
+
+    for (int i = 0; i < d.triangles.size(); i += 3) {
+        sf::Vector2f pos1(d.coords[2 * d.triangles[i]], d.coords[2 * d.triangles[i] + 1]);
+        sf::Vector2f pos2(d.coords[2 * d.triangles[i + 1]], d.coords[2 * d.triangles[i + 1] + 1]);
+        sf::Vector2f pos3(d.coords[2 * d.triangles[i + 2]], d.coords[2 * d.triangles[i + 2] + 1]);
+
+        Star* star1 = stars[std::pair<float, float>(pos1.x, pos1.y)];
+        Star* star2 = stars[std::pair<float, float>(pos2.x, pos2.y)];
+        Star* star3 = stars[std::pair<float, float>(pos3.x, pos3.y)];
+
+        float side1Length = Math::distance(star1->getPos(), star2->getPos());
+        float side2Length = Math::distance(star2->getPos(), star3->getPos());
+        float side3Length = Math::distance(star3->getPos(), star1->getPos());
+        float longestLength = std::max(side1Length, std::max(side2Length, side3Length));
+
+        if (!star1->hasHyperlaneConnectionTo(star2) && side1Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star1, star2));
+        if (!star2->hasHyperlaneConnectionTo(star3) && side2Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star2, star3));
+        if (!star3->hasHyperlaneConnectionTo(star1) && side3Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star3, star1));
+    }
 }
 
 void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player) {
