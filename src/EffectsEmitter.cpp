@@ -210,7 +210,7 @@ void EffectsEmitter::updateTime(float time) {
 	m_asteroidBeltShader.setUniform("time", time);
 }
 
-void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec2>& points, sf::Color color) {
+void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color) {
 	m_borderShader.setUniformArray("points", points.data(), points.size());
 	m_borderShader.setUniform("numPoints", static_cast<int>(points.size()));
 	m_borderShader.setUniform("size", sf::Glsl::Vec2(shape.getSize().x, shape.getSize().y));

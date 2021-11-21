@@ -187,15 +187,15 @@ void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 
     // Draw empire borders
     for (Faction& faction : m_factions) {
-        std::vector<sf::Glsl::Vec2> points;
-        
-        for (auto& star : faction.getOwnedStars()) {
+        std::vector<sf::Glsl::Vec3> points;
+
+        for (auto& star : m_stars) {
             sf::Vector2f pos = star->getCenter() - m_border.getPosition();
-            if (star->isDiscovered(player.getFaction())) points.push_back(pos);
+            if (star->getAllegiance() == faction.getID()) points.push_back(sf::Glsl::Vec3(pos.x, pos.y, 1.0f));
+            else points.push_back(sf::Glsl::Vec3(pos.x, pos.y, 0.0f));
         }
         
-        if (points.size() > 0) emitter.drawBorders(window, m_border, points, faction.getColor());
-        points.clear();
+        if (points.size() > 0) emitter.drawBorders(window, m_border, points, faction.getColor());   
     }
     
     for (std::unique_ptr<Hyperlane>& h : m_hyperlanes) {

@@ -2,21 +2,30 @@
 
 uniform vec2 size;
 uniform int numPoints;
-uniform vec2 points[512];
+uniform vec3 points[256];
 uniform vec3 color;
 in vec4 vertPos;
 
 void main() {
-	vec2 pixel = gl_FragCoord.xy / size;
 	vec2 worldPos = vertPos.xy - size;
 	
-	float val = 1.0;
+    vec2 closestPoint = points[0].xy;
+    int closestIndex = 0;
+    float closestDist = distance(points[0].xy - size, worldPos);
+    vec4 col = vec4(color, 1.0) * (1.0 - closestDist / 750.0);
 
-	for (int i = 0; i < numPoints; i++) {
-		float dist = distance(worldPos, points[i] - size);
-		val *= numPoints * 100.0 / dist;
-	}
+    for (int i = 0; i < numPoints; i++) {
+        float dist = distance(points[i].xy - size, worldPos);
+        if (dist < closestDist) {
+            closestPoint = points[i].xy - size;
+            closestDist = dist;
+            closestIndex = i;
+            col = vec4(color, 1.0) * (1.0 - closestDist / 750.0);
+        }
 
-	if (val > 1.0 && val < 1.1) gl_FragColor = vec4(color, 1.0);
-	if (val > 1.1) gl_FragColor = vec4(color - 0.5, 0.5);
+    }
+
+    if (points[closestIndex].z == 0.0) col = vec4(0.0);
+    
+    gl_FragColor = col;
 }
