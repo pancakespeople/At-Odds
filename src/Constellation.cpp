@@ -148,22 +148,40 @@ void Constellation::generateModernMegaRobustFinalConstellation(int sizeWidth, in
 void Constellation::generateTheReallyFinalRobustConstellationIMeanItReally(int sizeWidth, int sizeHeight, int numStars) {
     // Generate random points
     std::vector<double> coords;
+    const int minStarDist = 250;
+    const int maxStarDist = 750;
+    
+    coords.push_back(Random::randFloat(0, sizeWidth));
+    coords.push_back(Random::randFloat(0, sizeHeight));
+    
+    for (std::size_t i = 1; i < numStars; i++) {
+        float dist = Random::randFloat(minStarDist, maxStarDist);
+        float angle = Random::randFloat(0, Math::pi * 2.0f);
+        sf::Vector2f pos(std::cos(angle) * dist + coords[i * 2 - 2], std::sin(angle) * dist + coords[i * 2 - 1]);
+        
+        // Try to keep some distance between stars
+        int loops = 0; // Prevent infinite loop
+        while (closestStarDistanceCoords(pos, coords) < minStarDist && loops < 10) {
+            dist = Random::randFloat(minStarDist, maxStarDist);
+            angle = Random::randFloat(0, Math::pi * 2.0f);
+            pos = sf::Vector2f(std::cos(angle) * dist + coords[i * 2 - 2], std::sin(angle) * dist + coords[i * 2 - 1]);
+            loops++;
+        }
 
-    for (int i = 0; i < numStars; i++) {
-        coords.push_back(Random::randFloat(0.0f, sizeWidth));
-        coords.push_back(Random::randFloat(0.0f, sizeHeight));
+        coords.push_back(pos.x);
+        coords.push_back(pos.y);
     }
 
     delaunator::Delaunator d(coords);
     std::map<std::pair<float, float>, Star*> stars;
 
-    for (int i = 0; i < coords.size(); i += 2) {
+    for (std::size_t i = 0; i < coords.size(); i += 2) {
         sf::Vector2f pos(coords[i], coords[i + 1]);
         m_stars.push_back(std::make_unique<Star>(pos));
         stars[std::pair<float, float>(pos.x, pos.y)] = m_stars.back().get();
     }
 
-    for (int i = 0; i < d.triangles.size(); i += 3) {
+    for (std::size_t i = 0; i < d.triangles.size(); i += 3) {
         sf::Vector2f pos1(d.coords[2 * d.triangles[i]], d.coords[2 * d.triangles[i] + 1]);
         sf::Vector2f pos2(d.coords[2 * d.triangles[i + 1]], d.coords[2 * d.triangles[i + 1] + 1]);
         sf::Vector2f pos3(d.coords[2 * d.triangles[i + 2]], d.coords[2 * d.triangles[i + 2] + 1]);
@@ -179,7 +197,7 @@ void Constellation::generateTheReallyFinalRobustConstellationIMeanItReally(int s
 
         if (!star1->hasHyperlaneConnectionTo(star2) && side1Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star1, star2));
         if (!star2->hasHyperlaneConnectionTo(star3) && side2Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star2, star3));
-        if (!star3->hasHyperlaneConnectionTo(star1) && side3Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star3, star1));
+        //if (!star3->hasHyperlaneConnectionTo(star1) && side3Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star3, star1));
     }
 }
 
@@ -444,4 +462,15 @@ void Constellation::onStart() {
     for (Faction& faction : m_factions) {
         faction.onStart();
     }
+}
+
+float Constellation::closestStarDistanceCoords(const sf::Vector2f& targetPos, const std::vector<double>& coords) {
+    float closest = distBetweenVecs(targetPos, sf::Vector2f(coords[0], coords[1]));
+    for (std::size_t i = 0; i < coords.size(); i += 2) {
+        float dist = distBetweenVecs(targetPos, sf::Vector2f(coords[i], coords[i + 1]));
+        if (dist < closest) {
+            closest = dist;
+        }
+    }
+    return closest;
 }

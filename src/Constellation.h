@@ -70,6 +70,7 @@ private:
 	
 	float distBetweenVecs(const sf::Vector2f& a, const sf::Vector2f& b);
 	float findClosestStarDistance(sf::Vector2f& targetPos);
+	float closestStarDistanceCoords(const sf::Vector2f& targetPos, const std::vector<double>& coords);
 
 	std::vector<std::unique_ptr<Star>> m_stars;
 	std::vector<std::unique_ptr<Hyperlane>> m_hyperlanes;
