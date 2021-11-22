@@ -209,7 +209,7 @@ void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 
         for (auto& star : m_stars) {
             sf::Vector2f pos = star->getCenter() - m_border.getPosition();
-            if (star->getAllegiance() == faction.getID()) points.push_back(sf::Glsl::Vec3(pos.x, pos.y, 1.0f));
+            if (star->getAllegiance() == faction.getID() && star->isDiscovered(player.getFaction())) points.push_back(sf::Glsl::Vec3(pos.x, pos.y, 1.0f));
             else points.push_back(sf::Glsl::Vec3(pos.x, pos.y, 0.0f));
         }
         
