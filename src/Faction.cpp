@@ -603,3 +603,20 @@ bool Faction::hasColonyBuilding(const std::string& type) const {
 void Faction::onStart() {
 	if (m_aiEnabled) m_ai.onStart(this);
 }
+
+std::vector<Tech> Faction::getAllTechsOfCategory(const std::string& category, bool unresearchedOnly) {
+	std::vector<Tech> techs;
+	for (Tech& tech : m_techs) {
+		if (tech.getCategory() == category) {
+			if (unresearchedOnly) {
+				if (!tech.isResearched()) {
+					techs.push_back(tech);
+				}
+			}
+			else {
+				techs.push_back(tech);
+			}
+		}
+	}
+	return techs;
+}

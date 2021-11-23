@@ -24,18 +24,26 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			m_window = nullptr;
 		});
 
+		auto tabs = tgui::Tabs::create();
+		tabs->setPosition("2.5%", "0%");
+		tabs->setSize("50% - 2.5%", "5%");
+		tabs->add("Colony", true);
+		tabs->add("Spaceship", false);
+		tabs->add("Weapons", false);
+		m_window->add(tabs);
+
 		auto researchableTechs = tgui::ListBox::create();
-		researchableTechs->setPosition("2.5%", "2.5%");
+		researchableTechs->setPosition("2.5%", "5%");
 		researchableTechs->setSize("50% - 2.5%", "50% - 2.5%");
 		m_window->add(researchableTechs, "researchableTechs");
 
-		auto researchLabel = tgui::Label::create("Available Research");
+		/*auto researchLabel = tgui::Label::create("Available Research");
 		researchLabel->setOrigin(0.5, 0.0);
 		researchLabel->setPosition("researchableTechs.left + researchableTechs.width / 2", "0%");
-		m_window->add(researchLabel);
+		m_window->add(researchLabel);*/
 
 		m_techQueue = tgui::ListBox::create();
-		m_techQueue->setPosition("50%", "2.5%");
+		m_techQueue->setPosition("50%", "5%");
 		m_techQueue->setSize("50% - 2.5%", "50% - 2.5%");
 		m_window->add(m_techQueue, "techQueue");
 
@@ -60,7 +68,7 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 		m_window->add(m_progressBar);
 
 		for (const Tech& tech : playerFaction->getTechs()) {
-			if (!tech.isResearched() && !tech.isResearching()) {
+			if (!tech.isResearched() && !tech.isResearching() && tech.getCategory() == tabs->getSelected()) {
 				researchableTechs->addItem(tech.getName(), tech.getType());
 			}
 			else if (tech.isResearching()) {
@@ -107,6 +115,15 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 		m_progressBar->onFull([this]() {
 			m_techQueue->removeItem(m_techQueue->getSelectedItem());
+		});
+
+		tabs->onTabSelect([researchableTechs, playerFaction](const tgui::String& tab) {
+			researchableTechs->removeAllItems();
+			for (Tech& tech : playerFaction->getAllTechsOfCategory(tab.toStdString())) {
+				if (!tech.isResearched() && !tech.isResearching()) {
+					researchableTechs->addItem(tech.getName(), tech.getType());
+				}
+			}
 		});
 	});
 }

@@ -79,6 +79,7 @@ public:
 	std::vector<Star*> getUnderAttackStars();
 	const std::vector<Tech>& getTechs() { return m_techs; }
 	std::vector<Tech> getUnresearchedTechs();
+	std::vector<Tech> getAllTechsOfCategory(const std::string& category, bool unresearchedOnly = false);
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();

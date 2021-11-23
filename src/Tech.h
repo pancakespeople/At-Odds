@@ -10,7 +10,8 @@ public:
 	std::string getDescription() const;
 	std::string getExtendedDescription(Faction* faction) const;
 	std::string getType() const { return m_type; }
-	std::vector<std::string> getUnlockedBuildings() const;
+	std::string getCategory() const;
+	std::vector<std::string> getUnlocked(const std::string& key) const;
 	
 	float getResearchPercent() const { return m_researchPoints / m_researchPointsRequired * 100.0f; }
 	float getRequiredResearchPoints() const { return m_researchPointsRequired; }

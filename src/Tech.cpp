@@ -40,6 +40,7 @@ float Tech::getTimeToResearch(Faction* faction) const {
 
 std::string Tech::getExtendedDescription(Faction* faction) const {
 	std::string text = getDescription();
+	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
 
 	text += "\n";
 	text += "Research Points: " + Util::cutOffDecimal(getRequiredResearchPoints(), 2) + "\n";
@@ -49,7 +50,7 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 	if (timeToResearch == -1.0f) text += "Time to research: Infinity (You have no research point production)\n";
 	else text += "Time to research: " + Util::secondsToTime(timeToResearch) + "\n";
 	
-	auto buildings = getUnlockedBuildings();
+	auto buildings = getUnlocked("addsColonyBuildings");
 
 	if (buildings.size() > 0) {
 		text += "Unlocks buildings: ";
@@ -63,20 +64,42 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 		text += "\n";
 	}
 
+	auto chassis = getUnlocked("addsChassis");
+	if (chassis.size() > 0) {
+		text += "Unlocks chassis: ";
+		for (int i = 0; i < chassis.size(); i++) {
+			Spaceship::DesignerChassis theChassis(chassis[i]);
+			text += theChassis.name;
+			if (i != chassis.size() - 1) {
+				text += ", ";
+			}
+		}
+		text += "\n";
+	}
+
+	if (table[m_type]["unlockRandomWeapon"].value_or(false)) {
+		text += "Unlocks a random weapon\n";
+	}
+
 	return text;
 }
 
-std::vector<std::string> Tech::getUnlockedBuildings() const {
+std::string Tech::getCategory() const {
 	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
-	std::vector<std::string> buildings;
+	return table[m_type]["category"].value_or("");
+}
 
-	auto* arr = table[m_type]["addsColonyBuildings"].as_array();
+std::vector<std::string> Tech::getUnlocked(const std::string& key) const {
+	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
+	std::vector<std::string> things;
+
+	auto* arr = table[m_type][key].as_array();
 
 	if (arr != nullptr) {
-		for (auto& building : *arr) {
-			buildings.push_back(building.value_or(""));
+		for (auto& thing : *arr) {
+			things.push_back(thing.value_or(""));
 		}
 	}
 
-	return buildings;
+	return things;
 }

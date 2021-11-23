@@ -4,45 +4,53 @@ name = "Weapons Research"
 description = "Fund the research and development of a new and unheard of weapon that will make our enemies quiver with fear."
 researchRequired = 1000.0
 unlockRandomWeapon = true
+category = "Weapons"
 
 [FARMING]
 name = "Biodomes"
 description = "Even in the harshest conditions, we can find a way to grow crops."
 researchRequired = 500.0
 addsColonyBuildings = ["FARMING"]
+category = "Colony"
 
 [DEFENSE]
 name = "Planetary Defense Systems"
 description = "We must find new ways of defending our planets... Otherwise they will cease to be our planets."
 addsColonyBuildings = ["ORBITAL_DEFENSE", "BOMB_SHELTER"]
 researchRequired = 1250.0
+category = "Colony"
 
 [EXPLORATION]
 name = "The Exploration of Planets"
 description = "It's a big universe out there, but most of it is uninteresting. However, through careful observation, we may find something worth taking a look at..."
 researchRequired = 1000.0
 addsColonyBuildings = ["EXPLORING"]
+category = "Colony"
 
 [MANUFACTURING]
 name = "Production Networks"
 description = "No empire can thrive without a solid manufacturing base."
 researchRequired = 1600.0
 addsColonyBuildings = ["CONSUMER_GOODS_FACTORIES", "WEAPONS_FACTORIES"]
+category = "Colony"
 
 [MINING]
 name = "Mining Methods"
 description = "Specialized technology can allow us to more efficiently extract ores from our planets."
 researchRequired = 500.0
 addsColonyBuildings = ["MINING"]
+category = "Colony"
 
 [MILITARY]
 name = "Army Training"
 description = "Might makes right."
 researchRequired = 1100.0
 addsColonyBuildings = ["MILITARY_BASE"]
+category = "Colony"
 
 [CRUISER_HULL]
 name = "Cruiser Hull"
 description = "It's bigger and badder than destroyers, that's for sure."
 researchRequired = 2000.0
 addsChassis = ["CRUISER"]
+category = "Spaceship"
