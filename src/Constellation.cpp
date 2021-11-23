@@ -192,8 +192,8 @@ void Constellation::generateTheReallyFinalRobustConstellationIMeanItReally(int s
 
         float side1Length = Math::distance(star1->getPos(), star2->getPos());
         float side2Length = Math::distance(star2->getPos(), star3->getPos());
-        float side3Length = Math::distance(star3->getPos(), star1->getPos());
-        float longestLength = std::max(side1Length, std::max(side2Length, side3Length));
+        //float side3Length = Math::distance(star3->getPos(), star1->getPos());
+        float longestLength = std::max(side1Length, side2Length);
 
         if (!star1->hasHyperlaneConnectionTo(star2) && side1Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star1, star2));
         if (!star2->hasHyperlaneConnectionTo(star3) && side2Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star2, star3));
