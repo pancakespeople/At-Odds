@@ -54,3 +54,17 @@ description = "It's bigger and badder than destroyers, that's for sure."
 researchRequired = 2000.0
 addsChassis = ["CRUISER"]
 category = "Spaceship"
+
+[INVASIONS]
+name = "Invasions"
+description = "It would be nice if we could send troops down to enemy planets to take control of them."
+researchRequired = 500.0
+addsWeapons = ["INVASION_POD_LAUNCHER"]
+category = "Weapons"
+
+[NUCLEAR_WEAPONS]
+name = "Nuclear Weapons"
+description = "When diplomacy fails..."
+researchRequired = 500.0
+addsWeapons = ["NUKE_LAUNCHER"]
+category = "Weapons"

@@ -77,6 +77,19 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 		text += "\n";
 	}
 
+	auto weapons = getUnlocked("addsWeapons");
+	if (weapons.size() > 0) {
+		text += "Unlocks weapons: ";
+		for (int i = 0; i < weapons.size(); i++) {
+			Spaceship::DesignerWeapon weapon(weapons[i]);
+			text += weapon.name;
+			if (i != weapons.size() - 1) {
+				text += ", ";
+			}
+		}
+		text += "\n";
+	}
+
 	if (table[m_type]["unlockRandomWeapon"].value_or(false)) {
 		text += "Unlocks a random weapon\n";
 	}

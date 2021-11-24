@@ -30,9 +30,6 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	makeCapital(randStar);
 	randStar->factionTakeOwnership(this, true);
 
-	addWeapon(Spaceship::DesignerWeapon("NUKE_LAUNCHER"));
-	addWeapon(Spaceship::DesignerWeapon("INVASION_POD_LAUNCHER"));
-
 	// Add a random starter weapon
 	int rnd = Random::randInt(1, 3);
 	if (rnd == 1) {
@@ -92,6 +89,8 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	m_techs.push_back(Tech("MINING"));
 	m_techs.push_back(Tech("MILITARY"));
 	m_techs.push_back(Tech("CRUISER_HULL"));
+	m_techs.push_back(Tech("NUCLEAR_WEAPONS"));
+	m_techs.push_back(Tech("INVASIONS"));
 }
 
 void Faction::addOwnedSystem(Star* star) {
@@ -552,6 +551,12 @@ void Faction::onResearchFinish(const Tech& tech) {
 			std::string type = chassis.value_or("");
 			if (type != "") addChassis(Spaceship::DesignerChassis(type));
 		}
+	}
+
+	// Add weapons
+	auto weapons = tech.getUnlocked("addsWeapons");
+	for (const std::string& weapon : weapons) {
+		addWeapon(weapon);
 	}
 
 	DEBUG_PRINT(getName() << " completed research " << tech.getName());
