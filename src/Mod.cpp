@@ -29,88 +29,96 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
 	
-	for (auto& build : m_shipBuildData) {
-		if (build.second.build) {
-			
-			// Stop production if amount equals 0
-			if (build.second.amount == 0 && !build.second.continuous) {
-				build.second.build = false;
+	// Find the first build in queue
+	int buildIndex = -1;
+	for (int i = 0; i < m_shipBuildData.size(); i++) {
+		if (m_shipBuildData[i].build) {
+			buildIndex = i;
+			break;
+		}
+	}
 
-				// Update gui
-				if (m_shipWidgets != nullptr && build.second.selected) {
-					auto buildCheckbox = m_shipWidgets->get<tgui::CheckBox>("buildCheckbox");
-					if (buildCheckbox != nullptr) buildCheckbox->setChecked(false);
-				}
+	if (buildIndex != -1) {
+		ShipBuildData& build = m_shipBuildData[buildIndex];
+		// Stop production if amount equals 0
+		if (build.amount == 0 && !build.continuous) {
+			build.build = false;
 
-				break;
+			// Update gui
+			if (m_shipWidgets != nullptr && build.selected) {
+				auto buildCheckbox = m_shipWidgets->get<tgui::CheckBox>("buildCheckbox");
+				if (buildCheckbox != nullptr) buildCheckbox->setChecked(false);
 			}
-			
-			if (!build.second.resourcesSubtracted) {
-				// Check resources
+		}
+		
+		if (!build.resourcesSubtracted && build.build) {
+			// Check resources
 				
-				Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.first);
-				auto cost = shipDesign.getTotalResourceCost();
+			Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
+			auto cost = shipDesign.getTotalResourceCost();
 				
-				if (!faction->canSubtractResources(cost)) {
-					continue;
-				}
-				else {
-					faction->subtractResources(cost);
-					build.second.resourcesSubtracted = true;
-					build.second.buildTimeMultiplier = shipDesign.chassis.buildTimeMultiplier;
-				}
+			if (faction->canSubtractResources(cost)) {
+				faction->subtractResources(cost);
+				build.resourcesSubtracted = true;
+				build.buildTimeMultiplier = shipDesign.chassis.buildTimeMultiplier;
 			}
+		}
 			
-			if (build.second.progressPercent >= 100.0f) {
-				// Spawn the ship
+		if (build.progressPercent >= 100.0f) {
+			// Spawn the ship
 				
-				Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.first);
-				auto shipPtr = std::make_unique<Spaceship>(shipDesign.chassis.type, unit->getPos(), currentStar, faction->getID(), faction->getColor());
+			Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
+			auto shipPtr = std::make_unique<Spaceship>(shipDesign.chassis.type, unit->getPos(), currentStar, faction->getID(), faction->getColor());
 				
-				// Add weapons
-				for (Spaceship::DesignerWeapon& weapon : shipDesign.weapons) {
-					shipPtr->addWeapon(weapon.type);
-				}
+			// Add weapons
+			for (Spaceship::DesignerWeapon& weapon : shipDesign.weapons) {
+				shipPtr->addWeapon(weapon.type);
+			}
 
-				// Add construction gun
-				if (shipPtr->getConstructionSpeed() > 0.0f) {
-					shipPtr->addWeapon(Weapon("CONSTRUCTION_GUN"));
-				}
+			// Add construction gun
+			if (shipPtr->getConstructionSpeed() > 0.0f) {
+				shipPtr->addWeapon(Weapon("CONSTRUCTION_GUN"));
+			}
 
-				sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
-				shipPtr->addVelocity(randVel);
+			sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
+			shipPtr->addVelocity(randVel);
 
-				faction->addSpaceship(currentStar->createSpaceship(shipPtr));
+			faction->addSpaceship(currentStar->createSpaceship(shipPtr));
 
-				DEBUG_PRINT("Created spaceship " + shipDesign.chassis.type);
+			DEBUG_PRINT("Created spaceship " + shipDesign.chassis.type);
 				
-				if (m_buildProgressBar != nullptr && build.second.selected) m_buildProgressBar->setValue(0);
+			if (m_buildProgressBar != nullptr && build.selected) m_buildProgressBar->setValue(0);
 				
-				build.second.progressPercent = 0.0f;
-				build.second.resourcesSubtracted = false;
+			build.progressPercent = 0.0f;
+			build.resourcesSubtracted = false;
 
-				if (!build.second.continuous) {
-					build.second.amount--;
+			if (!build.continuous) {
+				build.amount--;
 					
-					// Update gui
-					if (m_shipWidgets != nullptr && build.second.selected) {
-						auto amountEditBox = m_shipWidgets->get<tgui::EditBox>("amountEditBox");
-						if (amountEditBox != nullptr) amountEditBox->setText(std::to_string(build.second.amount));
-					}
+				// Update gui
+				if (m_shipWidgets != nullptr && build.selected) {
+					auto amountEditBox = m_shipWidgets->get<tgui::EditBox>("amountEditBox");
+					if (amountEditBox != nullptr) amountEditBox->setText(std::to_string(build.amount));
 				}
 			}
-			else {
-				build.second.progressPercent += 0.05f / build.second.buildTimeMultiplier * getBuildSpeedMultiplier();
-				if (m_weaponsStockpile > 0.0f) m_weaponsStockpile -= 0.01f * getBuildSpeedMultiplier();
-				if (m_weaponsStockpile < 0.0f) m_weaponsStockpile = 0.0f;
 
-				if (m_buildProgressBar != nullptr && build.second.selected) {
-					m_buildProgressBar->setValue(build.second.progressPercent);
-				}
+			// Move build to the back of the queue
+			m_shipBuildData.push_back(build);
+			m_shipBuildData.erase(m_shipBuildData.begin() + buildIndex);
+			
+			updateDesignsListBox(m_shipBuildData.size() - 1);
+		}
+		else if (build.resourcesSubtracted) {
+			build.progressPercent += 0.05f / build.buildTimeMultiplier * getBuildSpeedMultiplier();
+			if (m_weaponsStockpile > 0.0f) m_weaponsStockpile -= 0.01f * getBuildSpeedMultiplier();
+			if (m_weaponsStockpile < 0.0f) m_weaponsStockpile = 0.0f;
 
-				if (m_armamentsLabel != nullptr) m_armamentsLabel->setText("Armaments: " + Util::cutOffDecimal(m_weaponsStockpile, 2) + "/100");
-				if (m_buildSpeedLabel != nullptr) m_buildSpeedLabel->setText("Additional build speed: " + Util::percentify(getBuildSpeedMultiplier(), 2));
+			if (m_buildProgressBar != nullptr && build.selected) {
+				m_buildProgressBar->setValue(build.progressPercent);
 			}
+
+			if (m_armamentsLabel != nullptr) m_armamentsLabel->setText("Armaments: " + Util::cutOffDecimal(m_weaponsStockpile, 2) + "/100");
+			if (m_buildSpeedLabel != nullptr) m_buildSpeedLabel->setText("Additional build speed: " + Util::percentify(getBuildSpeedMultiplier(), 2));
 		}
 	}
 
@@ -177,18 +185,24 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	window->onClose([this]() {
 		m_shipWidgets = nullptr;
 		for (auto& data : m_shipBuildData) {
-			data.second.selected = false;
+			data.selected = false;
 		}
 	});
 
-	auto designsListBox = tgui::ListBox::create();
-	designsListBox->setPosition("2.5%", "5%");
-	designsListBox->setSize("33% - 2.5%", "50% - 2.5%");
-	designsListBox->onItemSelect([this ,designsListBox, window, faction]() {
+	m_designsListBox = tgui::ListBox::create();
+	m_designsListBox->setPosition("2.5%", "5%");
+	m_designsListBox->setSize("33% - 2.5%", "50% - 2.5%");
+	m_designsListBox->onItemSelect([this, window, faction]() {
 		auto shipWidgets = window->get<tgui::Group>("shipWidgets");
 		
-		if (designsListBox->getSelectedItemIndex() != -1) {
-			Spaceship::DesignerShip ship = faction->getShipDesignByName(designsListBox->getSelectedItem().toStdString());
+		if (m_designsListBox->getSelectedItemIndex() != -1) {
+			Spaceship::DesignerShip ship = faction->getShipDesignByName(m_designsListBox->getSelectedItem().toStdString());
+			int buildIndex = -1;
+
+			// Find build index
+			for (int i = 0; i < m_shipBuildData.size(); i++) {
+				if (m_shipBuildData[i].shipName == ship.name) buildIndex = i;
+			}
 
 			if (ship.name == "") return;
 
@@ -204,20 +218,10 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 
 			auto buildCheckbox = tgui::CheckBox::create("Build");
 			buildCheckbox->setPosition("shipInfoGroup.right + 2.5%", "shipInfoGroup.top");
-			buildCheckbox->onChange([this, ship, buildCheckbox]() {
-				if (m_shipBuildData.count(ship.name) > 0) {
-					m_shipBuildData[ship.name].build = buildCheckbox->isChecked();
-				}
-			});
 			shipWidgets->add(buildCheckbox, "buildCheckbox");
 			
 			auto continuousCheckbox = tgui::CheckBox::create("Continuous");
 			continuousCheckbox->setPosition("shipInfoGroup.right + 2.5%", "shipInfoGroup.top + 15%");
-			continuousCheckbox->onChange([this, ship, continuousCheckbox]() {
-				if (m_shipBuildData.count(ship.name) > 0) {
-					m_shipBuildData[ship.name].continuous = continuousCheckbox->isChecked();
-				}
-			});
 			shipWidgets->add(continuousCheckbox);
 
 			auto amountEditBox = tgui::EditBox::create();
@@ -226,13 +230,6 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			amountEditBox->setSize("10%", "10%");
 			amountEditBox->setMaximumCharacters(2);
 			amountEditBox->setText("1");
-			amountEditBox->onUnfocus([this, ship, amountEditBox]() {
-				if (m_shipBuildData.count(ship.name) > 0) {
-					if (amountEditBox->getText().size() > 0) {
-						m_shipBuildData[ship.name].amount = amountEditBox->getText().toInt();
-					}
-				}
-			});
 			shipWidgets->add(amountEditBox, "amountEditBox");
 
 			auto amountLabel = tgui::Label::create("Amount");
@@ -240,31 +237,49 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			shipWidgets->add(amountLabel);
 
 			// Create ship build data if it doesnt exist or init the widget values with the data if it does
-			if (m_shipBuildData.count(ship.name) == 0) {
-				ShipBuildData data;
-				m_shipBuildData[ship.name] = data;
+			if (buildIndex == -1) {
+				ShipBuildData data(ship.name);
+				m_shipBuildData.push_back(data);
+
+				buildIndex = m_shipBuildData.size() - 1;
 			}
 			else {
-				buildCheckbox->setChecked(m_shipBuildData[ship.name].build);
-				continuousCheckbox->setChecked(m_shipBuildData[ship.name].continuous);
-				amountEditBox->setText(std::to_string(m_shipBuildData[ship.name].amount));
+				buildCheckbox->setChecked(m_shipBuildData[buildIndex].build);
+				continuousCheckbox->setChecked(m_shipBuildData[buildIndex].continuous);
+				amountEditBox->setText(std::to_string(m_shipBuildData[buildIndex].amount));
 			}
 
 			// Set selected design
 			for (auto& data : m_shipBuildData) {
-				if (data.first == ship.name) {
-					data.second.selected = true;
+				if (data.shipName == ship.name) {
+					data.selected = true;
 				}
 				else {
-					data.second.selected = false;
+					data.selected = false;
 				}
 			}
 
 			m_buildProgressBar = tgui::ProgressBar::create();
 			m_buildProgressBar->setPosition("parent.designsListBox.right + 2.5%", "80%");
 			m_buildProgressBar->setSize("66% - 5%", "10%");
-			m_buildProgressBar->setValue(m_shipBuildData[ship.name].progressPercent);
+			m_buildProgressBar->setValue(m_shipBuildData[buildIndex].progressPercent);
 			shipWidgets->add(m_buildProgressBar);
+
+			// Callbacks
+			amountEditBox->onUnfocus([this, ship, buildIndex, amountEditBox]() {
+				if (amountEditBox->getText().size() > 0) {
+					m_shipBuildData[buildIndex].amount = amountEditBox->getText().toInt();
+				}
+			});
+
+			continuousCheckbox->onChange([this, ship, buildIndex, continuousCheckbox]() {
+				m_shipBuildData[buildIndex].continuous = continuousCheckbox->isChecked();
+			});
+
+			buildCheckbox->onChange([this, ship, buildIndex, buildCheckbox]() {
+				m_shipBuildData[buildIndex].build = buildCheckbox->isChecked();
+				updateDesignsListBox(buildIndex);
+			});
 		}
 		else {
 			shipWidgets->removeAllWidgets();
@@ -272,16 +287,15 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			m_shipWidgets = nullptr;
 		}
 	});
-	window->add(designsListBox, "designsListBox");
+	window->add(m_designsListBox, "designsListBox");
 	
 	auto designsLabel = tgui::Label::create("Designs");
 	designsLabel->setOrigin(0.5f, 0.0f);
 	designsLabel->setPosition("designsListBox.width / 2 + designsListBox.left", "0%");
 	window->add(designsLabel);
 
-	for (Spaceship::DesignerShip& ship : faction->getShipDesigns()) {
-		designsListBox->addItem(ship.name);
-	}
+	updateDesigns(faction);
+	updateDesignsListBox(-1);
 	
 	m_shipWidgets = tgui::Group::create();
 	window->add(m_shipWidgets, "shipWidgets");
@@ -297,25 +311,33 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 
 void FactoryMod::updateDesigns(Faction* faction) {
 	for (Spaceship::DesignerShip ship : faction->getShipDesigns()) {
-		if (m_shipBuildData.count(ship.name) == 0) {
-			ShipBuildData data;
-			m_shipBuildData[ship.name] = data;
+		bool found = false;
+		for (const ShipBuildData& data : m_shipBuildData) {
+			if (data.shipName == ship.name) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			ShipBuildData data(ship.name);
+			m_shipBuildData.push_back(data);
 		}
 	}
 }
 
 void FactoryMod::setBuildAll(bool build) {
 	for (auto& data : m_shipBuildData) {
-		data.second.build = build;
-		data.second.continuous = build;
+		data.build = build;
+		data.continuous = build;
 	}
 }
 
 void FactoryMod::setBuild(const std::string& name, bool build) {
 	for (auto& data : m_shipBuildData) {
-		if (data.first == name) {
-			data.second.build = build;
-			data.second.continuous = build;
+		if (data.shipName == name) {
+			data.build = build;
+			data.continuous = build;
 			break;
 		}
 	}
@@ -323,6 +345,19 @@ void FactoryMod::setBuild(const std::string& name, bool build) {
 
 float FactoryMod::getBuildSpeedMultiplier() {
 	return std::min(100.0f, m_weaponsStockpile) / 100.0f + 1.0f;
+}
+
+void FactoryMod::updateDesignsListBox(int selectedIndex) {
+	if (m_designsListBox != nullptr) {
+		m_designsListBox->removeAllItems();
+		for (const ShipBuildData& build : m_shipBuildData) {
+			m_designsListBox->addItem(build.shipName);
+		}
+
+		if (selectedIndex != -1) {
+			m_designsListBox->setSelectedItemByIndex(selectedIndex);
+		}
+	}
 }
 
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {

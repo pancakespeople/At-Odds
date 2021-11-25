@@ -59,6 +59,8 @@ private:
 	}
 	
 	struct ShipBuildData {
+		ShipBuildData(const std::string shipName) { this->shipName = shipName; }
+		
 		bool selected = false;
 		bool build = false;
 		bool resourcesSubtracted = false;
@@ -66,7 +68,9 @@ private:
 		float progressPercent = 0.0f;
 		int amount = 1;
 		float buildTimeMultiplier = 1.0f;
+		std::string shipName;
 
+	private:
 		friend class boost::serialization::access;
 		template<class Archive>
 		void serialize(Archive& archive, const unsigned int version) {
@@ -77,16 +81,21 @@ private:
 			archive & amount;
 			archive & buildTimeMultiplier;
 		}
+
+		ShipBuildData() = default;
 	};
 
-	std::unordered_map<std::string, ShipBuildData> m_shipBuildData;
+	std::deque<ShipBuildData> m_shipBuildData;
 	tgui::ProgressBar::Ptr m_buildProgressBar;
 	tgui::Group::Ptr m_shipWidgets;
 	tgui::Label::Ptr m_armamentsLabel;
 	tgui::Label::Ptr m_buildSpeedLabel;
+	tgui::ListBox::Ptr m_designsListBox;
 
 	float m_weaponsStockpile = 0.0f;
 	int m_checkForWeaponsTimer = 1000;
+
+	void updateDesignsListBox(int selectedIndex);
 };
 
 class FighterBayMod : public Mod {
