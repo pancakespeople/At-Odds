@@ -387,7 +387,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		bool builtShipFactory = false;
 
 		// Build ship factories
-		if (!star->containsBuildingType("SHIP_FACTORY", true, faction->getID()) && faction->numIdleConstructionShips() > 0 &&
+		if (star->numAlliedBuildings(faction->getID(), "SHIP_FACTORY") < 5 && faction->numIdleConstructionShips() > 0 &&
 			!builtShipFactory) {
 			std::unique_ptr<Building> factory = std::make_unique<Building>(
 				"SHIP_FACTORY", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
