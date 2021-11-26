@@ -106,7 +106,14 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			m_shipBuildData.push_back(build);
 			m_shipBuildData.erase(m_shipBuildData.begin() + buildIndex);
 			
-			updateDesignsListBox(m_shipBuildData.size() - 1);
+			// Update design list box
+			if (m_designsListBox != nullptr) {
+				int newIndex = m_designsListBox->getSelectedItemIndex() - 1;
+				if (newIndex == -1) {
+					newIndex = m_designsListBox->getItemCount() - 1;
+				}
+				updateDesignsListBox(newIndex);
+			}
 		}
 		else if (build.resourcesSubtracted) {
 			build.progressPercent += 0.05f / build.buildTimeMultiplier * getBuildSpeedMultiplier();
@@ -236,6 +243,16 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			amountLabel->setPosition("amountEditBox.right + 1%", "amountEditBox.top");
 			shipWidgets->add(amountLabel);
 
+			auto moveDownButton = tgui::Button::create("Queue Down");
+			moveDownButton->setPosition("33% + 2.5%", "50%");
+			moveDownButton->setSize("15%", "5%");
+			shipWidgets->add(moveDownButton, "moveUpButton");
+
+			auto moveUpButton = tgui::Button::create("Queue Up");
+			moveUpButton->setPosition("33% + 2.5%", "moveUpButton.top - moveUpButton.height");
+			moveUpButton->setSize("15%", "5%");
+			shipWidgets->add(moveUpButton);
+
 			// Create ship build data if it doesnt exist or init the widget values with the data if it does
 			if (buildIndex == -1) {
 				ShipBuildData data(ship.name);
@@ -280,6 +297,26 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 				m_shipBuildData[buildIndex].build = buildCheckbox->isChecked();
 				updateDesignsListBox(buildIndex);
 			});
+
+			moveUpButton->onClick([this, buildIndex]() {
+				if (buildIndex != 0) {
+					// Swap elements
+					ShipBuildData before = m_shipBuildData[static_cast<size_t>(buildIndex) - 1];
+					m_shipBuildData[static_cast<size_t>(buildIndex) - 1] = m_shipBuildData[buildIndex];
+					m_shipBuildData[buildIndex] = before;
+					updateDesignsListBox(buildIndex - 1);
+				}
+			});
+
+			moveDownButton->onClick([this, buildIndex]() {
+				if (buildIndex != m_shipBuildData.size() - 1) {
+					// Swap elements
+					ShipBuildData after = m_shipBuildData[static_cast<size_t>(buildIndex) + 1];
+					m_shipBuildData[static_cast<size_t>(buildIndex) + 1] = m_shipBuildData[buildIndex];
+					m_shipBuildData[buildIndex] = after;
+					updateDesignsListBox(buildIndex + 1);
+				}
+			});
 		}
 		else {
 			shipWidgets->removeAllWidgets();
@@ -289,7 +326,7 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	});
 	window->add(m_designsListBox, "designsListBox");
 	
-	auto designsLabel = tgui::Label::create("Designs");
+	auto designsLabel = tgui::Label::create("Design Queue");
 	designsLabel->setOrigin(0.5f, 0.0f);
 	designsLabel->setPosition("designsListBox.width / 2 + designsListBox.left", "0%");
 	window->add(designsLabel);
