@@ -48,7 +48,7 @@ public:
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);
 	void onColonization();
-	void createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet);
+	void createSpaceBus(sf::Color factionColor, Star* currentStar, Star* targetStar, Planet* targetPlanet, const std::string& type, int population, int maxPopulation);
 	void generateResources();
 	void addBombardProjectile(const Projectile& proj) { m_bombardProjectiles.push_back(proj); }
 	void addEvent(const std::string& type);

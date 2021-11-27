@@ -39,12 +39,26 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_allegiance, targetStar, planet);
 
 				if (targetPlanet != nullptr) {
-					planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet);
+					if (m_population < 50000) {
+						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_BUS", 1000, 1000);
 
-					m_population -= 1000;
+						m_population -= 1000;
+					}
+					else {
+						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "BIG_SPACE_BUS", 10000, 10000);
+
+						m_population -= 10000;
+					}
 				}
 			}
-			m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population) * getBuildingEffects("busSpawnTimeMultiplier");
+			
+			float busSpawnTimeMultiplier = getBuildingEffects("busSpawnTimeMultiplier");
+			if (m_population < 50000) {
+				m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population) * busSpawnTimeMultiplier;
+			}
+			else {
+				m_ticksToNextBus = std::max(HabitatMod::calcBusTickTimer(m_population / 32.0f) * busSpawnTimeMultiplier, 1000.0f);
+			}
 		}
 		else {
 			m_ticksToNextBus--;
