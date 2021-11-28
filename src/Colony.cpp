@@ -45,7 +45,7 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 						m_population -= 1000;
 					}
 					else {
-						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "BIG_SPACE_BUS", 10000, 10000);
+						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_TRAIN", 10000, 10000);
 
 						m_population -= 10000;
 					}

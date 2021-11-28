@@ -51,12 +51,12 @@ colliderRadius = 150.0
 civilian = true
 playerCanGiveOrders = false
 
-[BIG_SPACE_BUS]
-name = "Big Space Bus"
-texturePath = "data/art/spacebus.png"
-mass = 90000.0
-health = 100.0
-colliderRadius = 250.0
+[SPACE_TRAIN]
+name = "Space Train"
+texturePath = "data/art/spacetrain.png"
+mass = 125000.0
+health = 400.0
+colliderRadius = 500.0
 civilian = true
 playerCanGiveOrders = false
 scale = 2.0
