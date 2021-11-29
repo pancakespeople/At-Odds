@@ -35,7 +35,7 @@ public:
 	void reinitAfterLoad(Constellation* constellation);
 	void addColonyBuilding(const std::string& type);
 	void setResearchingTech(const std::string& type, bool research);
-	void onResearchFinish(const Tech& tech);
+	void onResearchFinish(Tech& tech);
 	void addResearchPoints(float points) { m_currentResearchPoints += points; }
 	void onStart();
 	void setAIEnabled(bool enabled) { m_aiEnabled = enabled; }

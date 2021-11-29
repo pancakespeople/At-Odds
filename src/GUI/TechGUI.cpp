@@ -78,20 +78,21 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 		researchableTechs->onItemSelect([researchableTechs, this, researchButton, playerFaction](int index) {
 			if (index != -1) {
-				Tech tech = Tech(researchableTechs->getSelectedItemId().toStdString());
-				std::string techType = tech.getType();
+				const Tech* tech = playerFaction->getTech(researchableTechs->getSelectedItemId().toStdString());
 				
-				m_techQueue->deselectItem();
+				if (tech != nullptr) {
+					m_techQueue->deselectItem();
 
-				m_description->setText(tech.getExtendedDescription(playerFaction));
-				
-				researchButton->setVisible(true);
-				researchButton->onClick.disconnectAll();
-				researchButton->onClick([tech, researchableTechs, this, playerFaction]() {
-					playerFaction->setResearchingTech(tech.getType(), true);
-					researchableTechs->removeItem(researchableTechs->getSelectedItem());
-					m_techQueue->addItem(tech.getName(), tech.getType());
-				});
+					m_description->setText(tech->getExtendedDescription(playerFaction));
+
+					researchButton->setVisible(true);
+					researchButton->onClick.disconnectAll();
+					researchButton->onClick([tech, researchableTechs, this, playerFaction]() {
+						playerFaction->setResearchingTech(tech->getType(), true);
+						researchableTechs->removeItem(researchableTechs->getSelectedItem());
+						m_techQueue->addItem(tech->getName(), tech->getType());
+						});
+				}
 			}
 			else {
 				m_description->setText("");

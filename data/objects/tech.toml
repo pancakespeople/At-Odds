@@ -5,6 +5,8 @@ description = "Fund the research and development of a new and unheard of weapon 
 researchRequired = 1000.0
 unlockRandomWeapon = true
 category = "Weapons"
+repeatable = true
+repeatResearchMultiplier = 1.25
 
 [FARMING]
 name = "Biodomes"

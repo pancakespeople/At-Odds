@@ -20,6 +20,8 @@ public:
 
 	void addResearchPoints(float research);
 	void setResearching(bool researching) { m_researching = researching; }
+	void setRequiredResearchPoints(float points) { m_researchPointsRequired = points; }
+	void resetResearchPoints() { m_researchPoints = 0.0f; }
 	
 	bool isResearched() const { return m_researchPoints >= m_researchPointsRequired; }
 	bool isResearching() const { return m_researching; }

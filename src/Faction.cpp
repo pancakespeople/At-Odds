@@ -521,7 +521,7 @@ const Tech* Faction::getTech(const std::string& type) const {
 	return nullptr;
 }
 
-void Faction::onResearchFinish(const Tech& tech) {
+void Faction::onResearchFinish(Tech& tech) {
 	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
 
 	// Process flags
@@ -557,6 +557,11 @@ void Faction::onResearchFinish(const Tech& tech) {
 	auto weapons = tech.getUnlocked("addsWeapons");
 	for (const std::string& weapon : weapons) {
 		addWeapon(weapon);
+	}
+
+	if (table[tech.getType()]["repeatable"].value_or(false)) {
+		tech.resetResearchPoints();
+		tech.setRequiredResearchPoints(tech.getRequiredResearchPoints() * table[tech.getType()]["repeatResearchMultiplier"].value_or(1.0f));
 	}
 
 	DEBUG_PRINT(getName() << " completed research " << tech.getName());
