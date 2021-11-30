@@ -150,12 +150,13 @@ void Faction::update() {
 			}
 			else {
 				tech.addResearchPoints(0.1f * m_currentResearchPoints);
-				m_researchPointProduction = 0.1f * m_currentResearchPoints;
-				m_currentResearchPoints = 0.0f;
 			}
 			break; // Only work on the first in the queue
 		}
 	}
+
+	m_researchPointProduction = 0.1f * m_currentResearchPoints;
+	m_currentResearchPoints = 0.0f;
 }
 
 void Faction::controlByPlayer(Player& player) {
