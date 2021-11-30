@@ -565,6 +565,7 @@ void Faction::onResearchFinish(Tech& tech) {
 	}
 
 	DEBUG_PRINT(getName() << " completed research " << tech.getName());
+	addAnnouncementEvent("Research completed on " + tech.getName());
 
 	if (m_aiEnabled) m_ai.onResearchComplete(this);
 }
