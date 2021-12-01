@@ -52,18 +52,19 @@ void main()
     float dist = length(uv);
     float angle = atan(uv.y, uv.x);
     float c = fbm(vec2(cos(angle) + time / 7.0, sin(angle + dist) - time / 7.0) / 2.0) * 2.0;
-    float f = (1.0 - sqrt(1.0 - dist)) / dist;
+    float f = (sqrt(0.16) - sqrt(0.16 - dist)) / dist;
     float alpha = 0.0;
 
     vec3 col = vec3(0.0);
 
     vec2 nuv = uv;
-    nuv *= rotate(time / 10.0);
+    nuv *= rotate(time / 8.0);
 
     // Star
     //col += color.xyz * smoothstep(0.17, 0.15, dist);
-    col += max((noise(nuv * 25.0 * f) * 0.5 + 0.45) * smoothstep(0.16, 0.15, dist) * color.xyz, 0.0);
-    col += max((noise(nuv * 25.0 * f + 50.0 + time / 5.0) * 0.5 + 0.45) * smoothstep(0.16, 0.15, dist) * color.xyz, 0.0);
+    col += max((fbm(nuv * 20.0 * f) * 0.75 + 0.45) * smoothstep(0.16, 0.15, dist) * color.xyz, 0.0);
+    col += max((fbm(nuv * 20.0 * f + 50.0 + time / 2.0) * 0.75 + 0.45) * smoothstep(0.16, 0.15, dist) * color.xyz, 0.0);
+    col += pow(dist + 0.4, 3) * smoothstep(0.2, 0.15, dist) * smoothstep(0.2, 0.15, dist) * (fbm(nuv * 20.0 + time / 4.0) * 2.5 + 0.5);
     alpha += smoothstep(0.16, 0.15, dist);
 
     // Flaring
@@ -74,6 +75,9 @@ void main()
 
     // Glow
     col += vec3(smoothstep(1.0, 0.0, dist / 4.0) / 3.0) * color.xyz * smoothstep(0.15, 0.16, dist);
+    if (dist < 0.16) col += f / 4.0 * smoothstep(0.0, 0.3, dist);
+    //col += smoothstep(0.07, 0.2, dist) * smoothstep(0.16, 0.15, dist);
+    col += pow(dist + 0.4, 3) * smoothstep(0.2, 0.15, dist) * smoothstep(0.2, 0.16, dist);
 
     // Stars
     //col += vec3(0.01 / length(gv));
