@@ -19,14 +19,21 @@ public:
 	void setAccuracy(float accuracy) { m_accuracy = accuracy; }
 	void triggerCooldown() { m_cooldownPercent = 100.0f; }
 	void playFireSound(sf::Vector2f sourcePos, Star* star);
+	void drawFireAnimation(sf::RenderWindow& window, Unit* unit);
+	
+	// Insta hit makes the projectile hit the target always, instantly
+	void instaHitFireAt(sf::Vector2f sourcePos, Unit* target, Star* star);
 
 	bool isOnCooldown();
+	bool isInstaHit() { return m_instaHit; }
 
 	float getRange() const { return m_projectile.getRange(); }
 	float getAccuracy() const { return m_accuracy; }
 	float getDamage() const { return m_projectile.getDamage(); }
 
 	const Projectile& getProjectile() const { return m_projectile; }
+
+	std::string getSoundPath() const;
 
 private:
 	friend class boost::serialization::access;
@@ -38,8 +45,10 @@ private:
 		archive & m_numProjectiles;
 		archive & m_soundCooldown;
 		archive & m_baseSoundCooldown;
-		archive & m_soundPath;
+		archive & m_type;
 		archive & m_projectile;
+		archive & m_instaHit;
+		archive & m_lastFireLocation;
 	}
 
 	Weapon() {}
@@ -52,8 +61,13 @@ private:
 	int m_soundCooldown = 0;
 	int m_baseSoundCooldown = 0;
 
-	std::string m_soundPath;
+	std::string m_type;
+	std::string m_fireAnimation;
 
 	Projectile m_projectile;
+
+	bool m_instaHit = false;
+
+	sf::Vector2f m_lastFireLocation;
 };
 

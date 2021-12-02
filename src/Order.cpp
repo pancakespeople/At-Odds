@@ -91,7 +91,14 @@ bool AttackOrder::execute(Spaceship* ship, Star* currentStar) {
 
 	for (int i = 0; i < weapons.size(); i++) {
 		if (dist < weapons[i].getRange()) {
-			ship->smartFireAt(m_target, i);
+			
+			if (!weapons[i].isInstaHit()) {
+				ship->smartFireAt(m_target, i);
+			}
+			else {
+				weapons[i].instaHitFireAt(ship->getPos(), m_target, currentStar);
+			}
+
 			if (ship->getHealth() < m_lastEnemyHealth) {
 				m_frustration = 0.0f;
 			}

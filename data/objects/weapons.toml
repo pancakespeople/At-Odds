@@ -63,3 +63,10 @@ projectile = "INVASION_POD"
 sound = "data/sound/rocket1.wav"
 cooldownRecovery = 0.5
 allowedOnBuildings = false
+
+[BEAM_LASER]
+projectile = "BEAM_LASER"
+sound = "data/sound/pew1.wav"
+cooldownRecovery = 0.1
+fireAnimation = "laserAnimation"
+instaHit = true

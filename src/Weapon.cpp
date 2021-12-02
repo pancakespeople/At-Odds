@@ -9,19 +9,37 @@
 #include "Random.h"
 #include "TOMLCache.h"
 
+void laserAnimation(sf::RenderWindow& window, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
+	float angle = Math::angleBetween(sourcePos, endPos);
+	sf::RectangleShape shape;
+
+	shape.setRotation(-angle);
+	shape.setPosition(sourcePos);
+	shape.setSize(sf::Vector2f(Math::distance(sourcePos, endPos), 25.0f));
+	shape.setFillColor(sf::Color(255, 0, 0, 255 * (1.0 / step)));
+
+	window.draw(shape);
+}
+
+const std::unordered_map<std::string, std::function<void(sf::RenderWindow& window, sf::Vector2f sourcePos, sf::Vector2f endPos, float step)>> fireAnimationFunctions = {
+	{"laserAnimation", &laserAnimation},
+};
+
 Weapon::Weapon(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
 	assert(table.contains(type));
 
-	m_projectile = Projectile(table[type]["projectile"].value_or(""));
+	m_type = type;
 
-	m_soundPath = table[type]["sound"].value_or("");
+	m_projectile = Projectile(table[type]["projectile"].value_or(""));
 
 	m_cooldownRecovery = table[type]["cooldownRecovery"].value_or(1.0f);
 	m_accuracy = table[type]["accuracy"].value_or(1.0f);
 	m_baseSoundCooldown = table[type]["baseSoundCooldown"].value_or(0);
 	m_numProjectiles = table[type]["numProjectiles"].value_or(1);
+	m_fireAnimation = table[type]["fireAnimation"].value_or("");
+	m_instaHit = table[type]["instaHit"].value_or(false);
 }
 
 void Weapon::fireAtAngle(sf::Vector2f sourcePos, int allegiance, float angleDegrees, Star* star) {
@@ -72,8 +90,8 @@ void Weapon::fireAt(sf::Vector2f sourcePos, int allegiance, const sf::Vector2f& 
 }
 
 void Weapon::playFireSound(sf::Vector2f sourcePos, Star* star) {
-	if (m_soundPath != "" && m_soundCooldown == 0) {
-		Sounds::playSoundLocal(m_soundPath, star, sourcePos, 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
+	if (getSoundPath() != "" && m_soundCooldown == 0) {
+		Sounds::playSoundLocal(getSoundPath(), star, sourcePos, 25.0f, 1.0f + Random::randFloat(-0.5f, 0.5f));
 		m_soundCooldown = m_baseSoundCooldown;
 	}
 }
@@ -85,6 +103,29 @@ void Weapon::fireAtNearestEnemyCombatShip(sf::Vector2f sourcePos, int allegiance
 				fireAt(sourcePos, allegiance, ship->getPos(), star);
 				return;
 			}
+		}
+	}
+}
+
+void Weapon::instaHitFireAt(sf::Vector2f sourcePos, Unit* target, Star* star) {
+	if (!isOnCooldown()) {
+		target->takeDamage(getDamage());
+		playFireSound(sourcePos, star);
+
+		m_lastFireLocation = target->getPos();
+		m_cooldownPercent = 100.0f;
+	}
+}
+
+std::string Weapon::getSoundPath() const {
+	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
+	return table[m_type]["sound"].value_or("");
+}
+
+void Weapon::drawFireAnimation(sf::RenderWindow& window, Unit* unit) {
+	if (isOnCooldown()) {
+		if (m_fireAnimation != "") {
+			fireAnimationFunctions.at(m_fireAnimation)(window, unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
 		}
 	}
 }

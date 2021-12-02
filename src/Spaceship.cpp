@@ -109,6 +109,10 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 
 		drawHealthBar(window);
 	}
+
+	for (Weapon& weapon : m_weapons) {
+		weapon.drawFireAnimation(window, this);
+	}
 }
 
 bool Spaceship::rotateTo(float angleDegrees) {
