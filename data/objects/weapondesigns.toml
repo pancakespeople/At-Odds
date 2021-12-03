@@ -57,3 +57,9 @@ type = "INVASION_POD_LAUNCHER"
 name = "Invasion Pod Launcher"
 weaponPoints = 1.5
 cost = [["COMMON_ORE", 10.0]]
+
+[BEAM_LASER]
+type = "BEAM_LASER"
+name = "Beam Laser"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 50.0]]
