@@ -5,16 +5,16 @@
 #include "../TOMLCache.h"
 
 void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
-	if (goodies.console->validateArgs(command, 2) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
+	if (goodies.console->validateArgs(command, 3) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		std::string type = command.args[0];
-		int allegiance = std::atoi(command.args[1].c_str());
+		int allegiance = std::atoi(command.args[2].c_str());
 		sf::Vector2f pos = goodies.window.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
 		Star* star = goodies.state.getLocalViewStar();
 		Faction* faction = goodies.constellation.getFaction(allegiance);
 		sf::Color color = faction->getColor();
 
 		std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
-		ship->addWeapon(Weapon("LASER_GUN"));
+		ship->addWeapon(Weapon(command.args[1]));
 		faction->addSpaceship(star->createSpaceship(ship));
 
 		goodies.console->addLine("Created spaceship at mouse cursor");
