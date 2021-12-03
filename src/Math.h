@@ -33,4 +33,8 @@ namespace Math {
 
 		return angleDegrees;
 	}
+
+	inline double magnitude(const sf::Vector2f& vec) {
+		return std::sqrt(vec.x * vec.x + vec.y * vec.y);
+	}
 }

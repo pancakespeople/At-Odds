@@ -78,7 +78,7 @@ bool AttackOrder::execute(Spaceship* ship, Star* currentStar) {
 		return true;
 	}
 	
-	if (m_target->getVelocity() == sf::Vector2f(0.0f, 0.0f) || m_aggressive) {
+	if (Math::magnitude(m_target->getVelocity()) < 1.0f || m_aggressive) {
 		ship->orbit(m_target->getPos());
 	}
 	else {
