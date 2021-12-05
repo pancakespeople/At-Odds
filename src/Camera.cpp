@@ -1,6 +1,7 @@
 #include "gamepch.h"
 
 #include "Camera.h"
+#include "Math.h"
 
 #include <iostream>
 
@@ -46,6 +47,10 @@ void Camera::update(sf::RenderWindow& window, tgui::Widget::Ptr focusedWidget) {
 		}
 	}
 
+	// Smooth zooming
+	m_camZoomFactor = Math::lerp(m_camZoomFactor, m_wantedZoomFactor, m_zoomTimer.getElapsedTime().asSeconds());
+	m_view.setSize(sf::Vector2f(m_initialRect.width, m_initialRect.height) * m_camZoomFactor);
+
 	window.setView(m_view);
 }
 
@@ -53,24 +58,28 @@ void Camera::zoomEvent(sf::Event& ev) {
 	// Zoom with the mouse wheel
 	if (ev.type == sf::Event::MouseWheelScrolled) {
 		if (ev.mouseWheelScroll.delta >= 1) {
-			m_view.zoom(1 - ZOOM_FACTOR);
-			m_camZoomFactor *= 1 - ZOOM_FACTOR;
+			//m_view.zoom(1 - ZOOM_FACTOR);
+			m_wantedZoomFactor *= 1 - zoomChange;
+			m_zoomTimer.restart();
 		}
 		else {
-			m_view.zoom(1 + ZOOM_FACTOR);
-			m_camZoomFactor *= 1 + ZOOM_FACTOR;
+			//m_view.zoom(1 + ZOOM_FACTOR);
+			m_wantedZoomFactor *= 1 + zoomChange;
+			m_zoomTimer.restart();
 		}
 	}
 }
 
 void Camera::zoom(float factor) {
 	m_view.zoom(factor);
+	m_wantedZoomFactor *= factor;
 	m_camZoomFactor *= factor;
 }
 
 void Camera::resetZoom() {
 	m_view.setSize(getInitialWidthHeight());
-	m_camZoomFactor = 1;
+	m_camZoomFactor = 1.0f;
+	m_wantedZoomFactor = 1.0f;
 }
 
 void Camera::setAbsoluteZoom(float factor) {

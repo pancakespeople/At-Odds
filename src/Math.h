@@ -37,4 +37,8 @@ namespace Math {
 	inline double magnitude(const sf::Vector2f& vec) {
 		return std::sqrt(vec.x * vec.x + vec.y * vec.y);
 	}
+
+	inline double lerp(double v0, double v1, double t) {
+		return (1 - t) * v0 + t * v1;
+	}
 }

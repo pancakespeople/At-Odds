@@ -80,6 +80,7 @@ private:
 			archive & continuous;
 			archive & amount;
 			archive & buildTimeMultiplier;
+			archive & shipName;
 		}
 
 		ShipBuildData() = default;

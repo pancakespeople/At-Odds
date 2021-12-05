@@ -1,8 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-#define ZOOM_FACTOR 0.25f
-
 class Camera {
 public:
 	Camera(float x, float y, float w, float h);
@@ -25,15 +23,29 @@ public:
 
 private:
 	friend class boost::serialization::access;
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
 	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {
-		archive& m_view;
-		archive& m_camZoomFactor;
-		archive& m_initialRect;
+	void save(Archive& archive, const unsigned int version) const {
+		archive & m_view;
+		archive & m_camZoomFactor;
+		archive & m_initialRect;	
+	}
+
+	template<class Archive>
+	void load(Archive& archive, const unsigned int version) {
+		archive & m_view;
+		archive & m_camZoomFactor;
+		archive & m_initialRect;
+
+		m_wantedZoomFactor = m_camZoomFactor;
 	}
 	
 	sf::View m_view;
-	float m_camZoomFactor = 1;
 	sf::FloatRect m_initialRect;
+	sf::Clock m_zoomTimer;
+
+	float m_camZoomFactor = 1.0f;
+	float m_wantedZoomFactor = 1.0f;
+	const inline static float zoomChange = 0.5f;
 };
 
