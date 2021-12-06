@@ -15,12 +15,24 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 
 	assert(table.contains(type));
 
+	int allegiance;
+	sf::Color factionColor;
+
+	if (faction == nullptr) {
+		allegiance = -1;
+		factionColor = Faction::neutralColor;
+	}
+	else {
+		allegiance = faction->getID();
+		factionColor = faction->getColor();
+	}
+
 	m_sprite.setTexture(TextureCache::getTexture(table[type]["texturePath"].value_or("")));
 	m_sprite.setScale(table[type]["scale"].value_or(1.0f), table[type]["scale"].value_or(1.0f));
 	m_maxHealth = table[type]["health"].value_or(100.0f);
 	m_constructionSpeedMultiplier = table[type]["constructionSpeedMultiplier"].value_or(1.0f);
 	m_type = type;
-	m_collider = Collider(pos, faction->getColor(), m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
+	m_collider = Collider(pos, factionColor, m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
 
 	if (table[type].as_table()->contains("weapons")) {
 		for (auto& weapon : *table[type]["weapons"].as_array()) {
@@ -45,7 +57,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 			std::string val = mod.value_or("");
 			
 			if (val == "FighterBay") {
-				addMod(FighterBayMod(this, star, faction->getID(), faction->getColor()));
+				addMod(FighterBayMod(this, star, allegiance, factionColor));
 			}
 			else if (val == "Factory") {
 				addMod(FactoryMod());
@@ -56,6 +68,9 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 			else if (val == "Science") {
 				addMod(ScienceMod());
 			}
+			else if (val == "PirateBase") {
+				addMod(PirateBaseMod());
+			}
 		}
 	}
 
@@ -63,7 +78,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
 	m_sprite.setRotation(Random::randFloat(0.0f, 360.0f));
 	
-	m_allegiance = faction->getID();
+	m_allegiance = allegiance;
 	m_currentStar = star;
 
 	if (built) {

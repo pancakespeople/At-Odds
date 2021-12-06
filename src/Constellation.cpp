@@ -474,3 +474,7 @@ float Constellation::closestStarDistanceCoords(const sf::Vector2f& targetPos, co
     }
     return closest;
 }
+
+void Constellation::generatePirates() {
+    m_stars[0]->createBuilding(std::make_unique<Building>("PIRATE_BASE", m_stars[0].get(), Random::randVec(0.0f, 10000.0f), nullptr));
+}

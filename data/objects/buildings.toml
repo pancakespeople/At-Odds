@@ -17,7 +17,7 @@ weapons = ["LASER_GUN"]
 weaponRequirements = ["LASER_GUN"]
 
 [MACHINE_GUN_TURRET]
-name = "Machine Gun"
+name = "Machine Gun Turret"
 texturePath = "data/art/machinegunturret.png"
 health = 150.0
 weapons = ["MACHINE_GUN"]
@@ -70,3 +70,11 @@ scale = 2.0
 health = 500.0
 scienceLab = true
 mods = ["Science"]
+
+[PIRATE_BASE]
+name = "Pirate Base"
+texturePath = "data/art/piratebase.png"
+scale = 4.0
+health = 3500.0
+cannotBuild = true
+mods = ["PirateBase"]

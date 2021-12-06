@@ -216,3 +216,20 @@ private:
 
 	float m_research = 0.1f;
 };
+
+class PirateBaseMod : public Mod {
+public:
+	PirateBaseMod() = default;
+
+	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Mod>(*this);
+		archive & m_nextShipTime;
+	}
+
+	int m_nextShipTime = 0;
+};

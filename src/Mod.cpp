@@ -18,6 +18,7 @@ BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
 BOOST_CLASS_EXPORT_GUID(HabitatMod, "HabitatMod");
 BOOST_CLASS_EXPORT_GUID(TradeMod, "TradeMod");
 BOOST_CLASS_EXPORT_GUID(ScienceMod, "ScienceMod");
+BOOST_CLASS_EXPORT_GUID(PirateBaseMod, "PirateBaseMod");
 
 void Mod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	auto text = tgui::Label::create();
@@ -747,4 +748,30 @@ void ScienceMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
 	faction->addResearchPoints(m_research);
+}
+
+void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
+	if (m_nextShipTime == 0) {
+		Weapon weapon("LASER_GUN");
+		int rnd = Random::randInt(0, 2);
+
+		if (rnd == 0) {
+			weapon = Weapon("LASER_GUN");
+		}
+		else if (rnd == 1) {
+			weapon = Weapon("MACHINE_GUN");
+		}
+		else {
+			weapon = Weapon("ROCKET_LAUNCHER");
+		}
+
+		Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", unit->getPos(), currentStar, -1, Faction::neutralColor));
+		ship->addWeapon(weapon);
+
+		sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
+		ship->addVelocity(randVel);
+
+		m_nextShipTime = 10000;
+	}
+	else m_nextShipTime--;
 }

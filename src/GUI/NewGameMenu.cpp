@@ -104,6 +104,7 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 	constellation.generateFactions(factionsNum);
 	constellation.generateNeutralSquatters();
+	constellation.generatePirates();
 
 	state.getCamera().setPos(stars[0]->getPos());
 	state.getCamera().resetZoom();
