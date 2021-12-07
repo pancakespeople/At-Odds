@@ -378,7 +378,7 @@ void Star::update(Constellation* constellation, const Player& player) {
 	
 	// Update spaceships
 	for (int i = 0; i < m_localShips.size(); i++) {
-		m_localShips[i]->updateMods(this, constellation->getFaction(m_localShips[i]->getAllegiance()));
+		m_localShips[i]->updateMods(this, constellation->getFaction(m_localShips[i]->getAllegiance()), constellation);
 		m_localShips[i]->update(this);
 
 		if (m_localShips[i] == nullptr) {
@@ -402,7 +402,7 @@ void Star::update(Constellation* constellation, const Player& player) {
 	
 	// Update buildings
 	for (int i = 0; i < m_buildings.size(); i++) {
-		m_buildings[i]->updateMods(this, constellation->getFaction(m_buildings[i]->getAllegiance()));
+		m_buildings[i]->updateMods(this, constellation->getFaction(m_buildings[i]->getAllegiance()), constellation);
 		m_buildings[i]->update(this);
 		if (m_buildings[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_buildings[i]->getPos(), m_buildings[i]->getCollider().getColor(), 10.0f, 100);

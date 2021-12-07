@@ -12,6 +12,9 @@
 #include "Sounds.h"
 #include "TradeGoods.h"
 #include "Util.h"
+#include "Constellation.h"
+#include "Pathfinder.h"
+#include "Spaceship.h"
 
 BOOST_CLASS_EXPORT_GUID(FactoryMod, "FactoryMod")
 BOOST_CLASS_EXPORT_GUID(FighterBayMod, "FighterBayMod")
@@ -55,7 +58,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 		if (!build.resourcesSubtracted && build.build) {
 			// Check resources
 				
-			Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
+			DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
 			auto cost = shipDesign.getTotalResourceCost();
 				
 			if (faction->canSubtractResources(cost)) {
@@ -68,11 +71,11 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 		if (build.progressPercent >= 100.0f) {
 			// Spawn the ship
 				
-			Spaceship::DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
+			DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
 			auto shipPtr = std::make_unique<Spaceship>(shipDesign.chassis.type, unit->getPos(), currentStar, faction->getID(), faction->getColor());
 				
 			// Add weapons
-			for (Spaceship::DesignerWeapon& weapon : shipDesign.weapons) {
+			for (DesignerWeapon& weapon : shipDesign.weapons) {
 				shipPtr->addWeapon(weapon.type);
 			}
 
@@ -204,7 +207,7 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 		auto shipWidgets = window->get<tgui::Group>("shipWidgets");
 		
 		if (m_designsListBox->getSelectedItemIndex() != -1) {
-			Spaceship::DesignerShip ship = faction->getShipDesignByName(m_designsListBox->getSelectedItem().toStdString());
+			DesignerShip ship = faction->getShipDesignByName(m_designsListBox->getSelectedItem().toStdString());
 			int buildIndex = -1;
 
 			// Find build index
@@ -348,7 +351,7 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 }
 
 void FactoryMod::updateDesigns(Faction* faction) {
-	for (Spaceship::DesignerShip ship : faction->getShipDesigns()) {
+	for (DesignerShip ship : faction->getShipDesigns()) {
 		bool found = false;
 		for (const ShipBuildData& data : m_shipBuildData) {
 			if (data.shipName == ship.name) {
@@ -774,4 +777,60 @@ void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 		m_nextShipTime = 10000;
 	}
 	else m_nextShipTime--;
+}
+
+void PirateBaseMod::findTheftAllegiance(Star* currentStar, Constellation* constellation) {
+	// Find the nearest faction
+
+	if (currentStar->getAllegiance() != -1) {
+		m_theftAllegiance = currentStar->getAllegiance();
+		return;
+	}
+
+	std::vector<Faction>& factions = constellation->getFactions();
+
+	int nearestAllegiance = -1;
+	int closestDist = 0;
+
+	for (Faction& faction : factions) {
+		if (!faction.isDead()) {
+			int dist = Pathfinder::findPath(currentStar, faction.getCapital()).size();
+			if (dist < closestDist || closestDist == 0) {
+				closestDist = dist;
+				nearestAllegiance = faction.getID();
+			}
+		}
+	}
+
+	if (nearestAllegiance != -1) {
+		m_theftAllegiance = nearestAllegiance;
+	}
+}
+
+void PirateBaseMod::stealDesignFrom(Faction* faction) {
+	if (faction == nullptr) return;
+
+	auto designs = faction->getShipDesigns();
+	std::vector<DesignerShip> viableDesigns;
+
+	for (auto& shipDesign : designs) {
+		if (shipDesign.chassis.type != "CONSTRUCTION_SHIP") {
+			if (!hasDesign(shipDesign)) {
+				viableDesigns.push_back(shipDesign);
+			}
+		}
+	}
+
+	if (viableDesigns.size() > 0) {
+		int rnd = Random::randInt(0, viableDesigns.size() - 1);
+		m_stolenDesigns.push_back(viableDesigns[rnd]);
+		DEBUG_PRINT("Pirates stole the " << m_stolenDesigns.back().name << " design from " << faction->getName());
+	}
+}
+
+bool PirateBaseMod::hasDesign(const DesignerShip& design) {
+	for (auto& d : m_stolenDesigns) {
+		if (d.name == design.name) return true;
+	}
+	return false;
 }

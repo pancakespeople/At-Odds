@@ -17,6 +17,7 @@
 #include "ext/toml.hpp"
 #include "TOMLCache.h"
 #include "Constellation.h"
+#include "Designs.h"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -437,7 +438,7 @@ void Spaceship::attackRandomEnemyBuilding(std::vector<Building*>& enemyBuildings
 	}
 }
 
-std::unordered_map<std::string, float> Spaceship::DesignerShip::getTotalResourceCost() {
+std::unordered_map<std::string, float> DesignerShip::getTotalResourceCost() {
 	std::unordered_map<std::string, float> totalResourceCost;
 	
 	for (auto& resource : chassis.resourceCost) {
@@ -453,7 +454,7 @@ std::unordered_map<std::string, float> Spaceship::DesignerShip::getTotalResource
 	return totalResourceCost;
 }
 
-Spaceship::DesignerChassis::DesignerChassis(const std::string& typeStr) {
+DesignerChassis::DesignerChassis(const std::string& typeStr) {
 	const toml::table& table = TOMLCache::getTable("data/objects/chassis.toml");
 
 	assert(table.contains(typeStr));
@@ -469,7 +470,7 @@ Spaceship::DesignerChassis::DesignerChassis(const std::string& typeStr) {
 	}
 }
 
-Spaceship::DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
+DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
 
 	assert(table.contains(typeStr));
@@ -484,7 +485,7 @@ Spaceship::DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 	}
 }
 
-std::string Spaceship::DesignerShip::generateName() {
+std::string DesignerShip::generateName() {
 	std::string weaponName;
 	if (weapons.size() > 0) {
 		weaponName = weapons[0].name;
@@ -493,7 +494,7 @@ std::string Spaceship::DesignerShip::generateName() {
 	return chassis.name;
 }
 
-float Spaceship::DesignerShip::getTotalWeaponPoints() {
+float DesignerShip::getTotalWeaponPoints() {
 	float total = 0.0f;
 	for (auto& weapon : weapons) {
 		total += weapon.weaponPoints;

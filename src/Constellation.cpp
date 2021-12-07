@@ -369,7 +369,10 @@ void Constellation::update(const Player& player) {
     for (std::unique_ptr<Star>& s : m_stars) {
         s->update(this, player);
     }
+    updatePirates();
     cleanUpDeadShips();
+
+    m_numUpdates++;
 }
 
 void Constellation::cleanUpDeadShips() {
@@ -477,4 +480,31 @@ float Constellation::closestStarDistanceCoords(const sf::Vector2f& targetPos, co
 
 void Constellation::generatePirates() {
     m_stars[0]->createBuilding(std::make_unique<Building>("PIRATE_BASE", m_stars[0].get(), Random::randVec(0.0f, 10000.0f), nullptr));
+}
+
+void Constellation::updatePirates() {
+    if (m_numUpdates % 20000 == 0) {
+        for (Building* pirateBase : getAllBuildingsOfType("PIRATE_BASE")) {
+            PirateBaseMod* mod = pirateBase->getMod<PirateBaseMod>();
+            if (mod->getTheftAllegiance() == -1) {
+                mod->findTheftAllegiance(pirateBase->getCurrentStar(), this);
+            }
+
+            if (mod->getTheftAllegiance() != -1) {
+                mod->stealDesignFrom(getFaction(mod->getTheftAllegiance()));
+            }
+        }
+    }
+}
+
+std::vector<Building*> Constellation::getAllBuildingsOfType(const std::string& type) {
+    std::vector<Building*> buildings;
+    for (auto& star : m_stars) {
+        for (auto& building : star->getBuildings()) {
+            if (building->getType() == type) {
+                buildings.push_back(building.get());
+            }
+        }
+    }
+    return buildings;
 }

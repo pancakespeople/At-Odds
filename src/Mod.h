@@ -1,10 +1,13 @@
 #pragma once
 
+#include "Designs.h"
+
 class Unit;
 class Star;
 class Faction;
 class Planet;
 class Spaceship;
+class Constellation;
 
 class Mod {
 public:
@@ -220,8 +223,12 @@ private:
 class PirateBaseMod : public Mod {
 public:
 	PirateBaseMod() = default;
-
+	
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	int getTheftAllegiance() { return m_theftAllegiance; }
+	void findTheftAllegiance(Star* currentStar, Constellation* constellation);
+	void stealDesignFrom(Faction* faction);
+	bool hasDesign(const DesignerShip& design);
 
 private:
 	friend class boost::serialization::access;
@@ -229,7 +236,11 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_nextShipTime;
+		archive & m_theftAllegiance;
+		archive & m_stolenDesigns;
 	}
 
+	int m_theftAllegiance = -1;
 	int m_nextShipTime = 0;
+	std::vector<DesignerShip> m_stolenDesigns;
 };

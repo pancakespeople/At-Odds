@@ -31,10 +31,12 @@ public:
 	void reinitAfterLoad();
 	void onStart();
 	void generatePirates();
+	void updatePirates();
 
 	std::vector<std::unique_ptr<Star>>& getStars() { return m_stars; }
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }
 	std::vector<Faction>& getFactions() { return m_factions; }
+	std::vector<Building*> getAllBuildingsOfType(const std::string& type);
 
 	Faction* getFaction(int id);
 	Star* getStarByID(uint32_t id);
@@ -52,6 +54,7 @@ private:
 		archive & m_shipPurgatory;
 		archive & m_availableFactionColors;
 		archive & m_border;
+		archive & m_numUpdates;
 	}
 	
 	template <typename T>
@@ -80,5 +83,7 @@ private:
 	std::vector<std::pair<sf::Color, std::string>> m_availableFactionColors;
 	NameGenerator m_nameGenerator;
 	sf::RectangleShape m_border;
+
+	int m_numUpdates = 0;
 };
 

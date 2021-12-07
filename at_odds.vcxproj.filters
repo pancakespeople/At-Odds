@@ -74,6 +74,7 @@
     <ClInclude Include="src\GUI\MinimapGUI.h" />
     <ClInclude Include="src\AsteroidBelt.h" />
     <ClInclude Include="src\ext\delaunator.hpp" />
+    <ClInclude Include="src\Designs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />

@@ -428,8 +428,8 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 
 		// If there doesn't exist a design that uses this weapon, create a new design
 		if (notUsed) {
-			Spaceship::DesignerShip newDesign;
-			std::vector<Spaceship::DesignerChassis> usableChassis;
+			DesignerShip newDesign;
+			std::vector<DesignerChassis> usableChassis;
 
 			for (auto& chassis : faction->getChassis()) {
 				if (chassis.maxWeaponCapacity > 0.0f) {
@@ -472,10 +472,10 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		}
 
 		if (notUsed) {
-			Spaceship::DesignerShip newDesign;
+			DesignerShip newDesign;
 			newDesign.chassis = chassis;
 
-			std::vector<Spaceship::DesignerWeapon> usableWeapons = faction->getWeaponsBelowOrEqualWeaponPoints(chassis.maxWeaponCapacity);
+			std::vector<DesignerWeapon> usableWeapons = faction->getWeaponsBelowOrEqualWeaponPoints(chassis.maxWeaponCapacity);
 
 			if (usableWeapons.size() > 0) {
 				int i = 0;

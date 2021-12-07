@@ -4,6 +4,7 @@
 #include "Planet.h"
 #include "Building.h"
 #include "Tech.h"
+#include "Designs.h"
 
 class Constellation;
 class Player;
@@ -24,9 +25,9 @@ public:
 	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); m_shipIDs.push_back(ship->getID()); }
 	void addResource(const std::string& type, float num);
 	void subtractResource(const std::string& type, float num);
-	void addChassis(const Spaceship::DesignerChassis& chassis) { m_chassis.push_back(chassis); }
-	void addWeapon(const Spaceship::DesignerWeapon& weapon) { if (!hasWeapon(weapon.type)) m_weapons.push_back(weapon); }
-	void addShipDesign(const Spaceship::DesignerShip& ship);
+	void addChassis(const DesignerChassis& chassis) { m_chassis.push_back(chassis); }
+	void addWeapon(const DesignerWeapon& weapon) { if (!hasWeapon(weapon.type)) m_weapons.push_back(weapon); }
+	void addShipDesign(const DesignerShip& ship);
 	void subtractResources(const std::unordered_map<std::string, float>& resources);
 	void addAnnouncementEvent(const std::string& text);
 	void clearAnnouncementEvents() { m_announcementEvents.clear(); }
@@ -68,12 +69,12 @@ public:
 	std::vector<Building*> getAllOwnedBuildings();
 	std::vector<Building*> getAllOwnedBuildingsOfType(const std::string& type);
 	std::vector<Spaceship*> getAllCombatShips();
-	std::vector<Spaceship::DesignerChassis>& getChassis() { return m_chassis; }
-	std::vector<Spaceship::DesignerWeapon>& getWeapons() { return m_weapons; }
-	std::vector<Spaceship::DesignerShip>& getShipDesigns() { return m_designerShips; }
+	std::vector<DesignerChassis>& getChassis() { return m_chassis; }
+	std::vector<DesignerWeapon>& getWeapons() { return m_weapons; }
+	std::vector<DesignerShip>& getShipDesigns() { return m_designerShips; }
 	std::deque<std::string>& getAnnouncementEvents() { return m_announcementEvents; }
 	std::string getName() { return m_name; }
-	std::vector<Spaceship::DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
+	std::vector<DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
 	std::vector<ColonyBuilding> getColonyBuildings();
 	std::vector<Planet*> getOwnedPlanets() const;
 	std::vector<Star*> getUnderAttackStars();
@@ -88,16 +89,16 @@ public:
 	std::vector<Spaceship*> getPlanetAttackShips();
 	
 	// Gets weapons that are allowed to be fitted onto buildings
-	std::vector<Spaceship::DesignerWeapon> getBuildingWeapons();
+	std::vector<DesignerWeapon> getBuildingWeapons();
 	
 	// Gets all enemy planets that are in this faction's territory
 	std::vector<Planet*> getEnemyPlanets();
 
-	Spaceship::DesignerChassis getChassisByName(const std::string& name);
-	Spaceship::DesignerWeapon getWeaponByName(const std::string& name);
-	Spaceship::DesignerShip getShipDesignByName(const std::string& name);
-	Spaceship::DesignerWeapon addRandomWeapon();
-	Spaceship::DesignerWeapon addRandomUndiscoveredWeapon();
+	DesignerChassis getChassisByName(const std::string& name);
+	DesignerWeapon getWeaponByName(const std::string& name);
+	DesignerShip getShipDesignByName(const std::string& name);
+	DesignerWeapon addRandomWeapon();
+	DesignerWeapon addRandomUndiscoveredWeapon();
 
 	Star* getCapital() { return m_capital; }
 	Star* getRandomOwnedStar();
@@ -159,9 +160,9 @@ private:
 	std::vector<uint32_t> m_shipIDs;
 
 	std::unordered_map<std::string, float> m_resources;
-	std::vector<Spaceship::DesignerChassis> m_chassis;
-	std::vector<Spaceship::DesignerWeapon> m_weapons;
-	std::vector<Spaceship::DesignerShip> m_designerShips;
+	std::vector<DesignerChassis> m_chassis;
+	std::vector<DesignerWeapon> m_weapons;
+	std::vector<DesignerShip> m_designerShips;
 	std::deque<std::string> m_announcementEvents;
 	std::string m_name = "Unnamed";
 	std::vector<std::string> m_availableColonyBuildings;

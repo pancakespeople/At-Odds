@@ -28,7 +28,7 @@ void Derelict::update(Star* star, std::vector<Faction>& factions) {
 				
 				for (Faction& faction : factions) {
 					if (faction.getID() == ship->getAllegiance()) {
-						Spaceship::DesignerWeapon weapon = faction.addRandomWeapon();
+						DesignerWeapon weapon = faction.addRandomWeapon();
 						faction.addAnnouncementEvent("You plundered a derelict and found a " + weapon.name + " design");
 					}
 				}

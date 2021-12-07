@@ -33,13 +33,13 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	// Add a random starter weapon
 	int rnd = Random::randInt(1, 3);
 	if (rnd == 1) {
-		addWeapon(Spaceship::DesignerWeapon("LASER_GUN"));
+		addWeapon(DesignerWeapon("LASER_GUN"));
 	}
 	else if (rnd == 2) {
-		addWeapon(Spaceship::DesignerWeapon("MACHINE_GUN"));
+		addWeapon(DesignerWeapon("MACHINE_GUN"));
 	}
 	else if (rnd == 3) {
-		addWeapon(Spaceship::DesignerWeapon("ROCKET_LAUNCHER"));
+		addWeapon(DesignerWeapon("ROCKET_LAUNCHER"));
 	}
 
 	for (int i = 0; i < 10; i++) {
@@ -63,19 +63,19 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	addResource("COMMON_ORE", 100.0f);
 	
-	addChassis(Spaceship::DesignerChassis("FRIGATE"));
-	addChassis(Spaceship::DesignerChassis("DESTROYER"));
-	addChassis(Spaceship::DesignerChassis("CONSTRUCTOR"));
+	addChassis(DesignerChassis("FRIGATE"));
+	addChassis(DesignerChassis("DESTROYER"));
+	addChassis(DesignerChassis("CONSTRUCTOR"));
 
-	Spaceship::DesignerShip starterFrig;
-	starterFrig.chassis = Spaceship::DesignerChassis("FRIGATE");
-	starterFrig.weapons.push_back(Spaceship::DesignerWeapon(m_weapons.back().type));
+	DesignerShip starterFrig;
+	starterFrig.chassis = DesignerChassis("FRIGATE");
+	starterFrig.weapons.push_back(DesignerWeapon(m_weapons.back().type));
 	starterFrig.name = starterFrig.generateName();
 	addShipDesign(starterFrig);
 
-	Spaceship::DesignerShip constructor;
+	DesignerShip constructor;
 	constructor.name = "Constructor";
-	constructor.chassis = Spaceship::DesignerChassis("CONSTRUCTOR");
+	constructor.chassis = DesignerChassis("CONSTRUCTOR");
 	addShipDesign(constructor);
 
 	addColonyBuilding("INFRASTRUCTURE");
@@ -253,28 +253,28 @@ std::vector<Spaceship*> Faction::getAllCombatShips() {
 	return ships;
 }
 
-Spaceship::DesignerChassis Faction::getChassisByName(const std::string& name) {
+DesignerChassis Faction::getChassisByName(const std::string& name) {
 	for (auto& chassis : m_chassis) {
 		if (chassis.name == name) {
 			return chassis;
 		}
 	}
 	DEBUG_PRINT("Failed to get chassis");
-	return Spaceship::DesignerChassis();
+	return DesignerChassis();
 }
 
-Spaceship::DesignerWeapon Faction::getWeaponByName(const std::string& name) {
+DesignerWeapon Faction::getWeaponByName(const std::string& name) {
 	for (auto& weapon : m_weapons) {
 		if (weapon.name == name) {
 			return weapon;
 		}
 	}
 	DEBUG_PRINT("Failed to get weapon");
-	return Spaceship::DesignerWeapon();
+	return DesignerWeapon();
 }
 
-void Faction::addShipDesign(const Spaceship::DesignerShip& ship) {
-	for (Spaceship::DesignerShip& designerShip : m_designerShips) {
+void Faction::addShipDesign(const DesignerShip& ship) {
+	for (DesignerShip& designerShip : m_designerShips) {
 		if (ship.name == designerShip.name) {
 			designerShip = ship;
 			return;
@@ -284,14 +284,14 @@ void Faction::addShipDesign(const Spaceship::DesignerShip& ship) {
 	m_designerShips.push_back(ship);
 }
 
-Spaceship::DesignerShip Faction::getShipDesignByName(const std::string& name) {
+DesignerShip Faction::getShipDesignByName(const std::string& name) {
 	for (auto& ship : m_designerShips) {
 		if (ship.name == name) {
 			return ship;
 		}
 	}
 	DEBUG_PRINT("Failed to get ship design");
-	return Spaceship::DesignerShip();
+	return DesignerShip();
 }
 
 bool Faction::canSubtractResources(const std::unordered_map<std::string, float>& resources) {
@@ -313,8 +313,8 @@ void Faction::addAnnouncementEvent(const std::string& text) {
 	}
 }
 
-std::vector<Spaceship::DesignerWeapon> Faction::getWeaponsBelowOrEqualWeaponPoints(float wp) {
-	std::vector<Spaceship::DesignerWeapon> weapons;
+std::vector<DesignerWeapon> Faction::getWeaponsBelowOrEqualWeaponPoints(float wp) {
+	std::vector<DesignerWeapon> weapons;
 	for (auto& weapon : m_weapons) {
 		if (weapon.weaponPoints <= wp) {
 			weapons.push_back(weapon);
@@ -421,11 +421,11 @@ std::vector<Planet*> Faction::getEnemyPlanets() {
 	return planets;
 }
 
-std::vector<Spaceship::DesignerWeapon> Faction::getBuildingWeapons() {
-	std::vector<Spaceship::DesignerWeapon> weapons;
+std::vector<DesignerWeapon> Faction::getBuildingWeapons() {
+	std::vector<DesignerWeapon> weapons;
 	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
-	for (Spaceship::DesignerWeapon& weapon : m_weapons) {
+	for (DesignerWeapon& weapon : m_weapons) {
 		if (table[weapon.type]["allowedOnBuildings"].value_or(true)) {
 			weapons.push_back(weapon);
 		}
@@ -434,7 +434,7 @@ std::vector<Spaceship::DesignerWeapon> Faction::getBuildingWeapons() {
 	return weapons;
 }
 
-Spaceship::DesignerWeapon Faction::addRandomWeapon() {
+DesignerWeapon Faction::addRandomWeapon() {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
 
 	std::vector<std::string> vals;
@@ -444,7 +444,7 @@ Spaceship::DesignerWeapon Faction::addRandomWeapon() {
 	}
 
 	int randIdx = Random::randInt(0, vals.size() - 1);
-	Spaceship::DesignerWeapon weapon(vals[randIdx]);
+	DesignerWeapon weapon(vals[randIdx]);
 
 	bool alreadyHas = false;
 	for (auto& w : getWeapons()) {
@@ -458,7 +458,7 @@ Spaceship::DesignerWeapon Faction::addRandomWeapon() {
 	return weapon;
 }
 
-Spaceship::DesignerWeapon Faction::addRandomUndiscoveredWeapon() {
+DesignerWeapon Faction::addRandomUndiscoveredWeapon() {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
 
 	std::vector<std::string> vals;
@@ -469,12 +469,12 @@ Spaceship::DesignerWeapon Faction::addRandomUndiscoveredWeapon() {
 
 	if (vals.size() > 0) {
 		int randIdx = Random::randInt(0, vals.size() - 1);
-		Spaceship::DesignerWeapon weapon(vals[randIdx]);
+		DesignerWeapon weapon(vals[randIdx]);
 		addWeapon(weapon);
 		return weapon;
 	}
 	else {
-		return Spaceship::DesignerWeapon();
+		return DesignerWeapon();
 	}
 }
 
@@ -527,7 +527,7 @@ void Faction::onResearchFinish(Tech& tech) {
 
 	// Process flags
 	if (tech.hasFlag("unlockRandomWeapon")) {
-		Spaceship::DesignerWeapon weapon = addRandomUndiscoveredWeapon();
+		DesignerWeapon weapon = addRandomUndiscoveredWeapon();
 		if (weapon.type != "") {
 			addAnnouncementEvent("Our engineers have designed us the " + weapon.name + " weapon");
 		}
@@ -550,7 +550,7 @@ void Faction::onResearchFinish(Tech& tech) {
 	if (hulls != nullptr) {
 		for (auto& chassis : *hulls) {
 			std::string type = chassis.value_or("");
-			if (type != "") addChassis(Spaceship::DesignerChassis(type));
+			if (type != "") addChassis(DesignerChassis(type));
 		}
 	}
 

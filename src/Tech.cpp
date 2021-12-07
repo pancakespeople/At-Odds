@@ -4,6 +4,7 @@
 #include "Util.h"
 #include "Colony.h"
 #include "Faction.h"
+#include "Designs.h"
 
 Tech::Tech(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
@@ -68,7 +69,7 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 	if (chassis.size() > 0) {
 		text += "Unlocks chassis: ";
 		for (int i = 0; i < chassis.size(); i++) {
-			Spaceship::DesignerChassis theChassis(chassis[i]);
+			DesignerChassis theChassis(chassis[i]);
 			text += theChassis.name;
 			if (i != chassis.size() - 1) {
 				text += ", ";
@@ -81,7 +82,7 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 	if (weapons.size() > 0) {
 		text += "Unlocks weapons: ";
 		for (int i = 0; i < weapons.size(); i++) {
-			Spaceship::DesignerWeapon weapon(weapons[i]);
+			DesignerWeapon weapon(weapons[i]);
 			text += weapon.name;
 			if (i != weapons.size() - 1) {
 				text += ", ";

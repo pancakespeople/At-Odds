@@ -1,6 +1,7 @@
 #include "gamepch.h"
 #include "ShipDesigner.h"
 #include "../Faction.h"
+#include "../Designs.h"
 
 void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 	m_icon.open(gui, tgui::Layout2d("0%", "80%"), tgui::Layout2d("2.5%", "5%"), "data/art/shipicon.png");
@@ -30,7 +31,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				auto designNameTextBox = m_window->get<tgui::EditBox>("designNameTextBox");
 
 				if (designListBox->getSelectedItemIndex() != -1) {
-					Spaceship::DesignerShip ship = playerFaction->getShipDesignByName(designListBox->getSelectedItem().toStdString());
+					DesignerShip ship = playerFaction->getShipDesignByName(designListBox->getSelectedItem().toStdString());
 
 					shipChassisListBox->removeAllItems();
 					shipChassisListBox->addItem(ship.chassis.name);
@@ -84,7 +85,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 					weaponInfoGroup->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
 					m_window->add(weaponInfoGroup, "weaponInfoGroup");
 
-					Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(weaponsListBox->getSelectedItem().toStdString());
+					DesignerWeapon weapon = playerFaction->getWeaponByName(weaponsListBox->getSelectedItem().toStdString());
 					Weapon weaponObj(weapon.type);
 					
 					auto weaponNameLabel = tgui::Label::create(weapon.name);
@@ -149,7 +150,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			designNameSaveButton->onClick([this, designNameTextBox, shipChassisListBox, shipWeaponsListBox, playerFaction]() {
 				if (shipChassisListBox->getItemCount() > 0) {
 					if (canChassisFitWeapons(playerFaction)) {
-						Spaceship::DesignerShip ship;
+						DesignerShip ship;
 						ship.chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
 						
 						for (tgui::String& weapon : shipWeaponsListBox->getItems()) {
@@ -250,7 +251,7 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 		tgui::String chassisName = shipChassisListBox->getItemByIndex(0);
 		std::unordered_map<std::string, float> totalResourceCost;
 
-		Spaceship::DesignerChassis chassis = playerFaction->getChassisByName(chassisName.toStdString());
+		DesignerChassis chassis = playerFaction->getChassisByName(chassisName.toStdString());
 		for (auto& resource : chassis.resourceCost) {
 			totalResourceCost[resource.first] += resource.second;
 		}
@@ -258,7 +259,7 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 		float totalWeaponPoints = 0.0f;
 
 		for (tgui::String& str : shipWeaponsListBox->getItems()) {
-			Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(str.toStdString());
+			DesignerWeapon weapon = playerFaction->getWeaponByName(str.toStdString());
 			totalWeaponPoints += weapon.weaponPoints;
 			for (auto& resource : weapon.resourceCost) {
 				totalResourceCost[resource.first] += resource.second;
@@ -302,11 +303,11 @@ bool ShipDesignerGUI::canChassisFitWeapons(Faction* playerFaction) {
 	auto shipChassisListBox = m_window->get<tgui::ListBox>("shipChassisListBox");
 	auto shipWeaponsListBox = m_window->get<tgui::ListBox>("shipWeaponsListBox");
 
-	Spaceship::DesignerChassis chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
+	DesignerChassis chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
 
 	float total = 0.0f;
 	for (tgui::String& weaponString : shipWeaponsListBox->getItems()) {
-		Spaceship::DesignerWeapon weapon = playerFaction->getWeaponByName(weaponString.toStdString());
+		DesignerWeapon weapon = playerFaction->getWeaponByName(weaponString.toStdString());
 		total += weapon.weaponPoints;
 	}
 
@@ -318,7 +319,7 @@ void ShipDesignerGUI::displayShipDesigns(Faction* playerFaction) {
 	auto designListBox = m_window->get<tgui::ListBox>("designListBox");
 	designListBox->removeAllItems();
 
-	for (Spaceship::DesignerShip& ship : playerFaction->getShipDesigns()) {
+	for (DesignerShip& ship : playerFaction->getShipDesigns()) {
 		designListBox->addItem(ship.name);
 	}
 }

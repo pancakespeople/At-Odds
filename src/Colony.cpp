@@ -220,7 +220,7 @@ void Colony::exploration(Planet* planet, Faction* faction) {
 			// Interesting exploration event
 
 			// Found weapon
-			Spaceship::DesignerWeapon weapon = faction->addRandomWeapon();
+			DesignerWeapon weapon = faction->addRandomWeapon();
 			planet->addEvent("EXPLORATION_WEAPON");
 			faction->addAnnouncementEvent("Your explorers found a " + weapon.name + " weapon design");
 		}

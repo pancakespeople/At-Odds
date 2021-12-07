@@ -3,6 +3,7 @@
 #include "Star.h"
 #include "Faction.h"
 #include "SmoothCircle.h"
+#include "Constellation.h"
 
 std::vector<Spaceship*> Unit::findEnemyShips() {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
@@ -54,7 +55,7 @@ void Unit::fireAllWeaponsAt(Unit* target) {
 	}
 }
 
-void Unit::updateMods(Star* currentStar, Faction* faction) {
+void Unit::updateMods(Star* currentStar, Faction* faction, Constellation* constellation) {
 	for (auto& mod : m_mods) {
 		mod->update(this, currentStar, faction);
 	}

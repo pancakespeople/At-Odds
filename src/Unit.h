@@ -10,6 +10,7 @@
 class Star;
 class Faction;
 class EffectsEmitter;
+class Constellation;
 
 class Unit : public Identifiable {
 public:
@@ -39,7 +40,7 @@ public:
 	void addWeapon(Weapon weapon);
 	void updateWeapons();
 	void fireAllWeaponsAt(Unit* target);
-	void updateMods(Star* currentStar, Faction* faction);
+	void updateMods(Star* currentStar, Faction* faction, Constellation* constellation);
 	void enableAllMods();
 	void onDeath(Star* currentStar);
 	void openModGUI(tgui::ChildWindow::Ptr window, Faction* faction);
