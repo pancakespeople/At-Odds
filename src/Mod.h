@@ -235,12 +235,12 @@ private:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Mod>(*this);
-		archive & m_nextShipTime;
+		archive & m_nextShipPercent;
 		archive & m_theftAllegiance;
 		archive & m_stolenDesigns;
 	}
 
 	int m_theftAllegiance = -1;
-	int m_nextShipTime = 0;
-	std::vector<DesignerShip> m_stolenDesigns;
+	float m_nextShipPercent = 0.0f;
+	std::deque<DesignerShip> m_stolenDesigns;
 };

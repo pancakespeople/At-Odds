@@ -134,6 +134,7 @@
     <ClCompile Include="src\MusicPlayer.cpp" />
     <ClCompile Include="src\GUI\OptionsMenu.cpp" />
     <ClCompile Include="src\GUI\MinimapGUI.cpp" />
+    <ClCompile Include="src\Designs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />

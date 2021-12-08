@@ -754,29 +754,26 @@ void ScienceMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 }
 
 void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
-	if (m_nextShipTime == 0) {
-		Weapon weapon("LASER_GUN");
-		int rnd = Random::randInt(0, 2);
+	if (m_stolenDesigns.size() > 0) {
+		if (m_nextShipPercent >= 100.0f) {
+			Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>(m_stolenDesigns.front().chassis.type, unit->getPos(), currentStar, -1, Faction::neutralColor));
+			for (const DesignerWeapon& weapon : m_stolenDesigns.front().weapons) {
+				ship->addWeapon(weapon.type);
+			}
 
-		if (rnd == 0) {
-			weapon = Weapon("LASER_GUN");
-		}
-		else if (rnd == 1) {
-			weapon = Weapon("MACHINE_GUN");
+			sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
+			ship->addVelocity(randVel);
+			
+			// Move to end of queue
+			m_stolenDesigns.push_back(m_stolenDesigns.front());
+			m_stolenDesigns.pop_front();
+
+			m_nextShipPercent = 0.0f;
 		}
 		else {
-			weapon = Weapon("ROCKET_LAUNCHER");
+			m_nextShipPercent += 0.025f / m_stolenDesigns.front().chassis.buildTimeMultiplier;
 		}
-
-		Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", unit->getPos(), currentStar, -1, Faction::neutralColor));
-		ship->addWeapon(weapon);
-
-		sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
-		ship->addVelocity(randVel);
-
-		m_nextShipTime = 10000;
 	}
-	else m_nextShipTime--;
 }
 
 void PirateBaseMod::findTheftAllegiance(Star* currentStar, Constellation* constellation) {
