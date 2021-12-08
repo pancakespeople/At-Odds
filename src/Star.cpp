@@ -131,6 +131,9 @@ void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation
 	if (isDiscovered(player.getFaction())) {
 		if (!player.hasFogOfWar() || numAllies(player.getFaction()) > 0) {
 			std::unordered_map<int, int> numFactionShips = countNumFactionShips();
+			sf::RectangleShape background;
+			background.setFillColor(sf::Color::Black);
+
 			for (auto& ships : numFactionShips) {
 				Faction* faction = constellation.getFaction(ships.first);
 				if (faction != nullptr) {
@@ -139,6 +142,11 @@ void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation
 					text.setString(std::to_string(ships.second));
 					text.setOrigin(text.getLocalBounds().width / 2.0f, 0.0f);
 					text.setFillColor(faction->getColor());
+
+					background.setPosition(text.getPosition() - sf::Vector2f(text.getLocalBounds().width / 2.0f, -text.getLocalBounds().height / 2.0f - 1.0f));
+					background.setSize(sf::Vector2f(text.getLocalBounds().width + 5.0f, text.getLocalBounds().height));
+
+					window.draw(background);
 					window.draw(text);
 				}
 			}
