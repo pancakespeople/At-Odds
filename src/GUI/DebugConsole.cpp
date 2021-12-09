@@ -3,6 +3,8 @@
 #include "../Faction.h"
 #include "../Constellation.h"
 #include "../TOMLCache.h"
+#include "../Sounds.h"
+#include "../Random.h"
 
 void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 3) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
@@ -193,6 +195,49 @@ void spawnBuilding(const DebugConsole::Command& command, const DebugConsole::Goo
 	}
 }
 
+void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 0) && goodies.console->validateState(command, goodies.state, GameState::State::MAIN_MENU)) {
+		Camera camera = goodies.state.getCamera();
+
+		goodies.state = GameState(camera);
+
+		goodies.constellation = Constellation();
+		goodies.constellation.generateOneStarConstellation();
+		goodies.constellation.setupStars();
+
+		Star* star = goodies.constellation.getStars()[0].get();
+
+		goodies.state.getCamera().setPos(sf::Vector2f(0.0f, 0.0f));
+		goodies.state.getCamera().resetZoom();
+
+		goodies.gui.removeAllWidgets();
+		goodies.state.clearCallbacks();
+		Sounds::clearSounds();
+
+		goodies.state.changeToLocalView(star);
+
+		goodies.constellation.onStart();
+
+		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, true);
+
+		for (int i = 0; i < 50; i++) {
+			std::array<std::string, 3> weapons = { "LASER_GUN", "MACHINE_GUN", "ROCKET_LAUNCHER" };
+			std::string weaponChoice = weapons[Random::randInt(0, 2)];
+
+			Spaceship* ship = star->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), star, 0, sf::Color::Blue));
+			ship->addWeapon(Weapon(weaponChoice));
+		}
+
+		for (int i = 0; i < 50; i++) {
+			std::array<std::string, 3> weapons = { "LASER_GUN", "MACHINE_GUN", "ROCKET_LAUNCHER" };
+			std::string weaponChoice = weapons[Random::randInt(0, 2)];
+
+			Spaceship* ship = star->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), star, 1, sf::Color::Red));
+			ship->addWeapon(Weapon(weaponChoice));
+		}
+	}
+}
+
 void DebugConsole::open(tgui::Gui& gui) {
 	m_console = tgui::Group::create();
 	m_console->getRenderer()->setOpacity(0.75f);
@@ -226,6 +271,7 @@ void DebugConsole::open(tgui::Gui& gui) {
 	addCommand("cheats", cheats);
 	addCommand("ownplanet", ownPlanet);
 	addCommand("spawnbuilding", spawnBuilding);
+	addCommand("benchmark", benchmark);
 }
 
 void DebugConsole::close(tgui::Gui& gui) {
@@ -236,7 +282,7 @@ void DebugConsole::close(tgui::Gui& gui) {
 }
 
 void DebugConsole::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
-	if (ev.type == sf::Event::EventType::KeyReleased && ev.key.code == sf::Keyboard::Tilde && state.getState() != GameState::State::MAIN_MENU) {
+	if (ev.type == sf::Event::EventType::KeyReleased && ev.key.code == sf::Keyboard::Tilde) {
 		if (isOpen()) {
 			close(gui);
 		}

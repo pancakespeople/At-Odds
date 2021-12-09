@@ -508,3 +508,7 @@ std::vector<Building*> Constellation::getAllBuildingsOfType(const std::string& t
     }
     return buildings;
 }
+
+void Constellation::generateOneStarConstellation() {
+    m_stars.push_back(std::make_unique<Star>(sf::Vector2f(0.0f, 0.0f)));
+}

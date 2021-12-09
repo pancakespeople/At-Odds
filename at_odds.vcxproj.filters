@@ -75,6 +75,7 @@
     <ClInclude Include="src\AsteroidBelt.h" />
     <ClInclude Include="src\ext\delaunator.hpp" />
     <ClInclude Include="src\Designs.h" />
+    <ClInclude Include="src\GUI\DebugInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -135,6 +136,7 @@
     <ClCompile Include="src\GUI\OptionsMenu.cpp" />
     <ClCompile Include="src\GUI\MinimapGUI.cpp" />
     <ClCompile Include="src\Designs.cpp" />
+    <ClCompile Include="src\GUI\DebugInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />

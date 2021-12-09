@@ -25,6 +25,8 @@
 #include "NameGenerator.h"
 #include "MusicPlayer.h"
 #include "GUI/OptionsMenu.h"
+#include "Fonts.h"
+#include "GUI/DebugInfo.h"
 
 int main(int argc, const char* argv[])
 {
@@ -61,7 +63,8 @@ int main(int argc, const char* argv[])
         window.create(sf::VideoMode(resolution.x, resolution.y), "At Odds", sf::Style::Titlebar | sf::Style::Close);
     }
 
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
 
     tgui::GuiSFML gui(window);
     tgui::Theme::setDefault("data/tgui/Black.txt");
@@ -75,6 +78,7 @@ int main(int argc, const char* argv[])
     SaveLoader saveLoader;
     DebugConsole console;
     MusicPlayer musicPlayer;
+    DebugInfo debugInfo(window);
 
     mainMenu.open(gui, constellation, state);
     
@@ -151,6 +155,7 @@ int main(int argc, const char* argv[])
         unitGui.draw(window);
         playerGui.minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera());
         mainMenu.drawPreview(window, emitter, state, time);
+        debugInfo.draw(window, fps, ticks);
         gui.draw();
 
         window.display();
