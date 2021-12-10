@@ -196,7 +196,7 @@ void spawnBuilding(const DebugConsole::Command& command, const DebugConsole::Goo
 }
 
 void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
-	if (goodies.console->validateArgs(command, 0) && goodies.console->validateState(command, goodies.state, GameState::State::MAIN_MENU)) {
+	if (goodies.console->validateArgs(command, 1) && goodies.console->validateState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		Camera camera = goodies.state.getCamera();
 
 		goodies.state = GameState(camera);
@@ -220,7 +220,9 @@ void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies
 
 		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, true);
 
-		for (int i = 0; i < 50; i++) {
+		int shipsPerSide = std::stoi(command.args[0]);
+
+		for (int i = 0; i < shipsPerSide; i++) {
 			std::array<std::string, 3> weapons = { "LASER_GUN", "MACHINE_GUN", "ROCKET_LAUNCHER" };
 			std::string weaponChoice = weapons[Random::randInt(0, 2)];
 
@@ -228,7 +230,7 @@ void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies
 			ship->addWeapon(Weapon(weaponChoice));
 		}
 
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < shipsPerSide; i++) {
 			std::array<std::string, 3> weapons = { "LASER_GUN", "MACHINE_GUN", "ROCKET_LAUNCHER" };
 			std::string weaponChoice = weapons[Random::randInt(0, 2)];
 

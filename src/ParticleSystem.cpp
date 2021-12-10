@@ -3,32 +3,34 @@
 #include "Random.h"
 
 void ParticleSystem::createParticle(const Particle& particle, const sf::Vector2f& pos, const sf::Color& color) {
-	m_particles.push_back(particle);
+	if (m_particles.size() < particleLimit) {
+		m_particles.push_back(particle);
 
-	sf::Vertex v0;
-	v0.position.x = pos.x;
-	v0.position.y = pos.y;
-	v0.color = color;
+		sf::Vertex v0;
+		v0.position.x = pos.x;
+		v0.position.y = pos.y;
+		v0.color = color;
 
-	sf::Vertex v1;
-	v1.position.x = pos.x;
-	v1.position.y = pos.y + 10.0f;
-	v1.color = color;
+		sf::Vertex v1;
+		v1.position.x = pos.x;
+		v1.position.y = pos.y + 10.0f;
+		v1.color = color;
 
-	sf::Vertex v2;
-	v2.position.x = pos.x + 10.0f;
-	v2.position.y = pos.y + 10.0f;
-	v2.color = color;
+		sf::Vertex v2;
+		v2.position.x = pos.x + 10.0f;
+		v2.position.y = pos.y + 10.0f;
+		v2.color = color;
 
-	sf::Vertex v3;
-	v3.position.x = pos.x + 10.0f;
-	v3.position.y = pos.y;
-	v3.color = color;
+		sf::Vertex v3;
+		v3.position.x = pos.x + 10.0f;
+		v3.position.y = pos.y;
+		v3.color = color;
 
-	m_particleVertices.push_back(v0);
-	m_particleVertices.push_back(v1);
-	m_particleVertices.push_back(v2);
-	m_particleVertices.push_back(v3);
+		m_particleVertices.push_back(v0);
+		m_particleVertices.push_back(v1);
+		m_particleVertices.push_back(v2);
+		m_particleVertices.push_back(v3);
+	}
 }
 
 void ParticleSystem::updateParticles() {

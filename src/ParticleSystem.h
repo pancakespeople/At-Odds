@@ -4,6 +4,8 @@
 
 class ParticleSystem {
 public:
+	const static inline int particleLimit = 10000;
+
 	struct Particle {
 		int life = 1000;
 		sf::Vector2f velocity;
