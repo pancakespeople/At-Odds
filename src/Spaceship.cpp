@@ -75,9 +75,18 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	init(pos, star, allegiance, color);
 }
 
-void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
+void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time) {
 	if (m_disabled) return;
 	
+	if (m_pirate) {
+		sf::Sprite sprite;
+		sprite.setTexture(TextureCache::getTexture("data/art/skullncrossbones.png"));
+		sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height);
+		sprite.setPosition(m_sprite.getPosition() - sf::Vector2f(0.0f, m_collider.getRadius()));
+		sprite.setColor(sf::Color(255, 255, 255, (std::sin(time * 4.0f) + 1.0f) / 2.0f * 255));
+		window.draw(sprite);
+	}
+
 	window.draw(m_sprite);
 	window.draw(m_collider);
 	

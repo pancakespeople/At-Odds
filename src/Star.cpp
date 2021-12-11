@@ -178,7 +178,7 @@ void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Play
 		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {
-			s->draw(window, emitter);
+			s->draw(window, emitter, time);
 		}
 		for (std::unique_ptr<Building>& b : m_buildings) {
 			b->draw(window, emitter);

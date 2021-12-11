@@ -155,12 +155,12 @@ int main(int argc, const char* argv[])
         unitGui.draw(window);
         playerGui.minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera());
         mainMenu.drawPreview(window, emitter, state, time);
-        debugInfo.draw(window);
+        //debugInfo.draw(window);
         gui.draw();
 
         window.display();
 
-        debugInfo.update(fps, fpsClock.getElapsedTime().asMilliseconds(), ticks, updateStep, playerGui.timescaleGUI.getUpdatesPerSecondTarget());
+        //debugInfo.update(fps, fpsClock.getElapsedTime().asMilliseconds(), ticks, updateStep, playerGui.timescaleGUI.getUpdatesPerSecondTarget());
         
         ticks++;
         time += fpsClock.getElapsedTime().asSeconds();

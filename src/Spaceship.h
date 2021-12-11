@@ -34,7 +34,7 @@ public:
 	Spaceship(const std::string& type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 	Spaceship(const Spaceship& old) = delete;
 	
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
+	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time);
 	void accelerate(float amount);
 	void update(Star* currentStar);
 	void keepSpeed(float speed);
@@ -51,6 +51,7 @@ public:
 	void setSilentDeath(bool flag) { m_diesSilently = flag; }
 	void setCanReceiveOrders(bool flag) { m_canReceiveOrders = flag; }
 	void reinitOrdersAfterLoad(Constellation* constellation);
+	void setPirate(bool pirate) { m_pirate = pirate; }
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
@@ -115,6 +116,7 @@ private:
 		archive & m_diesSilently;
 		archive & m_civilian;
 		archive & m_name;
+		archive & m_pirate;
 	}
 
 	Spaceship() {}
@@ -140,5 +142,6 @@ private:
 	bool m_fighterAI = false;
 	bool m_diesSilently = false;
 	bool m_civilian = false;
+	bool m_pirate = false;
 };
 

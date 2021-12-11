@@ -760,6 +760,7 @@ void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			for (const DesignerWeapon& weapon : m_stolenDesigns.front().weapons) {
 				ship->addWeapon(weapon.type);
 			}
+			ship->setPirate(true);
 
 			sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
 			ship->addVelocity(randVel);
