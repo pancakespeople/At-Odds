@@ -35,7 +35,7 @@ sf::Sound& Sounds::getSound(const std::string& filePath) {
 }
 
 void Sounds::playSound(const std::string& filePath, const sf::Vector2f& pos, float volume, float pitch, Star* star, bool noSpatial) {
-	if (m_playingSounds.size() < 255) {
+	if (m_playingSounds.size() < 200) {
 		getSound(filePath);
 		GameSound gameSound;
 

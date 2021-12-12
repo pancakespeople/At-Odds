@@ -49,6 +49,7 @@ public:
 	void reinitAfterLoad(Constellation* constellation);
 	void setName(const std::string& name) { m_name = name; }
 	void generateAsteroidBelts();
+	void generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color);
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);

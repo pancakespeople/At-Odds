@@ -9,12 +9,20 @@
 #include "BuildGUI.h"
 #include "MinimapGUI.h"
 
+enum class PlayerGUIState {
+	CLOSED,
+	PLAYER,
+	SPECTATOR,
+};
+
 struct PlayerGUI {
 	PlayerGUI() {}
 
-	void open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator);
+	void open(tgui::Gui& gui, GameState& state, Constellation& constellation, PlayerGUIState guiState);
 	void update(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui);
 	void onEvent(const sf::Event& ev, tgui::Gui& gui);
+	void setVisible(tgui::Gui& gui, bool visible);
+	void draw(sf::RenderWindow& window, GameState& state, Constellation& constellation, Player& player);
 	
 	// This update function is to be called in sync with game time (wont be called when game is paused)
 	void updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui);
@@ -36,4 +44,5 @@ struct PlayerGUI {
 
 private:
 	bool m_visible = true;
+	PlayerGUIState m_state = PlayerGUIState::CLOSED;
 };

@@ -2,7 +2,7 @@
 #include "PlayerGUI.h"
 #include "../Constellation.h"
 
-void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation, bool spectator) {
+void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation, PlayerGUIState guiState) {
 	// An invisible bottom level panel to help with gui focusing
 	mainPanel = tgui::Panel::create();
 	mainPanel->getRenderer()->setOpacity(0.0f);
@@ -10,7 +10,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 
 	Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
 
-	if (!spectator) {
+	if (guiState == PlayerGUIState::PLAYER) {
 #ifdef NDEBUG
 		helpWindow.open(gui);
 #endif
@@ -24,40 +24,60 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		colonyListGUI.open(gui, state, constellation);
 		techGUI.open(gui, playerFaction);
 	}
-	else {
+	else if (guiState == PlayerGUIState::SPECTATOR) {
 		unitGUI.open(gui);
 		planetGUI.open(gui, state, playerFaction);
 		timescaleGUI.open(gui);
 	}
+
+	m_state = guiState;
 }
 
 void PlayerGUI::update(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
-	Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
+	if (m_state != PlayerGUIState::CLOSED) {
+		Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
 
-	unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel, minimapGUI);
-	resourceGUI.update(constellation, state.getPlayer(), state.getLocalViewStar());
-	announcerGUI.update(gui, playerFaction);
-	buildingGUI.update();
-	techGUI.update(playerFaction);
-	minimapGUI.update(window, state, unitGUI);
+		unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel, minimapGUI);
+		resourceGUI.update(constellation, state.getPlayer(), state.getLocalViewStar());
+		announcerGUI.update(gui, playerFaction);
+		buildingGUI.update();
+		techGUI.update(playerFaction);
+		minimapGUI.update(window, state, unitGUI);
+	}
 }
 
 void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
 	timescaleGUI.restartUpdateClock();
-	planetGUI.update(state);
+	if (m_state != PlayerGUIState::CLOSED) {
+		planetGUI.update(state);
+	}
 }
 
 void PlayerGUI::onEvent(const sf::Event& ev, tgui::Gui& gui) {
-	if (ev.type == sf::Event::KeyReleased) {
-		if (ev.key.code == sf::Keyboard::F2) {
-			if (m_visible) {
-				gui.setRelativeViewport(tgui::FloatRect(0.0f, 0.0f, 0.0f, 0.0f));
-				m_visible = false;
-			}
-			else {
-				gui.setRelativeViewport(tgui::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
-				m_visible = true;
+	if (m_state != PlayerGUIState::CLOSED) {
+		if (ev.type == sf::Event::KeyReleased) {
+			if (ev.key.code == sf::Keyboard::F2) {
+				setVisible(gui, !m_visible);
 			}
 		}
+	}
+}
+
+void PlayerGUI::setVisible(tgui::Gui& gui, bool visible) {
+	if (visible) {
+		gui.setRelativeViewport(tgui::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
+		m_visible = true;
+	}
+	else {
+		gui.setRelativeViewport(tgui::FloatRect(0.0f, 0.0f, 0.0f, 0.0f));
+		m_visible = false;
+	}
+}
+
+void PlayerGUI::draw(sf::RenderWindow& window, GameState& state, Constellation& constellation, Player& player) {
+	if (m_state != PlayerGUIState::CLOSED) {
+		buildGUI.draw(window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()));
+		unitGUI.draw(window);
+		minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera());
 	}
 }

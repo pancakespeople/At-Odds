@@ -80,8 +80,9 @@ int main(int argc, const char* argv[])
     MusicPlayer musicPlayer;
     DebugInfo debugInfo(window);
 
+    mainMenu.spawnArena(gui, constellation, state, playerGui);
     mainMenu.open(gui, constellation, state);
-    
+
     Background background("data/art/spacebackground1.png", resolution.x, resolution.y);
     newGameMenu.addGameStartCallbacK([&background]() {
         background.setNebulaSeed(Random::randFloat(0.0f, 1.0f));
@@ -151,10 +152,8 @@ int main(int argc, const char* argv[])
         
         console.runCommands(constellation, state, window, gui, playerGui);
         
-        buildGui.draw(window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()));
-        unitGui.draw(window);
-        playerGui.minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera());
-        mainMenu.drawPreview(window, emitter, state, time);
+        playerGui.draw(window, state, constellation, player);
+        //mainMenu.drawPreview(window, emitter, state, time);
         //debugInfo.draw(window);
         gui.draw();
 
@@ -171,6 +170,7 @@ int main(int argc, const char* argv[])
         if (state.getMetaState() == GameState::MetaState::LOAD_GAME) {
             if (saveLoader.loadGame("data/saves/game.save", constellation, state, background)) {
                 mainMenu.close(gui);
+                mainMenu.setForceOpen(false);
 
                 state.resetMetaState();
                 state.clearCallbacks();
@@ -178,11 +178,11 @@ int main(int argc, const char* argv[])
                 gui.removeAllWidgets();
 
                 if (player.getFaction() != -1) {
-                    playerGui.open(gui, state, constellation, false);
+                    playerGui.open(gui, state, constellation, PlayerGUIState::PLAYER);
                     playerGui.helpWindow.close();
                 }
                 else {
-                    playerGui.open(gui, state, constellation, true);
+                    playerGui.open(gui, state, constellation, PlayerGUIState::SPECTATOR);
                 }
 
                 DEBUG_PRINT("Loaded game");
@@ -199,7 +199,7 @@ int main(int argc, const char* argv[])
         state.exitGame();
     }
 
-    if (state.getMetaState() == GameState::MetaState::EXIT_AND_SAVE) {
+    if (state.getMetaState() == GameState::MetaState::EXIT_AND_SAVE && !mainMenu.isForceOpen()) {
         saveLoader.saveGame("data/saves/game.save", constellation, state, background);
         DEBUG_PRINT("Game saved");
     }

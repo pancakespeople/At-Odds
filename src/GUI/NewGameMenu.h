@@ -17,7 +17,7 @@ public:
 private:
 	void onStarsSliderChange(tgui::Gui& gui);
 	void onFactionsSliderChange(tgui::Gui& gui);
-	void startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state);
+	void startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
 
 	tgui::ChildWindow::Ptr m_window;
 

@@ -23,7 +23,7 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 
 	auto startGameButton = tgui::Button::create("Start Game ->");
 	startGameButton->setPosition("95% - width", "90%");
-	startGameButton->onPress(&NewGameMenu::startNewGame, this, std::ref(gui), std::ref(constellation), std::ref(state));
+	startGameButton->onPress(&NewGameMenu::startNewGame, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
 	guiWindow->add(startGameButton);
 
 	// Stars slider
@@ -87,7 +87,7 @@ void NewGameMenu::onFactionsSliderChange(tgui::Gui& gui) {
 	label->setText(std::to_string(static_cast<int>(slider->getValue())));
 }
 
-void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state) {
+void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu) {
 	int starsNum = m_window->get<tgui::Slider>("starSlider")->getValue();
 	int factionsNum = m_window->get<tgui::Slider>("factionSlider")->getValue();
 
@@ -127,7 +127,7 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 		state.changeToLocalView(factions[0].getCapital());
 		state.getCamera().setPos(factions[0].getCapital()->getLocalViewCenter());
 
-		m_playerGui.open(gui, state, constellation, false);
+		m_playerGui.open(gui, state, constellation, PlayerGUIState::PLAYER);
 	}
 	else {
 		for (int i = 0; i < factions.size(); i++) {
@@ -136,14 +136,16 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 		state.changeToWorldView();
 
-		m_playerGui.open(gui, state, constellation, true);
+		m_playerGui.open(gui, state, constellation, PlayerGUIState::SPECTATOR);
 	}
 
+	m_playerGui.setVisible(gui, true);
 	constellation.onStart();
 
 	for (auto& func : m_gameStartCallbacks) {
 		func();
 	}
 
+	mainMenu->setForceOpen(false);
 	close();
 }

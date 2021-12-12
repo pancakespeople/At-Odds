@@ -104,7 +104,7 @@ void possess(const DebugConsole::Command& command, const DebugConsole::Goodies& 
 			goodies.console->close(goodies.gui);
 
 			goodies.gui.removeAllWidgets();
-			goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, false);
+			goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, PlayerGUIState::PLAYER);
 		}
 		else {
 			goodies.console->addLine("Invalid faction");
@@ -120,7 +120,7 @@ void spectate(const DebugConsole::Command& command, const DebugConsole::Goodies&
 		goodies.console->close(goodies.gui);
 
 		goodies.gui.removeAllWidgets();
-		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, true);
+		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, PlayerGUIState::SPECTATOR);
 	}
 }
 
@@ -218,7 +218,8 @@ void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies
 
 		goodies.constellation.onStart();
 
-		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, true);
+		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, PlayerGUIState::SPECTATOR);
+		goodies.playerGUI.setVisible(goodies.gui, true);
 
 		int shipsPerSide = std::stoi(command.args[0]);
 

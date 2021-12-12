@@ -13,6 +13,7 @@
 #include "Constellation.h"
 #include "Math.h"
 #include "Fonts.h"
+#include "TOMLCache.h"
 
 Star::Star(sf::Vector2f pos) {
 	init(pos);
@@ -768,4 +769,53 @@ bool Star::hasHyperlaneConnectionTo(const Star* star) const {
 		if (lane->getBeginStar() == star || lane->getEndStar() == star) return true;
 	}
 	return false;
+}
+
+void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color) {
+	std::array<std::string, 3> chassisList = { "FRIGATE", "DESTROYER", "CRUISER" };
+	std::vector<DesignerWeapon> weapons;
+	const toml::table& weaponDesignTable = TOMLCache::getTable("data/objects/weapondesigns.toml");
+	const toml::table& weaponTable = TOMLCache::getTable("data/objects/weapons.toml");
+	const toml::table& projectileTable = TOMLCache::getTable("data/objects/projectiles.toml");
+
+	// Pick weapons that actually do damage
+	for (auto& weapon : weaponDesignTable) {
+		std::string weaponType = weaponDesignTable[weapon.first]["type"].value_or("");
+		std::string projectile = weaponTable[weaponType]["projectile"].value_or("");
+		if (projectile != "") {
+			
+			if (projectileTable[projectile]["damage"].value_or(0.0f) != 0.0f) {
+				weapons.push_back(DesignerWeapon(weapon.first));
+			}
+		}
+	}
+
+	DesignerChassis chassis(chassisList[Random::randInt(0, chassisList.size() - 1)]);
+	DesignerShip shipDesign;
+	shipDesign.chassis = chassis;
+
+	// Add the most random weapons that can fit
+	int index = 0;
+	while (weapons.size() != 0) {
+		int totalWeaponPoints = shipDesign.getTotalWeaponPoints();
+		
+			// Remove weapons that dont fit
+		for (int i = 0; i < weapons.size(); i++) {
+			if (totalWeaponPoints + weapons[i].weaponPoints > shipDesign.chassis.maxWeaponCapacity) {
+				weapons.erase(weapons.begin() + i);
+			}
+		}
+
+		// Add weapon
+		if (weapons.size() > 0) {
+			int rnd = Random::randInt(0, weapons.size() - 1);
+			shipDesign.weapons.push_back(weapons[rnd]);
+		}
+	}
+
+	// Spawn ship
+	Spaceship* ship = createSpaceship(std::make_unique<Spaceship>(shipDesign.chassis.type, pos, this, allegiance, color));
+	for (DesignerWeapon& weapon : shipDesign.weapons) {
+		ship->addWeapon(Weapon(weapon.type));
+	}
 }

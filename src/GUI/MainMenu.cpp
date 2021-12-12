@@ -1,6 +1,8 @@
 #include "gamepch.h"
 #include "MainMenu.h"
 #include "../Random.h"
+#include "../Constellation.h"
+#include "../Sounds.h"
 
 void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state) {
 	auto panel = tgui::Panel::create();
@@ -93,13 +95,15 @@ void MainMenu::exitGame(GameState& state) {
 
 void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state) {
 	if (ev.type == sf::Event::KeyPressed) {
-		if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && !m_opened) {
-			m_newGameMenu.close();
-			m_optionsMenu.close(gui);
-			open(gui, constellation, state);
-		}
-		else if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && m_opened) {
-			close(gui);
+		if (!m_forceOpen) {
+			if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && !m_opened) {
+				m_newGameMenu.close();
+				m_optionsMenu.close(gui);
+				open(gui, constellation, state);
+			}
+			else if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && m_opened) {
+				close(gui);
+			}
 		}
 	}
 }
@@ -108,5 +112,38 @@ void MainMenu::drawPreview(sf::RenderWindow& window, EffectsEmitter& emitter, co
 	if (state.getState() == GameState::State::MAIN_MENU) {
 		emitter.drawLocalStar(window, m_starRect, time, m_starSeed);
 		emitter.drawTerraPlanet(window, m_planetRect, m_planetRect.getSize().x / 2.0f, m_planetRect.getPosition(), m_starRect.getPosition(), m_starSeed, time);
+	}
+}
+
+void MainMenu::spawnArena(tgui::Gui& gui, Constellation& constellation, GameState& state, PlayerGUI& playerGUI) {
+	Camera camera = state.getCamera();
+
+	state = GameState(camera);
+
+	constellation = Constellation();
+	constellation.generateOneStarConstellation();
+	constellation.setupStars();
+
+	Star* star = constellation.getStars()[0].get();
+
+	state.getCamera().setPos(sf::Vector2f(0.0f, 0.0f));
+	state.getCamera().resetZoom();
+
+	gui.removeAllWidgets();
+	state.clearCallbacks();
+	Sounds::clearSounds();
+
+	state.changeToLocalView(star);
+
+	constellation.onStart();
+
+	playerGUI.open(gui, state, constellation, PlayerGUIState::CLOSED);
+
+	for (int i = 0; i < 50; i++) {
+		star->generateRandomShip(sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue);
+	}
+
+	for (int i = 0; i < 50; i++) {
+		star->generateRandomShip(sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red);
 	}
 }
