@@ -139,11 +139,38 @@ void MainMenu::spawnArena(tgui::Gui& gui, Constellation& constellation, GameStat
 
 	playerGUI.open(gui, state, constellation, PlayerGUIState::CLOSED);
 
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 5; i++) {
 		star->generateRandomShip(sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue);
 	}
 
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 5; i++) {
 		star->generateRandomShip(sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red);
+	}
+}
+
+void MainMenu::updateArena(int ticks, Constellation& constellation) {
+	if (m_forceOpen) {
+		int blues = 0;
+		int reds = 0;
+
+		Star* star = constellation.getStars()[0].get();
+		auto& ships = star->getSpaceships();
+
+		for (auto& ship : ships) {
+			if (ship->getAllegiance() == 0) blues++;
+			else reds++;
+		}
+
+		if (ticks % 180 == 0) {
+			int total = blues + reds;
+			if (total < 50) {
+				if (blues < reds) {
+					star->generateRandomShip(sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue);
+				}
+				else {
+					star->generateRandomShip(sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red);
+				}
+			}
+		}
 	}
 }

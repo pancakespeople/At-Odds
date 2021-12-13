@@ -91,6 +91,7 @@ int main(int argc, const char* argv[])
 
     float time = 0;
     int ticks = 0;
+    int updates = 0;
     
     optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, state.getCamera(), true);
 
@@ -130,6 +131,8 @@ int main(int argc, const char* argv[])
         for (int i = 0; i < std::round(updateStep); i++) {
             constellation.update(state.getPlayer());
             playerGui.updateSync(window, state, constellation, gui);
+            mainMenu.updateArena(updates, constellation);
+            updates++;
         }
 
         emitter.updateTime(time);

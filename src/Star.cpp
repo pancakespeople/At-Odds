@@ -803,6 +803,7 @@ void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color)
 		for (int i = 0; i < weapons.size(); i++) {
 			if (totalWeaponPoints + weapons[i].weaponPoints > shipDesign.chassis.maxWeaponCapacity) {
 				weapons.erase(weapons.begin() + i);
+				i--;
 			}
 		}
 
