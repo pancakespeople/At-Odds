@@ -225,9 +225,11 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 
 			if (underAttackStars.size() == 0) {
 				// Send an order to all combat ships to travel to the most recently conquered star
-				for (Spaceship* ship : faction->getAllCombatShips()) {
-					ship->clearOrders();
-					ship->addOrder(TravelOrder(faction->getOwnedStars().back()));
+				if (faction->getOwnedStars().size() > 0) {
+					for (Spaceship* ship : faction->getAllCombatShips()) {
+						ship->clearOrders();
+						ship->addOrder(TravelOrder(faction->getOwnedStars().back()));
+					}
 				}
 			}
 			else {

@@ -363,13 +363,13 @@ void Constellation::generateFactions(int numFactions) {
 }
 
 void Constellation::update(const Player& player) {
+    updatePirates();
     for (auto& f : m_factions) {
         f.update();
     }
     for (std::unique_ptr<Star>& s : m_stars) {
         s->update(this, player);
     }
-    updatePirates();
     cleanUpDeadShips();
 
     m_numUpdates++;
@@ -486,9 +486,7 @@ void Constellation::updatePirates() {
     if (m_numUpdates % 20000 == 0) {
         for (Building* pirateBase : getAllBuildingsOfType("PIRATE_BASE")) {
             PirateBaseMod* mod = pirateBase->getMod<PirateBaseMod>();
-            if (mod->getTheftAllegiance() == -1) {
-                mod->findTheftAllegiance(pirateBase->getCurrentStar(), this);
-            }
+            mod->findTheftAllegiance(pirateBase->getCurrentStar(), this);
 
             if (mod->getTheftAllegiance() != -1) {
                 mod->stealDesignFrom(getFaction(mod->getTheftAllegiance()));

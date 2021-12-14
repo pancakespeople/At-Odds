@@ -85,6 +85,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 		enableAllMods();
 		m_constructionPercent = 100.0f;
 		m_health = m_maxHealth;
+		onBuild();
 	}
 	else {
 		m_constructionPercent = 1.0f;
@@ -182,6 +183,10 @@ void Building::construct(const Spaceship* constructor) {
 	m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
 
 	m_health = m_maxHealth * (m_constructionPercent / 100.0f);
+
+	if (m_constructionPercent >= 100.0f) {
+		onBuild();
+	}
 }
 
 bool Building::checkBuildCondition(const std::string& type, sf::Vector2f pos, float radius, Star* star, Faction* faction, bool player) {
@@ -273,4 +278,10 @@ bool BuildingPrototype::meetsDisplayRequirements(const std::string& type, Factio
 	}
 
 	return true;
+}
+
+void Building::onBuild() {
+	for (auto& mod : m_mods) {
+		mod->onBuild(this, m_currentStar);
+	}
 }

@@ -775,6 +775,17 @@ void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			m_nextShipPercent += 0.025f / m_stolenDesigns.front().chassis.buildTimeMultiplier;
 		}
 	}
+
+	if ((m_lifetimeTicks + 1) % 20000 == 0) {
+		// Send out a ship to create a new pirate base
+		Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>("BIG_SPACE_TRUCK", unit->getPos(), currentStar, -1, Faction::neutralColor));
+		ship->setPirate(true);
+		ship->addOrder(TravelOrder(currentStar->getConnectedStars()[Random::randInt(0, currentStar->getConnectedStars().size() - 1)]));
+		ship->addOrder(EstablishPirateBaseOrder(currentStar->getRandomLocalPos(-10000.0f, 10000.0f), m_theftAllegiance, m_stolenDesigns));
+		ship->addOrder(DieOrder());
+	}
+
+	m_lifetimeTicks++;
 }
 
 void PirateBaseMod::findTheftAllegiance(Star* currentStar, Constellation* constellation) {

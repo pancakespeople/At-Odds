@@ -82,6 +82,7 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float ti
 		sf::Sprite sprite;
 		sprite.setTexture(TextureCache::getTexture("data/art/skullncrossbones.png"));
 		sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height);
+		sprite.setScale(sf::Vector2f(m_collider.getRadius() / 100.0f, m_collider.getRadius() / 100.0f));
 		sprite.setPosition(m_sprite.getPosition() - sf::Vector2f(0.0f, m_collider.getRadius()));
 		sprite.setColor(sf::Color(255, 255, 255, (std::sin(time * 4.0f) + 1.0f) / 2.0f * 255));
 		window.draw(sprite);

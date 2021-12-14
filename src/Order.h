@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+#include "Designs.h"
+
 class Spaceship;
 class JumpPoint;
 class Star;
@@ -214,4 +216,26 @@ private:
 
 	uint32_t m_unitID = 0;
 	Unit* m_unit = nullptr;
+};
+
+class EstablishPirateBaseOrder : public Order {
+public:
+	virtual bool execute(Spaceship* ship, Star* currentStar) override;
+
+	EstablishPirateBaseOrder(sf::Vector2f pos, int theftAllegiance, const std::deque<DesignerShip>& designs);
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Order>(*this);
+		archive & m_pos;
+		archive & m_theftAllegiance;
+		archive & m_designs;
+	}
+
+	EstablishPirateBaseOrder() = default;
+	
+	sf::Vector2f m_pos;
+	int m_theftAllegiance = -1;
+	std::deque<DesignerShip> m_designs;
 };

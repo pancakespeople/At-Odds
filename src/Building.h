@@ -31,6 +31,7 @@ public:
 	void construct(const Spaceship* constructor);
 	void reinitAfterLoad(Star* star);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
+	void onBuild();
 
 	static bool checkBuildCondition(const std::string& type, sf::Vector2f pos, float radius, Star* star, Faction* faction, bool player = false);
 

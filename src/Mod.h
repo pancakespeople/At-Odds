@@ -19,6 +19,7 @@ public:
 	virtual void onUnitDeath(Star* currentStar) {}
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction);
 	virtual void onShipInteract(Spaceship* ship) {}
+	virtual void onBuild(Unit* unit, Star* currentStar) {}
 
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
@@ -228,6 +229,8 @@ public:
 	int getTheftAllegiance() { return m_theftAllegiance; }
 	void findTheftAllegiance(Star* currentStar, Constellation* constellation);
 	void stealDesignFrom(Faction* faction);
+	void addDesign(const DesignerShip& ship) { m_stolenDesigns.push_back(ship); }
+	void setTheftAllegiance(int allegiance) { m_theftAllegiance = allegiance; }
 	bool hasDesign(const DesignerShip& design);
 
 private:
@@ -238,9 +241,11 @@ private:
 		archive & m_nextShipPercent;
 		archive & m_theftAllegiance;
 		archive & m_stolenDesigns;
+		archive & m_lifetimeTicks;
 	}
 
 	int m_theftAllegiance = -1;
+	int m_lifetimeTicks = 0;
 	float m_nextShipPercent = 0.0f;
 	std::deque<DesignerShip> m_stolenDesigns;
 };

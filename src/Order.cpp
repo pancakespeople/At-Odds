@@ -11,6 +11,7 @@
 #include "Hyperlane.h"
 #include "Planet.h"
 #include "Constellation.h"
+#include "Designs.h"
 
 BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
 BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
@@ -20,6 +21,7 @@ BOOST_CLASS_EXPORT_GUID(InteractWithBuildingOrder, "InteractWithBuildingOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithPlanetOrder, "InteractWithPlanetOrder")
 BOOST_CLASS_EXPORT_GUID(DieOrder, "DieOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithUnitOrder, "InteractWithUnitOrder")
+BOOST_CLASS_EXPORT_GUID(EstablishPirateBaseOrder, "EstablishPirateBaseOrder")
 
 bool FlyToOrder::execute(Spaceship* ship, Star* currentStar) {
 	return ship->flyTo(m_pos);
@@ -357,4 +359,25 @@ std::pair<bool, sf::Vector2f> InteractWithUnitOrder::getDestinationPos(Star* cur
 	else {
 		return std::pair<bool, sf::Vector2f>(false, sf::Vector2f());
 	}
+}
+
+EstablishPirateBaseOrder::EstablishPirateBaseOrder(sf::Vector2f pos, int theftAllegiance, const std::deque<DesignerShip>& designs) {
+	m_pos = pos;
+	m_theftAllegiance = theftAllegiance;
+	m_designs = designs;
+}
+
+bool EstablishPirateBaseOrder::execute(Spaceship* ship, Star* currentStar) {
+	if (ship->flyTo(m_pos)) {
+		Building* building = currentStar->createBuilding(std::make_unique<Building>("PIRATE_BASE", currentStar, m_pos, nullptr, true));
+		PirateBaseMod* pirateBase = building->getMod<PirateBaseMod>();
+		pirateBase->setTheftAllegiance(m_theftAllegiance);
+		
+		for (const DesignerShip& design : m_designs) {
+			pirateBase->addDesign(design);
+		}
+
+		return true;
+	}
+	return false;
 }
