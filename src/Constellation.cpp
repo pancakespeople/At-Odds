@@ -478,7 +478,13 @@ float Constellation::closestStarDistanceCoords(const sf::Vector2f& targetPos, co
 }
 
 void Constellation::generatePirates() {
-    m_stars[0]->createBuilding("PIRATE_BASE", Random::randVec(0.0f, 10000.0f), nullptr);
+    std::vector<Star*> neutralStars = getStarsByAllegiance(-1);
+
+    if (neutralStars.size() > 0) {
+        int rnd = Random::randInt(0, neutralStars.size() - 1);
+        neutralStars[rnd]->createBuilding("PIRATE_BASE", Random::randVec(0.0f, 10000.0f), nullptr);
+        DEBUG_PRINT("Started pirates in " << neutralStars[rnd]->getName());
+    }
 }
 
 void Constellation::updatePirates() {
@@ -508,4 +514,16 @@ std::vector<Building*> Constellation::getAllBuildingsOfType(const std::string& t
 
 void Constellation::generateOneStarConstellation() {
     m_stars.push_back(std::make_unique<Star>(sf::Vector2f(0.0f, 0.0f)));
+}
+
+std::vector<Star*> Constellation::getStarsByAllegiance(int allegiance) {
+    std::vector<Star*> stars;
+
+    for (auto& star : m_stars) {
+        if (star->getAllegiance() == allegiance) {
+            stars.push_back(star.get());
+        }
+    }
+
+    return stars;
 }

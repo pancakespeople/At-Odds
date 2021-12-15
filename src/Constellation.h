@@ -38,6 +38,7 @@ public:
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }
 	std::vector<Faction>& getFactions() { return m_factions; }
 	std::vector<Building*> getAllBuildingsOfType(const std::string& type);
+	std::vector<Star*> getStarsByAllegiance(int allegiance);
 
 	Faction* getFaction(int id);
 	Star* getStarByID(uint32_t id);
