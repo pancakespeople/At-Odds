@@ -369,7 +369,7 @@ EstablishPirateBaseOrder::EstablishPirateBaseOrder(sf::Vector2f pos, int theftAl
 
 bool EstablishPirateBaseOrder::execute(Spaceship* ship, Star* currentStar) {
 	if (ship->flyTo(m_pos)) {
-		Building* building = currentStar->createBuilding(std::make_unique<Building>("PIRATE_BASE", currentStar, m_pos, nullptr, true));
+		Building* building = currentStar->createBuilding("PIRATE_BASE", m_pos, nullptr, true);
 		PirateBaseMod* pirateBase = building->getMod<PirateBaseMod>();
 		pirateBase->setTheftAllegiance(m_theftAllegiance);
 		

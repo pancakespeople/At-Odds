@@ -15,9 +15,9 @@ void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies
 		Faction* faction = goodies.constellation.getFaction(allegiance);
 		sf::Color color = faction->getColor();
 
-		std::unique_ptr<Spaceship> ship = std::make_unique<Spaceship>(type, pos, star, allegiance, color);
+		Spaceship* ship = star->createSpaceship(type, pos, allegiance, color);
 		ship->addWeapon(Weapon(command.args[1]));
-		faction->addSpaceship(star->createSpaceship(ship));
+		faction->addSpaceship(ship);
 
 		goodies.console->addLine("Created spaceship at mouse cursor");
 	}
@@ -186,7 +186,7 @@ void spawnBuilding(const DebugConsole::Command& command, const DebugConsole::Goo
 		Faction* faction = goodies.constellation.getFaction(allegiance);
 		sf::Color color = faction->getColor();
 		
-		star->createBuilding(std::make_unique<Building>(command.args[0], star, pos, faction, true));
+		star->createBuilding(command.args[0], pos, faction, true);
 
 		goodies.console->addLine("Created building at mouse cursor");
 	}
@@ -227,7 +227,7 @@ void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies
 			std::array<std::string, 3> weapons = { "LASER_GUN", "MACHINE_GUN", "ROCKET_LAUNCHER" };
 			std::string weaponChoice = weapons[Random::randInt(0, 2)];
 
-			Spaceship* ship = star->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), star, 0, sf::Color::Blue));
+			Spaceship* ship = star->createSpaceship("FRIGATE_1", sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue);
 			ship->addWeapon(Weapon(weaponChoice));
 		}
 
@@ -235,7 +235,7 @@ void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies
 			std::array<std::string, 3> weapons = { "LASER_GUN", "MACHINE_GUN", "ROCKET_LAUNCHER" };
 			std::string weaponChoice = weapons[Random::randInt(0, 2)];
 
-			Spaceship* ship = star->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), star, 1, sf::Color::Red));
+			Spaceship* ship = star->createSpaceship("FRIGATE_1", sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red);
 			ship->addWeapon(Weapon(weaponChoice));
 		}
 	}

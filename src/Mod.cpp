@@ -72,7 +72,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			// Spawn the ship
 				
 			DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
-			auto shipPtr = std::make_unique<Spaceship>(shipDesign.chassis.type, unit->getPos(), currentStar, faction->getID(), faction->getColor());
+			Spaceship* shipPtr = currentStar->createSpaceship(shipDesign.chassis.type, unit->getPos(), faction->getID(), faction->getColor());
 				
 			// Add weapons
 			for (DesignerWeapon& weapon : shipDesign.weapons) {
@@ -87,7 +87,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
 			shipPtr->addVelocity(randVel);
 
-			faction->addSpaceship(currentStar->createSpaceship(shipPtr));
+			faction->addSpaceship(shipPtr);
 
 			DEBUG_PRINT("Created spaceship " + shipDesign.chassis.type);
 				
@@ -157,7 +157,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			if (mostSupply > 0.0f) {
 				// Send space truck
 
-				Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>("SPACE_TRUCK", mostSupplyPlanet->getPos(), currentStar, faction->getID(), faction->getColor()));
+				Spaceship* ship = currentStar->createSpaceship("SPACE_TRUCK", mostSupplyPlanet->getPos(), faction->getID(), faction->getColor());
 				ship->addOrder(InteractWithUnitOrder(unit));
 				ship->addOrder(DieOrder(true));
 
@@ -404,8 +404,7 @@ void FactoryMod::updateDesignsListBox(int selectedIndex) {
 FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color) {
 	for (int i = 0; i < 4; i++) {
 		float radius = unit->getCollider().getRadius();
-		auto ship = std::make_unique<Spaceship>(
-			"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), star, allegiance, color);
+		Spaceship* ship = star->createSpaceship("FIGHTER", unit->getPos() + Random::randVec(-radius, radius), allegiance, color);
 		
 		if (Random::randBool()) {
 			ship->addWeapon(Weapon("LASER_GUN"));
@@ -414,10 +413,9 @@ FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::C
 			ship->addWeapon(Weapon("MACHINE_GUN"));
 		}
 
-		Spaceship* shipPtr = star->createSpaceship(ship);
-		shipPtr->disable();
+		ship->disable();
 		
-		m_fighterShipIds.push_back(shipPtr->getID());
+		m_fighterShipIds.push_back(ship->getID());
 	}
 }
 
@@ -518,19 +516,16 @@ void FighterBayMod::constructNewFighter(Star* currentStar, Unit* unit, Faction* 
 		auto weapons = faction->getWeaponsBelowOrEqualWeaponPoints(1.0);
 		
 		if (weapons.size() > 0) {
-			auto ship = std::make_unique<Spaceship>(
-				"FIGHTER", unit->getPos() + Random::randVec(-radius, radius), currentStar, unit->getAllegiance(), unit->getFactionColor());
+			Spaceship* ship = currentStar->createSpaceship("FIGHTER", unit->getPos() + Random::randVec(-radius, radius), unit->getAllegiance(), unit->getFactionColor());
 
 			int rndIndex = Random::randInt(0, weapons.size() - 1);
 			ship->addWeapon(weapons[rndIndex].type);
 
-			Spaceship* shipPtr = currentStar->createSpaceship(ship);
-
 			if (m_fighterStatus != FIGHTER_STATUS::FIGHTING) {
-				shipPtr->disable();
+				ship->disable();
 			}
 
-			m_fighterShipIds.push_back(shipPtr->getID());
+			m_fighterShipIds.push_back(ship->getID());
 
 			m_ticksToNextFighter = 1000;
 
@@ -699,9 +694,7 @@ Planet* HabitatMod::findBusPlanetDestination(int allegiance, Star* targetStar, P
 }
 
 void HabitatMod::createSpaceBus(sf::Vector2f pos, int allegiance, sf::Color color, Star* currentStar, Star* targetStar, Planet* targetPlanet) {
-	Spaceship* bus = currentStar->createSpaceship(
-		std::make_unique<Spaceship>("SPACE_BUS", pos, currentStar, allegiance, color)
-	);
+	Spaceship* bus = currentStar->createSpaceship("SPACE_BUS", pos, allegiance, color);
 	bus->addMod(HabitatMod(1000, 1000, false));
 	bus->addOrder(TravelOrder(targetStar));
 	bus->addOrder(InteractWithPlanetOrder(targetPlanet, targetStar));
@@ -756,7 +749,7 @@ void ScienceMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (m_stolenDesigns.size() > 0) {
 		if (m_nextShipPercent >= 100.0f) {
-			Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>(m_stolenDesigns.front().chassis.type, unit->getPos(), currentStar, -1, Faction::neutralColor));
+			Spaceship* ship = currentStar->createSpaceship(m_stolenDesigns.front().chassis.type, unit->getPos(), -1, Faction::neutralColor);
 			for (const DesignerWeapon& weapon : m_stolenDesigns.front().weapons) {
 				ship->addWeapon(weapon.type);
 			}
@@ -778,7 +771,7 @@ void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 
 	if ((m_lifetimeTicks + 1) % 20000 == 0) {
 		// Send out a ship to create a new pirate base
-		Spaceship* ship = currentStar->createSpaceship(std::make_unique<Spaceship>("BIG_SPACE_TRUCK", unit->getPos(), currentStar, -1, Faction::neutralColor));
+		Spaceship* ship = currentStar->createSpaceship("BIG_SPACE_TRUCK", unit->getPos(), -1, Faction::neutralColor);
 		ship->setPirate(true);
 		ship->addOrder(TravelOrder(currentStar->getConnectedStars()[Random::randInt(0, currentStar->getConnectedStars().size() - 1)]));
 		ship->addOrder(EstablishPirateBaseOrder(currentStar->getRandomLocalPos(-10000.0f, 10000.0f), m_theftAllegiance, m_stolenDesigns));

@@ -44,22 +44,22 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		addSpaceship(m_capital->createSpaceship(std::make_unique<Spaceship>("FRIGATE_1", pos, m_capital, m_id, m_color)));
+		addSpaceship(m_capital->createSpaceship("FRIGATE_1", pos, m_id, m_color));
 		m_ships.back()->addWeapon(Weapon(m_weapons.back().type));
 	}
 
 	for (int i = 0; i < 3; i++) {
 		sf::Vector2f pos = m_capital->getRandomLocalPos(-10000.0f, 10000.0f);
-		addSpaceship(m_capital->createSpaceship(std::make_unique<Spaceship>("CONSTRUCTION_SHIP", pos, m_capital, m_id, m_color)));
+		addSpaceship(m_capital->createSpaceship("CONSTRUCTION_SHIP", pos, m_id, m_color));
 		m_ships.back()->addWeapon(Weapon("CONSTRUCTION_GUN"));
 	}
 
-	addSpaceship(m_capital->createSpaceship(std::make_unique<Spaceship>("DESTROYER_1", Random::randVec(-10000, 10000), m_capital, m_id, m_color)));
+	addSpaceship(m_capital->createSpaceship("DESTROYER_1", Random::randVec(-10000, 10000), m_id, m_color));
 	m_ships.back()->addWeapon(Weapon("GAUSS_CANNON"));
 
-	m_capital->createBuilding(std::make_unique<Building>("OUTPOST", m_capital, m_capital->getRandomLocalPos(-10000, 10000), this));
-	m_capital->createBuilding(std::make_unique<Building>("SHIP_FACTORY", m_capital, m_capital->getRandomLocalPos(-10000.0f, 10000.0f), this));
-	m_capital->createBuilding(std::make_unique<Building>("SPACE_HABITAT", m_capital, m_capital->getRandomLocalPos(-10000.0f, 10000.0f), this));
+	m_capital->createBuilding("OUTPOST", m_capital->getRandomLocalPos(-10000, 10000), this);
+	m_capital->createBuilding("SHIP_FACTORY", m_capital->getRandomLocalPos(-10000.0f, 10000.0f), this);
+	m_capital->createBuilding("SPACE_HABITAT", m_capital->getRandomLocalPos(-10000.0f, 10000.0f), this);
 
 	addResource("COMMON_ORE", 100.0f);
 	

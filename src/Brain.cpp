@@ -279,12 +279,10 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 				if (!star->containsBuildingType("OUTPOST", true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
 					// Build outpost
 
-					std::unique_ptr<Building> building = std::make_unique<Building>(
-						"OUTPOST", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
-					Building* realBuilding = star->createBuilding(building);
+					Building* building = star->createBuilding("OUTPOST", star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
 
 					// Give idle construction ships order to build it
-					faction->orderConstructionShipsBuild(realBuilding, true);
+					faction->orderConstructionShipsBuild(building, true);
 
 					AI_DEBUG_PRINT("Building outpost");
 				}
@@ -336,8 +334,7 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 							int rndIndex = Random::randInt(0, allowedTurrets.size() - 1);
 
 							// Create turret
-							std::unique_ptr<Building> building = std::make_unique<Building>(allowedTurrets[rndIndex], star, pos, faction, false);
-							turret = star->createBuilding(building);
+							turret = star->createBuilding(allowedTurrets[rndIndex], pos, faction, false);
 
 							// Order turret to be built
 							conShips[i]->addOrder(InteractWithBuildingOrder(turret));
@@ -378,9 +375,8 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		if (star->numAlliedBuildings(faction->getID(), "SCIENCE_LAB") < faction->getScienceLabMax(star) && faction->numIdleConstructionShips() > 0) {
 			int numToBuild = faction->getScienceLabMax(star) - star->numAlliedBuildings(faction->getID(), "SCIENCE_LAB");
 			for (int i = 0; i < numToBuild && faction->numIdleConstructionShips() > 0; i++) {
-				std::unique_ptr<Building> lab = std::make_unique<Building>("SCIENCE_LAB", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
-				Building* ptr = star->createBuilding(lab);
-				faction->orderConstructionShipsBuild(ptr, true, true);
+				Building* lab = star->createBuilding("SCIENCE_LAB", star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
+				faction->orderConstructionShipsBuild(lab, true, true);
 
 				AI_DEBUG_PRINT("Building science lab");
 			}
@@ -391,11 +387,9 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		// Build ship factories
 		if (star->numAlliedBuildings(faction->getID(), "SHIP_FACTORY") < 5 && faction->numIdleConstructionShips() > 0 &&
 			!builtShipFactory) {
-			std::unique_ptr<Building> factory = std::make_unique<Building>(
-				"SHIP_FACTORY", star, star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
+			Building* factory = star->createBuilding("SHIP_FACTORY", star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
 
-			Building* ptr = star->createBuilding(factory);
-			faction->orderConstructionShipsBuild(ptr, true);
+			faction->orderConstructionShipsBuild(factory, true);
 
 			AI_DEBUG_PRINT("Building ship factory");
 			builtShipFactory = true;

@@ -193,9 +193,7 @@ void TradeGoods::spawnSpaceTruck(Star* currentStar, Faction* faction, Planet* pl
 						wantedItems = std::min(surplus.second / 2.0f, maxItems);
 					}
 
-					truck = currentStar->createSpaceship(
-						std::make_unique<Spaceship>(truckType, planet->getPos(), currentStar, faction->getID(), faction->getColor())
-					);
+					truck = currentStar->createSpaceship(truckType, planet->getPos(), faction->getID(), faction->getColor());
 					TradeMod mod;
 					mod.addItem(surplus.first, wantedItems, calcPrice(surplus.first));
 					removeSupply(surplus.first, wantedItems, true);

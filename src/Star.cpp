@@ -249,7 +249,7 @@ void Star::factionTakeOwnership(Faction* faction, bool spawnClaimUnit) {
 	faction->addOwnedSystem(this);
 
 	if (spawnClaimUnit) {
-		createSpaceship(std::make_unique<Spaceship>("CLAIM_SHIP", getRandomLocalPos(-10000.0f, 10000.0f), this, faction->getID(), faction->getColor()));
+		createSpaceship("CLAIM_SHIP", getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor());
 	}
 }
 
@@ -531,16 +531,6 @@ JumpPoint* Star::getJumpPointByID(unsigned int id) {
 	return nullptr;
 }
 
-Spaceship* Star::createSpaceship(std::unique_ptr<Spaceship>&& ship) {
-	m_localShips.push_back(std::move(ship));
-	return m_localShips.back().get();
-}
-
-Spaceship* Star::createSpaceship(std::unique_ptr<Spaceship>& ship) {
-	m_localShips.push_back(std::move(ship));
-	return m_localShips.back().get();
-}
-
 void Star::moveShipToOtherStar(Spaceship* ship, Star* other) {
 	for (int i = 0; i < m_localShips.size(); i++) {
 		if (m_localShips[i].get() == ship) {
@@ -559,16 +549,6 @@ int Star::numAlliedBuildings(int allegiance, const std::string& type) const {
 		}
 	}
 	return c;
-}
-
-Building* Star::createBuilding(std::unique_ptr<Building>&& building) {
-	m_buildings.push_back(std::move(building));
-	return m_buildings.back().get();
-}
-
-Building* Star::createBuilding(std::unique_ptr<Building>& building) {
-	m_buildings.push_back(std::move(building));
-	return m_buildings.back().get();
 }
 
 int Star::numAllies(int allegiance) const {

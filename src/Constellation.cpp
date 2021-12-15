@@ -396,14 +396,13 @@ void Constellation::generateNeutralSquatters() {
             int numShips = Random::randInt(0, 10);
             for (int i = 0; i < numShips; i++) {
                 sf::Vector2f pos = star->getRandomLocalPos(-10000, 10000);
-                auto ship = std::make_unique<Spaceship>("FRIGATE_1", pos, star.get(), -1, sf::Color(175, 175, 175));
+                Spaceship* ship = star->createSpaceship("FRIGATE_1", pos, -1, sf::Color(175, 175, 175));
                 if (Random::randBool()) {
                     ship->addWeapon(Weapon("LASER_GUN"));
                 }
                 else {
                     ship->addWeapon(Weapon("MACHINE_GUN"));
                 }
-                star->createSpaceship(ship);
             }
         }
     }
@@ -479,7 +478,7 @@ float Constellation::closestStarDistanceCoords(const sf::Vector2f& targetPos, co
 }
 
 void Constellation::generatePirates() {
-    m_stars[0]->createBuilding(std::make_unique<Building>("PIRATE_BASE", m_stars[0].get(), Random::randVec(0.0f, 10000.0f), nullptr));
+    m_stars[0]->createBuilding("PIRATE_BASE", Random::randVec(0.0f, 10000.0f), nullptr);
 }
 
 void Constellation::updatePirates() {
