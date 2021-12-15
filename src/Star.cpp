@@ -815,8 +815,18 @@ void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color)
 	}
 
 	// Spawn ship
-	Spaceship* ship = createSpaceship(std::make_unique<Spaceship>(shipDesign.chassis.type, pos, this, allegiance, color));
+	Spaceship* ship = createSpaceship(shipDesign.chassis.type, pos, allegiance, color);
 	for (DesignerWeapon& weapon : shipDesign.weapons) {
 		ship->addWeapon(Weapon(weapon.type));
 	}
+}
+
+Spaceship* Star::createSpaceship(const std::string& type, sf::Vector2f pos, int allegiance, sf::Color color) {
+	m_localShips.push_back(std::make_unique<Spaceship>(type, pos, this, allegiance, color));
+	return m_localShips.back().get();
+}
+
+Building* Star::createBuilding(const std::string& type, sf::Vector2f pos, Faction* faction, bool built) {
+	m_buildings.push_back(std::make_unique<Building>(type, this, pos, faction, built));
+	return m_buildings.back().get();
 }

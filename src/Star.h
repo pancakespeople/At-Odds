@@ -53,9 +53,11 @@ public:
 	
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>&& ship);
 	Spaceship* createSpaceship(std::unique_ptr<Spaceship>& ship);
-	
+	Spaceship* createSpaceship(const std::string& type, sf::Vector2f pos, int allegiance, sf::Color color);
+
 	Building* createBuilding(std::unique_ptr<Building>&& building);
 	Building* createBuilding(std::unique_ptr<Building>& building);
+	Building* createBuilding(const std::string& type, sf::Vector2f pos, Faction* faction, bool built = true);
 
 	float getRadius() const { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);
@@ -173,4 +175,3 @@ private:
 
 	std::string m_name;
 };
-
