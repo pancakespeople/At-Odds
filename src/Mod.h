@@ -232,6 +232,7 @@ public:
 	void addDesign(const DesignerShip& ship) { m_stolenDesigns.push_back(ship); }
 	void setTheftAllegiance(int allegiance) { m_theftAllegiance = allegiance; }
 	bool hasDesign(const DesignerShip& design);
+	virtual void onBuild(Unit* unit, Star* currentStar) override;
 
 private:
 	friend class boost::serialization::access;

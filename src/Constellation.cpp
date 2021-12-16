@@ -490,11 +490,30 @@ void Constellation::generatePirates() {
 void Constellation::updatePirates() {
     if (m_numUpdates % 20000 == 0) {
         for (Building* pirateBase : getAllBuildingsOfType("PIRATE_BASE")) {
+            // Steal designs
             PirateBaseMod* mod = pirateBase->getMod<PirateBaseMod>();
             mod->findTheftAllegiance(pirateBase->getCurrentStar(), this);
 
             if (mod->getTheftAllegiance() != -1) {
                 mod->stealDesignFrom(getFaction(mod->getTheftAllegiance()));
+            }
+
+            // Attack a random faction
+            Star* attackTarget = nullptr;
+            std::string factionName;
+            if (m_factions.size() > 0) {
+                int rnd = Random::randInt(0, m_factions.size() - 1);
+                attackTarget = m_factions[rnd].getCapital();
+                factionName = m_factions[rnd].getName();
+            }
+
+            if (attackTarget != nullptr) {
+                for (Spaceship* ship : pirateBase->getCurrentStar()->getAllShipsOfAllegiance(-1)) {
+                    if (!ship->isCivilian()) {
+                        ship->addOrder(TravelOrder(attackTarget));
+                    }
+                }
+                DEBUG_PRINT("Pirates in " << pirateBase->getCurrentStar()->getName() << " are attacking " << factionName);
             }
         }
     }

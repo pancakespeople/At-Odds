@@ -836,3 +836,12 @@ bool PirateBaseMod::hasDesign(const DesignerShip& design) {
 	}
 	return false;
 }
+
+void PirateBaseMod::onBuild(Unit* unit, Star* currentStar) {
+	// Convert neutrals to pirate
+	for (auto& ship : currentStar->getSpaceships()) {
+		if (ship->getAllegiance() == -1 && !ship->isCivilian() && !ship->isPirate()) {
+			ship->setPirate(true);
+		}
+	}
+}

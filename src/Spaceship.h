@@ -64,6 +64,7 @@ public:
 	bool isHeavy() const { return m_mass >= 125000; }
 	bool isPlanetAttackShip() const;
 	bool hasFighterAI() const { return m_fighterAI; }
+	bool isPirate() const { return m_pirate; }
 	
 	// Returns false if there is nothing to attack
 	bool attack(Star* star, bool urgent = false);
