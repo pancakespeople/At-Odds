@@ -6,6 +6,7 @@ health = 1000.0
 mods = ["FighterBay"]
 numPerStar = 1
 weapons = ["$RAND_WEAPON", "$RAND_WEAPON", "$RAND_WEAPON"]
+category = "Defense"
 
 # Turrets
 
@@ -15,6 +16,7 @@ texturePath = "data/art/laserturret.png"
 health = 150.0
 weapons = ["LASER_GUN"]
 weaponRequirements = ["LASER_GUN"]
+category = "Defense"
 
 [MACHINE_GUN_TURRET]
 name = "Machine Gun Turret"
@@ -22,6 +24,7 @@ texturePath = "data/art/machinegunturret.png"
 health = 150.0
 weapons = ["MACHINE_GUN"]
 weaponRequirements = ["MACHINE_GUN"]
+category = "Defense"
 
 [GAUSS_TURRET]
 name = "Gauss Turret"
@@ -30,6 +33,7 @@ health = 150.0
 constructionSpeedMultiplier = 0.5
 weapons = ["GAUSS_CANNON"]
 weaponRequirements = ["GAUSS_CANNON"]
+category = "Defense"
 
 [ROCKET_TURRET]
 name = "Rocket Turret"
@@ -37,6 +41,7 @@ texturePath = "data/art/rocketturret.png"
 health = 150.0
 weapons = ["ROCKET_LAUNCHER"]
 weaponRequirements = ["ROCKET_LAUNCHER"]
+category = "Defense"
 
 [FLAK_TURRET]
 name = "Flak Turret"
@@ -45,6 +50,7 @@ health = 150.0
 constructionSpeedMultiplier = 0.5
 weapons = ["FLAK_CANNON"]
 weaponRequirements = ["FLAK_CANNON"]
+category = "Defense"
 
 [SHIP_FACTORY]
 name = "Ship Factory"
@@ -54,6 +60,7 @@ health = 2500.0
 constructionSpeedMultiplier = 1.5
 mods = ["Factory"]
 numPerStar = 5
+category = "Economy"
 
 [SPACE_HABITAT]
 name = "Space Habitat"
@@ -70,6 +77,7 @@ scale = 2.0
 health = 500.0
 scienceLab = true
 mods = ["Science"]
+category = "Economy"
 
 [PIRATE_BASE]
 name = "Pirate Base"

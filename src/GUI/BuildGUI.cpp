@@ -40,16 +40,16 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 		m_buildPanel->setSize("20%", "29%");
 		gui.add(m_buildPanel);
 
-		const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
-		for (auto& type : table) {
-			if (!table[type.first]["cannotBuild"].value_or(false)) {
-				if (BuildingPrototype::meetsDisplayRequirements(type.first, playerFaction)) {
-					addBuildingSelector(type.first);
-				}
-			}
-		}
+		m_tabs = tgui::Tabs::create();
+		m_tabs->setSize("100%", "10%");
+		m_tabs->add("Defense");
+		m_tabs->add("Economy");
+		m_tabs->onTabSelect([this, playerFaction]() {
+			updateBuildingSelectors(playerFaction);
+		});
+		m_buildPanel->add(m_tabs);
 
-		m_selectedBuildingIdx = -1;
+		updateBuildingSelectors(playerFaction);
 	}
 	else {
 		gui.remove(m_buildPanel);
@@ -65,11 +65,11 @@ void BuildGUI::addBuildingSelector(const std::string& type) {
 		int x = m_buildingSelectors.size() % 5;
 		int y = m_buildingSelectors.size() / 5;
 		xPosPercent = std::to_string(18 * x) + "%";
-		yPosPercent = std::to_string(18 * y) + "%";
+		yPosPercent = std::to_string(18 * y + 10) + "%";
 	}
 	else {
 		xPosPercent = "0%";
-		yPosPercent = "0%";
+		yPosPercent = "10%";
 	}
 
 	BuildingSelector selector;
@@ -182,4 +182,23 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star
 			}
 		}
 	}
+}
+
+void BuildGUI::updateBuildingSelectors(Faction* playerFaction) {
+	// Remove current panels
+	for (int i = 0; i < m_buildingSelectors.size(); i++) {
+		m_buildPanel->remove(m_buildingSelectors[i].panel);
+	}
+	m_buildingSelectors.clear();
+	
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+	for (auto& type : table) {
+		if (!table[type.first]["cannotBuild"].value_or(false) && table[type.first]["category"].value_or("") == m_tabs->getSelected()) {
+			if (BuildingPrototype::meetsDisplayRequirements(type.first, playerFaction)) {
+				addBuildingSelector(type.first);
+			}
+		}
+	}
+
+	m_selectedBuildingIdx = -1;
 }
