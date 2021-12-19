@@ -40,6 +40,8 @@ public:
 	void addResearchPoints(float points) { m_currentResearchPoints += points; }
 	void onStart();
 	void setAIEnabled(bool enabled) { m_aiEnabled = enabled; }
+	void addNewsEvent(const std::string& text);
+	void onColonization(Planet* planet, Star* star);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -81,6 +83,7 @@ public:
 	const std::vector<Tech>& getTechs() { return m_techs; }
 	std::vector<Tech> getUnresearchedTechs();
 	std::vector<Tech> getAllTechsOfCategory(const std::string& category, bool unresearchedOnly = false);
+	std::deque<std::string>& getNewsEvents() { return m_newsEvents; }
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();
@@ -144,6 +147,8 @@ private:
 		archive & m_techs;
 		archive & m_currentResearchPoints;
 		archive & m_researchPointProduction;
+		archive & m_newsEvents;
+		archive & m_neverColonized;
 	}
 	
 	Faction() {}
@@ -166,7 +171,7 @@ private:
 	std::deque<std::string> m_announcementEvents;
 	std::string m_name = "Unnamed";
 	std::vector<std::string> m_availableColonyBuildings;
-	
+	std::deque<std::string> m_newsEvents;
 	std::vector<Tech> m_techs;
 	
 	Brain m_ai;
@@ -175,6 +180,7 @@ private:
 	
 	bool m_aiEnabled = false;
 	bool m_dead = false;
+	bool m_neverColonized = true;
 
 	float m_currentResearchPoints = 0.0f;
 	float m_researchPointProduction = 0.0f;

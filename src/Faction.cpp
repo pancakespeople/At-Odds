@@ -91,6 +91,8 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	m_techs.push_back(Tech("CRUISER_HULL"));
 	m_techs.push_back(Tech("NUCLEAR_WEAPONS"));
 	m_techs.push_back(Tech("INVASIONS"));
+
+	addNewsEvent("Our glorious nation has been founded!");
 }
 
 void Faction::addOwnedSystem(Star* star) {
@@ -631,4 +633,48 @@ std::vector<Tech> Faction::getAllTechsOfCategory(const std::string& category, bo
 		}
 	}
 	return techs;
+}
+
+void Faction::addNewsEvent(const std::string& text) {
+	if (!m_aiEnabled) {
+		m_newsEvents.push_back(text);
+	}
+}
+
+void Faction::onColonization(Planet* planet, Star* star) {
+	std::string planetName = planet->getName(star, star->getPlanetIndex(planet) + 1);
+	if (m_neverColonized) {
+		addNewsEvent("Brave pioneers from our nation have stepped foot on a planet for the first time in our nation's history. " + planetName + " " +
+			"has been colonized.");
+		m_neverColonized = false;
+	}
+	else {
+		int rnd = Random::randInt(0, 7);
+		switch (rnd) {
+		case 0:
+			addNewsEvent("Searching for a new beginning, people from our faction have arrived to colonize the planet " + planetName + ".");
+			break;
+		case 1:
+			addNewsEvent(planetName + " has been colonized.");
+			break;
+		case 2:
+			addNewsEvent(planetName + " has been colonized for the glory of our nation.");
+			break;
+		case 3:
+			addNewsEvent("The first settlers on " + planetName + " have arrived.");
+			break;
+		case 4:
+			addNewsEvent("Looking to escape their nightmarish lives, the first colonists of " + planetName + " have arrived.");
+			break;
+		case 5:
+			addNewsEvent("The first colonists have arrived on " + planetName + ". What could go wrong?");
+			break;
+		case 6:
+			addNewsEvent("The first colony ship has touched down on " + planetName + ". A man describes arriving on the planet as \"a dream come true.\"");
+			break;
+		case 7:
+			addNewsEvent("The first settlers from our nation have stepped foot on " + planetName + ". A woman describes the planet as \"the most beautiful planet I have ever seen.\"");
+			break;
+		}
+	}
 }

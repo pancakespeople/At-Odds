@@ -23,6 +23,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		announcerGUI.open(gui);
 		colonyListGUI.open(gui, state, constellation);
 		techGUI.open(gui, playerFaction);
+		newsGUI.open(gui);
 	}
 	else if (guiState == PlayerGUIState::SPECTATOR) {
 		unitGUI.open(gui);
@@ -43,6 +44,7 @@ void PlayerGUI::update(sf::RenderWindow& window, GameState& state, Constellation
 		buildingGUI.update();
 		techGUI.update(playerFaction);
 		minimapGUI.update(window, state, unitGUI);
+		newsGUI.update(playerFaction);
 	}
 }
 

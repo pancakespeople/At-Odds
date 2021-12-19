@@ -171,6 +171,8 @@ private:
 
 	HabitatMod() {}
 	
+	Faction* m_faction = nullptr;
+
 	int m_population = 100000;
 	int m_ticksToNextGrowth = 1000;
 	int m_popCap = 1000000;

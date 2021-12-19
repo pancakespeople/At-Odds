@@ -569,6 +569,10 @@ HabitatMod::HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus) {
 }
 
 void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
+	if (m_faction == nullptr) {
+		m_faction = faction;
+	}
+	
 	if (m_ticksToNextGrowth == 0) {
 		if (m_population != m_popCap) {
 			m_population += m_population * m_growthRate;
@@ -620,6 +624,9 @@ void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 		planet->getColony().setAllegiance(unit->getAllegiance());
 		planet->getColony().setFactionColor(unit->getFactionColor());
 		planet->onColonization();
+		if (m_faction != nullptr) {
+			m_faction->onColonization(planet, star);
+		}
 	}
 	m_population = 0;
 }

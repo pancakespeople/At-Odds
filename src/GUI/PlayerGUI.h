@@ -8,6 +8,7 @@
 #include "ResourceGUI.h"
 #include "BuildGUI.h"
 #include "MinimapGUI.h"
+#include "NewsGUI.h"
 
 enum class PlayerGUIState {
 	CLOSED,
@@ -41,6 +42,7 @@ struct PlayerGUI {
 	MinimapGUI minimapGUI;
 	ColonyListGUI colonyListGUI;
 	TechGUI techGUI;
+	NewsGUI newsGUI;
 
 private:
 	bool m_visible = true;

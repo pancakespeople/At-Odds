@@ -69,6 +69,7 @@ public:
 	int numAlliedShips(int allegiance) const;
 	int numAlliedBuildings(int allegiance, const std::string& type = "") const;
 	int numAllies(int allegiance) const;
+	int getPlanetIndex(Planet* planet) const;
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 	sf::Vector2f getCenter() const;

@@ -810,3 +810,12 @@ Building* Star::createBuilding(const std::string& type, sf::Vector2f pos, Factio
 	m_buildings.push_back(std::make_unique<Building>(type, this, pos, faction, built));
 	return m_buildings.back().get();
 }
+
+int Star::getPlanetIndex(Planet* planet) const {
+	for (int i = 0; i < m_planets.size(); i++) {
+		if (planet == &m_planets[i]) {
+			return i;
+		}
+	}
+	return -1;
+}
