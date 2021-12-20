@@ -31,7 +31,21 @@ namespace Util {
 
 		std::stringstream str;
 
-		str << hours << ":" << minutes << ":" << static_cast<int>(seconds);
+		if (hours < 10) {
+			str << "0";
+		}
+		str << hours << ":";
+
+		if (minutes < 10) {
+			str << "0";
+		}
+		str << minutes << ":";
+
+		if (static_cast<int>(seconds) < 10) {
+			str << "0";
+		}
+		str << static_cast<int>(seconds);
+
 		return str.str();
 	}
 

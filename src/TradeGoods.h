@@ -14,6 +14,7 @@ struct SupplyDemand {
 	float supplyChange = 1.0f;
 	float demandChange = 0.0f;
 	float priceChange = 0.0f;
+	bool shortage = false;
 
 private:
 	friend class boost::serialization::access;
@@ -25,6 +26,7 @@ private:
 		archive & supplyChange;
 		archive & demandChange;
 		archive & priceChange;
+		archive & shortage;
 	}
 };
 
@@ -49,6 +51,7 @@ public:
 	std::vector<std::pair<std::string, float>> getDeficitGoods(float demandMultiplier = 1.0f) const;
 	std::string getContentString(Planet& planet) const;
 	const std::map<std::string, SupplyDemand>& getGoods() const { return m_items; }
+	std::string getGoodName(const std::string& type);
 
 private:
 	friend class boost::serialization::access;

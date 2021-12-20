@@ -204,7 +204,7 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 					if (planet.getColony().getAllegiance() == playerFaction) {
 						std::vector<tgui::String> info;
 						info.push_back(planet.getTypeString());
-						info.push_back(planet.getName(star.get(), pos));
+						info.push_back(planet.getName(star.get()));
 						info.push_back(std::to_string(planet.getColony().getPopulation()));
 						info.push_back(std::to_string(planet.getColony().getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
 						info.push_back(std::to_string(planet.getTemperature()));

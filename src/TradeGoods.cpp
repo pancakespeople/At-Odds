@@ -106,12 +106,44 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		}
 		else planet->getColony().addStability(0.05f);
 		
-		// Set prices and trends
 		for (auto& good : m_items) {
+			// Set prices and trends
 			good.second.price = calcPrice(good.first);
 			good.second.supplyChange = good.second.supply - m_oldItems[good.first].supply;
 			good.second.demandChange = good.second.demand - m_oldItems[good.first].demand;
 			good.second.priceChange = good.second.price - m_oldItems[good.first].price;
+
+			// News events
+			if (!good.second.shortage) {
+				if (good.second.supply < good.second.demand) {
+					good.second.shortage = true;
+					
+					int rnd = Random::randInt(0, 1);
+
+					switch (rnd) {
+					case 0:
+						faction->addNewsEvent("There is a shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + ".");
+						break;
+					case 1:
+						faction->addNewsEvent("We have run out of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + "!");
+						break;
+					}
+				}
+			}
+			else if (good.second.supply > good.second.demand && good.second.shortage) {
+				good.second.shortage = false;
+
+				int rnd = Random::randInt(0, 1);
+
+				switch (rnd) {
+				case 0:
+					faction->addNewsEvent("The shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + " has been resolved.");
+					break;
+				case 1:
+					faction->addNewsEvent("We have finally ended the shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + ".");
+					break;
+				}
+			}
 		}
 
 		m_oldItems = m_items;
@@ -229,4 +261,9 @@ float TradeGoods::sellGoods(const std::string& item, float num) {
 	float revenue = (calcPrice(item) * num + calcPrice(item, num) * num) / 2.0f;
 	addSupply(item, num);
 	return revenue;
+}
+
+std::string TradeGoods::getGoodName(const std::string& type) {
+	const toml::table& table = TOMLCache::getTable("data/objects/tradegoods.toml");
+	return table[type]["name"].value_or("???");
 }

@@ -47,6 +47,7 @@ public:
 	int numUnbuiltBuildings(Star* star);
 	int numIdleConstructionShips();
 	int getScienceLabMax(Star* star) const;
+	int getNumTicksAlive() const { return m_numTicksAlive; }
 
 	float getResourceCount(const std::string& type) const;
 	float getResourceExploitation(const std::string& type) const;
@@ -149,6 +150,7 @@ private:
 		archive & m_researchPointProduction;
 		archive & m_newsEvents;
 		archive & m_neverColonized;
+		archive & m_numTicksAlive;
 	}
 	
 	Faction() {}
@@ -177,6 +179,7 @@ private:
 	Brain m_ai;
 	
 	int m_id = 0;
+	int m_numTicksAlive = 0;
 	
 	bool m_aiEnabled = false;
 	bool m_dead = false;

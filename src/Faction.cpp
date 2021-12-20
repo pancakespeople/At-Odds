@@ -159,6 +159,7 @@ void Faction::update() {
 
 	m_researchPointProduction = 0.1f * m_currentResearchPoints;
 	m_currentResearchPoints = 0.0f;
+	m_numTicksAlive++;
 }
 
 void Faction::controlByPlayer(Player& player) {
@@ -642,7 +643,7 @@ void Faction::addNewsEvent(const std::string& text) {
 }
 
 void Faction::onColonization(Planet* planet, Star* star) {
-	std::string planetName = planet->getName(star, star->getPlanetIndex(planet) + 1);
+	std::string planetName = planet->getName(star);
 	if (m_neverColonized) {
 		addNewsEvent("Brave pioneers from our nation have stepped foot on a planet for the first time in our nation's history. " + planetName + " " +
 			"has been colonized.");

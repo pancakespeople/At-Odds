@@ -72,7 +72,7 @@ public:
 	std::string getTypeString() const;
 	std::vector<Resource>& getResources() { return m_resources; }
 	const std::vector<PlanetEvent>& getEvents() const { return m_events; }
-	std::string getName(const Star* star, int pos);
+	std::string getName(const Star* star);
 
 private:
 	friend class boost::serialization::access;
