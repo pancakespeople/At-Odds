@@ -636,9 +636,9 @@ std::vector<Tech> Faction::getAllTechsOfCategory(const std::string& category, bo
 	return techs;
 }
 
-void Faction::addNewsEvent(const std::string& text) {
+void Faction::addNewsEvent(const std::string& text, sf::Color color) {
 	if (!m_aiEnabled) {
-		m_newsEvents.push_back(text);
+		m_newsEvents.push_back(std::pair<std::string, sf::Color>(text, color));
 	}
 }
 

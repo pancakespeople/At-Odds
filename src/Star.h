@@ -129,6 +129,7 @@ private:
 		archive & m_name;
 		archive & m_blackHole;
 		archive & m_asteroidBelts;
+		archive & m_peaceful;
 	}
 	
 	void handleCollisions();
@@ -160,6 +161,7 @@ private:
 	bool m_multipleFactionsPresent = false;
 	bool m_drawHidden = true;
 	bool m_blackHole = false;
+	bool m_peaceful = true;
 
 	int m_allegiance = -1;
 

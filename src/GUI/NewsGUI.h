@@ -6,7 +6,7 @@ class NewsGUI {
 public:
 	NewsGUI() = default;
 	void open(tgui::Gui& gui);
-	void addEvent(const std::string& text);
+	void addEvent(const std::string& text, sf::Color color);
 	void update(Faction* playerFaction);
 
 private:

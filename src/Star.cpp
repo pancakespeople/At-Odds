@@ -430,9 +430,21 @@ void Star::update(Constellation* constellation, const Player& player) {
 	// For the flashy thing
 	if (factions.size() > 1) {
 		m_multipleFactionsPresent = true;
+
+		if (m_peaceful) {
+			m_peaceful = false;
+			Faction* owningFaction = constellation->getFaction(m_allegiance);
+			if (owningFaction != nullptr) {
+				owningFaction->addNewsEvent("Enemies have arrived in " + m_name + "!", tgui::Color::Red);
+			}
+		}
 	}
 	else {
 		m_multipleFactionsPresent = false;
+
+		if (!m_peaceful) {
+			m_peaceful = true;
+		}
 	}
 
 	// Update projectiles

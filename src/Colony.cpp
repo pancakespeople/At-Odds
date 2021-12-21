@@ -97,9 +97,19 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 		}
 	}
 
+	// Exploration
 	if (m_explorationEnabled && faction != nullptr) exploration(planet, faction);
 
+	// Trade goods
 	m_tradeGoods.update(currentStar, faction, planet);
+
+	// News events
+	while (m_newBuildingNames.size() != 0) {
+		if (faction != nullptr) {
+			faction->addNewsEvent("The construction of the " + m_newBuildingNames.front() + " on " + planet->getName(currentStar) + " has completed.");
+		}
+		m_newBuildingNames.pop_front();
+	}
 }
 
 void Colony::addPopulation(int pop) {
@@ -191,7 +201,7 @@ float Colony::getBuildingEffects(const std::string& effect) const {
 	return mult;
 }
 
-void Colony::onBuildingBuild() {
+void Colony::onBuildingBuild(ColonyBuilding& building) {
 	if (hasBuildingFlag("ENABLE_ORBITAL_CANNON")) {
 		m_defenseCannonEnabled = true;
 	}
@@ -200,6 +210,8 @@ void Colony::onBuildingBuild() {
 		m_explorationEnabled = true;
 		m_explorationEventTimer = Random::randInt(10000, 20000);
 	}
+
+	m_newBuildingNames.push_back(building.getName());
 }
 
 void Colony::exploration(Planet* planet, Faction* faction) {
@@ -289,7 +301,7 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& p
 void ColonyBuilding::build(Colony& colony) {
 	if (!isBuilt()) {
 		m_percentBuilt += 0.01;
-		if (isBuilt()) colony.onBuildingBuild();
+		if (isBuilt()) colony.onBuildingBuild(*this);
 	}
 }
 

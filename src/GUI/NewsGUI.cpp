@@ -23,19 +23,19 @@ void NewsGUI::open(tgui::Gui& gui) {
 	gui.add(m_box);
 }
 
-void NewsGUI::addEvent(const std::string& text) {
+void NewsGUI::addEvent(const std::string& text, sf::Color color) {
 	if (m_box != nullptr) {
-		m_box->addLine(text, tgui::Color::White);
+		m_box->addLine(text, color);
 	}
 }
 
 void NewsGUI::update(Faction* playerFaction) {
 	if (playerFaction != nullptr) {
-		std::deque<std::string>& news = playerFaction->getNewsEvents();
+		std::deque<std::pair<std::string, sf::Color>>& news = playerFaction->getNewsEvents();
 		while (news.size() > 0) {
 			std::string timestamp = "[" + Util::secondsToTime(playerFaction->getNumTicksAlive() / 60.0f) + "]";
 
-			addEvent(timestamp + " " + news.front());
+			addEvent(timestamp + " " + news.front().first, news.front().second);
 			news.pop_front();
 		}
 	}

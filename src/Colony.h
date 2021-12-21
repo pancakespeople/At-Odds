@@ -40,7 +40,7 @@ public:
 	void setAllegiance(int id) { m_allegiance = id; }
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
 	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }
-	void onBuildingBuild();
+	void onBuildingBuild(ColonyBuilding& building);
 	void exploration(Planet* planet, Faction* faction);
 	void addWealth(float wealth) { m_wealth += wealth; }
 	void removeWealth(float wealth);
@@ -72,6 +72,7 @@ private:
 		archive & m_tradeGoods;
 		archive & m_stability;
 		archive & m_wealth;
+		archive & m_newBuildingNames;
 	}
 
 	int m_population = 0;
@@ -91,6 +92,7 @@ private:
 
 	std::unordered_map<int, bool> m_factionColonyLegality;
 	std::vector<ColonyBuilding> m_buildings;
+	std::deque<std::string> m_newBuildingNames;
 
 	Weapon m_defenseCannon = Weapon("FLAK_CANNON");
 	TradeGoods m_tradeGoods;
