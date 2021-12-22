@@ -19,6 +19,7 @@ public:
 
 private:
 	void drawStarPath(Star* begin, Star* end);
+	sf::Vector2f getAveragePosOfSelectedShips();
 
 	sf::RectangleShape m_mouseSelectionBox;
 

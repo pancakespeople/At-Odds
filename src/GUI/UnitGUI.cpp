@@ -263,6 +263,8 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 						}
 					}
 
+					int index = 0;
+					sf::Vector2f avgPos = getAveragePosOfSelectedShips();
 					// Add orders
 					for (Spaceship* s : m_selectedShips) {
 						if (!s->canPlayerGiveOrders()) continue;
@@ -286,9 +288,14 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 								s->addOrder(InteractWithPlanetOrder(planetClick, state.getLocalViewStar()));
 							}
 							else {
-								s->addOrder(FlyToOrder(worldClick));
+								float angle = Math::angleBetween(avgPos, worldClick);
+								float perpendicularAngle = angle - 90.0f;
+								sf::Vector2f formationMove(std::cos(perpendicularAngle) * index * 100.0f, std::sin(perpendicularAngle) * index * 100.0f);
+
+								s->addOrder(FlyToOrder(worldClick + formationMove));
 							}
 						}
+						index++;
 					}
 				}
 			}
@@ -336,4 +343,15 @@ void UnitGUI::drawStarPath(Star* begin, Star* end) {
 			}
 		}
 	}
+}
+
+sf::Vector2f UnitGUI::getAveragePosOfSelectedShips() {
+	sf::Vector2f pos;
+	for (Spaceship* ship : m_selectedShips) {
+		if (ship->canPlayerGiveOrders()) {
+			pos += ship->getPos();
+		}
+	}
+	pos = sf::Vector2f(pos.x / m_selectedShips.size(), pos.y / m_selectedShips.size());
+	return pos;
 }
