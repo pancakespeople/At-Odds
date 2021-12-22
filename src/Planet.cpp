@@ -61,6 +61,7 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star,
 		emitter.drawTerraPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
 		break;
 	case PLANET_TYPE::LAVA:
+	case PLANET_TYPE::VOLCANIC:
 		emitter.drawLavaPlanet(window, m_shape, this, star, m_shaderRandomSeed);
 		break;
 	default:
@@ -223,13 +224,26 @@ void Planet::generateTerrestrial(float baseTemperature) {
 				m_type = PLANET_TYPE::LAVA;
 			}
 			else {
-				// Mercury
-				// Gray/white
+				int rnd = Random::randInt(0, 3);
 
-				int rgb = Random::randInt(125, 255);
+				if (rnd < 3) {
+					// Mercury
+					// Gray/white
 
-				m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
-				m_type = PLANET_TYPE::BARREN;
+					int rgb = Random::randInt(125, 255);
+
+					m_shape.setFillColor(sf::Color(rgb, rgb, rgb));
+					m_type = PLANET_TYPE::BARREN;
+				}
+				else {
+					// Volcanic
+
+					int gb = std::min(255.0f, m_temperature * 0.05f);
+
+					m_shape.setFillColor(sf::Color(255, 100, 100));
+					m_type = PLANET_TYPE::VOLCANIC;
+					m_temperature += Random::randFloat(50.0f, 200.0f);
+				}
 			}
 		}
 		else if (m_water > 0.4f && m_temperature < 273.15f) {
@@ -296,6 +310,8 @@ std::string Planet::getTypeString() const {
 		return "Lava";
 	case PLANET_TYPE::OCEAN:
 		return "Ocean";
+	case PLANET_TYPE::VOLCANIC:
+		return "Volcanic";
 	default:
 		return "Unknown";
 	}

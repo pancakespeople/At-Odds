@@ -25,7 +25,8 @@ public:
 		ICE_GIANT,
 		TOXIC,
 		LAVA,
-		OCEAN
+		OCEAN,
+		VOLCANIC
 	};
 
 	struct PlanetEvent {

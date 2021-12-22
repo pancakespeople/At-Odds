@@ -123,6 +123,7 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 						dot.setFillColor(sf::Color::Blue);
 						break;
 					case Planet::PLANET_TYPE::LAVA:
+					case Planet::PLANET_TYPE::VOLCANIC:
 						dot.setFillColor(sf::Color(255, 200, 200));
 						break;
 					case Planet::PLANET_TYPE::OCEAN:
