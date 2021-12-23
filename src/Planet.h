@@ -42,7 +42,7 @@ public:
 		}
 	};
 	
-	Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature);
+	Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, float starTemperature, bool moon = false);
 
 	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star, float time);
 	void update(Star* currentStar, Faction* faction);
@@ -53,6 +53,8 @@ public:
 	void generateResources();
 	void addBombardProjectile(const Projectile& proj) { m_bombardProjectiles.push_back(proj); }
 	void addEvent(const std::string& type);
+	void setMoonOf(int planetIndex) { m_parentPlanetIndex = planetIndex; }
+	void setRadius(float radius);
 	
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
@@ -66,6 +68,7 @@ public:
 
 	bool isGasGiant() const { return m_gasGiant; }
 	bool hasResource(const std::string& resource) const;
+	bool isMoon() const { return m_parentPlanetIndex != -1; }
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 
@@ -94,6 +97,7 @@ private:
 		archive & m_events;
 		archive & m_timeSinceCreaton;
 		archive & m_rings;
+		archive & m_parentPlanetIndex;
 	}
 	
 	Planet() {}
@@ -105,6 +109,8 @@ private:
 	float m_atmosphere = 1.0f; // Atmospheric pressure in Earth atmospheres
 	float m_water = 0.0f; // Percent of planet covered in water from 0-1
 	float m_timeSinceCreaton = 0.0f; // Seconds
+
+	int m_parentPlanetIndex = -1;
 	
 	bool m_gasGiant = false;
 	bool m_rings = false;

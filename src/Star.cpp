@@ -584,16 +584,30 @@ bool Star::containsBuildingType(const std::string& type, bool allegianceOnly, in
 }
 
 void Star::generatePlanets() {
-	int numPlanets = Random::randInt(0, 15);
+	int numPlanets = Random::randInt(0, 7);
 	float starRadius = m_localViewRect.getSize().x / 2.0f * m_localViewRect.getScale().x;
 	float latestRadius = Random::randFloat(1000.0f + starRadius, 10000.0f + starRadius);
 
 	for (int i = 0; i < numPlanets; i++) {
 		float angle = Random::randFloat(0.0f, 2.0f * Math::pi);
-		sf::Vector2f pos(latestRadius * std::cos(angle) + getLocalViewCenter().x, latestRadius * std::sin(angle) + getLocalViewCenter().y);
+		sf::Vector2f planetPos(latestRadius * std::cos(angle) + getLocalViewCenter().x, latestRadius * std::sin(angle) + getLocalViewCenter().y);
+		sf::Vector2f starPos = getLocalViewCenter();
 
-		Planet planet(pos, getLocalViewCenter(), m_temperature);
+		Planet planet(planetPos, starPos, starPos, m_temperature);
 		m_planets.push_back(planet);
+
+		int rnd = Random::randInt(0, 1);
+		// Spawn moon
+		if (rnd == 1) {
+			float rndAngle = Random::randFloat(0.0f, 2.0f * Math::pi);
+			float rndRadius = Random::randFloat(planet.getRadius() + 500.0f, planet.getRadius() + 3000.0f);
+
+			sf::Vector2f moonPos = planetPos + sf::Vector2f(std::cos(rndAngle), std::sin(rndAngle)) * rndRadius;
+			Planet moon(moonPos, starPos, planetPos, m_temperature, true);
+			moon.setMoonOf(m_planets.size() - 1);
+			moon.setRadius(Random::randFloat(planet.getRadius() / 2.0f, planet.getRadius()));
+			m_planets.push_back(moon);
+		}
 
 		latestRadius += Random::randFloat(500.0f, 20000.0f);
 	}

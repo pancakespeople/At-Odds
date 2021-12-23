@@ -9,6 +9,7 @@ public:
 	sf::Vector2f update();
 
 	void draw(sf::RenderWindow& window);
+	void setParentPos(sf::Vector2f pos) { m_parentPos = pos; }
 
 private:
 	friend class boost::serialization::access;

@@ -27,5 +27,6 @@ sf::Vector2f Orbit::update() {
 }
 
 void Orbit::draw(sf::RenderWindow& window) {
+	m_orbitIndicator.setPosition(m_parentPos);
 	window.draw(m_orbitIndicator);
 }

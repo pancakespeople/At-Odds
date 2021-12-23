@@ -10,19 +10,20 @@
 #include "Util.h"
 #include "SmoothCircle.h"
 
-Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
+Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, float starTemperature, bool moon) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
 	m_shape.setSize(sf::Vector2f(500.0f, 500.0f));
 	m_shape.setPosition(pos);
 
 	float radiusFromStar = Math::distance(pos, starPos);
-	float orbitSpeed = 500.0f / radiusFromStar;
+	float orbitRadius = Math::distance(pos, orbitPos);
+	float orbitSpeed = 500.0f / orbitRadius;
 	float baseTemperature = std::min(starTemperature, (starTemperature * 1000.0f) / radiusFromStar);
 
-	m_orbit = Orbit(pos, starPos, orbitSpeed);
+	m_orbit = Orbit(pos, orbitPos, orbitSpeed);
 
 	if (baseTemperature < 273.15f) {
-		if (Random::randFloat(0.0f, 1.0f) < 0.5f) {
+		if (Random::randFloat(0.0f, 1.0f) < 0.5f && !moon) {
 			// Gas giant
 
 			generateGasGiant(baseTemperature);
@@ -34,7 +35,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, float starTemperature) {
 		}
 	}
 	else {
-		if (Random::randFloat(0.0f, 1.0f) < 0.9f) {
+		if (Random::randFloat(0.0f, 1.0f) < 0.9f || moon) {
 			// Rocky planet
 
 			generateTerrestrial(baseTemperature);
@@ -129,11 +130,17 @@ void Planet::update(Star* currentStar, Faction* faction) {
 	}
 
 	m_timeSinceCreaton += 1.0f / 60.0f; // Fixed timestep, 60 updates per second
+
+	// Set orbit pos
+	if (isMoon()) {
+		Planet& parent = currentStar->getPlanets()[m_parentPlanetIndex];
+		m_orbit.setParentPos(parent.getPos());
+	}
 }
 
 void Planet::generateGasGiant(float baseTemperature) {
-	float radius = getRadius() * Random::randFloat(2.0f, 4.0f) * 2.0;
-	m_shape.setSize(sf::Vector2f(radius, radius));
+	float radius = getRadius() * Random::randFloat(2.0f, 4.0f);
+	m_shape.setSize(sf::Vector2f(radius * 2.0f, radius * 2.0f));
 	
 	if (baseTemperature < 100.0f) {
 		// Blue
@@ -161,8 +168,8 @@ void Planet::generateGasGiant(float baseTemperature) {
 }
 
 void Planet::generateTerrestrial(float baseTemperature) {
-	float radius = getRadius() * Random::randFloat(0.75f, 1.9f) * 2.0;
-	m_shape.setSize(sf::Vector2f(radius, radius));
+	float radius = getRadius() * Random::randFloat(0.75f, 1.9f);
+	m_shape.setSize(sf::Vector2f(radius * 2.0f, radius * 2.0f));
 
 	if (baseTemperature > 400.0f) {
 		// Too hot to sustain an atmosphere
@@ -408,4 +415,9 @@ float Planet::getResourceAbundance(const std::string& type) const {
 		if (r.type == type) return r.abundance;
 	}
 	return 0.0f;
+}
+
+void Planet::setRadius(float radius) {
+	m_shape.setSize(sf::Vector2f(radius * 2.0f, radius * 2.0f));
+	m_shape.setOrigin(sf::Vector2f(getRadius(), getRadius()));
 }
