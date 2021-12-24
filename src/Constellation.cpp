@@ -522,8 +522,6 @@ void Constellation::updatePirates() {
                 DEBUG_PRINT("Pirates in " << pirateBase->getCurrentStar()->getName() << " are attacking " << factionName);
             }
         }
-
-        m_pirateAttackTime *= 1.5f;
     }
 }
 
