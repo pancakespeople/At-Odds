@@ -57,6 +57,7 @@ private:
 		archive & m_availableFactionColors;
 		archive & m_border;
 		archive & m_numUpdates;
+		archive & m_pirateAttackTime;
 	}
 	
 	template <typename T>
@@ -87,5 +88,6 @@ private:
 	sf::RectangleShape m_border;
 
 	int m_numUpdates = 0;
+	int m_pirateAttackTime = 20000;
 };
 

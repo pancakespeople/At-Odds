@@ -488,8 +488,15 @@ void Constellation::generatePirates() {
 }
 
 void Constellation::updatePirates() {
-    if (m_numUpdates % 20000 == 0) {
-        for (Building* pirateBase : getAllBuildingsOfType("PIRATE_BASE")) {
+    if (m_numUpdates % m_pirateAttackTime == 0) {
+        auto pirateBases = getAllBuildingsOfType("PIRATE_BASE");
+
+        if (pirateBases.size() == 0) {
+            m_pirateAttackTime = 20000;
+            generatePirates();
+        }
+
+        for (Building* pirateBase : pirateBases) {
             // Steal designs
             PirateBaseMod* mod = pirateBase->getMod<PirateBaseMod>();
             mod->findTheftAllegiance(pirateBase->getCurrentStar(), this);
@@ -516,6 +523,8 @@ void Constellation::updatePirates() {
                 DEBUG_PRINT("Pirates in " << pirateBase->getCurrentStar()->getName() << " are attacking " << factionName);
             }
         }
+
+        m_pirateAttackTime *= 1.5f;
     }
 }
 
