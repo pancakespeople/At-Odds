@@ -605,7 +605,7 @@ void Star::generatePlanets() {
 			sf::Vector2f moonPos = planetPos + sf::Vector2f(std::cos(rndAngle), std::sin(rndAngle)) * rndRadius;
 			Planet moon(moonPos, starPos, planetPos, m_temperature, true);
 			moon.setMoonOf(m_planets.size() - 1);
-			moon.setRadius(Random::randFloat(planet.getRadius() / 2.0f, planet.getRadius()));
+			moon.setRadius(Random::randFloat(moon.getRadius() / 4.0f, moon.getRadius()));
 			m_planets.push_back(moon);
 		}
 
