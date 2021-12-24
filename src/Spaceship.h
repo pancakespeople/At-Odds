@@ -94,6 +94,7 @@ public:
 	std::vector<Spaceship*> findEnemyShips();
 	std::vector<Spaceship*> findEnemyCombatShips();
 	Spaceship* findClosestEnemyCombatShip(Star* star);
+	Spaceship * findClosestEnemyShip(Star * star);
 
 	std::string getName() { return m_name; }
 

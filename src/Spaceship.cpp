@@ -476,8 +476,30 @@ Spaceship* Spaceship::findClosestEnemyCombatShip(Star* star) {
 	return closest;
 }
 
+Spaceship* Spaceship::findClosestEnemyShip(Star* star) {
+	Spaceship* closest = nullptr;
+	float closestDist = 0.0f;
+	for (auto& ship : star->getSpaceships()) {
+		if (ship->getAllegiance() != m_allegiance) {
+			float dist = Math::distance(getPos(), ship->getPos());
+			if (dist < closestDist || closest == nullptr) {
+				closest = ship.get();
+				closestDist = dist;
+			}
+		}
+	}
+	return closest;
+}
+
 bool Spaceship::attack(Star* star, bool urgent) {
-	Spaceship* enemy = findClosestEnemyCombatShip(star);
+	Spaceship* enemy = nullptr;
+	if (!m_pirate) {
+		enemy = findClosestEnemyCombatShip(star);
+	}
+	else {
+		enemy = findClosestEnemyShip(star);
+	}
+
 	if (enemy != nullptr) {
 		if (urgent) addOrderFront(AttackOrder(enemy, m_fighterAI));
 		else addOrder(AttackOrder(enemy, m_fighterAI));
