@@ -489,7 +489,13 @@ void Constellation::generatePirates() {
 
 void Constellation::updatePirates() {
     if (m_numUpdates % 20000 == 0) {
-        for (Building* pirateBase : getAllBuildingsOfType("PIRATE_BASE")) {
+        auto pirateBases = getAllBuildingsOfType("PIRATE_BASE");
+
+        if (pirateBases.size() == 0) {
+            generatePirates();
+        }
+
+        for (Building* pirateBase : pirateBases) {
             // Steal designs
             PirateBaseMod* mod = pirateBase->getMod<PirateBaseMod>();
             mod->findTheftAllegiance(pirateBase->getCurrentStar(), this);

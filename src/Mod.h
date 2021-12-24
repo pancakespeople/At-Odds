@@ -245,10 +245,12 @@ private:
 		archive & m_theftAllegiance;
 		archive & m_stolenDesigns;
 		archive & m_lifetimeTicks;
+		archive & m_spawnNewBaseTime;
 	}
 
 	int m_theftAllegiance = -1;
 	int m_lifetimeTicks = 0;
 	float m_nextShipPercent = 0.0f;
 	std::deque<DesignerShip> m_stolenDesigns;
+	int m_spawnNewBaseTime = 20000.0f;
 };
