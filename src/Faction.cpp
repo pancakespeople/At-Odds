@@ -645,7 +645,7 @@ void Faction::addNewsEvent(const std::string& text, sf::Color color) {
 void Faction::onColonization(Planet* planet, Star* star) {
 	std::string planetName = planet->getName(star);
 	if (m_neverColonized) {
-		addNewsEvent("Brave pioneers from our nation have stepped foot on a planet for the first time in our nation's history. " + planetName + " " +
+		addNewsEvent("Brave pioneers from our nation have set foot on a planet for the first time in our nation's history. " + planetName + " " +
 			"has been colonized.");
 		m_neverColonized = false;
 	}
@@ -671,10 +671,10 @@ void Faction::onColonization(Planet* planet, Star* star) {
 			addNewsEvent("The first colonists have arrived on " + planetName + ". What could go wrong?");
 			break;
 		case 6:
-			addNewsEvent("The first colony ship has touched down on " + planetName + ". A man describes arriving on the planet as \"a dream come true.\"");
+			addNewsEvent("'A dream come true': The first colony ship has touched down on " + planetName);
 			break;
 		case 7:
-			addNewsEvent("The first settlers from our nation have stepped foot on " + planetName + ". A woman describes the planet as \"the most beautiful planet I have ever seen.\"");
+			addNewsEvent("'The most beautiful planet I have ever seen': The first settlers from our nation have set foot on " + planetName);
 			break;
 		}
 	}

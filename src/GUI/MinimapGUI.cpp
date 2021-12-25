@@ -11,7 +11,12 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 
 		float mapRadius = 50000.0f;
 		if (currentStar->getPlanets().size() > 0) {
-			mapRadius = Math::distance(currentStar->getPlanets().back().getPos(), currentStar->getLocalViewCenter()) * 2.0f + 100.0f;
+			Planet* furthestPlanet = &currentStar->getPlanets().back();
+			if (furthestPlanet->isMoon()) {
+				furthestPlanet = &currentStar->getPlanets()[currentStar->getPlanets().size() - 2];
+			}
+
+			mapRadius = Math::distance(furthestPlanet->getPos(), currentStar->getLocalViewCenter()) * 2.0f + 100.0f;
 		}
 
 		m_view.setCenter(currentStar->getPos());
