@@ -36,7 +36,7 @@ void main()
     float ringDensity = 800.0;
     float ring = sin(radius * ringDensity) + 1.0;
     float ringIndex = round(ring);
-    float rotationSpeed = 0.05 * ringIndex * ceil(radius / 3.14159 * ringDensity);
+    float rotationSpeed = -0.05 * ringIndex * ceil(radius / 3.14159 * ringDensity);
     float n = noise(uv * 250.0 * rotate(time / rotationSpeed));
     float v = ring * smoothstep(0.4, 0.3, radius) * smoothstep(0.1, 0.2, radius) * n;
 
