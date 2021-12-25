@@ -68,17 +68,6 @@ private:
 	tgui::Label::Ptr m_label;
 };
 
-class ColonyListGUI {
-public:
-	ColonyListGUI() {}
-
-	void open(tgui::Gui& gui, GameState& state, Constellation& constellation);
-
-private:
-	GameWidget::Icon m_icon;
-	tgui::ChildWindow::Ptr m_window = nullptr;
-};
-
 namespace GUIUtil {
 	void displayResourceCost(tgui::Group::Ptr group, const std::unordered_map<std::string, float>& totalResourceCost, int yPosPercent, int percentStep = 5);
 }

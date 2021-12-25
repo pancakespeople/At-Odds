@@ -9,6 +9,7 @@
 #include "BuildGUI.h"
 #include "MinimapGUI.h"
 #include "NewsGUI.h"
+#include "ColonyListGUI.h"
 
 enum class PlayerGUIState {
 	CLOSED,
