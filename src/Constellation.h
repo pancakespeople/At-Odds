@@ -78,6 +78,9 @@ private:
 	float findClosestStarDistance(sf::Vector2f& targetPos);
 	float closestStarDistanceCoords(const sf::Vector2f& targetPos, const std::vector<double>& coords);
 
+	// Function to check if every star in the constellation is connected
+	bool verifyConnections();
+
 	std::vector<std::unique_ptr<Star>> m_stars;
 	std::vector<std::unique_ptr<Hyperlane>> m_hyperlanes;
 	std::vector<PurgatoryItem<Spaceship>> m_shipPurgatory;

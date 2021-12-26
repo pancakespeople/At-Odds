@@ -98,7 +98,7 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 	//constellation.generateModernMegaRobustFinalConstellation(800, 800, starsNum);
 	constellation.generateTheReallyFinalRobustConstellationIMeanItReally(3000, 3000, starsNum);
-	constellation.setupStars();
+	//constellation.setupStars();
 
 	auto& stars = constellation.getStars();
 

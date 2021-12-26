@@ -146,59 +146,70 @@ void Constellation::generateModernMegaRobustFinalConstellation(int sizeWidth, in
 }
 
 void Constellation::generateTheReallyFinalRobustConstellationIMeanItReally(int sizeWidth, int sizeHeight, int numStars) {
-    // Generate random points
-    std::vector<double> coords;
-    const int minStarDist = 250;
-    const int maxStarDist = 750;
-    
-    coords.push_back(Random::randFloat(0, sizeWidth));
-    coords.push_back(Random::randFloat(0, sizeHeight));
-    
-    for (std::size_t i = 1; i < numStars; i++) {
-        float dist = Random::randFloat(minStarDist, maxStarDist);
-        float angle = Random::randFloat(0, Math::pi * 2.0f);
-        sf::Vector2f pos(std::cos(angle) * dist + coords[i * 2 - 2], std::sin(angle) * dist + coords[i * 2 - 1]);
-        
-        // Try to keep some distance between stars
-        int loops = 0; // Prevent infinite loop
-        while (closestStarDistanceCoords(pos, coords) < minStarDist && loops < 10) {
-            dist = Random::randFloat(minStarDist, maxStarDist);
-            angle = Random::randFloat(0, Math::pi * 2.0f);
-            pos = sf::Vector2f(std::cos(angle) * dist + coords[i * 2 - 2], std::sin(angle) * dist + coords[i * 2 - 1]);
-            loops++;
+    int attempts = 0;
+    do {
+        m_stars.clear();
+        m_hyperlanes.clear();
+
+        // Generate random points
+        std::vector<double> coords;
+        const int minStarDist = 250;
+        const int maxStarDist = 750;
+
+        coords.push_back(Random::randFloat(0, sizeWidth));
+        coords.push_back(Random::randFloat(0, sizeHeight));
+
+        for (std::size_t i = 1; i < numStars; i++) {
+            float dist = Random::randFloat(minStarDist, maxStarDist);
+            float angle = Random::randFloat(0, Math::pi * 2.0f);
+            sf::Vector2f pos(std::cos(angle) * dist + coords[i * 2 - 2], std::sin(angle) * dist + coords[i * 2 - 1]);
+
+            // Try to keep some distance between stars
+            int loops = 0; // Prevent infinite loop
+            while (closestStarDistanceCoords(pos, coords) < minStarDist && loops < 10) {
+                dist = Random::randFloat(minStarDist, maxStarDist);
+                angle = Random::randFloat(0, Math::pi * 2.0f);
+                pos = sf::Vector2f(std::cos(angle) * dist + coords[i * 2 - 2], std::sin(angle) * dist + coords[i * 2 - 1]);
+                loops++;
+            }
+
+            coords.push_back(pos.x);
+            coords.push_back(pos.y);
         }
 
-        coords.push_back(pos.x);
-        coords.push_back(pos.y);
-    }
+        delaunator::Delaunator d(coords);
+        std::map<std::pair<float, float>, Star*> stars;
 
-    delaunator::Delaunator d(coords);
-    std::map<std::pair<float, float>, Star*> stars;
+        for (std::size_t i = 0; i < coords.size(); i += 2) {
+            sf::Vector2f pos(coords[i], coords[i + 1]);
+            m_stars.push_back(std::make_unique<Star>(pos));
+            stars[std::pair<float, float>(pos.x, pos.y)] = m_stars.back().get();
+        }
 
-    for (std::size_t i = 0; i < coords.size(); i += 2) {
-        sf::Vector2f pos(coords[i], coords[i + 1]);
-        m_stars.push_back(std::make_unique<Star>(pos));
-        stars[std::pair<float, float>(pos.x, pos.y)] = m_stars.back().get();
-    }
+        for (std::size_t i = 0; i < d.triangles.size(); i += 3) {
+            sf::Vector2f pos1(d.coords[2 * d.triangles[i]], d.coords[2 * d.triangles[i] + 1]);
+            sf::Vector2f pos2(d.coords[2 * d.triangles[i + 1]], d.coords[2 * d.triangles[i + 1] + 1]);
+            sf::Vector2f pos3(d.coords[2 * d.triangles[i + 2]], d.coords[2 * d.triangles[i + 2] + 1]);
 
-    for (std::size_t i = 0; i < d.triangles.size(); i += 3) {
-        sf::Vector2f pos1(d.coords[2 * d.triangles[i]], d.coords[2 * d.triangles[i] + 1]);
-        sf::Vector2f pos2(d.coords[2 * d.triangles[i + 1]], d.coords[2 * d.triangles[i + 1] + 1]);
-        sf::Vector2f pos3(d.coords[2 * d.triangles[i + 2]], d.coords[2 * d.triangles[i + 2] + 1]);
+            Star* star1 = stars[std::pair<float, float>(pos1.x, pos1.y)];
+            Star* star2 = stars[std::pair<float, float>(pos2.x, pos2.y)];
+            Star* star3 = stars[std::pair<float, float>(pos3.x, pos3.y)];
 
-        Star* star1 = stars[std::pair<float, float>(pos1.x, pos1.y)];
-        Star* star2 = stars[std::pair<float, float>(pos2.x, pos2.y)];
-        Star* star3 = stars[std::pair<float, float>(pos3.x, pos3.y)];
+            float side1Length = Math::distance(star1->getPos(), star2->getPos());
+            float side2Length = Math::distance(star2->getPos(), star3->getPos());
+            //float side3Length = Math::distance(star3->getPos(), star1->getPos());
+            float longestLength = std::max(side1Length, side2Length);
 
-        float side1Length = Math::distance(star1->getPos(), star2->getPos());
-        float side2Length = Math::distance(star2->getPos(), star3->getPos());
-        //float side3Length = Math::distance(star3->getPos(), star1->getPos());
-        float longestLength = std::max(side1Length, side2Length);
+            if (!star1->hasHyperlaneConnectionTo(star2) && side1Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star1, star2));
+            if (!star2->hasHyperlaneConnectionTo(star3) && side2Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star2, star3));
+            //if (!star3->hasHyperlaneConnectionTo(star1) && side3Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star3, star1));
+        }
 
-        if (!star1->hasHyperlaneConnectionTo(star2) && side1Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star1, star2));
-        if (!star2->hasHyperlaneConnectionTo(star3) && side2Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star2, star3));
-        //if (!star3->hasHyperlaneConnectionTo(star1) && side3Length != longestLength) m_hyperlanes.push_back(std::make_unique<Hyperlane>(star3, star1));
-    }
+        setupStars();
+        attempts++;
+    } while (!verifyConnections());
+
+    DEBUG_PRINT("Generated the really robust final constellation with " << m_stars.size() << " stars, " << m_hyperlanes.size() << " hyperlanes and " << attempts << " attempts");
 }
 
 void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player) {
@@ -551,4 +562,33 @@ std::vector<Star*> Constellation::getStarsByAllegiance(int allegiance) {
     }
 
     return stars;
+}
+
+bool Constellation::verifyConnections() {
+    // Do a breadth first search on the entire constellation
+
+    Star* root = m_stars[0].get();
+    std::deque<Star*> toExploreStars;
+    std::vector<Star*> exploredStars;
+    toExploreStars.push_back(root);
+
+    while (toExploreStars.size() != 0) {
+        exploredStars.push_back(toExploreStars.front());
+        for (Star* connected : toExploreStars.front()->getConnectedStars()) {
+            if (std::find(exploredStars.begin(), exploredStars.end(), connected) == exploredStars.end() &&
+                std::find(toExploreStars.begin(), toExploreStars.end(), connected) == toExploreStars.end()) {
+                toExploreStars.push_back(connected);
+            }
+        }
+        toExploreStars.pop_front();
+    }
+
+    DEBUG_PRINT(exploredStars.size() << " " << m_stars.size());
+
+    if (exploredStars.size() == m_stars.size()) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
