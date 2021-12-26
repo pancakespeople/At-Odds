@@ -49,6 +49,7 @@ private:
 		archive & m_projectile;
 		archive & m_instaHit;
 		archive & m_lastFireLocation;
+		archive & m_fireAnimation;
 	}
 
 	Weapon() {}
