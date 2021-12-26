@@ -214,11 +214,12 @@ void UnitGUI::draw(sf::RenderWindow& window) {
 }
 
 void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel) {
+	bool mainPanelFocused = true;
 	if (mainPanel != nullptr) {
-		if (!mainPanel->isFocused()) return;
+		mainPanelFocused = mainPanel->isFocused();
 	}
 
-	if (state.getState() == GameState::State::LOCAL_VIEW) {
+	if (state.getState() == GameState::State::LOCAL_VIEW && mainPanelFocused) {
 		if (ev.type == sf::Event::MouseButtonPressed) {
 			if (ev.mouseButton.button == sf::Mouse::Right) {
 				// Give orders to selected ships
