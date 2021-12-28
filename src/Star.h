@@ -33,7 +33,7 @@ public:
 	void connectHyperlane(Hyperlane* lane);
 	void factionTakeOwnership(Faction* faction, bool spawnClaimUnit = false);
 	void setRadius(float radius) { m_shape.setRadius(radius); }
-	void clicked(sf::Event ev, GameState& state);
+	void worldViewClicked(sf::Event ev, GameState& state);
 	void setupJumpPoints();
 	void addProjectile(Projectile proj);
 	void addAnimation(const Animation& anim);
@@ -50,6 +50,7 @@ public:
 	void setName(const std::string& name) { m_name = name; }
 	void generateAsteroidBelts();
 	void generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color);
+	void onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos);
 	
 	Spaceship* createSpaceship(const std::string& type, sf::Vector2f pos, int allegiance, sf::Color color);
 	Building* createBuilding(const std::string& type, sf::Vector2f pos, Faction* faction, bool built = true);

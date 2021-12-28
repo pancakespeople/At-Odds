@@ -16,9 +16,11 @@ public:
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 	void jumpShipThrough(Spaceship* ship, Star* currentStar);
 	void reinitAfterLoad(Star* star);
+	void onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos);
 
 	bool isOutgoing() { return m_isOutgoing; }
 	bool isPointInRadius(sf::Vector2f point);
+	bool isMouseInRadius(const sf::RenderWindow& window);
 
 	float getRadius() { return m_sprite.getTextureRect().width / 2.0f; }
 

@@ -260,7 +260,7 @@ sf::Vector2f Star::getCenter() const {
 	return pos;
 }
 
-void Star::clicked(sf::Event ev, GameState& state) {
+void Star::worldViewClicked(sf::Event ev, GameState& state) {
 	state.changeToLocalView(this);
 }
 
@@ -824,6 +824,12 @@ void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color)
 	Spaceship* ship = createSpaceship(shipDesign.chassis.type, pos, allegiance, color);
 	for (DesignerWeapon& weapon : shipDesign.weapons) {
 		ship->addWeapon(Weapon(weapon.type));
+	}
+}
+
+void Star::onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos) {
+	for (JumpPoint& point : m_jumpPoints) {
+		point.onClick(state, releaseMouseWorldPos, pressMouseWorldPos);
 	}
 }
 

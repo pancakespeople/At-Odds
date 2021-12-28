@@ -312,8 +312,12 @@ void Constellation::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& s
         for (auto& star : m_stars) {
             if (star->isInShapeRadius(mouseCoordsWorld.x, mouseCoordsWorld.y) &&
                 star->isInShapeRadius(lastMousePressPos.x, lastMousePressPos.y)) {
-                star->clicked(ev, state);
+                star->worldViewClicked(ev, state);
             }
+        }
+
+        if (state.getLocalViewStar() != nullptr) {
+            state.getLocalViewStar()->onClick(state, mouseCoordsWorld, lastMousePressPos);
         }
     }
     else if (ev.type == sf::Event::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {

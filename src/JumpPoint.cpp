@@ -6,6 +6,7 @@
 #include "Star.h"
 #include "Debug.h"
 #include "Random.h"
+#include "Math.h"
 
 JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing) {
 	m_sprite.setTexture(TextureCache::getTexture("data/art/swirly2.png"));
@@ -30,6 +31,10 @@ JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane,
 void JumpPoint::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 	m_sprite.rotate(60.0f / (1.0f / m_rotationClock.getElapsedTime().asSeconds()));
 	m_rotationClock.restart();
+
+	if (isMouseInRadius(window)) {
+		emitter.drawGlow(window, m_sprite.getPosition(), getRadius() * 10.0f, sf::Color(255, 0, 255));
+	}
 
 	emitter.drawWithDistanceShader(window, m_trail, window.mapCoordsToPixel(m_sprite.getPosition()));
 	window.draw(m_sprite);
@@ -91,6 +96,23 @@ bool JumpPoint::isPointInRadius(sf::Vector2f point) {
 	else return false;
 }
 
+bool JumpPoint::isMouseInRadius(const sf::RenderWindow& window) {
+	sf::Vector2f mouseWorldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+	if (Math::distance(mouseWorldPos, m_sprite.getPosition()) < getRadius()) {
+		return true;
+	}
+	return false;
+}
+
 void JumpPoint::reinitAfterLoad(Star* star) {
 	m_hyperlane = star->getHyperlaneByID(m_hyperlaneID);
+}
+
+void JumpPoint::onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos) {
+	if (isPointInRadius(releaseMouseWorldPos) && isPointInRadius(pressMouseWorldPos)) {
+		state.changeToWorldView();
+		state.changeToLocalView(getConnectedOtherStar());
+
+		state.getCamera().setPos(getConnectedJumpPoint()->getPos());
+	}
 }
