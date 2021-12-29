@@ -11,6 +11,8 @@ public:
 	void displayShipDesigns(Faction* playerFaction);
 
 private:
+	void displayChassisInfo(const std::string& chassisType);
+
 	GameWidget::Icon m_icon;
 	tgui::ChildWindow::Ptr m_window;
 };

@@ -34,7 +34,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 					DesignerShip ship = playerFaction->getShipDesignByName(designListBox->getSelectedItem().toStdString());
 
 					shipChassisListBox->removeAllItems();
-					shipChassisListBox->addItem(ship.chassis.name);
+					shipChassisListBox->addItem(ship.chassis.name, ship.chassis.type);
 					shipChassisListBox->setSelectedItemByIndex(0);
 
 					shipWeaponsListBox->removeAllItems();
@@ -63,7 +63,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 			// Add chassis to list box
 			for (auto& chassis : playerFaction->getChassis()) {
-				chassisListBox->addItem(chassis.name);
+				chassisListBox->addItem(chassis.name, chassis.type);
 			}
 
 			auto weaponsLabel = tgui::Label::create("Weapons");
@@ -125,8 +125,13 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 			auto shipChassisListBox = tgui::ListBox::create();
 			shipChassisListBox->setPosition("27.5%", "50%");
-			shipChassisListBox->setSize("22.5%", "30%");
+			shipChassisListBox->setSize("22.5%", "5%");
 			m_window->add(shipChassisListBox, "shipChassisListBox");
+
+			auto chassisInfoLabel = tgui::Label::create();
+			chassisInfoLabel->setPosition("27.5%", "60%");
+			chassisInfoLabel->setSize("22.5%", "30%");
+			m_window->add(chassisInfoLabel, "chassisInfoLabel");
 
 			auto shipWeaponsListBox = tgui::ListBox::create();
 			shipWeaponsListBox->setPosition("52.5%", "50%");
@@ -178,7 +183,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			chassisAdderButton->onClick([this, playerFaction, chassisListBox, shipChassisListBox]() {
 				if (chassisListBox->getSelectedItemIndex() != -1) {
 					if (shipChassisListBox->getItemCount() == 0) {
-						shipChassisListBox->addItem(chassisListBox->getSelectedItem());
+						shipChassisListBox->addItem(chassisListBox->getSelectedItem(), chassisListBox->getSelectedItemId());
 						shipChassisListBox->setSelectedItemByIndex(0);
 						displayShipInfo(playerFaction);
 					}
@@ -230,6 +235,10 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				}
 				});
 			m_window->add(weaponsRemoverButton);
+
+			shipChassisListBox->onItemSelect([this, shipChassisListBox]() {
+				displayChassisInfo(shipChassisListBox->getSelectedItemId().toStdString());
+			});
 
 			displayShipDesigns(playerFaction);
 
@@ -322,4 +331,17 @@ void ShipDesignerGUI::displayShipDesigns(Faction* playerFaction) {
 	for (DesignerShip& ship : playerFaction->getShipDesigns()) {
 		designListBox->addItem(ship.name);
 	}
+}
+
+void ShipDesignerGUI::displayChassisInfo(const std::string& chassisType) {
+	auto chassisInfoLabel = m_window->get<tgui::Label>("chassisInfoLabel");
+	const toml::table& table = TOMLCache::getTable("data/objects/spaceships.toml");
+	
+	std::stringstream ss;
+	ss << table[chassisType]["name"].value_or("Unknown") << " Chassis\n";
+	ss << "Weapon Capacity: " << table[chassisType]["maxWeaponCapacity"].value_or(0.0f) << " kg\n";
+	ss << "Mass: " << table[chassisType]["mass"].value_or(0.0f) << "\n";
+	ss << "Health: " << table[chassisType]["health"].value_or(0.0f) << "\n";
+
+	chassisInfoLabel->setText(ss.str());
 }
