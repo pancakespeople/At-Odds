@@ -411,7 +411,7 @@ void Constellation::generateNeutralSquatters() {
             int numShips = Random::randInt(0, 10);
             for (int i = 0; i < numShips; i++) {
                 sf::Vector2f pos = star->getRandomLocalPos(-10000, 10000);
-                Spaceship* ship = star->createSpaceship("FRIGATE_1", pos, -1, sf::Color(175, 175, 175));
+                Spaceship* ship = star->createSpaceship("FRIGATE", pos, -1, sf::Color(175, 175, 175));
                 if (Random::randBool()) {
                     ship->addWeapon(Weapon("LASER_GUN"));
                 }

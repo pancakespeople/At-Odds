@@ -44,17 +44,17 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		addSpaceship(m_capital->createSpaceship("FRIGATE_1", pos, m_id, m_color));
+		addSpaceship(m_capital->createSpaceship("FRIGATE", pos, m_id, m_color));
 		m_ships.back()->addWeapon(Weapon(m_weapons.back().type));
 	}
 
 	for (int i = 0; i < 3; i++) {
 		sf::Vector2f pos = m_capital->getRandomLocalPos(-10000.0f, 10000.0f);
-		addSpaceship(m_capital->createSpaceship("CONSTRUCTION_SHIP", pos, m_id, m_color));
+		addSpaceship(m_capital->createSpaceship("CONSTRUCTOR", pos, m_id, m_color));
 		m_ships.back()->addWeapon(Weapon("CONSTRUCTION_GUN"));
 	}
 
-	addSpaceship(m_capital->createSpaceship("DESTROYER_1", Random::randVec(-10000, 10000), m_id, m_color));
+	addSpaceship(m_capital->createSpaceship("DESTROYER", Random::randVec(-10000, 10000), m_id, m_color));
 	m_ships.back()->addWeapon(Weapon("GAUSS_CANNON"));
 
 	m_capital->createBuilding("OUTPOST", m_capital->getRandomLocalPos(-10000, 10000), this);
@@ -438,12 +438,14 @@ std::vector<DesignerWeapon> Faction::getBuildingWeapons() {
 }
 
 DesignerWeapon Faction::addRandomWeapon() {
-	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
+	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
 	std::vector<std::string> vals;
 
 	for (auto& elem : table) {
-		vals.push_back(elem.first);
+		if (table[elem.first]["findable"].value_or(true)) {
+			vals.push_back(elem.first);
+		}
 	}
 
 	int randIdx = Random::randInt(0, vals.size() - 1);
@@ -462,12 +464,12 @@ DesignerWeapon Faction::addRandomWeapon() {
 }
 
 DesignerWeapon Faction::addRandomUndiscoveredWeapon() {
-	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
+	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
 	std::vector<std::string> vals;
 
 	for (auto& elem : table) {
-		if (!hasWeapon(elem.first)) vals.push_back(elem.first);
+		if (!hasWeapon(elem.first) && table[elem.first]["findable"].value_or(true)) vals.push_back(elem.first);
 	}
 
 	if (vals.size() > 0) {

@@ -1,70 +1,93 @@
 [LASER_GUN]
+name = "Laser Gun"
+weaponPoints = 1.0
+cost = [["COMMON_ORE", 2.5]]
 projectile = "LASER"
 sound = "data/sound/pew1.wav"
 
 [GAUSS_CANNON]
+name = "Gauss Cannon"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 10.0], ["UNCOMMON_ORE", 5.0]]
 projectile = "GAUSS"
 sound = "data/sound/pew2.wav"
 
 [MACHINE_GUN]
+name = "Machine Gun"
+weaponPoints = 1.0
+cost = [["COMMON_ORE", 2.5]]
 projectile = "LIGHT_BALLISTIC"
 sound = "data/sound/gunshot4.wav"
 cooldownRecovery = 5.0
 accuracy = 0.9
 baseSoundCooldown = 60
 
-[LONG_RANGE_LASER_GUN]
-projectile = "LONG_RANGE_LASER"
-sound = "data/sound/pew1.wav"
-cooldownRecovery = 0.5
-accuracy = 0.95
-
-[LONG_RANGE_MACHINE_GUN]
-projectile = "LONG_RANGE_LIGHT_BALLISTIC"
-sound = "data/sound/gunshot4.wav"
-cooldownRecovery = 0.5
-accuracy = 0.95
-numProjectiles = 2
-baseSoundCooldown = 60
-
 [CONSTRUCTION_GUN]
 projectile = "CONSTRUCTION"
 cooldownRecovery = 5.0
+findable = false
+hasDesign = false
 
 [ROCKET_LAUNCHER]
+name = "Rocket Launcher"
+weaponPoints = 1.0
+cost = [["COMMON_ORE", 2.5]]
 projectile = "ROCKET"
 sound = "data/sound/rocket1.wav"
 
 [FLAK_CANNON]
+name = "Flak Cannon"
+weaponPoints = 1.5
+cost = [["COMMON_ORE", 5.0], ["UNCOMMON_ORE", 2.0]]
 projectile = "FLAK"
 sound = "data/sound/gunshot1.wav"
 accuracy = 0.6
 numProjectiles = 6
 
 [MEGA_LASER]
+name = "Mega Laser"
+weaponPoints = 4.0
+cost = [["COMMON_ORE", 75.0], ["UNCOMMON_ORE", 66.0]]
 projectile = "MEGA_LASER"
 sound = "data/sound/pew1.wav"
 
 [ZAPPER]
+name = "Zapper"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 20.0], ["UNCOMMON_ORE", 20.0]]
 projectile = "LIGHTNING"
 
 [THE_CRUSHER]
+name = "The Crusher"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 50.0]]
 projectile = "CRUSHER_BOLT"
 sound = "data/sound/gunshot1.wav"
 cooldownRecovery = 0.5
 
 [NUKE_LAUNCHER]
+name = "Nuke Launcher"
+weaponPoints = 2.0
+cost = [["UNCOMMON_ORE", 20.0]]
 projectile = "NUCLEAR_MISSILE"
 sound = "data/sound/rocket1.wav"
 cooldownRecovery = 0.25
+findable = false
 
 [INVASION_POD_LAUNCHER]
+name = "Invasion Pod Launcher"
+weaponPoints = 1.5
+cost = [["COMMON_ORE", 10.0]]
 projectile = "INVASION_POD"
 sound = "data/sound/rocket1.wav"
 cooldownRecovery = 0.5
 allowedOnBuildings = false
+findable = false
 
 [BEAM_LASER]
+name = "Beam Laser"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 50.0]]
 projectile = "BEAM_LASER"
 sound = "data/sound/pew1.wav"
 cooldownRecovery = 0.25

@@ -16,15 +16,6 @@ class Building;
 
 class Spaceship : public Unit {
 public:
-	enum class SPACESHIP_TYPE {
-		FRIGATE_1,
-		DESTROYER_1,
-		CLAIM_SHIP,
-		CONSTRUCTION_SHIP,
-		FIGHTER,
-		SPACE_BUS
-	};
-	
 	enum class JumpState {
 		TRAVEL,
 		JUMPING,

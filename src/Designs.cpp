@@ -19,11 +19,11 @@ std::unordered_map<std::string, float> DesignerShip::getTotalResourceCost() {
 }
 
 DesignerChassis::DesignerChassis(const std::string& typeStr) {
-	const toml::table& table = TOMLCache::getTable("data/objects/chassis.toml");
+	const toml::table& table = TOMLCache::getTable("data/objects/spaceships.toml");
 
 	assert(table.contains(typeStr));
 
-	type = table[typeStr]["type"].value_or("");
+	type = typeStr;
 	name = table[typeStr]["name"].value_or("");
 	maxWeaponCapacity = table[typeStr]["maxWeaponCapacity"].value_or(1.0f);
 	buildTimeMultiplier = table[typeStr]["buildTimeMultiplier"].value_or(1.0f);
@@ -35,11 +35,11 @@ DesignerChassis::DesignerChassis(const std::string& typeStr) {
 }
 
 DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
-	const toml::table& table = TOMLCache::getTable("data/objects/weapondesigns.toml");
+	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
 	assert(table.contains(typeStr));
 
-	type = table[typeStr]["type"].value_or("");
+	type = typeStr;
 	name = table[typeStr]["name"].value_or("");
 	weaponPoints = table[typeStr]["weaponPoints"].value_or(1.0f);
 

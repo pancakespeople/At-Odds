@@ -780,13 +780,12 @@ bool Star::hasHyperlaneConnectionTo(const Star* star) const {
 void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color) {
 	std::array<std::string, 3> chassisList = { "FRIGATE", "DESTROYER", "CRUISER" };
 	std::vector<DesignerWeapon> weapons;
-	const toml::table& weaponDesignTable = TOMLCache::getTable("data/objects/weapondesigns.toml");
 	const toml::table& weaponTable = TOMLCache::getTable("data/objects/weapons.toml");
 	const toml::table& projectileTable = TOMLCache::getTable("data/objects/projectiles.toml");
 
 	// Pick weapons that actually do damage
-	for (auto& weapon : weaponDesignTable) {
-		std::string weaponType = weaponDesignTable[weapon.first]["type"].value_or("");
+	for (auto& weapon : weaponTable) {
+		std::string weaponType = weapon.first;
 		std::string projectile = weaponTable[weaponType]["projectile"].value_or("");
 		if (projectile != "") {
 			

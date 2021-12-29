@@ -1,18 +1,23 @@
 
-[FRIGATE_1]
+[FRIGATE]
 name = "Frigate"
 texturePath = "data/art/SpaceShipNormal.png"
 mass = 50000.0
 health = 100.0
 colliderRadius = 100.0
+maxWeaponCapacity = 1.0
+cost = [["COMMON_ORE", 7.5]]
 
-[DESTROYER_1]
+[DESTROYER]
 name = "Destroyer"
 texturePath = "data/art/bgspeedship.png"
 scale = 2.0
 mass = 100000.0
 health = 250.0
 colliderRadius = 125.0
+maxWeaponCapacity = 2.0
+cost = [["COMMON_ORE", 15.0]]
+buildTimeMultiplier = 1.25
 
 [CLAIM_SHIP]
 name = "Flag"
@@ -24,13 +29,15 @@ colliderRadius = 300.0
 canReceiveOrders = false
 stationary = true
 
-[CONSTRUCTION_SHIP]
+[CONSTRUCTOR]
 name = "Constructor"
 texturePath = "data/art/constructionship.png"
 mass = 150000.0
 health = 50.0
 colliderRadius = 350.0
 constructionSpeed = 10.0
+maxWeaponCapacity = 0.0
+cost = [["COMMON_ORE", 10.0]]
 
 [FIGHTER]
 name = "Fighter"
@@ -97,3 +104,6 @@ scale = 6.0
 mass = 250000
 health = 500.0
 colliderRadius = 300.0
+maxWeaponCapacity = 5.0
+cost = [["COMMON_ORE", 100.0], ["RARE_ORE", 5.0]]
+buildTimeMultiplier = 2.0

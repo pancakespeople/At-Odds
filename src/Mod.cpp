@@ -825,7 +825,8 @@ void PirateBaseMod::stealDesignFrom(Faction* faction) {
 	std::vector<DesignerShip> viableDesigns;
 
 	for (auto& shipDesign : designs) {
-		if (shipDesign.chassis.type != "CONSTRUCTION_SHIP") {
+		// todo: unhardcode this to account for possibly more than 1 constructor ship type later
+		if (shipDesign.chassis.type != "CONSTRUCTOR") {
 			if (!hasDesign(shipDesign)) {
 				viableDesigns.push_back(shipDesign);
 			}
