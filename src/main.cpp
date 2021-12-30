@@ -27,6 +27,7 @@
 #include "GUI/OptionsMenu.h"
 #include "Fonts.h"
 #include "GUI/DebugInfo.h"
+#include "Renderer.h"
 
 int main(int argc, const char* argv[])
 {
@@ -69,12 +70,13 @@ int main(int argc, const char* argv[])
     tgui::GuiSFML gui(window);
     tgui::Theme::setDefault("data/tgui/Black.txt");
 
+    Renderer renderer(resolution);
+    Background& background = renderer.background;
     Constellation constellation;
     GameState state(Camera(0, 0, resolution.x, resolution.y));
     Player& player = state.getPlayer();
     UnitGUI& unitGui = playerGui.unitGUI;
     BuildGUI& buildGui = playerGui.buildGUI;
-    EffectsEmitter emitter(sf::Vector2i(resolution.x, resolution.y));
     SaveLoader saveLoader;
     DebugConsole console;
     MusicPlayer musicPlayer;
@@ -82,8 +84,6 @@ int main(int argc, const char* argv[])
 
     mainMenu.spawnArena(gui, constellation, state, playerGui);
     mainMenu.open(gui, constellation, state);
-
-    Background background("data/art/spacebackground1.png", resolution.x, resolution.y);
     newGameMenu.addGameStartCallbacK([&background]() {
         background.setNebulaSeed(Random::randFloat(0.0f, 1.0f));
         DEBUG_PRINT("Randomized nebula seed");
@@ -93,7 +93,7 @@ int main(int argc, const char* argv[])
     int ticks = 0;
     int updates = 0;
     
-    optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, state.getCamera(), true);
+    optionsMenu.updateGameSettings(window, renderer, gui, musicPlayer, state.getCamera(), true);
 
     sf::Clock fpsClock;
     float fps = 60;
@@ -106,24 +106,23 @@ int main(int argc, const char* argv[])
             if (event.type == sf::Event::Closed)
                 window.close();
             state.getCamera().zoomEvent(event);
-            constellation.onEvent(event, window, state);
+            constellation.onEvent(event, window, renderer, state);
             state.onEvent(event);
-            unitGui.onEvent(event, window, state, constellation.getStars(), playerGui.mainPanel);
+            unitGui.onEvent(event, window, renderer, state, constellation.getStars(), playerGui.mainPanel);
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
-            emitter.onEvent(event);
-            playerGui.buildingGUI.onEvent(event, window, gui, state, constellation, playerGui.mainPanel);
-            buildGui.onEvent(event, window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
+            playerGui.buildingGUI.onEvent(event, window, renderer, gui, state, constellation, playerGui.mainPanel);
+            buildGui.onEvent(event, window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
             console.onEvent(event, gui, state);
             playerGui.timescaleGUI.onEvent(event, gui);
-            playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, state.getLocalViewStar(), playerGui.mainPanel);
+            playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, renderer, state.getLocalViewStar(), playerGui.mainPanel);
             playerGui.onEvent(event, gui);
         }
 
-        optionsMenu.updateGameSettings(window, background, gui, emitter, musicPlayer, state.getCamera());
+        optionsMenu.updateGameSettings(window, renderer, gui, musicPlayer, state.getCamera());
         if (state.getState() != GameState::State::MAIN_MENU) {
             // Update GUIs
-            playerGui.update(window, state, constellation, gui);
+            playerGui.update(window, renderer, state, constellation, gui);
         }
         
         // Maintain a constant update rate
@@ -135,29 +134,31 @@ int main(int argc, const char* argv[])
             updates++;
         }
 
-        emitter.updateTime(time);
+        renderer.effects.updateTime(time);
 
         window.clear();
-        
-        background.draw(window, emitter);
-        
-        state.getCamera().update(window, gui.getFocusedLeaf());
+        renderer.clear();
+
+        background.draw(renderer);
+
+        state.getCamera().update(renderer, gui.getFocusedLeaf());
 
         Sounds::updateSounds(state.getPlayer(), state.getCamera());
         musicPlayer.playMusic();
 
         if (state.getState() == GameState::State::WORLD_VIEW) {
-            constellation.draw(window, emitter, state.getPlayer());
+            constellation.draw(window, renderer, state.getPlayer());
         }
         else if (state.getState() == GameState::State::LOCAL_VIEW) {
-            state.getLocalViewStar()->drawLocalView(window, emitter, state.getPlayer(), time);
+            state.getLocalViewStar()->drawLocalView(window, renderer, state.getPlayer(), time);
         }
         
-        console.runCommands(constellation, state, window, gui, playerGui);
+        console.runCommands(constellation, state, window, renderer, gui, playerGui);
         
-        playerGui.draw(window, state, constellation, player);
         //mainMenu.drawPreview(window, emitter, state, time);
         //debugInfo.draw(window);
+        renderer.displayToWindow(window);
+        playerGui.draw(window, renderer, state, constellation, player);
         gui.draw();
 
         window.display();

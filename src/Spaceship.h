@@ -25,7 +25,7 @@ public:
 	Spaceship(const std::string& type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 	Spaceship(const Spaceship& old) = delete;
 	
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time);
+	void draw(Renderer& renderer, float time);
 	void accelerate(float amount);
 	void update(Star* currentStar);
 	void keepSpeed(float speed);

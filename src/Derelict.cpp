@@ -5,6 +5,7 @@
 #include "Star.h"
 #include "TOMLCache.h"
 #include "Spaceship.h"
+#include "Renderer.h"
 
 Derelict::Derelict(sf::Vector2f pos) {
 	m_sprite.setTexture(TextureCache::getTexture("data/art/derelict.png"));
@@ -16,9 +17,9 @@ Derelict::Derelict(sf::Vector2f pos) {
 	m_collider = Collider(pos, sf::Color(175, 175, 175), m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
 }
 
-void Derelict::draw(sf::RenderWindow& window) {
-	window.draw(m_sprite);
-	window.draw(m_collider);
+void Derelict::draw(Renderer& renderer) {
+	renderer.draw(m_sprite);
+	renderer.draw(m_collider);
 }
 
 void Derelict::update(Star* star, std::vector<Faction>& factions) {

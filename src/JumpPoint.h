@@ -12,7 +12,7 @@ class JumpPoint : public Identifiable {
 public:
 	JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing);
 
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
+	void draw(Renderer& renderer, const sf::RenderWindow& window);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 	void jumpShipThrough(Spaceship* ship, Star* currentStar);
 	void reinitAfterLoad(Star* star);
@@ -20,7 +20,7 @@ public:
 
 	bool isOutgoing() { return m_isOutgoing; }
 	bool isPointInRadius(sf::Vector2f point);
-	bool isMouseInRadius(const sf::RenderWindow& window);
+	bool isMouseInRadius(const sf::RenderWindow& window, const Renderer& renderer);
 
 	float getRadius() { return m_sprite.getTextureRect().width / 2.0f; }
 

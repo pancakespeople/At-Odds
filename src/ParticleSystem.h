@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+class Renderer;
+
 class ParticleSystem {
 public:
 	const static inline int particleLimit = 10000;
@@ -13,7 +15,7 @@ public:
 
 	void createParticle(const Particle& particle, const sf::Vector2f& pos, const sf::Color& color);
 	void updateParticles();
-	void drawParticles(sf::RenderWindow& window);
+	void drawParticles(Renderer& renderer);
 	void createProjectileHitParticle(const sf::Vector2f& pos);
 	void createParticleExplosion(const sf::Vector2f& pos, const sf::Color& color, float velocity, int numParticles);
 

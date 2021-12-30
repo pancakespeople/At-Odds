@@ -2,13 +2,14 @@
 #include "BuildingGUI.h"
 #include "../Math.h"
 #include "../Constellation.h"
+#include "../Renderer.h"
 
-void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel) {
+void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Renderer& renderer, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel) {
 	bool valid = ev.mouseButton.button == sf::Mouse::Left && state.getLocalViewStar() != nullptr && mainPanel->isFocused();
 
 	if (ev.type == sf::Event::EventType::MouseButtonReleased && valid) {
 		sf::Vector2i mouseScreenPos = sf::Mouse::getPosition(window);
-		sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseScreenPos);
+		sf::Vector2f mouseWorldPos = renderer.mapPixelToCoords(mouseScreenPos);
 
 		if (m_window != nullptr) {
 			if (m_window->isMouseOnWidget(tgui::Vector2f(mouseScreenPos.x, mouseScreenPos.y))) {
@@ -45,7 +46,7 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, t
 		}
 	}
 	else if (ev.type == sf::Event::EventType::MouseButtonPressed && valid) {
-		m_lastMouseDownPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+		m_lastMouseDownPos = renderer.mapPixelToCoords(sf::Mouse::getPosition(window));
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "Math.h"
 #include "Planet.h"
 #include "Star.h"
+#include "Renderer.h"
 
 EffectsEmitter::EffectsEmitter(sf::Vector2i resolution) {
 	init(resolution);
@@ -63,15 +64,15 @@ void EffectsEmitter::onEvent(const sf::Event& event) {
 	}
 }
 
-void EffectsEmitter::drawJumpBubble(sf::RenderWindow& window, const sf::Vector2f& pos, float radius, float percent) {
+void EffectsEmitter::drawJumpBubble(Renderer& renderer, const sf::Vector2f& pos, float radius, float percent) {
 	m_jumpBubble.setRadius(radius);
 	m_jumpBubble.setOrigin(sf::Vector2f(radius, radius));
 	m_jumpBubble.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 200.0f * (percent / 100.0f)));
 	m_jumpBubble.setPosition(pos);
-	window.draw(m_jumpBubble);
+	renderer.draw(m_jumpBubble);
 }
 
-void EffectsEmitter::drawLine(sf::RenderWindow& window, const sf::Vector2f& begin, const sf::Vector2f& end, const sf::Color& color) {
+void EffectsEmitter::drawLine(Renderer& renderer, const sf::Vector2f& begin, const sf::Vector2f& end, const sf::Color& color) {
 	float angle = Math::angleBetween(begin, end);
 	float dist = Math::distance(begin, end);
 
@@ -80,30 +81,30 @@ void EffectsEmitter::drawLine(sf::RenderWindow& window, const sf::Vector2f& begi
 	m_line.setFillColor(color);
 	m_line.setPosition(begin);
 
-	window.draw(m_line);
+	renderer.draw(m_line);
 }
 
-void EffectsEmitter::drawWithDistanceShader(sf::RenderWindow& window, sf::Shape& s, const sf::Vector2i& pos) {
-	window.draw(s, &m_distanceShader);
+void EffectsEmitter::drawWithDistanceShader(Renderer& renderer, sf::Shape& s, const sf::Vector2i& pos) {
+	renderer.draw(s, &m_distanceShader);
 }
 
-void EffectsEmitter::drawFogOfWar(sf::RenderWindow& window) {
-	sf::View oldView = window.getView();
-	window.setView(window.getDefaultView());
+void EffectsEmitter::drawFogOfWar(Renderer& renderer) {
+	sf::View oldView = renderer.getView();
+	renderer.setView(renderer.getDefaultView());
 
-	window.draw(m_fogOfWar);
+	renderer.draw(m_fogOfWar);
 
-	window.setView(oldView);
+	renderer.setView(oldView);
 }
 
-void EffectsEmitter::drawLocalStar(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed) {
+void EffectsEmitter::drawLocalStar(Renderer& renderer, const sf::RectangleShape& starRect, float time, float seed) {
 	m_starLocalViewShader.setUniform("time", time);
 	m_starLocalViewShader.setUniform("randSeed", seed);
 
-	window.draw(starRect, &m_starLocalViewShader);
+	renderer.draw(starRect, &m_starLocalViewShader);
 }
 
-void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time) {
+void EffectsEmitter::drawPlanet(Renderer& renderer, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time) {
 	m_planetShader.setUniform("randSeed", seed);
 	m_planetShader.setUniform("size", sf::Glsl::Vec2(planet->getRadius(), planet->getRadius()));
 	m_planetShader.setUniform("time", time);
@@ -126,10 +127,10 @@ void EffectsEmitter::drawPlanet(sf::RenderWindow& window, const sf::RectangleSha
 	float angle = Math::angleBetween(planet->getPos(), star->getLocalViewCenter()) * Math::toRadians;
 	m_planetShader.setUniform("sunVec", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
 
-	window.draw(shape, &m_planetShader);
+	renderer.draw(shape, &m_planetShader);
 }
 
-void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time) {
+void EffectsEmitter::drawTerraPlanet(Renderer& renderer, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time) {
 	m_terraPlanetShader.setUniform("size", sf::Glsl::Vec2(planet->getRadius(), planet->getRadius()));
 	m_terraPlanetShader.setUniform("time", time);
 	m_terraPlanetShader.setUniform("seed", seed);
@@ -137,10 +138,10 @@ void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::Rectang
 	float angle = Math::angleBetween(planet->getPos(), star->getLocalViewCenter()) * Math::toRadians;
 	m_terraPlanetShader.setUniform("sun", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
 
-	window.draw(shape, &m_terraPlanetShader);
+	renderer.draw(shape, &m_terraPlanetShader);
 }
 
-void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, float planetRadius, sf::Vector2f planetPos, sf::Vector2f sunPos, float seed, float time) {
+void EffectsEmitter::drawTerraPlanet(Renderer& renderer, const sf::RectangleShape& shape, float planetRadius, sf::Vector2f planetPos, sf::Vector2f sunPos, float seed, float time) {
 	m_terraPlanetShader.setUniform("size", sf::Glsl::Vec2(planetRadius, planetRadius));
 	m_terraPlanetShader.setUniform("time", time);
 	m_terraPlanetShader.setUniform("seed", seed);
@@ -148,20 +149,20 @@ void EffectsEmitter::drawTerraPlanet(sf::RenderWindow& window, const sf::Rectang
 	float angle = Math::angleBetween(planetPos, sunPos) * Math::toRadians;
 	m_terraPlanetShader.setUniform("sun", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
 
-	window.draw(shape, &m_terraPlanetShader);
+	renderer.draw(shape, &m_terraPlanetShader);
 }
 
-void EffectsEmitter::drawLavaPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed) {
+void EffectsEmitter::drawLavaPlanet(Renderer& renderer, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed) {
 	m_lavaPlanetShader.setUniform("size", sf::Glsl::Vec2(planet->getRadius(), planet->getRadius()));
 	m_lavaPlanetShader.setUniform("seed", seed);
 
 	float angle = Math::angleBetween(planet->getPos(), star->getLocalViewCenter()) * Math::toRadians;
 	m_lavaPlanetShader.setUniform("sun", sf::Glsl::Vec2(std::cos(angle), -std::sin(angle)));
 
-	window.draw(shape, &m_lavaPlanetShader);
+	renderer.draw(shape, &m_lavaPlanetShader);
 }
 
-void EffectsEmitter::drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color) {
+void EffectsEmitter::drawGlow(Renderer& renderer, const sf::Vector2f& pos, float size, const sf::Color& color) {
 	m_glow.setSize(sf::Vector2f(size, size));
 	m_glow.setOrigin(sf::Vector2f(size / 2.0f, size / 2.0f));
 	m_glow.setPosition(pos);
@@ -169,7 +170,7 @@ void EffectsEmitter::drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos,
 
 	m_glowShader.setUniform("size", sf::Glsl::Vec2(size, size));
 
-	window.draw(m_glow, &m_glowShader);
+	renderer.draw(m_glow, &m_glowShader);
 }
 
 void EffectsEmitter::drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature) {
@@ -192,15 +193,15 @@ void EffectsEmitter::drawHabitableZone(sf::RenderWindow& window, const sf::Vecto
 	window.draw(m_habitableZone);
 }
 
-void EffectsEmitter::drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed) {
+void EffectsEmitter::drawNebula(Renderer& renderer, sf::Sprite& sprite, float seed) {
 	m_nebulaShader.setUniform("background", sf::Shader::CurrentTexture);
 	m_nebulaShader.setUniform("seed", seed);
-	window.draw(sprite, &m_nebulaShader);
+	renderer.draw(sprite, &m_nebulaShader);
 }
 
-void EffectsEmitter::drawSelection(sf::RenderWindow& window, const sf::RectangleShape& shape) {
+void EffectsEmitter::drawSelection(Renderer& renderer, const sf::RectangleShape& shape) {
 	m_selectionShader.setUniform("size", sf::Glsl::Vec2(shape.getSize()));
-	window.draw(shape, &m_selectionShader);
+	renderer.draw(shape, &m_selectionShader);
 }
 
 void EffectsEmitter::updateTime(float time) {
@@ -210,29 +211,29 @@ void EffectsEmitter::updateTime(float time) {
 	m_asteroidBeltShader.setUniform("time", time);
 }
 
-void EffectsEmitter::drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color) {
+void EffectsEmitter::drawBorders(Renderer& renderer, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color) {
 	m_borderShader.setUniformArray("points", points.data(), points.size());
 	m_borderShader.setUniform("numPoints", static_cast<int>(points.size()));
 	m_borderShader.setUniform("size", sf::Glsl::Vec2(shape.getSize().x, shape.getSize().y));
 	m_borderShader.setUniform("color", sf::Glsl::Vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
-	window.draw(shape, &m_borderShader);
+	renderer.draw(shape, &m_borderShader);
 }
 
-void EffectsEmitter::drawBlackHole(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed) {
+void EffectsEmitter::drawBlackHole(Renderer& renderer, const sf::RectangleShape& starRect, float time, float seed) {
 	m_blackHoleShader.setUniform("time", time);
 	m_blackHoleShader.setUniform("randSeed", seed);
 	m_blackHoleShader.setUniform("size", starRect.getSize());
 
-	window.draw(starRect, &m_blackHoleShader);
+	renderer.draw(starRect, &m_blackHoleShader);
 }
 
-void EffectsEmitter::drawMapStar(sf::RenderWindow& window, const sf::CircleShape& shape, bool flashing) {
+void EffectsEmitter::drawMapStar(Renderer& renderer, const sf::CircleShape& shape, bool flashing) {
 	m_mapStarShader.setUniform("radius", shape.getRadius());
 	m_mapStarShader.setUniform("flashing", flashing);
-	window.draw(shape, &m_mapStarShader);
+	renderer.draw(shape, &m_mapStarShader);
 }
 
-void EffectsEmitter::drawRings(sf::RenderWindow& window, sf::Vector2f pos, float radius, float seed) {
+void EffectsEmitter::drawRings(Renderer& renderer, sf::Vector2f pos, float radius, float seed) {
 	m_ringsShader.setUniform("seed", seed);
 	m_ringsShader.setUniform("size", sf::Glsl::Vec2(radius, radius));
 
@@ -241,10 +242,10 @@ void EffectsEmitter::drawRings(sf::RenderWindow& window, sf::Vector2f pos, float
 	shape.setOrigin(sf::Vector2f(radius / 2.0f, radius / 2.0f));
 	shape.setPosition(pos);
 
-	window.draw(shape, &m_ringsShader);
+	renderer.draw(shape, &m_ringsShader);
 }
 
-void EffectsEmitter::drawAsteroidBelt(sf::RenderWindow& window, sf::Vector2f pos, float radius, float seed) {
+void EffectsEmitter::drawAsteroidBelt(Renderer& renderer, sf::Vector2f pos, float radius, float seed) {
 	m_asteroidBeltShader.setUniform("seed", seed);
 	m_asteroidBeltShader.setUniform("size", sf::Glsl::Vec2(radius, radius));
 
@@ -253,5 +254,5 @@ void EffectsEmitter::drawAsteroidBelt(sf::RenderWindow& window, sf::Vector2f pos
 	shape.setOrigin(sf::Vector2f(radius / 2.0f, radius / 2.0f));
 	shape.setPosition(pos);
 
-	window.draw(shape, &m_asteroidBeltShader);
+	renderer.draw(shape, &m_asteroidBeltShader);
 }

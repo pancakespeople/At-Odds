@@ -4,6 +4,7 @@
 #include "TextureCache.h"
 #include "EffectsEmitter.h"
 #include "Random.h"
+#include "Renderer.h"
 
 #include <iostream>
 
@@ -29,8 +30,8 @@ Background::Background(std::string texturePath, int w, int h) {
 	m_nebulaSeed = Random::randFloat(0.0f, 1.0f);
 }
 
-void Background::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
-	window.setView(window.getDefaultView());
-	emitter.drawNebula(window, m_sprite, m_nebulaSeed);
+void Background::draw(Renderer& renderer) {
+	renderer.setView(renderer.getDefaultView());
+	renderer.effects.drawNebula(renderer, m_sprite, m_nebulaSeed);
 }
 

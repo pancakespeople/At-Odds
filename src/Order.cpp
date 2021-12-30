@@ -12,6 +12,7 @@
 #include "Planet.h"
 #include "Constellation.h"
 #include "Designs.h"
+#include "Renderer.h"
 
 BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
 BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
@@ -27,8 +28,8 @@ bool FlyToOrder::execute(Spaceship* ship, Star* currentStar) {
 	return ship->flyTo(m_pos);
 }
 
-void FlyToOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
-	emitter.drawLine(window, shipPos, m_pos, sf::Color::Green);
+void FlyToOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
+	renderer.effects.drawLine(renderer, shipPos, m_pos, sf::Color::Green);
 }
 
 JumpOrder::JumpOrder(JumpPoint* point, bool attackEnemies) {
@@ -56,10 +57,10 @@ bool JumpOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 }
 
-void JumpOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+void JumpOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
 	m_jumpPoint = currentStar->getJumpPointByID(m_jumpPointID);
 	if (m_jumpPoint != nullptr)
-		emitter.drawLine(window, shipPos, m_jumpPoint->getPos(), sf::Color::Yellow);
+		renderer.effects.drawLine(renderer, shipPos, m_jumpPoint->getPos(), sf::Color::Yellow);
 }
 
 AttackOrder::AttackOrder(Unit* target, bool aggressive) {
@@ -123,10 +124,10 @@ bool AttackOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 }
 
-void AttackOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+void AttackOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
 	m_target = currentStar->getUnitByID(m_targetID);
 	if (m_target != nullptr) {
-		emitter.drawLine(window, shipPos, m_target->getPos(), sf::Color::Red);
+		renderer.effects.drawLine(renderer, shipPos, m_target->getPos(), sf::Color::Red);
 	}
 }
 
@@ -226,10 +227,10 @@ bool InteractWithBuildingOrder::execute(Spaceship* ship, Star* currentStar) {
 	}
 }
 
-void InteractWithBuildingOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+void InteractWithBuildingOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
 	m_building = currentStar->getBuildingByID(m_buildingID);
 	if (m_building != nullptr)
-		emitter.drawLine(window, shipPos, m_building->getPos(), sf::Color(100, 100, 255));
+		renderer.effects.drawLine(renderer, shipPos, m_building->getPos(), sf::Color(100, 100, 255));
 }
 
 std::pair<bool, sf::Vector2f> InteractWithBuildingOrder::getDestinationPos(Star* currentStar) {
@@ -293,10 +294,10 @@ bool InteractWithPlanetOrder::execute(Spaceship* ship, Star* currentStar) {
 	return false;
 }
 
-void InteractWithPlanetOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+void InteractWithPlanetOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
 	m_planet = currentStar->getPlanetByID(m_planetID);
 	if (m_planet != nullptr)
-		emitter.drawLine(window, shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
+		renderer.effects.drawLine(renderer, shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
 }
 
 std::pair<bool, sf::Vector2f> InteractWithPlanetOrder::getDestinationPos(Star* currentStar) {
@@ -345,10 +346,10 @@ bool InteractWithUnitOrder::execute(Spaceship* ship, Star* currentStar) {
 	return false;
 }
 
-void InteractWithUnitOrder::draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {
+void InteractWithUnitOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
 	m_unit = currentStar->getBuildingByID(m_unitID);
 	if (m_unit != nullptr)
-		emitter.drawLine(window, shipPos, m_unit->getPos(), sf::Color(100, 100, 255));
+		renderer.effects.drawLine(renderer, shipPos, m_unit->getPos(), sf::Color(100, 100, 255));
 }
 
 std::pair<bool, sf::Vector2f> InteractWithUnitOrder::getDestinationPos(Star* currentStar) {

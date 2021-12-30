@@ -12,6 +12,7 @@
 class Star;
 class Faction;
 class Projectile;
+class Renderer;
 
 class Planet : public Identifiable {
 public:
@@ -44,7 +45,7 @@ public:
 	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, float starTemperature, bool moon = false);
 
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star, float time);
+	void draw(Renderer& renderer, Star* star, float time);
 	void update(Star* currentStar, Faction* faction);
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);

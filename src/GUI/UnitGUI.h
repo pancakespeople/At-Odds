@@ -9,9 +9,9 @@ public:
 	UnitGUI();
 
 	void open(tgui::Gui& gui);
-	void update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
+	void update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
 	void draw(sf::RenderWindow& window);
-	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel);
+	void onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel);
 
 	bool isSelecting() const { return m_selecting; }
 

@@ -4,6 +4,7 @@
 #include "../Building.h"
 #include "../Star.h"
 #include "UnitGUI.h"
+#include "../Renderer.h"
 
 void BuildGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 	auto panel = tgui::Panel::create();
@@ -120,22 +121,24 @@ void BuildGUI::onBuildingSelectorClick(int selectorIdx) {
 	}
 }
 
-void BuildGUI::draw(sf::RenderWindow& window, Star* currentStar, Faction* playerFaction) {
+void BuildGUI::draw(sf::RenderWindow& window, Renderer& renderer, Star* currentStar, Faction* playerFaction) {
 	if (m_selectedBuildingIdx > -1 && m_buildingSelectors.size() > 0) {
+		window.setView(renderer.getView());
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 		sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
 		m_buildingSelectors[m_selectedBuildingIdx].prototype.setPos(worldPos);
 		m_buildingSelectors[m_selectedBuildingIdx].prototype.draw(window, currentStar, playerFaction);
+		window.setView(window.getDefaultView());
 	}
 }
 
-void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction, UnitGUI& unitGUI, tgui::Panel::Ptr mainPanel) {
+void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Renderer& renderer, Star* currentLocalStar, Faction* playerFaction, UnitGUI& unitGUI, tgui::Panel::Ptr mainPanel) {
 	if (m_canReceiveEvents) {
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
 				sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-				sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+				sf::Vector2f worldPos = renderer.mapPixelToCoords(mousePos);
 
 				// Create new building
 				BuildingSelector& selector = m_buildingSelectors[m_selectedBuildingIdx];

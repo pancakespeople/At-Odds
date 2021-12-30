@@ -14,8 +14,8 @@ public:
 	BuildGUI() {}
 
 	void open(tgui::Gui& gui, Faction* playerFaction);
-	void draw(sf::RenderWindow& window, Star* currentStar, Faction* playerFaction);
-	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Star* currentLocalStar, Faction* playerFaction, UnitGUI& unitGUI, tgui::Panel::Ptr mainPanel);
+	void draw(sf::RenderWindow& window, Renderer& renderer, Star* currentStar, Faction* playerFaction);
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Renderer& renderer, Star* currentLocalStar, Faction* playerFaction, UnitGUI& unitGUI, tgui::Panel::Ptr mainPanel);
 
 private:
 	void onBuildIconMouseEnter();

@@ -1,6 +1,7 @@
 #include "gamepch.h"
 #include "ParticleSystem.h"
 #include "Random.h"
+#include "Renderer.h"
 
 void ParticleSystem::createParticle(const Particle& particle, const sf::Vector2f& pos, const sf::Color& color) {
 	if (m_particles.size() < particleLimit) {
@@ -58,9 +59,9 @@ void ParticleSystem::updateParticles() {
 	}
 }
 
-void ParticleSystem::drawParticles(sf::RenderWindow& window) {
+void ParticleSystem::drawParticles(Renderer& renderer) {
 	if (m_particleVertices.size() > 0) {
-		window.draw(&m_particleVertices[0], m_particleVertices.size(), sf::Quads);
+		renderer.draw(&m_particleVertices[0], m_particleVertices.size(), sf::Quads);
 	}
 }
 

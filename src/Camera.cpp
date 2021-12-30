@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Math.h"
+#include "Renderer.h"
 
 #include <iostream>
 
@@ -15,7 +16,7 @@ Camera::Camera() {
 	m_camZoomFactor = 1;
 }
 
-void Camera::update(sf::RenderWindow& window, tgui::Widget::Ptr focusedWidget) {
+void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
 	tgui::String widgetType;
 	if (focusedWidget != nullptr) {
 		widgetType = focusedWidget->getWidgetType();
@@ -51,7 +52,7 @@ void Camera::update(sf::RenderWindow& window, tgui::Widget::Ptr focusedWidget) {
 	m_camZoomFactor = Math::lerp(m_camZoomFactor, m_wantedZoomFactor, m_zoomTimer.getElapsedTime().asSeconds());
 	m_view.setSize(sf::Vector2f(m_initialRect.width, m_initialRect.height) * m_camZoomFactor);
 
-	window.setView(m_view);
+	renderer.setView(m_view);
 }
 
 void Camera::zoomEvent(sf::Event& ev) {

@@ -9,6 +9,7 @@
 #include "Building.h"
 #include "Util.h"
 #include "SmoothCircle.h"
+#include "Renderer.h"
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, float starTemperature, bool moon) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
@@ -53,20 +54,20 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, fl
 	m_shape.setOrigin(sf::Vector2f(getRadius(), getRadius()));
 }
 
-void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star, float time) {
+void Planet::draw(Renderer& renderer, Star* star, float time) {
 	//m_orbit.draw(window);
 	//emitter.drawGlow(window, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
 
 	switch (m_type) {
 	case PLANET_TYPE::TERRA:
-		emitter.drawTerraPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
+		renderer.effects.drawTerraPlanet(renderer, m_shape, this, star, m_shaderRandomSeed, time);
 		break;
 	case PLANET_TYPE::LAVA:
 	case PLANET_TYPE::VOLCANIC:
-		emitter.drawLavaPlanet(window, m_shape, this, star, m_shaderRandomSeed);
+		renderer.effects.drawLavaPlanet(renderer, m_shape, this, star, m_shaderRandomSeed);
 		break;
 	default:
-		emitter.drawPlanet(window, m_shape, this, star, m_shaderRandomSeed, time);
+		renderer.effects.drawPlanet(renderer, m_shape, this, star, m_shaderRandomSeed, time);
 	}
 
 	if (m_colony.getAllegiance() != -1) {
@@ -79,14 +80,14 @@ void Planet::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Star* star,
 		circle.setOrigin(sf::Vector2f(circle.getRadius(), circle.getRadius()));
 		circle.setPosition(m_shape.getPosition());
 
-		window.draw(circle);
+		renderer.draw(circle);
 	}
 
 	for (Projectile& proj : m_bombardProjectiles) {
-		proj.draw(window);
+		proj.draw(renderer);
 	}
 
-	if (m_rings) emitter.drawRings(window, getPos(), getRadius() * 8.0f, m_shaderRandomSeed);
+	if (m_rings) renderer.effects.drawRings(renderer, getPos(), getRadius() * 8.0f, m_shaderRandomSeed);
 }
 
 void Planet::update(Star* currentStar, Faction* faction) {

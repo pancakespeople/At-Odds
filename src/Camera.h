@@ -1,12 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+class Renderer;
+
 class Camera {
 public:
 	Camera(float x, float y, float w, float h);
 	Camera();
 	
-	void update(sf::RenderWindow& window, tgui::Widget::Ptr focusedWidget);
+	void update(Renderer& renderer, tgui::Widget::Ptr focusedWidget);
 	void zoomEvent(sf::Event& ev);
 	void setPos(sf::Vector2f pos) { m_view.setCenter(pos); }
 	void zoom(float factor);

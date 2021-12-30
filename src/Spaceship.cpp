@@ -18,6 +18,7 @@
 #include "TOMLCache.h"
 #include "Constellation.h"
 #include "Designs.h"
+#include "Renderer.h"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -75,7 +76,7 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	init(pos, star, allegiance, color);
 }
 
-void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float time) {
+void Spaceship::draw(Renderer& renderer, float time) {
 	if (m_disabled) return;
 	
 	if (m_pirate) {
@@ -85,23 +86,23 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float ti
 		sprite.setScale(sf::Vector2f(m_collider.getRadius() / 100.0f, m_collider.getRadius() / 100.0f));
 		sprite.setPosition(m_sprite.getPosition() - sf::Vector2f(0.0f, m_collider.getRadius()));
 		sprite.setColor(sf::Color(255, 255, 255, (std::sin(time * 4.0f) + 1.0f) / 2.0f * 255));
-		window.draw(sprite);
+		renderer.draw(sprite);
 	}
 
-	window.draw(m_sprite);
-	window.draw(m_collider);
+	renderer.draw(m_sprite);
+	renderer.draw(m_collider);
 	
 	if (m_percentJumpDriveCharged > 0.0f) {
-		emitter.drawJumpBubble(window, m_collider.getPosition(), m_collider.getRadius(), m_percentJumpDriveCharged);
+		renderer.effects.drawJumpBubble(renderer, m_collider.getPosition(), m_collider.getRadius(), m_percentJumpDriveCharged);
 	}
 
 	if (m_selected) {
-		drawSelectionCircle(window, emitter);
+		drawSelectionCircle(renderer);
 
 		// Visualizes orders when selected
 		for (int i = 0; i < m_orders.size(); i++) {
 			if (i == 0) {
-				m_orders.front()->draw(window, emitter, getPos(), m_currentStar);
+				m_orders.front()->draw(renderer, getPos(), m_currentStar);
 			}
 			else {
 				int j = i - 1;
@@ -113,16 +114,16 @@ void Spaceship::draw(sf::RenderWindow& window, EffectsEmitter& emitter, float ti
 				}
 
 				if (destPos.first) {
-					m_orders[i]->draw(window, emitter, destPos.second, m_currentStar);
+					m_orders[i]->draw(renderer, destPos.second, m_currentStar);
 				}
 			}
 		}
 
-		drawHealthBar(window);
+		drawHealthBar(renderer);
 	}
 
 	for (Weapon& weapon : m_weapons) {
-		weapon.drawFireAnimation(window, this);
+		weapon.drawFireAnimation(renderer, this);
 	}
 }
 

@@ -34,11 +34,11 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 	m_state = guiState;
 }
 
-void PlayerGUI::update(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
+void PlayerGUI::update(sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Gui& gui) {
 	if (m_state != PlayerGUIState::CLOSED) {
 		Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
 
-		unitGUI.update(window, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel, minimapGUI);
+		unitGUI.update(window, renderer, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel, minimapGUI);
 		resourceGUI.update(constellation, state.getPlayer(), state.getLocalViewStar());
 		announcerGUI.update(gui, playerFaction);
 		buildingGUI.update();
@@ -76,9 +76,9 @@ void PlayerGUI::setVisible(tgui::Gui& gui, bool visible) {
 	}
 }
 
-void PlayerGUI::draw(sf::RenderWindow& window, GameState& state, Constellation& constellation, Player& player) {
+void PlayerGUI::draw(sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, Player& player) {
 	if (m_state != PlayerGUIState::CLOSED) {
-		buildGUI.draw(window, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()));
+		buildGUI.draw(window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()));
 		unitGUI.draw(window);
 		minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera());
 	}

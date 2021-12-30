@@ -5,6 +5,7 @@
 #include "../Math.h"
 #include "../TOMLCache.h"
 #include "../Util.h"
+#include "../Renderer.h"
 
 void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 	if (m_planetPanel != nullptr) {
@@ -240,13 +241,13 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	m_updateFunction = nullptr;
 }
 
-void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Star* currentStar, tgui::Panel::Ptr mainPanel) {
+void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel) {
 	if (currentStar != nullptr && m_planetIconPanel != nullptr && mainPanel->isFocused()) {
 		static sf::Vector2f lastMousePressPos;
 
 		if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
 			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-			sf::Vector2f worldPos = window.mapPixelToCoords(screenPos);
+			sf::Vector2f worldPos = renderer.mapPixelToCoords(screenPos);
 
 			int i = 0;
 			for (Planet& planet : currentStar->getPlanets()) {
@@ -263,7 +264,7 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, F
 			}
 		}
 		else if (ev.type == sf::Event::EventType::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
-			lastMousePressPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			lastMousePressPos = renderer.mapPixelToCoords(sf::Mouse::getPosition(window));
 		}
 	}
 }

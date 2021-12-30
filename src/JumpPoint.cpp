@@ -7,6 +7,7 @@
 #include "Debug.h"
 #include "Random.h"
 #include "Math.h"
+#include "Renderer.h"
 
 JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing) {
 	m_sprite.setTexture(TextureCache::getTexture("data/art/swirly2.png"));
@@ -28,16 +29,16 @@ JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane,
 	m_isOutgoing = isOutgoing;
 }
 
-void JumpPoint::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
+void JumpPoint::draw(Renderer& renderer, const sf::RenderWindow& window) {
 	m_sprite.rotate(60.0f / (1.0f / m_rotationClock.getElapsedTime().asSeconds()));
 	m_rotationClock.restart();
 
-	if (isMouseInRadius(window)) {
-		emitter.drawGlow(window, m_sprite.getPosition(), getRadius() * 10.0f, sf::Color(255, 0, 255));
+	if (isMouseInRadius(window, renderer)) {
+		renderer.effects.drawGlow(renderer, m_sprite.getPosition(), getRadius() * 10.0f, sf::Color(255, 0, 255));
 	}
 
-	emitter.drawWithDistanceShader(window, m_trail, window.mapCoordsToPixel(m_sprite.getPosition()));
-	window.draw(m_sprite);
+	renderer.effects.drawWithDistanceShader(renderer, m_trail, renderer.mapCoordsToPixel(m_sprite.getPosition()));
+	renderer.draw(m_sprite);
 }
 
 JumpPoint* JumpPoint::getConnectedJumpPoint() {
@@ -96,8 +97,8 @@ bool JumpPoint::isPointInRadius(sf::Vector2f point) {
 	else return false;
 }
 
-bool JumpPoint::isMouseInRadius(const sf::RenderWindow& window) {
-	sf::Vector2f mouseWorldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+bool JumpPoint::isMouseInRadius(const sf::RenderWindow& window, const Renderer& renderer) {
+	sf::Vector2f mouseWorldPos = renderer.mapPixelToCoords(sf::Mouse::getPosition(window));
 	if (Math::distance(mouseWorldPos, m_sprite.getPosition()) < getRadius()) {
 		return true;
 	}

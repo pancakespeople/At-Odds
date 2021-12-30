@@ -8,8 +8,9 @@
 #include "Sounds.h"
 #include "Random.h"
 #include "TOMLCache.h"
+#include "Renderer.h"
 
-void laserAnimation(sf::RenderWindow& window, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
+void laserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
 	float angle = Math::angleBetween(sourcePos, endPos);
 	sf::RectangleShape shape;
 
@@ -18,10 +19,10 @@ void laserAnimation(sf::RenderWindow& window, sf::Vector2f sourcePos, sf::Vector
 	shape.setSize(sf::Vector2f(Math::distance(sourcePos, endPos), 25.0f));
 	shape.setFillColor(sf::Color(255, 0, 0, 255 * (1.0 / step)));
 
-	window.draw(shape);
+	renderer.draw(shape);
 }
 
-const std::unordered_map<std::string, std::function<void(sf::RenderWindow& window, sf::Vector2f sourcePos, sf::Vector2f endPos, float step)>> fireAnimationFunctions = {
+const std::unordered_map<std::string, std::function<void(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step)>> fireAnimationFunctions = {
 	{"laserAnimation", &laserAnimation},
 };
 
@@ -122,10 +123,10 @@ std::string Weapon::getSoundPath() const {
 	return table[m_type]["sound"].value_or("");
 }
 
-void Weapon::drawFireAnimation(sf::RenderWindow& window, Unit* unit) {
+void Weapon::drawFireAnimation(Renderer& renderer, Unit* unit) {
 	if (isOnCooldown()) {
 		if (m_fireAnimation != "") {
-			fireAnimationFunctions.at(m_fireAnimation)(window, unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
+			fireAnimationFunctions.at(m_fireAnimation)(renderer, unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
 		}
 	}
 }

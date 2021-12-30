@@ -22,8 +22,8 @@ public:
 	void generateOneStarConstellation();
 	void generateRandomHyperlanes(int size, int numStars);
 	void generateRobustHyperlanes(int size, int numStars);
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player);
-	void onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state);
+	void draw(const sf::RenderWindow& window, Renderer& renderer, Player& player);
+	void onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state);
 	void setupStars();
 	void generateFactions(int numFactions);
 	void update(const Player& player);

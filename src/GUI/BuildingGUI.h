@@ -9,7 +9,7 @@ public:
 	BuildingGUI() {}
 
 	void open() { m_openBuilding = nullptr; }
-	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel);
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window, Renderer& renderer, tgui::Gui& gui, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel);
 	void update();
 
 private:

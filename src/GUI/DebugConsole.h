@@ -15,6 +15,7 @@ public:
 		Constellation& constellation;
 		GameState& state;
 		sf::RenderWindow& window;
+		Renderer& renderer;
 		tgui::Gui& gui;
 		PlayerGUI& playerGUI;
 	};
@@ -25,7 +26,7 @@ public:
 	void close(tgui::Gui& gui);
 	void onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state);
 	void processCommand(std::string rawCommand);
-	void runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window, tgui::Gui& gui, PlayerGUI& playerGUI);
+	void runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window, Renderer& renderer, tgui::Gui& gui, PlayerGUI& playerGUI);
 	void addCommand(const std::string& name, std::function<void(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies)> function) { m_commands[name] = function; }
 	void addLine(const std::string& text) { m_chatBox->addLine(text); }
 

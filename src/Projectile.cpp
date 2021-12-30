@@ -9,6 +9,7 @@
 #include "Sounds.h"
 #include "Random.h"
 #include "Animation.h"
+#include "Renderer.h"
 
 const std::map<std::string, std::function<void(Star* star, Projectile* proj)>> deathFunctions = {
 	{"smallExplosion", &DeathFunctions::smallExplosion},
@@ -64,8 +65,8 @@ void Projectile::update(Star* star) {
 	m_life -= 1.0f;
 }
 
-void Projectile::draw(sf::RenderWindow& window) {
-	window.draw(m_sprite);
+void Projectile::draw(Renderer& renderer) {
+	renderer.draw(m_sprite);
 }
 
 bool Projectile::isCollidingWith(const Collider& collider) {

@@ -14,6 +14,7 @@
 #include "Math.h"
 #include "Fonts.h"
 #include "TOMLCache.h"
+#include "Renderer.h"
 
 Star::Star(sf::Vector2f pos) {
 	init(pos);
@@ -76,9 +77,9 @@ void Star::draw(sf::RenderWindow& window) {
 	window.draw(m_shape);
 }
 
-void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation& constellation, Player& player) {
+void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellation& constellation, Player& player) {
 	sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
-	sf::Vector2f mouseCoordsWorld = window.mapPixelToCoords(mouseCoords);
+	sf::Vector2f mouseCoordsWorld = renderer.mapPixelToCoords(mouseCoords);
 	bool flashing = false;
 
 	if (m_multipleFactionsPresent && isDiscovered(player.getFaction())) {
@@ -97,10 +98,10 @@ void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation
 		setPos(newPos);
 
 		if (!isDiscovered(player.getFaction())) {
-			drawUndiscovered(window, emitter);
+			drawUndiscovered(renderer);
 		}
 		else {
-			emitter.drawMapStar(window, m_shape, flashing);
+			renderer.effects.drawMapStar(renderer, m_shape, flashing);
 		}
 		
 		setRadius(getRadius() / 2);
@@ -108,10 +109,10 @@ void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation
 	}
 	else {
 		if (!isDiscovered(player.getFaction())) {
-			drawUndiscovered(window, emitter);
+			drawUndiscovered(renderer);
 		}
 		else {
-			emitter.drawMapStar(window, m_shape, flashing);
+			renderer.effects.drawMapStar(renderer, m_shape, flashing);
 		}
 	}
 
@@ -126,7 +127,7 @@ void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation
 
 	text.setPosition(pos);
 	
-	window.draw(text);
+	renderer.draw(text);
 
 	// Draw number of ships text
 	if (isDiscovered(player.getFaction())) {
@@ -147,56 +148,56 @@ void Star::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation
 					background.setPosition(text.getPosition() - sf::Vector2f(text.getLocalBounds().width / 2.0f, -text.getLocalBounds().height / 2.0f - 1.0f));
 					background.setSize(sf::Vector2f(text.getLocalBounds().width + 5.0f, text.getLocalBounds().height));
 
-					window.draw(background);
-					window.draw(text);
+					renderer.draw(background);
+					renderer.draw(text);
 				}
 			}
 		}
 	}
 }
 
-void Star::drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time) {
+void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, float time) {
 	m_drawHidden = true;
 
 	if (player.hasFogOfWar()) {
 		if (numAllies(player.getFaction()) == 0) {
 			m_drawHidden = false;
-			emitter.drawFogOfWar(window);
+			renderer.effects.drawFogOfWar(renderer);
 		}
 	}
 	
-	if (m_blackHole) emitter.drawBlackHole(window, m_localViewRect, time, m_shaderRandomSeed);
-	else emitter.drawLocalStar(window, m_localViewRect, time, m_shaderRandomSeed);
+	if (m_blackHole) renderer.effects.drawBlackHole(renderer, m_localViewRect, time, m_shaderRandomSeed);
+	else renderer.effects.drawLocalStar(renderer, m_localViewRect, time, m_shaderRandomSeed);
 	
 	for (JumpPoint& j : m_jumpPoints) {
-		j.draw(window, emitter);
+		j.draw(renderer, window);
 	}
 
 	if (m_drawHidden) {
 
 		for (Planet& planet : m_planets) {
-			planet.draw(window, emitter, this, time);
+			planet.draw(renderer, this, time);
 		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {
-			s->draw(window, emitter, time);
+			s->draw(renderer, time);
 		}
 		for (std::unique_ptr<Building>& b : m_buildings) {
-			b->draw(window, emitter);
+			b->draw(renderer);
 		}
 		for (Derelict& d : m_derelicts) {
-			d.draw(window);
+			d.draw(renderer);
 		}
 		for (Projectile& p : m_projectiles) {
-			p.draw(window);
+			p.draw(renderer);
 		}
 		for (Animation& a : m_localViewAnimations) {
-			a.draw(window);
+			a.draw(renderer);
 		}
-		m_particleSystem.drawParticles(window);
+		m_particleSystem.drawParticles(renderer);
 
 		for (AsteroidBelt& ab : m_asteroidBelts) {
-			emitter.drawAsteroidBelt(window, getLocalViewCenter(), ab.radius, ab.seed);
+			renderer.effects.drawAsteroidBelt(renderer, getLocalViewCenter(), ab.radius, ab.seed);
 		}
 	}
 }
@@ -634,11 +635,11 @@ Planet& Star::getMostHabitablePlanet() {
 	return m_planets[index];
 }
 
-void Star::drawUndiscovered(sf::RenderWindow& window, EffectsEmitter& emitter) {
+void Star::drawUndiscovered(Renderer& renderer) {
 	sf::Color oldColor;
 	oldColor = m_shape.getFillColor();
 	m_shape.setFillColor(sf::Color(166, 166, 166));
-	emitter.drawMapStar(window, m_shape, false);
+	renderer.effects.drawMapStar(renderer, m_shape, false);
 	m_shape.setFillColor(oldColor);
 }
 

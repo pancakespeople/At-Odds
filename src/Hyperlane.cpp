@@ -3,6 +3,7 @@
 #include "Hyperlane.h"
 #include "Debug.h"
 #include "Constellation.h"
+#include "Renderer.h"
 
 Hyperlane::Hyperlane(Star* begin, Star* end) : m_beginStar(begin), m_endStar(end) {
 	setColor(sf::Color(255, 255, 255, 100));
@@ -57,7 +58,7 @@ Hyperlane::Hyperlane(Star* begin, Star* end) : m_beginStar(begin), m_endStar(end
 	m_endStarID = end->getID();
 }
 
-void Hyperlane::draw(sf::RenderWindow& window, int playerFaction) {
+void Hyperlane::draw(Renderer& renderer, int playerFaction) {
 	// Set faction colors
 	if (m_beginStar->isDiscovered(playerFaction)) {
 		if (m_beginStar->getAllegiance() != -1) {
@@ -89,10 +90,10 @@ void Hyperlane::draw(sf::RenderWindow& window, int playerFaction) {
 		m_vertices[3].color = sf::Color(255, 255, 255, 100);
 	}
 	
-	window.draw(&m_vertices[0], m_vertices.size(), sf::Quads);
+	renderer.draw(&m_vertices[0], m_vertices.size(), sf::Quads);
 
 	if (m_pathEffectEnabled) {
-		window.draw(m_shape);
+		renderer.draw(m_shape);
 		
 		sf::Color newColor = m_shape.getFillColor();
 		

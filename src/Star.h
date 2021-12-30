@@ -26,8 +26,8 @@ public:
 	Star(sf::Vector2f pos);
 
 	void draw(sf::RenderWindow& window);
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter, Constellation& constellation, Player& player);
-	void drawLocalView(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player, float time);
+	void draw(const sf::RenderWindow & window, Renderer& renderer, Constellation& constellation, Player& player);
+	void drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, float time);
 	void setPos(sf::Vector2f pos);
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
 	void connectHyperlane(Hyperlane* lane);
@@ -44,7 +44,7 @@ public:
 	void moveShipToOtherStar(Spaceship* ship, Star* other);
 	void generatePlanets();
 	void setDiscovered(bool isDiscovered, int allegiance);
-	void drawUndiscovered(sf::RenderWindow& window, EffectsEmitter& emitter);
+	void drawUndiscovered(Renderer& renderer);
 	void generateDerelicts();
 	void reinitAfterLoad(Constellation* constellation);
 	void setName(const std::string& name) { m_name = name; }

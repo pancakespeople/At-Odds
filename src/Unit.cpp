@@ -4,6 +4,7 @@
 #include "Faction.h"
 #include "SmoothCircle.h"
 #include "Constellation.h"
+#include "Renderer.h"
 
 std::vector<Spaceship*> Unit::findEnemyShips() {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
@@ -96,7 +97,7 @@ float Unit::maxWeaponDamage() const {
 	return max;
 }
 
-void Unit::drawSelectionCircle(sf::RenderWindow& window, EffectsEmitter& emitter) {
+void Unit::drawSelectionCircle(Renderer& renderer) {
 	sf::RectangleShape selectionIndicator;
 
 	selectionIndicator.setOrigin(sf::Vector2f(m_collider.getRadius() * 2.0f, m_collider.getRadius() * 2.0f));
@@ -104,10 +105,10 @@ void Unit::drawSelectionCircle(sf::RenderWindow& window, EffectsEmitter& emitter
 	selectionIndicator.setFillColor(sf::Color::Yellow);
 	selectionIndicator.setSize(sf::Vector2f(m_collider.getRadius() * 4.0f, m_collider.getRadius() * 4.0f));
 
-	emitter.drawSelection(window, selectionIndicator);
+	renderer.effects.drawSelection(renderer, selectionIndicator);
 }
 
-void Unit::drawHealthBar(sf::RenderWindow& window) {
+void Unit::drawHealthBar(Renderer& renderer) {
 	sf::RectangleShape rect;
 
 	float healthPercent = m_health / m_maxHealth;
@@ -123,5 +124,5 @@ void Unit::drawHealthBar(sf::RenderWindow& window) {
 
 	rect.setFillColor(sf::Color(colorR, colorG, 0));
 
-	window.draw(rect);
+	renderer.draw(rect);
 }

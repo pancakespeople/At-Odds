@@ -78,6 +78,7 @@
     <ClInclude Include="src\GUI\DebugInfo.h" />
     <ClInclude Include="src\GUI\NewsGUI.h" />
     <ClInclude Include="src\GUI\ColonyListGUI.h" />
+    <ClInclude Include="src\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="src\GUI\DebugInfo.cpp" />
     <ClCompile Include="src\GUI\NewsGUI.cpp" />
     <ClCompile Include="src\GUI\ColonyListGUI.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\objects\planetevents.toml" />

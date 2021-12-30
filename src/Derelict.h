@@ -5,12 +5,13 @@
 #include "Faction.h"
 
 class Star;
+class Renderer;
 
 class Derelict {
 public:
 	Derelict(sf::Vector2f pos);
 	
-	void draw(sf::RenderWindow& window);
+	void draw(Renderer& renderer);
 	void update(Star* star, std::vector<Faction>& factions);
 
 	bool isDead() { return m_dead; }

@@ -26,7 +26,7 @@ public:
 	Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built = true);
 	Building() {}
 
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
+	void draw(Renderer& renderer);
 	void update(Star* currentStar);
 	void construct(const Spaceship* constructor);
 	void reinitAfterLoad(Star* star);

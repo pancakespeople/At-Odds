@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "TextureCache.h"
 #include "TOMLCache.h"
+#include "Renderer.h"
 
 Animation::Animation(const std::string& type, sf::Vector2f pos) {
 	const toml::table& table = TOMLCache::getTable("data/objects/animations.toml");
@@ -59,6 +60,6 @@ void Animation::nextFrame() {
 	}
 }
 
-void Animation::draw(sf::RenderWindow& window) {
-	window.draw(m_frames[m_frameIndex]);
+void Animation::draw(Renderer& renderer) {
+	renderer.draw(m_frames[m_frameIndex]);
 }

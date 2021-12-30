@@ -3,6 +3,7 @@
 
 class Planet;
 class Star;
+class Renderer;
 
 class EffectsEmitter {
 public:
@@ -10,24 +11,24 @@ public:
 
 	void init(sf::Vector2i resolution);
 	void onEvent(const sf::Event& event);
-	void drawJumpBubble(sf::RenderWindow& window, const sf::Vector2f& pos, float radius, float percent);
-	void drawLine(sf::RenderWindow& window, const sf::Vector2f& begin, const sf::Vector2f& end, const sf::Color& color);
-	void drawWithDistanceShader(sf::RenderWindow& window, sf::Shape& s, const sf::Vector2i& pos);
-	void drawFogOfWar(sf::RenderWindow& window);
-	void drawMapStar(sf::RenderWindow& window, const sf::CircleShape& shape, bool flashing);
-	void drawLocalStar(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed);
-	void drawPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
-	void drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
-	void drawTerraPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, float planetRadius, sf::Vector2f planetPos, sf::Vector2f sunPos, float seed, float time);
-	void drawLavaPlanet(sf::RenderWindow& window, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed);
-	void drawGlow(sf::RenderWindow& window, const sf::Vector2f& pos, float size, const sf::Color& color);
+	void drawJumpBubble(Renderer& renderer, const sf::Vector2f& pos, float radius, float percent);
+	void drawLine(Renderer& renderer, const sf::Vector2f& begin, const sf::Vector2f& end, const sf::Color& color);
+	void drawWithDistanceShader(Renderer& renderer, sf::Shape& s, const sf::Vector2i& pos);
+	void drawFogOfWar(Renderer& renderer);
+	void drawMapStar(Renderer& renderer, const sf::CircleShape& shape, bool flashing);
+	void drawLocalStar(Renderer& renderer, const sf::RectangleShape& starRect, float time, float seed);
+	void drawPlanet(Renderer& renderer, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
+	void drawTerraPlanet(Renderer& renderer, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed, float time);
+	void drawTerraPlanet(Renderer& renderer, const sf::RectangleShape& shape, float planetRadius, sf::Vector2f planetPos, sf::Vector2f sunPos, float seed, float time);
+	void drawLavaPlanet(Renderer& renderer, const sf::RectangleShape& shape, const Planet* planet, const Star* star, float seed);
+	void drawGlow(Renderer& renderer, const sf::Vector2f& pos, float size, const sf::Color& color);
 	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);
-	void drawNebula(sf::RenderWindow& window, sf::Sprite& sprite, float seed);
-	void drawSelection(sf::RenderWindow& window, const sf::RectangleShape& shape);
-	void drawBorders(sf::RenderWindow& window, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color);
-	void drawBlackHole(sf::RenderWindow& window, const sf::RectangleShape& starRect, float time, float seed);
-	void drawRings(sf::RenderWindow& window, sf::Vector2f pos, float radius, float seed);
-	void drawAsteroidBelt(sf::RenderWindow& window, sf::Vector2f pos, float radius, float seed);
+	void drawNebula(Renderer& renderer, sf::Sprite& sprite, float seed);
+	void drawSelection(Renderer& renderer, const sf::RectangleShape& shape);
+	void drawBorders(Renderer& renderer, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color);
+	void drawBlackHole(Renderer& renderer, const sf::RectangleShape& starRect, float time, float seed);
+	void drawRings(Renderer& renderer, sf::Vector2f pos, float radius, float seed);
+	void drawAsteroidBelt(Renderer& renderer, sf::Vector2f pos, float radius, float seed);
 	void updateTime(float time);
 
 private:

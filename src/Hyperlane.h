@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 class Star;
+class Renderer;
 
 #include "Star.h"
 #include "Identifiable.h"
@@ -12,7 +13,7 @@ class Hyperlane : public Identifiable {
 public:
 	Hyperlane(Star* begin, Star* end);
 
-	void draw(sf::RenderWindow& window, int playerFaction);
+	void draw(Renderer& renderer, int playerFaction);
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
 	void enablePathEffect();
 	void reinitAfterLoad(Constellation* constellation);

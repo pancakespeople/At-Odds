@@ -1,13 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class EffectsEmitter;
+class Renderer;
 
 class Background {
 public:
 	Background(std::string texturePath, int w, int h);
 
-	void draw(sf::RenderWindow& window, EffectsEmitter& emitter);
+	void draw(Renderer& renderer);
 
 	std::string getTexturePath() const { return m_texturePath; }
 

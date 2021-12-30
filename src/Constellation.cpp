@@ -7,6 +7,7 @@
 #include "Random.h"
 #include "Math.h"
 #include "ext/delaunator.hpp"
+#include "Renderer.h"
 
 Constellation::Constellation() {
     m_availableFactionColors = {
@@ -212,7 +213,7 @@ void Constellation::generateTheReallyFinalRobustConstellationIMeanItReally(int s
     DEBUG_PRINT("Generated the really robust final constellation with " << m_stars.size() << " stars, " << m_hyperlanes.size() << " hyperlanes and " << attempts << " attempts");
 }
 
-void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Player& player) {
+void Constellation::draw(const sf::RenderWindow& window, Renderer& renderer, Player& player) {
 
     // Draw empire borders
     for (Faction& faction : m_factions) {
@@ -224,14 +225,14 @@ void Constellation::draw(sf::RenderWindow& window, EffectsEmitter& emitter, Play
             else points.push_back(sf::Glsl::Vec3(pos.x, pos.y, 0.0f));
         }
         
-        if (points.size() > 0) emitter.drawBorders(window, m_border, points, faction.getColor());   
+        if (points.size() > 0) renderer.effects.drawBorders(renderer, m_border, points, faction.getColor());
     }
     
     for (std::unique_ptr<Hyperlane>& h : m_hyperlanes) {
-        h->draw(window, player.getFaction());
+        h->draw(renderer, player.getFaction());
     }
     for (std::unique_ptr<Star>& s : m_stars) {
-        s->draw(window, emitter, *this, player);
+        s->draw(window, renderer, *this, player);
     }
 }
 
@@ -302,12 +303,12 @@ void Constellation::generateRandomHyperlanes(int size, int numStars) {
 //    }
 //}
 //
-void Constellation::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state) {
+void Constellation::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state) {
     static sf::Vector2f lastMousePressPos;
 
     if (ev.type == sf::Event::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mouseCoords = sf::Mouse::getPosition(window);
-        sf::Vector2f mouseCoordsWorld = window.mapPixelToCoords(mouseCoords);
+        sf::Vector2f mouseCoordsWorld = renderer.mapPixelToCoords(mouseCoords);
 
         for (auto& star : m_stars) {
             if (star->isInShapeRadius(mouseCoordsWorld.x, mouseCoordsWorld.y) &&
@@ -321,7 +322,7 @@ void Constellation::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& s
         }
     }
     else if (ev.type == sf::Event::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
-        lastMousePressPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        lastMousePressPos = renderer.mapPixelToCoords(sf::Mouse::getPosition(window));
     }
 }
 

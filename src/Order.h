@@ -11,13 +11,14 @@ class Building;
 class EffectsEmitter;
 class Planet;
 class Constellation;
+class Renderer;
 
 class Order {
 public:
 	// Should return true if order is finished
 	virtual bool execute(Spaceship* ship, Star* currentStar) { return true; }
 
-	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) {}
+	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {}
 	virtual void reinitAfterLoad(Constellation* constellation) {}
 	
 	// Returns a pair, first value is true if there IS a destination, second is the coordinates of the destination
@@ -36,7 +37,7 @@ public:
 	FlyToOrder(sf::Vector2f pos) { m_pos = pos; }
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
-	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) override;
+	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override { return std::pair<bool, sf::Vector2f>(true, m_pos); }
 
 private:
@@ -58,7 +59,7 @@ public:
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
 
-	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) override;
+	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 
 private:
 	friend class boost::serialization::access;
@@ -81,7 +82,7 @@ public:
 	AttackOrder(Unit* target, bool aggressive = false);
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
-	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) override;
+	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 
 	unsigned int getTargetShipID() { return m_targetID; }
 
@@ -139,7 +140,7 @@ public:
 	InteractWithBuildingOrder(Building* building);
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
-	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) override;
+	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override;
 
 private:
@@ -161,7 +162,7 @@ public:
 	InteractWithPlanetOrder(Planet* planet, Star* star);
 
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
-	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) override;
+	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override;
 
@@ -199,7 +200,7 @@ private:
 class InteractWithUnitOrder : public Order {
 public:
 	virtual bool execute(Spaceship* ship, Star* currentStar) override;
-	virtual void draw(sf::RenderWindow& window, EffectsEmitter& emitter, const sf::Vector2f& shipPos, Star* currentStar) override;
+	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar);
 
 	InteractWithUnitOrder(Unit* unit);

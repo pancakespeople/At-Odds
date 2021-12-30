@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
+class Renderer;
+
 class Animation {
 public:
 	enum class ANIMATION_TYPE {
@@ -12,7 +14,7 @@ public:
 
 	Animation(const std::string& filePath, int frameWidth, int frameHeight, sf::Vector2f pos, int frameDelay = 0, float scale = 1.0f);
 
-	void draw(sf::RenderWindow& window);
+	void draw(Renderer& renderer);
 
 	bool isDone() { return m_done; }
 

@@ -5,6 +5,7 @@
 #include "Animation.h"
 
 class Star;
+class Renderer;
 
 class Projectile {
 public:
@@ -22,7 +23,7 @@ public:
 	Projectile();
 	
 	void update(Star* star);
-	void draw(sf::RenderWindow& window);
+	void draw(Renderer& renderer);
 	void kill() { m_life = 0.0f; }
 	void setPos(const sf::Vector2f& pos);
 	void setRotation(float angleDegrees);

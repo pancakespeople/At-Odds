@@ -9,6 +9,7 @@
 #include "Mod.h"
 #include "Player.h"
 #include "TOMLCache.h"
+#include "Renderer.h"
 
 Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built) {
 	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
@@ -93,7 +94,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	}
 }
 
-void Building::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
+void Building::draw(Renderer& renderer) {
 	if (m_constructionPercent < 100.0f) {
 		sf::Color oldColor = m_sprite.getColor();
 		sf::Color newColor = oldColor;
@@ -101,17 +102,17 @@ void Building::draw(sf::RenderWindow& window, EffectsEmitter& emitter) {
 		newColor.a = std::max(10.0f, 255 * (m_constructionPercent / 100.0f));
 
 		m_sprite.setColor(newColor);
-		window.draw(m_sprite);
+		renderer.draw(m_sprite);
 		m_sprite.setColor(oldColor);
 	}
 	else {
-		window.draw(m_sprite);
+		renderer.draw(m_sprite);
 	}
-	window.draw(m_collider);
+	renderer.draw(m_collider);
 
 	if (m_selected) {
-		drawSelectionCircle(window, emitter);
-		drawHealthBar(window);
+		drawSelectionCircle(renderer);
+		drawHealthBar(renderer);
 	}
 }
 

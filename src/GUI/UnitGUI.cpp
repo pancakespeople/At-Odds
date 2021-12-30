@@ -6,6 +6,7 @@
 #include "../Pathfinder.h"
 #include "../Hyperlane.h"
 #include "MinimapGUI.h"
+#include "../Renderer.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -38,7 +39,7 @@ void UnitGUI::open(tgui::Gui& gui) {
 	m_panel->add(m_label);
 }
 
-void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
+void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
 	static bool mouseHeld = false;
 
 	// Remove dead or unselected stuff
@@ -85,7 +86,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 			for (auto& s : currentStar->getSpaceships()) {
 				if (s->getCurrentStar()->isLocalViewActive() && s->getAllegiance() == playerFaction) {
 
-					sf::Vector2i screenPos = window.mapCoordsToPixel(s->getPos());
+					sf::Vector2i screenPos = renderer.mapCoordsToPixel(s->getPos());
 					sf::FloatRect selection = m_mouseSelectionBox.getGlobalBounds();
 
 					if (screenPos.x >= selection.left && screenPos.x <= selection.left + selection.width &&
@@ -145,7 +146,7 @@ void UnitGUI::update(const sf::RenderWindow& window, Star* currentStar, int play
 		if (currentStar != nullptr) {
 
 			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-			sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
+			sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
 
 			for (auto& s : currentStar->getSpaceships()) {
 				if (s->getCollider().contains(worldClick)) {
@@ -213,7 +214,7 @@ void UnitGUI::draw(sf::RenderWindow& window) {
 	window.setView(oldView);
 }
 
-void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel) {
+void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel) {
 	bool mainPanelFocused = true;
 	if (mainPanel != nullptr) {
 		mainPanelFocused = mainPanel->isFocused();
@@ -226,7 +227,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 
 				if (m_selectedShips.size() > 0) {
 					sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-					sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
+					sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
 					JumpPoint* jumpPoint = nullptr;
 					Spaceship* attackTarget = nullptr;
 					Building* buildingClick = nullptr;
@@ -305,7 +306,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, GameState& state, 
 	else if (state.getState() == GameState::State::WORLD_VIEW) {
 		if (ev.type == sf::Event::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Right) {
 			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-			sf::Vector2f worldClick = window.mapPixelToCoords(screenPos);
+			sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
 			Star* star = nullptr;
 
 			// Check if click on star

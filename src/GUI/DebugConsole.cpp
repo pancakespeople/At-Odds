@@ -5,12 +5,13 @@
 #include "../TOMLCache.h"
 #include "../Sounds.h"
 #include "../Random.h"
+#include "../Renderer.h"
 
 void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 3) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		std::string type = command.args[0];
 		int allegiance = std::atoi(command.args[2].c_str());
-		sf::Vector2f pos = goodies.window.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
+		sf::Vector2f pos = goodies.renderer.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
 		Star* star = goodies.state.getLocalViewStar();
 		Faction* faction = goodies.constellation.getFaction(allegiance);
 		sf::Color color = faction->getColor();
@@ -183,7 +184,7 @@ void ownPlanet(const DebugConsole::Command& command, const DebugConsole::Goodies
 void spawnBuilding(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 2) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		int allegiance = std::atoi(command.args[1].c_str());
-		sf::Vector2f pos = goodies.window.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
+		sf::Vector2f pos = goodies.renderer.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
 		Star* star = goodies.state.getLocalViewStar();
 		Faction* faction = goodies.constellation.getFaction(allegiance);
 		sf::Color color = faction->getColor();
@@ -322,14 +323,14 @@ void DebugConsole::processCommand(std::string rawCommand) {
 	m_commandQueue.push(c);
 }
 
-void DebugConsole::runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window, tgui::Gui& gui, PlayerGUI& playerGUI) {
+void DebugConsole::runCommands(Constellation& constellation, GameState& state, sf::RenderWindow& window, Renderer& renderer, tgui::Gui& gui, PlayerGUI& playerGUI) {
 	while (m_commandQueue.size() > 0) {
 		Command command = m_commandQueue.front();
 		m_commandQueue.pop();
 
 		if (m_commands.count(command.command) > 0) {
 			addLine("Running command " + command.command);
-			m_commands[command.command](command, DebugConsole::Goodies{ this, constellation, state, window, gui, playerGUI });
+			m_commands[command.command](command, DebugConsole::Goodies{ this, constellation, state, window, renderer, gui, playerGUI });
 		}
 		else {
 			addLine("Invalid command " + command.command);

@@ -7,6 +7,7 @@
 class Spaceship;
 class Star;
 class Unit;
+class Renderer;
 
 class Weapon {
 public:
@@ -19,7 +20,7 @@ public:
 	void setAccuracy(float accuracy) { m_accuracy = accuracy; }
 	void triggerCooldown() { m_cooldownPercent = 100.0f; }
 	void playFireSound(sf::Vector2f sourcePos, Star* star);
-	void drawFireAnimation(sf::RenderWindow& window, Unit* unit);
+	void drawFireAnimation(Renderer& renderer, Unit* unit);
 	
 	// Insta hit makes the projectile hit the target always, instantly
 	void instaHitFireAt(sf::Vector2f sourcePos, Unit* target, Star* star);
