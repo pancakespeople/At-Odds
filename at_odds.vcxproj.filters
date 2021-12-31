@@ -156,5 +156,6 @@
     <None Include="data\shaders\lavaplanetshader.shader" />
     <None Include="data\shaders\ringsshader.shader" />
     <None Include="data\shaders\asteroidbeltshader.shader" />
+    <None Include="data\shaders\posteffectsshader.shader" />
   </ItemGroup>
 </Project>

@@ -4,10 +4,11 @@
 class Planet;
 class Star;
 class Renderer;
+class GameState;
 
 class EffectsEmitter {
 public:
-	EffectsEmitter(sf::Vector2i resolution);
+	EffectsEmitter(sf::Vector2i resolution, Renderer& renderer);
 
 	void init(sf::Vector2i resolution);
 	void onEvent(const sf::Event& event);
@@ -29,11 +30,14 @@ public:
 	void drawBlackHole(Renderer& renderer, const sf::RectangleShape& starRect, float time, float seed);
 	void drawRings(Renderer& renderer, sf::Vector2f pos, float radius, float seed);
 	void drawAsteroidBelt(Renderer& renderer, sf::Vector2f pos, float radius, float seed);
+	void drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state);
 	void updateTime(float time);
 
 private:
 	void initShaders(sf::Vector2i resolution);
 	
+	Renderer& m_renderer;
+
 	sf::CircleShape m_jumpBubble;
 	sf::CircleShape m_habitableZone;
 
@@ -55,6 +59,7 @@ private:
 	sf::Shader m_mapStarShader;
 	sf::Shader m_ringsShader;
 	sf::Shader m_asteroidBeltShader;
+	sf::Shader m_postEffectsShader;
 
 	sf::Vector2i m_resolution;
 

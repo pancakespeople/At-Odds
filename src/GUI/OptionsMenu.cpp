@@ -172,6 +172,7 @@ void OptionsMenu::updateGameSettings(sf::RenderWindow& window, Renderer& rendere
 			}
 
 			window.setVerticalSyncEnabled(true);
+			//window.setView(sf::View(sf::FloatRect(0, 0, res.x, res.y)));
 			gui.setTarget(window);
 
 			renderer.setResolution(res);

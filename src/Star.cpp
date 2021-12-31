@@ -166,8 +166,12 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		}
 	}
 	
-	if (m_blackHole) renderer.effects.drawBlackHole(renderer, m_localViewRect, time, m_shaderRandomSeed);
-	else renderer.effects.drawLocalStar(renderer, m_localViewRect, time, m_shaderRandomSeed);
+	if (m_blackHole) {
+		//renderer.effects.drawBlackHole(renderer, m_localViewRect, time, m_shaderRandomSeed);
+	}
+	else {
+		renderer.effects.drawLocalStar(renderer, m_localViewRect, time, m_shaderRandomSeed);
+	}
 	
 	for (JumpPoint& j : m_jumpPoints) {
 		j.draw(renderer, window);

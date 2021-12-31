@@ -157,7 +157,7 @@ int main(int argc, const char* argv[])
         
         //mainMenu.drawPreview(window, emitter, state, time);
         //debugInfo.draw(window);
-        renderer.displayToWindow(window);
+        renderer.displayToWindow(window, state);
         playerGui.draw(window, renderer, state, constellation, player);
         gui.draw();
 

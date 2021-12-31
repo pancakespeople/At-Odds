@@ -5,8 +5,10 @@
 #include "Planet.h"
 #include "Star.h"
 #include "Renderer.h"
+#include "GameState.h"
 
-EffectsEmitter::EffectsEmitter(sf::Vector2i resolution) {
+EffectsEmitter::EffectsEmitter(sf::Vector2i resolution, Renderer& renderer) :
+m_renderer(renderer) {
 	init(resolution);
 }
 
@@ -53,6 +55,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 
 	m_ringsShader.loadFromFile(m_vertexShaderPath, "data/shaders/ringsshader.shader");
 	m_asteroidBeltShader.loadFromFile(m_vertexShaderPath, "data/shaders/asteroidbeltshader.shader");
+	m_postEffectsShader.loadFromFile(m_vertexShaderPath, "data/shaders/posteffectsshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -255,4 +258,34 @@ void EffectsEmitter::drawAsteroidBelt(Renderer& renderer, sf::Vector2f pos, floa
 	shape.setPosition(pos);
 
 	renderer.draw(shape, &m_asteroidBeltShader);
+}
+
+void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state) {
+	Star* star = state.getLocalViewStar();
+
+	if (star != nullptr) {
+		if (star->isBlackHole()) {
+			// Black hole post processing effect
+			sf::Vector2f texSize = sf::Vector2f(sprite.getTexture()->getSize());
+
+			m_postEffectsShader.setUniform("size", texSize);
+			m_postEffectsShader.setUniform("screen", *sprite.getTexture());
+			m_postEffectsShader.setUniform("aspect", texSize.x / texSize.y);
+
+			sf::Vector2f bhPos = star->getLocalViewCenter();
+			sf::Vector2f viewPos = m_renderer.getView().getCenter() - bhPos;
+			sf::Vector2f viewSize = m_renderer.getView().getSize();
+			sf::Vector2f viewPosNorm = sf::Vector2f(1.0f - (viewPos.x + viewSize.x / 2.0f) / viewSize.x, (viewPos.y + viewSize.y / 2.0f) / viewSize.y);
+
+			m_postEffectsShader.setUniform("pos", viewPosNorm);
+			m_postEffectsShader.setUniform("zoom", state.getCamera().getZoomFactor());
+			window.draw(sprite, &m_postEffectsShader);
+		}
+		else {
+			window.draw(sprite);
+		}
+	}
+	else {
+		window.draw(sprite);
+	}
 }
