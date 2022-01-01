@@ -23,8 +23,17 @@ DesignerChassis::DesignerChassis(const std::string& typeStr) {
 
 	assert(table.contains(typeStr));
 
+	std::string typeName = table[typeStr]["type"].value_or("");
+
 	type = typeStr;
-	name = table[typeStr]["name"].value_or("");
+
+	if (typeName == "") {
+		name = table[typeStr]["name"].value_or("");
+	}
+	else {
+		name = table[typeStr]["name"].value_or(std::string()) + " " + typeName;
+	}
+
 	maxWeaponCapacity = table[typeStr]["maxWeaponCapacity"].value_or(1.0f);
 	buildTimeMultiplier = table[typeStr]["buildTimeMultiplier"].value_or(1.0f);
 

@@ -339,8 +339,9 @@ void ShipDesignerGUI::displayChassisInfo(const std::string& chassisType) {
 	
 	std::stringstream ss;
 	ss << table[chassisType]["name"].value_or("Unknown") << " Chassis\n";
-	ss << "Weapon Capacity: " << table[chassisType]["maxWeaponCapacity"].value_or(0.0f) << " kg\n";
-	ss << "Mass: " << table[chassisType]["mass"].value_or(0.0f) << "\n";
+	ss << "Type: " << table[chassisType]["type"].value_or("N/A") << "\n";
+	ss << "Weapon Capacity: " << table[chassisType]["maxWeaponCapacity"].value_or(0.0f) << "\n";
+	ss << "Mass: " << table[chassisType]["mass"].value_or(0.0f) << " kg\n";
 	ss << "Health: " << table[chassisType]["health"].value_or(0.0f) << "\n";
 
 	chassisInfoLabel->setText(ss.str());

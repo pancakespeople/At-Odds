@@ -1,6 +1,7 @@
 
 [FRIGATE]
-name = "Frigate"
+name = "Falcon"
+type = "Frigate"
 texturePath = "data/art/SpaceShipNormal.png"
 mass = 50000.0
 health = 100.0
@@ -9,7 +10,8 @@ maxWeaponCapacity = 1.0
 cost = [["COMMON_ORE", 7.5]]
 
 [DESTROYER]
-name = "Destroyer"
+name = "Guardian"
+type = "Destroyer"
 texturePath = "data/art/bgspeedship.png"
 scale = 2.0
 mass = 100000.0
@@ -98,7 +100,8 @@ civilian = true
 playerCanGiveOrders = false
 
 [CRUISER]
-name = "Cruiser"
+name = "Pummeler"
+type = "Cruiser"
 texturePath = "data/art/medfighter.png"
 scale = 6.0
 mass = 250000
