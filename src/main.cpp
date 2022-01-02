@@ -68,7 +68,7 @@ int main(int argc, const char* argv[])
     window.setVerticalSyncEnabled(true);
 
     tgui::GuiSFML gui(window);
-    tgui::Theme::setDefault("data/tgui/Black.txt");
+    tgui::Theme::setDefault("data/tgui/newUI.txt");
 
     Renderer renderer(resolution);
     Background& background = renderer.background;

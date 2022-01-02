@@ -53,6 +53,8 @@ namespace GameWidget {
 		void open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath);
 
 		tgui::Panel::Ptr panel;
+	private:
+		tgui::Theme m_hoverTheme;
 	};
 
 }

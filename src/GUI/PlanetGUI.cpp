@@ -20,12 +20,14 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 
 	m_planetIconPanel->onMouseEnter([this]() {
 		m_planetIconPanel->getRenderer()->setBackgroundColor(tgui::Color::White);
+		m_planetIconPanel->setRenderer(tgui::Theme().getRenderer("Panel"));
 		});
 
 	m_planetIconPanel->onMouseLeave([this]() {
 		m_planetIconPanel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 		m_planetIconPanel->getRenderer()->setOpacity(0.75f);
-		});
+		m_planetIconPanel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
+	});
 
 	m_planetIconPanel->onClick([this, &gui, &state, playerFaction]() {
 		if (m_planetPanel == nullptr) {

@@ -26,11 +26,13 @@ void BuildGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 void BuildGUI::onBuildIconMouseEnter() {
 	m_buildIconPanel->getRenderer()->setBackgroundColor(tgui::Color::White);
+	m_buildIconPanel->setRenderer(tgui::Theme().getRenderer("Panel"));
 }
 
 void BuildGUI::onBuildIconMouseExit() {
 	m_buildIconPanel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 	m_buildIconPanel->getRenderer()->setOpacity(0.75f);
+	m_buildIconPanel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
 }
 
 void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
@@ -103,12 +105,14 @@ void BuildGUI::addBuildingSelector(const std::string& type) {
 
 void BuildGUI::onBuildingSelectorMouseEnter(int selectorIdx) {
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setBackgroundColor(tgui::Color::White);
+	m_buildingSelectors[selectorIdx].panel->setRenderer(tgui::Theme().getRenderer("Panel"));
 	m_canReceiveEvents = false;
 }
 
 void BuildGUI::onBuildingSelectorMouseExit(int selectorIdx) {
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setOpacity(0.75f);
+	m_buildingSelectors[selectorIdx].panel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
 	m_canReceiveEvents = true;
 }
 

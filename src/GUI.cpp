@@ -129,11 +129,13 @@ void GameWidget::Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d s
 
 	panel->onMouseEnter([this]() {
 		panel->getRenderer()->setBackgroundColor(tgui::Color::White);
+		panel->setRenderer(tgui::Theme().getRenderer("Panel"));
 	});
 
 	panel->onMouseLeave([this]() {
 		panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 		panel->getRenderer()->setOpacity(0.75f);
+		panel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
 	});
 
 	gui.add(panel);
