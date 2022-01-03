@@ -134,6 +134,15 @@ void giveWeapon(const DebugConsole::Command& command, const DebugConsole::Goodie
 	}
 }
 
+void giveChassis(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 1)) {
+		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
+		if (playerFaction != nullptr) {
+			playerFaction->addChassis(DesignerChassis(command.args[0]));
+		}
+	}
+}
+
 void giveResource(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 2) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
@@ -273,6 +282,7 @@ void DebugConsole::open(tgui::Gui& gui) {
 	addCommand("possess", possess);
 	addCommand("spectate", spectate);
 	addCommand("giveweapon", giveWeapon);
+	addCommand("givechassis", giveChassis);
 	addCommand("giveresource", giveResource);
 	addCommand("cheats", cheats);
 	addCommand("ownplanet", ownPlanet);

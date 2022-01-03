@@ -335,14 +335,23 @@ void ShipDesignerGUI::displayShipDesigns(Faction* playerFaction) {
 
 void ShipDesignerGUI::displayChassisInfo(const std::string& chassisType) {
 	auto chassisInfoLabel = m_window->get<tgui::Label>("chassisInfoLabel");
-	const toml::table& table = TOMLCache::getTable("data/objects/spaceships.toml");
-	
-	std::stringstream ss;
-	ss << table[chassisType]["name"].value_or("Unknown") << " Chassis\n";
-	ss << "Type: " << table[chassisType]["type"].value_or("N/A") << "\n";
-	ss << "Weapon Capacity: " << table[chassisType]["maxWeaponCapacity"].value_or(0.0f) << "\n";
-	ss << "Mass: " << table[chassisType]["mass"].value_or(0.0f) << " kg\n";
-	ss << "Health: " << table[chassisType]["health"].value_or(0.0f) << "\n";
 
-	chassisInfoLabel->setText(ss.str());
+	if (chassisType != "") {
+		const toml::table& table = TOMLCache::getTable("data/objects/spaceships.toml");
+
+		DesignerChassis chassis(chassisType);
+
+		std::stringstream ss;
+		ss << table[chassisType]["name"].value_or("Unknown") << " Chassis\n";
+		ss << "Type: " << table[chassisType]["type"].value_or("N/A") << "\n";
+		ss << "Cost: " << Resource::getResourceString(chassis.resourceCost) << "\n";
+		ss << "Weapon Capacity: " << table[chassisType]["maxWeaponCapacity"].value_or(0.0f) << "\n";
+		ss << "Mass: " << table[chassisType]["mass"].value_or(0.0f) << " kg\n";
+		ss << "Health: " << table[chassisType]["health"].value_or(0.0f) << "\n";
+
+		chassisInfoLabel->setText(ss.str());
+	}
+	else {
+		chassisInfoLabel->setText("");
+	}
 }
