@@ -9,6 +9,17 @@ colliderRadius = 100.0
 maxWeaponCapacity = 1.0
 cost = [["COMMON_ORE", 7.5]]
 
+[FRIGATE_2]
+name = "Meteor"
+type = "Frigate"
+texturePath = "data/art/roundysh.png"
+scale = 0.5
+mass = 30000.0
+health = 125.0
+colliderRadius = 100.0
+maxWeaponCapacity = 1.0
+cost = [["COMMON_ORE", 10.0], ["UNCOMMON_ORE", 10.0]]
+
 [DESTROYER]
 name = "Guardian"
 type = "Destroyer"
@@ -20,6 +31,30 @@ colliderRadius = 125.0
 maxWeaponCapacity = 2.0
 cost = [["COMMON_ORE", 15.0]]
 buildTimeMultiplier = 1.25
+
+[DESTROYER_2]
+name = "Seeker"
+type = "Destroyer"
+texturePath = "data/art/F5S1.png"
+scale = 2.0
+mass = 120000.0
+health = 300.0
+colliderRadius = 200.0
+maxWeaponCapacity = 3.0
+cost = [["COMMON_ORE", 35.0], ["UNCOMMON_ORE", 12.5], ["RARE_ORE", 1.0]]
+buildTimeMultiplier = 1.25
+
+[CRUISER]
+name = "Pummeler"
+type = "Cruiser"
+texturePath = "data/art/medfighter.png"
+scale = 6.0
+mass = 250000
+health = 500.0
+colliderRadius = 300.0
+maxWeaponCapacity = 5.0
+cost = [["COMMON_ORE", 100.0], ["RARE_ORE", 5.0]]
+buildTimeMultiplier = 2.0
 
 [CLAIM_SHIP]
 name = "Flag"
@@ -98,15 +133,3 @@ health = 1000.0
 colliderRadius = 300.0
 civilian = true
 playerCanGiveOrders = false
-
-[CRUISER]
-name = "Pummeler"
-type = "Cruiser"
-texturePath = "data/art/medfighter.png"
-scale = 6.0
-mass = 250000
-health = 500.0
-colliderRadius = 300.0
-maxWeaponCapacity = 5.0
-cost = [["COMMON_ORE", 100.0], ["RARE_ORE", 5.0]]
-buildTimeMultiplier = 2.0

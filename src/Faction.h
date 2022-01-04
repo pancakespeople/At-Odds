@@ -42,6 +42,7 @@ public:
 	void setAIEnabled(bool enabled) { m_aiEnabled = enabled; }
 	void addNewsEvent(const std::string& text, sf::Color color = sf::Color::White);
 	void onColonization(Planet* planet, Star* star);
+	void addTech(const Tech& tech) { m_techs.push_back(tech); }
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);

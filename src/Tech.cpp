@@ -51,6 +51,19 @@ std::string Tech::getExtendedDescription(Faction* faction) const {
 	if (timeToResearch == -1.0f) text += "Time to research: Infinity (You have no research point production)\n";
 	else text += "Time to research: " + Util::secondsToTime(timeToResearch) + "\n";
 	
+	auto techs = getUnlocked("unlocksTech");
+
+	if (techs.size() > 0) {
+		text += "Unlocks tech: ";
+		for (int i = 0; i < techs.size(); i++) {
+			text += table[techs[i]]["name"].value_or("Unnamed Tech");
+			if (i != techs.size() - 1) {
+				text += ", ";
+			}
+		}
+		text += "\n";
+	}
+
 	auto buildings = getUnlocked("addsColonyBuildings");
 
 	if (buildings.size() > 0) {

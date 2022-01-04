@@ -81,16 +81,16 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	addColonyBuilding("INFRASTRUCTURE");
 	addColonyBuilding("SPACEPORT");
 
-	m_techs.push_back(Tech("WEAPONS_RESEARCH"));
-	m_techs.push_back(Tech("FARMING"));
-	m_techs.push_back(Tech("DEFENSE"));
-	m_techs.push_back(Tech("EXPLORATION"));
-	m_techs.push_back(Tech("MANUFACTURING"));
-	m_techs.push_back(Tech("MINING"));
-	m_techs.push_back(Tech("MILITARY"));
-	m_techs.push_back(Tech("CRUISER_HULL"));
-	m_techs.push_back(Tech("NUCLEAR_WEAPONS"));
-	m_techs.push_back(Tech("INVASIONS"));
+	addTech(Tech("WEAPONS_RESEARCH"));
+	addTech(Tech("FARMING"));
+	addTech(Tech("DEFENSE"));
+	addTech(Tech("EXPLORATION"));
+	addTech(Tech("MANUFACTURING"));
+	addTech(Tech("MINING"));
+	addTech(Tech("MILITARY"));
+	addTech(Tech("CRUISER_HULL"));
+	addTech(Tech("NUCLEAR_WEAPONS"));
+	addTech(Tech("INVASIONS"));
 
 	addNewsEvent("Our glorious nation has been founded!");
 }
@@ -565,9 +565,16 @@ void Faction::onResearchFinish(Tech& tech) {
 		addWeapon(weapon);
 	}
 
+	// Reset repeatable techs
 	if (table[tech.getType()]["repeatable"].value_or(false)) {
 		tech.resetResearchPoints();
 		tech.setRequiredResearchPoints(tech.getRequiredResearchPoints() * table[tech.getType()]["repeatResearchMultiplier"].value_or(1.0f));
+	}
+
+	// Add unlocked techs
+	auto techs = tech.getUnlocked("unlocksTech");
+	for (const std::string& unlockedTech : techs) {
+		addTech(Tech(unlockedTech));
 	}
 
 	DEBUG_PRINT(getName() << " completed research " << tech.getName());
