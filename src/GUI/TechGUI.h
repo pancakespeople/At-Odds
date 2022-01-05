@@ -7,6 +7,7 @@ class TechGUI {
 public:
 	TechGUI() {}
 	void open(tgui::Gui& gui, Faction* playerFaction);
+	void updateTechs(Faction * playerFaction);
 	void update(Faction* playerFaction);
 
 private:
@@ -16,4 +17,6 @@ private:
 	tgui::ListBox::Ptr m_techQueue = nullptr;
 	std::string m_progressBarTech = "";
 	tgui::Label::Ptr m_description = nullptr;
+	tgui::ListBox::Ptr m_researchableTechs = nullptr;
+	tgui::Tabs::Ptr m_tabs = nullptr;
 };

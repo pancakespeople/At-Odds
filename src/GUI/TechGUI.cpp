@@ -24,18 +24,18 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			m_window = nullptr;
 		});
 
-		auto tabs = tgui::Tabs::create();
-		tabs->setPosition("2.5%", "0%");
-		tabs->setSize("50% - 2.5%", "5%");
-		tabs->add("Colony", true);
-		tabs->add("Spaceship", false);
-		tabs->add("Weapons", false);
-		m_window->add(tabs);
+		m_tabs = tgui::Tabs::create();
+		m_tabs->setPosition("2.5%", "0%");
+		m_tabs->setSize("50% - 2.5%", "5%");
+		m_tabs->add("Colony", true);
+		m_tabs->add("Spaceship", false);
+		m_tabs->add("Weapons", false);
+		m_window->add(m_tabs);
 
-		auto researchableTechs = tgui::ListBox::create();
-		researchableTechs->setPosition("2.5%", "5%");
-		researchableTechs->setSize("50% - 2.5%", "50% - 2.5%");
-		m_window->add(researchableTechs, "researchableTechs");
+		m_researchableTechs = tgui::ListBox::create();
+		m_researchableTechs->setPosition("2.5%", "5%");
+		m_researchableTechs->setSize("50% - 2.5%", "50% - 2.5%");
+		m_window->add(m_researchableTechs, "researchableTechs");
 
 		/*auto researchLabel = tgui::Label::create("Available Research");
 		researchLabel->setOrigin(0.5, 0.0);
@@ -62,23 +62,16 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 		m_window->add(m_description);
 
 		m_progressBar = tgui::ProgressBar::create();
-		m_progressBar->setPosition("2.5%", "75%");
+		m_progressBar->setPosition("2.5%", "87.5%");
 		m_progressBar->setSize("95%", "10%");
 		m_progressBar->setVisible(false);
 		m_window->add(m_progressBar);
 
-		for (const Tech& tech : playerFaction->getTechs()) {
-			if (!tech.isResearched() && !tech.isResearching() && tech.getCategory() == tabs->getSelected()) {
-				researchableTechs->addItem(tech.getName(), tech.getType());
-			}
-			else if (tech.isResearching()) {
-				m_techQueue->addItem(tech.getName(), tech.getType());
-			}
-		}
+		updateTechs(playerFaction);
 
-		researchableTechs->onItemSelect([researchableTechs, this, researchButton, playerFaction](int index) {
+		m_researchableTechs->onItemSelect([this, researchButton, playerFaction](int index) {
 			if (index != -1) {
-				const Tech* tech = playerFaction->getTech(researchableTechs->getSelectedItemId().toStdString());
+				const Tech* tech = playerFaction->getTech(m_researchableTechs->getSelectedItemId().toStdString());
 
 				if (tech != nullptr) {
 					std::string techType = tech->getType();
@@ -88,11 +81,11 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 					researchButton->setVisible(true);
 					researchButton->onClick.disconnectAll();
-					researchButton->onClick([techType, researchableTechs, this, playerFaction]() {
+					researchButton->onClick([techType, this, playerFaction]() {
 						const Tech* tech = playerFaction->getTech(techType);
 
 						if (tech != nullptr) {
-							researchableTechs->removeItem(researchableTechs->getSelectedItem());
+							m_researchableTechs->removeItem(m_researchableTechs->getSelectedItem());
 							m_techQueue->addItem(tech->getName(), tech->getType());
 							
 							// Invalidates pointers
@@ -107,9 +100,9 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			}
 		});
 
-		m_techQueue->onItemSelect([researchableTechs, this, playerFaction](int index) {
+		m_techQueue->onItemSelect([this, playerFaction](int index) {
 			if (index != -1) {
-				researchableTechs->deselectItem();
+				m_researchableTechs->deselectItem();
 				m_progressBar->setVisible(true);
 				m_progressBar->setValue(playerFaction->getTech(m_techQueue->getSelectedItemId().toStdString())->getResearchPercent());
 				m_progressBarTech = m_techQueue->getSelectedItemId().toStdString();
@@ -122,18 +115,31 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 		});
 
 		m_progressBar->onFull([this]() {
-			m_techQueue->removeItem(m_techQueue->getSelectedItem());
+			//m_techQueue->removeItem(m_techQueue->getSelectedItem());
 		});
 
-		tabs->onTabSelect([researchableTechs, playerFaction](const tgui::String& tab) {
-			researchableTechs->removeAllItems();
+		m_tabs->onTabSelect([this, playerFaction](const tgui::String& tab) {
+			m_researchableTechs->removeAllItems();
 			for (Tech& tech : playerFaction->getAllTechsOfCategory(tab.toStdString())) {
 				if (!tech.isResearched() && !tech.isResearching()) {
-					researchableTechs->addItem(tech.getName(), tech.getType());
+					m_researchableTechs->addItem(tech.getName(), tech.getType());
 				}
 			}
 		});
 	});
+}
+
+void TechGUI::updateTechs(Faction* playerFaction) {
+	m_researchableTechs->removeAllItems();
+	m_techQueue->removeAllItems();
+	for (const Tech& tech : playerFaction->getTechs()) {
+		if (!tech.isResearched() && !tech.isResearching() && tech.getCategory() == m_tabs->getSelected()) {
+			m_researchableTechs->addItem(tech.getName(), tech.getType());
+		}
+		else if (tech.isResearching()) {
+			m_techQueue->addItem(tech.getName(), tech.getType());
+		}
+	}
 }
 
 void TechGUI::update(Faction* playerFaction) {
@@ -147,7 +153,18 @@ void TechGUI::update(Faction* playerFaction) {
 				const Tech* tech = playerFaction->getTech(item.toStdString());
 				if (tech != nullptr) {
 					// Remove researched items from tech queue
-					if (tech->isResearched()) m_techQueue->removeItemById(item);
+					if (tech->isResearched()) {
+						// Add unlocked techs
+						auto unlockedTechs = tech->getUnlocked("unlocksTech");
+						for (const std::string& techType : unlockedTechs) {
+							Tech newTech(techType);
+							if (newTech.getCategory() == m_tabs->getSelected()) {
+								m_researchableTechs->addItem(newTech.getName(), newTech.getType());
+							}
+						}
+
+						m_techQueue->removeItemById(item);
+					}
 					else if (tech->isResearching()) {
 						// Set name
 						m_techQueue->changeItemById(item, tech->getName() + " (" + std::to_string(idx + 1) + ")");
