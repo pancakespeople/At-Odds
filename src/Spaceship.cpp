@@ -20,6 +20,21 @@
 #include "Designs.h"
 #include "Renderer.h"
 
+void projectileExplosion(Star& star, Spaceship& ship) {
+	for (int i = 0; i < 25; i++) {
+		float randAngle = Random::randFloat(0.0f, 360.0f);
+		Projectile newProj("FLAK");
+		newProj.setPos(ship.getPos());
+		newProj.setRotation(randAngle);
+		newProj.setAllegiance(ship.getAllegiance());
+		star.addProjectile(newProj);
+	}
+}
+
+const std::unordered_map<std::string, std::function<void(Star& star, Spaceship& ship)>> onDeathFunctions = {
+	{"projectileExplosion", &projectileExplosion},
+};
+
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
 	m_sprite.setOrigin(sf::Vector2f(m_sprite.getTextureRect().width / 2.0f, m_sprite.getTextureRect().height / 2.0f));
@@ -69,7 +84,7 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	m_playerCanGiveOrders = playerCanGiveOrders;
 	m_civilian = civilian;
 	m_stationary = stationary;
-	m_name = table[type]["name"].value_or("");
+	m_type = type;
 
 	if (spriteTakesFactionColor) m_sprite.setColor(color);
 
@@ -515,5 +530,20 @@ bool Spaceship::attack(Star* star, bool urgent) {
 		else {
 			return false;
 		}
+	}
+}
+
+std::string Spaceship::getName() {
+	auto& table = TOMLCache::getTable("data/objects/spaceships.toml");
+
+	return table[m_type]["name"].value_or("Unknown");
+}
+
+void Spaceship::onDeath(Star* currentStar) {
+	auto& table = TOMLCache::getTable("data/objects/spaceships.toml");
+	std::string onDeathFunction = table[m_type]["onDeathFunction"].value_or("");
+
+	if (onDeathFunction != "") {
+		onDeathFunctions.at(onDeathFunction)(*currentStar, *this);
 	}
 }

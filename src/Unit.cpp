@@ -5,6 +5,7 @@
 #include "SmoothCircle.h"
 #include "Constellation.h"
 #include "Renderer.h"
+#include "Random.h"
 
 std::vector<Spaceship*> Unit::findEnemyShips() {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();

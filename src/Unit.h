@@ -83,6 +83,7 @@ protected:
 		archive & m_mods;
 		archive & m_maxHealth;
 		archive & m_stationary;
+		archive & m_type;
 	}
 
 	Star* m_currentStar = nullptr;
@@ -92,6 +93,7 @@ protected:
 	
 	std::vector<Weapon> m_weapons;
 	std::vector<std::unique_ptr<Mod>> m_mods;
+	std::string m_type;
 
 	int m_allegiance = 0;
 	

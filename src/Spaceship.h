@@ -43,6 +43,7 @@ public:
 	void setCanReceiveOrders(bool flag) { m_canReceiveOrders = flag; }
 	void reinitOrdersAfterLoad(Constellation* constellation);
 	void setPirate(bool pirate) { m_pirate = pirate; }
+	void onDeath(Star* currentStar);
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
@@ -87,7 +88,7 @@ public:
 	Spaceship* findClosestEnemyCombatShip(Star* star);
 	Spaceship * findClosestEnemyShip(Star * star);
 
-	std::string getName() { return m_name; }
+	std::string getName();
 
 private:
 	friend class boost::serialization::access;
@@ -108,7 +109,6 @@ private:
 		archive & m_fighterAI;
 		archive & m_diesSilently;
 		archive & m_civilian;
-		archive & m_name;
 		archive & m_pirate;
 	}
 
@@ -120,8 +120,6 @@ private:
 	
 	std::deque<std::unique_ptr<Order>> m_orders;
 	
-	std::string m_name;
-
 	float m_mass = 100.0; // kg
 	float m_maxAcceleration = 10.0;
 	float m_percentJumpDriveCharged = 0.0f;

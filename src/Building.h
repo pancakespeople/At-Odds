@@ -62,8 +62,6 @@ private:
 
 	float m_constructionPercent = 0.0f;
 	float m_constructionSpeedMultiplier = 1.0f;
-
-	std::string m_type;
 };
 
 class BuildingPrototype {

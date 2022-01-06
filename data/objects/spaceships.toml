@@ -19,6 +19,7 @@ health = 125.0
 colliderRadius = 100.0
 maxWeaponCapacity = 1.0
 cost = [["COMMON_ORE", 10.0], ["UNCOMMON_ORE", 10.0]]
+onDeathFunction = "projectileExplosion"
 
 [DESTROYER]
 name = "Guardian"
