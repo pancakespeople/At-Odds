@@ -44,7 +44,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	for (int i = 0; i < 10; i++) {
 		sf::Vector2f pos = sf::Vector2f(Random::randFloat(-10000.0f, 10000.0f), Random::randFloat(-10000.0f, 10000.0f));
-		addSpaceship(m_capital->createSpaceship("FRIGATE_2", pos, m_id, m_color));
+		addSpaceship(m_capital->createSpaceship("FRIGATE", pos, m_id, m_color));
 		m_ships.back()->addWeapon(Weapon(m_weapons.back().type));
 	}
 

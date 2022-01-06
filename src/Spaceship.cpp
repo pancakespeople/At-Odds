@@ -317,17 +317,13 @@ float Spaceship::getSpeed() {
 
 void Spaceship::keepSpeed(float speed) {
 	float nowSpeed = getSpeed();
-	static float lastSpeed = getSpeed();
-	float changeSpeed = lastSpeed - nowSpeed;
 
 	if (nowSpeed > speed) {
-		accelerate(-(m_maxAcceleration / 5.0f));
+		accelerate(-(std::clamp(m_maxAcceleration, 0.0f, 0.5f) / 5.0f));
 	}
 	else if (nowSpeed < speed) {
 		accelerate(m_maxAcceleration / 5.0f);
 	}
-
-	lastSpeed = getSpeed();
 }
 
 Spaceship::JumpState Spaceship::jump(JumpPoint* point) {
