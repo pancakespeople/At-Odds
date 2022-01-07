@@ -25,7 +25,7 @@ public:
 	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); m_shipIDs.push_back(ship->getID()); }
 	void addResource(const std::string& type, float num);
 	void subtractResource(const std::string& type, float num);
-	void addChassis(const DesignerChassis& chassis) { m_chassis.push_back(chassis); }
+	void addChassis(const DesignerChassis& chassis) { if (!hasChassis(chassis.type)) m_chassis.push_back(chassis); }
 	void addWeapon(const DesignerWeapon& weapon) { if (!hasWeapon(weapon.type)) m_weapons.push_back(weapon); }
 	void addShipDesign(const DesignerShip& ship);
 	void subtractResources(const std::unordered_map<std::string, float>& resources);
@@ -59,6 +59,7 @@ public:
 	bool canSubtractResource(const std::string& type, float num);
 	bool canSubtractResources(const std::unordered_map<std::string, float>& resources);
 	bool hasWeapon(const std::string& type);
+	bool hasChassis(const std::string& type);
 	bool hasResearchedTech(const std::string& type) const;
 	bool hasColonyBuilding(const std::string& type) const;
 	

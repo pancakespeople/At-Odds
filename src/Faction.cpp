@@ -688,3 +688,12 @@ void Faction::onColonization(Planet* planet, Star* star) {
 		}
 	}
 }
+
+bool Faction::hasChassis(const std::string& type) {
+	for (auto& chassis : m_chassis) {
+		if (chassis.type == type) {
+			return true;
+		}
+	}
+	return false;
+}

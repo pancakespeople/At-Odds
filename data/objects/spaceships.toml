@@ -20,6 +20,7 @@ colliderRadius = 100.0
 maxWeaponCapacity = 1.0
 cost = [["COMMON_ORE", 10.0], ["UNCOMMON_ORE", 10.0]]
 onDeathFunction = "projectileExplosion"
+extraInfo = "Explodes into many projectiles on death"
 
 [DESTROYER]
 name = "Guardian"
@@ -66,6 +67,7 @@ health = 50.0
 colliderRadius = 300.0
 canReceiveOrders = false
 stationary = true
+hasDesign = false
 
 [CONSTRUCTOR]
 name = "Constructor"
@@ -76,6 +78,7 @@ colliderRadius = 350.0
 constructionSpeed = 10.0
 maxWeaponCapacity = 0.0
 cost = [["COMMON_ORE", 10.0]]
+hasDesign = false
 
 [FIGHTER]
 name = "Fighter"
@@ -86,6 +89,7 @@ health = 50.0
 colliderRadius = 50.0
 fighterAI = true
 playerCanGiveOrders = false
+hasDesign = false
 
 [SPACE_BUS]
 name = "Space Bus"
@@ -95,6 +99,7 @@ health = 50.0
 colliderRadius = 150.0
 civilian = true
 playerCanGiveOrders = false
+hasDesign = false
 
 [SPACE_TRAIN]
 name = "Space Train"
@@ -105,6 +110,7 @@ colliderRadius = 500.0
 civilian = true
 playerCanGiveOrders = false
 scale = 2.0
+hasDesign = false
 
 [SPACE_TRUCK]
 name = "Space Truck"
@@ -114,6 +120,7 @@ health = 50.0
 colliderRadius = 150.0
 civilian = true
 playerCanGiveOrders = false
+hasDesign = false
 
 [BIG_SPACE_TRUCK]
 name = "Big Space Truck"
@@ -124,6 +131,7 @@ health = 100.0
 colliderRadius = 300.0
 civilian = true
 playerCanGiveOrders = false
+hasDesign = false
 
 [FREIGHTER]
 name = "Freighter"
@@ -134,3 +142,4 @@ health = 1000.0
 colliderRadius = 300.0
 civilian = true
 playerCanGiveOrders = false
+hasDesign = false

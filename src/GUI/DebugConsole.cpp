@@ -152,10 +152,11 @@ void giveResource(const DebugConsole::Command& command, const DebugConsole::Good
 	}
 }
 
-void cheats(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
+void unlockAll(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		const toml::table& resources = TOMLCache::getTable("data/objects/resources.toml");
 		const toml::table& weaponDesigns = TOMLCache::getTable("data/objects/weapons.toml");
+		const toml::table& ships = TOMLCache::getTable("data/objects/spaceships.toml");
 
 		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
 
@@ -166,6 +167,12 @@ void cheats(const DebugConsole::Command& command, const DebugConsole::Goodies& g
 		for (auto& elem : weaponDesigns) {
 			if (weaponDesigns[elem.first]["hasDesign"].value_or(true)) {
 				playerFaction->addWeapon(elem.first);
+			}
+		}
+
+		for (auto& elem : ships) {
+			if (ships[elem.first]["hasDesign"].value_or(true)) {
+				playerFaction->addChassis(elem.first);
 			}
 		}
 	}
@@ -284,7 +291,7 @@ void DebugConsole::open(tgui::Gui& gui) {
 	addCommand("giveweapon", giveWeapon);
 	addCommand("givechassis", giveChassis);
 	addCommand("giveresource", giveResource);
-	addCommand("cheats", cheats);
+	addCommand("unlockall", unlockAll);
 	addCommand("ownplanet", ownPlanet);
 	addCommand("spawnbuilding", spawnBuilding);
 	addCommand("benchmark", benchmark);
