@@ -25,7 +25,7 @@ CheckBox {
 }
 
 ChildWindow {
-    TextureTitleBar        = "Black.png" Part(0, 580, 75, 25) Middle(25, 0) Smooth;
+    TextureTitleBar        = "titlebar.png" Smooth;
     TextureBackground      = "panel2.png" Smooth;
     TitleColor             = rgb(190, 190, 190);
     BorderColor            = Black;
@@ -34,9 +34,9 @@ ChildWindow {
     PaddingBetweenButtons  = 2;
     ShowTextOnTitleButtons = false;
     CloseButton = {
-        Texture       = "Black.png" Part(34, 212, 15, 15) Smooth;
-        TextureHover  = "Black.png" Part(68, 212, 15, 15) Smooth;
-        TextureDown   = "Black.png" Part(51, 212, 15, 15) Smooth;
+        Texture       = "closebutton.png" Smooth;
+        TextureHover  = "closebuttonhover.png" Smooth;
+        TextureDown   = "closebuttonhover.png" Part(51, 212, 15, 15) Smooth;
     };
     MaximizeButton = {
         Texture       = "Black.png" Part(0, 330, 15, 15) Smooth;
