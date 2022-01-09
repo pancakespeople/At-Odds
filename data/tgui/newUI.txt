@@ -208,14 +208,14 @@ RadioButton {
 }
 
 Scrollbar {
-    TextureTrack          = "Black.png" Part(0, 499, 20, 20) Smooth;
-    TextureTrackHover     = "Black.png" Part(22, 499, 20, 20) Smooth;
-    TextureThumb          = "Black.png" Part(68, 465, 20, 20) Smooth;
-    TextureThumbHover     = "Black.png" Part(90, 465, 20, 20) Smooth;
-    TextureArrowUp        = "Black.png" Part(44, 0, 20, 20) Middle(0, 0, 20, 19) Smooth;
-    TextureArrowUpHover   = "Black.png" Part(66, 0, 20, 20) Middle(0, 0, 20, 19) Smooth;
-    TextureArrowDown      = "Black.png" Part(0, 0, 20, 20) Middle(0, 1, 20, 19) Smooth;
-    TextureArrowDownHover = "Black.png" Part(22, 0, 20, 20) Middle(0, 1, 20, 19) Smooth;
+    TextureTrack          = "scrollbartrack.png" Smooth;
+    TextureTrackHover     = "scrollbartrackhover.png" Smooth;
+    TextureThumb          = "scrollbar.png" Smooth;
+    TextureThumbHover     = "scrollbarhover.png" Smooth;
+    TextureArrowUp        = "uparrow.png" Smooth;
+    TextureArrowUpHover   = "uparrowhover.png" Smooth;
+    TextureArrowDown      = "downarrow.png" Smooth;
+    TextureArrowDownHover = "downarrowhover.png" Smooth;
 }
 
 Slider {
