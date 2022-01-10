@@ -45,7 +45,7 @@ public:
 	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, float starTemperature, bool moon = false);
 
-	void draw(Renderer& renderer, Star* star, float time);
+	void draw(Renderer& renderer, sf::RenderWindow& window, Star* star, float time);
 	void update(Star* currentStar, Faction* faction);
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);
@@ -56,6 +56,7 @@ public:
 	void addEvent(const std::string& type);
 	void setMoonOf(int planetIndex) { m_parentPlanetIndex = planetIndex; }
 	void setRadius(float radius);
+
 	
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
@@ -70,6 +71,7 @@ public:
 	bool isGasGiant() const { return m_gasGiant; }
 	bool hasResource(const std::string& resource) const;
 	bool isMoon() const { return m_parentPlanetIndex != -1; }
+	bool isMouseInRadius(const sf::RenderWindow & window, const Renderer & renderer) const;
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
 

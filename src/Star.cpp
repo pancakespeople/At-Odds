@@ -180,7 +180,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 	if (m_drawHidden) {
 
 		for (Planet& planet : m_planets) {
-			planet.draw(renderer, this, time);
+			planet.draw(renderer, window, this, time);
 		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {

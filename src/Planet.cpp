@@ -54,9 +54,12 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, fl
 	m_shape.setOrigin(sf::Vector2f(getRadius(), getRadius()));
 }
 
-void Planet::draw(Renderer& renderer, Star* star, float time) {
+void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, float time) {
 	//m_orbit.draw(window);
-	//emitter.drawGlow(window, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
+	
+	if (isMouseInRadius(window, renderer)) {
+		renderer.effects.drawGlow(renderer, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
+	}
 
 	switch (m_type) {
 	case PLANET_TYPE::TERRA:
@@ -421,4 +424,12 @@ float Planet::getResourceAbundance(const std::string& type) const {
 void Planet::setRadius(float radius) {
 	m_shape.setSize(sf::Vector2f(radius * 2.0f, radius * 2.0f));
 	m_shape.setOrigin(sf::Vector2f(getRadius(), getRadius()));
+}
+
+bool Planet::isMouseInRadius(const sf::RenderWindow& window, const Renderer& renderer) const {
+	sf::Vector2f mouseWorldPos = renderer.mapPixelToCoords(sf::Mouse::getPosition(window));
+	if (Math::distance(mouseWorldPos, m_shape.getPosition()) < getRadius()) {
+		return true;
+	}
+	return false;
 }
