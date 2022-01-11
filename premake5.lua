@@ -10,8 +10,11 @@ project "at_odds"
    pchheader "gamepch.h"
    pchsource "src/gamepch.cpp"
 
-   files { "src/**.h", "src/**.hpp", "src/**.cpp" }
+   files { "src/**.h", "src/**.hpp", "src/**.cpp", "src/**.c" }
    
+   filter "files:src/ext/lua/*.c"
+      flags "NoPCH"
+
    filter "system:Windows"
       buildoptions "/bigobj"
    

@@ -19,21 +19,7 @@
 #include "Constellation.h"
 #include "Designs.h"
 #include "Renderer.h"
-
-void projectileExplosion(Star& star, Spaceship& ship) {
-	for (int i = 0; i < 25; i++) {
-		float randAngle = Random::randFloat(0.0f, 360.0f);
-		Projectile newProj("FLAK");
-		newProj.setPos(ship.getPos());
-		newProj.setRotation(randAngle);
-		newProj.setAllegiance(ship.getAllegiance());
-		star.addProjectile(newProj);
-	}
-}
-
-const std::unordered_map<std::string, std::function<void(Star& star, Spaceship& ship)>> onDeathFunctions = {
-	{"projectileExplosion", &projectileExplosion},
-};
+#include "Script.h"
 
 void Spaceship::init(const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color) {
 	m_sprite.setPosition(pos);
@@ -537,9 +523,10 @@ std::string Spaceship::getName() {
 
 void Spaceship::onDeath(Star* currentStar) {
 	auto& table = TOMLCache::getTable("data/objects/spaceships.toml");
-	std::string onDeathFunction = table[m_type]["onDeathFunction"].value_or("");
+	std::string onDeathScript = table[m_type]["onDeathScript"].value_or("");
 
-	if (onDeathFunction != "") {
-		onDeathFunctions.at(onDeathFunction)(*currentStar, *this);
+	if (onDeathScript != "") {
+		Script::RunScript(onDeathScript);
+		Script::CallFunction<void>("onUnitDeath", *currentStar, *this);
 	}
 }

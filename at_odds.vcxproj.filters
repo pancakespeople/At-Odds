@@ -4,12 +4,22 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{2AEC870B-96F5-877C-1F71-9E7C8B79937C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ext">
+      <UniqueIdentifier>{7670880B-E279-887C-6BF5-9E7CD7FD937C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\lua">
+      <UniqueIdentifier>{275CB382-933B-321E-9C53-BDF408B2987F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\sol">
+      <UniqueIdentifier>{3379B382-9F58-321E-A870-BDF414CF987F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="pch">
       <UniqueIdentifier>{809C880B-ECA5-887C-7521-9F7CE129947C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Animation.h" />
+    <ClInclude Include="src\AsteroidBelt.h" />
     <ClInclude Include="src\Background.h" />
     <ClInclude Include="src\Brain.h" />
     <ClInclude Include="src\Building.h" />
@@ -19,10 +29,57 @@
     <ClInclude Include="src\Constellation.h" />
     <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\Derelict.h" />
+    <ClInclude Include="src\Designs.h" />
     <ClInclude Include="src\EffectsEmitter.h" />
     <ClInclude Include="src\Faction.h" />
+    <ClInclude Include="src\Fonts.h" />
     <ClInclude Include="src\GUI.h" />
+    <ClInclude Include="src\GUI\BuildGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\BuildingGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\ColonyListGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
     <ClInclude Include="src\GUI\DebugConsole.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\DebugInfo.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\MainMenu.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\MinimapGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\NewGameMenu.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\NewsGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\OptionsMenu.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\PlanetGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\PlayerGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\ResourceGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\ShipDesigner.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\TechGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\UnitGUI.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GameState.h" />
@@ -31,6 +88,8 @@
     <ClInclude Include="src\JumpPoint.h" />
     <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\Mod.h" />
+    <ClInclude Include="src\MusicPlayer.h" />
+    <ClInclude Include="src\NameGenerator.h" />
     <ClInclude Include="src\Orbit.h" />
     <ClInclude Include="src\Order.h" />
     <ClInclude Include="src\ParticleSystem.h" />
@@ -40,45 +99,123 @@
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\Quadtree.h" />
     <ClInclude Include="src\Random.h" />
+    <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Resource.h" />
     <ClInclude Include="src\SaveLoader.h" />
+    <ClInclude Include="src\Script.h" />
+    <ClInclude Include="src\SmoothCircle.h" />
     <ClInclude Include="src\Sounds.h" />
     <ClInclude Include="src\Spaceship.h" />
     <ClInclude Include="src\Star.h" />
     <ClInclude Include="src\TOMLCache.h" />
+    <ClInclude Include="src\Tech.h" />
     <ClInclude Include="src\TextureCache.h" />
+    <ClInclude Include="src\TradeGoods.h" />
     <ClInclude Include="src\Unit.h" />
     <ClInclude Include="src\Util.h" />
     <ClInclude Include="src\Weapon.h" />
+    <ClInclude Include="src\ext\delaunator.hpp">
+      <Filter>ext</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lapi.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lauxlib.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lcode.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lctype.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\ldebug.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\ldo.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lfunc.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lgc.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\ljumptab.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\llex.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\llimits.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lmem.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lobject.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lopcodes.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lopnames.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lparser.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lprefix.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lstate.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lstring.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\ltable.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\ltm.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lua.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lua.hpp">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\luaconf.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lualib.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lundump.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lvm.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\lua\lzio.h">
+      <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\sol.hpp">
+      <Filter>ext</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\sol\config.hpp">
+      <Filter>ext\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\sol\forward.hpp">
+      <Filter>ext\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\toml.hpp">
+      <Filter>ext</Filter>
+    </ClInclude>
     <ClInclude Include="src\pch\gamepch.h">
       <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="src\ext\toml.hpp" />
-    <ClInclude Include="src\GUI\ShipDesigner.h" />
-    <ClInclude Include="src\GUI\PlayerGUI.h" />
-    <ClInclude Include="src\GUI\NewGameMenu.h" />
-    <ClInclude Include="src\GUI\MainMenu.h" />
-    <ClInclude Include="src\GUI\PlanetGUI.h" />
-    <ClInclude Include="src\GUI\UnitGUI.h" />
-    <ClInclude Include="src\GUI\BuildingGUI.h" />
-    <ClInclude Include="src\NameGenerator.h" />
-    <ClInclude Include="src\Fonts.h" />
-    <ClInclude Include="src\TradeGoods.h" />
-    <ClInclude Include="src\SmoothCircle.h" />
-    <ClInclude Include="src\GUI\TechGUI.h" />
-    <ClInclude Include="src\Tech.h" />
-    <ClInclude Include="src\GUI\ResourceGUI.h" />
-    <ClInclude Include="src\GUI\BuildGUI.h" />
-    <ClInclude Include="src\MusicPlayer.h" />
-    <ClInclude Include="src\GUI\OptionsMenu.h" />
-    <ClInclude Include="src\GUI\MinimapGUI.h" />
-    <ClInclude Include="src\AsteroidBelt.h" />
-    <ClInclude Include="src\ext\delaunator.hpp" />
-    <ClInclude Include="src\Designs.h" />
-    <ClInclude Include="src\GUI\DebugInfo.h" />
-    <ClInclude Include="src\GUI\NewsGUI.h" />
-    <ClInclude Include="src\GUI\ColonyListGUI.h" />
-    <ClInclude Include="src\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -90,10 +227,57 @@
     <ClCompile Include="src\Colony.cpp" />
     <ClCompile Include="src\Constellation.cpp" />
     <ClCompile Include="src\Derelict.cpp" />
+    <ClCompile Include="src\Designs.cpp" />
     <ClCompile Include="src\EffectsEmitter.cpp" />
     <ClCompile Include="src\Faction.cpp" />
+    <ClCompile Include="src\Fonts.cpp" />
     <ClCompile Include="src\GUI.cpp" />
+    <ClCompile Include="src\GUI\BuildGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\BuildingGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\ColonyListGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
     <ClCompile Include="src\GUI\DebugConsole.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\DebugInfo.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\MainMenu.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\MinimapGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\NewGameMenu.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\NewsGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\OptionsMenu.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\PlanetGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\PlayerGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\ResourceGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\ShipDesigner.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\TechGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\UnitGUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\GameState.cpp" />
@@ -101,6 +285,8 @@
     <ClCompile Include="src\Identifiable.cpp" />
     <ClCompile Include="src\JumpPoint.cpp" />
     <ClCompile Include="src\Mod.cpp" />
+    <ClCompile Include="src\MusicPlayer.cpp" />
+    <ClCompile Include="src\NameGenerator.cpp" />
     <ClCompile Include="src\Orbit.cpp" />
     <ClCompile Include="src\Order.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
@@ -110,52 +296,119 @@
     <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\Quadtree.cpp" />
     <ClCompile Include="src\Random.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Resource.cpp" />
     <ClCompile Include="src\SaveLoader.cpp" />
+    <ClCompile Include="src\Script.cpp" />
     <ClCompile Include="src\Sounds.cpp" />
     <ClCompile Include="src\Spaceship.cpp" />
     <ClCompile Include="src\Star.cpp" />
     <ClCompile Include="src\TOMLCache.cpp" />
+    <ClCompile Include="src\Tech.cpp" />
     <ClCompile Include="src\TextureCache.cpp" />
+    <ClCompile Include="src\TradeGoods.cpp" />
     <ClCompile Include="src\Unit.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
+    <ClCompile Include="src\ext\lua\lapi.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lauxlib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lbaselib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lcode.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lcorolib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lctype.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\ldblib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\ldebug.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\ldo.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\ldump.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lfunc.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lgc.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\linit.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\liolib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\llex.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lmathlib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lmem.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\loadlib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lobject.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lopcodes.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\loslib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lparser.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lstate.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lstring.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lstrlib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\ltable.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\ltablib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\ltm.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lundump.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lutf8lib.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lvm.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\lua\lzio.c">
+      <Filter>ext\lua</Filter>
+    </ClCompile>
     <ClCompile Include="src\gamepch.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\GUI\ShipDesigner.cpp" />
-    <ClCompile Include="src\GUI\PlayerGUI.cpp" />
-    <ClCompile Include="src\GUI\NewGameMenu.cpp" />
-    <ClCompile Include="src\GUI\MainMenu.cpp" />
-    <ClCompile Include="src\GUI\PlanetGUI.cpp" />
-    <ClCompile Include="src\GUI\UnitGUI.cpp" />
-    <ClCompile Include="src\GUI\BuildingGUI.cpp" />
-    <ClCompile Include="src\NameGenerator.cpp" />
-    <ClCompile Include="src\Fonts.cpp" />
-    <ClCompile Include="src\TradeGoods.cpp" />
-    <ClCompile Include="src\GUI\TechGUI.cpp" />
-    <ClCompile Include="src\Tech.cpp" />
-    <ClCompile Include="src\GUI\ResourceGUI.cpp" />
-    <ClCompile Include="src\GUI\BuildGUI.cpp" />
-    <ClCompile Include="src\MusicPlayer.cpp" />
-    <ClCompile Include="src\GUI\OptionsMenu.cpp" />
-    <ClCompile Include="src\GUI\MinimapGUI.cpp" />
-    <ClCompile Include="src\Designs.cpp" />
-    <ClCompile Include="src\GUI\DebugInfo.cpp" />
-    <ClCompile Include="src\GUI\NewsGUI.cpp" />
-    <ClCompile Include="src\GUI\ColonyListGUI.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\objects\planetevents.toml" />
-    <None Include="data\shaders\selectionshader.shader" />
-    <None Include="data\shaders\bordershader.shader" />
-    <None Include="data\objects\tradegoods.toml" />
-    <None Include="data\shaders\terraplanetshader.shader" />
-    <None Include="data\shaders\blackholeshader.shader" />
-    <None Include="data\objects\tech.toml" />
-    <None Include="data\objects\colonybuildingeffectstext.toml" />
-    <None Include="data\shaders\lavaplanetshader.shader" />
-    <None Include="data\shaders\ringsshader.shader" />
-    <None Include="data\shaders\asteroidbeltshader.shader" />
-    <None Include="data\shaders\posteffectsshader.shader" />
+    <None Include="data\scripts\projectileExplosion.lua" />
   </ItemGroup>
 </Project>

@@ -28,6 +28,7 @@
 #include "Fonts.h"
 #include "GUI/DebugInfo.h"
 #include "Renderer.h"
+#include "Script.h"
 
 int main(int argc, const char* argv[])
 {
