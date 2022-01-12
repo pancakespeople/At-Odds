@@ -408,7 +408,4 @@
     <ClCompile Include="src\gamepch.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="data\scripts\projectileExplosion.lua" />
-  </ItemGroup>
 </Project>

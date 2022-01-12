@@ -5,7 +5,8 @@ project "at_odds"
    language "C++"
    cppdialect "C++17"
    targetdir "bin/%{cfg.buildcfg}"
-   includedirs "src/pch"
+   includedirs {"src/pch", "src/ext/lua"}
+   flags {"MultiProcessorCompile"}
    
    pchheader "gamepch.h"
    pchsource "src/gamepch.cpp"
@@ -16,7 +17,7 @@ project "at_odds"
       flags "NoPCH"
 
    filter "system:Windows"
-      buildoptions "/bigobj"
+      buildoptions {"/bigobj", "/MP"}
    
    filter "system:Linux"
       links {
