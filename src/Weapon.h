@@ -50,7 +50,7 @@ private:
 		archive & m_projectile;
 		archive & m_instaHit;
 		archive & m_lastFireLocation;
-		archive & m_fireAnimation;
+		archive & m_fireAnimationScript;
 	}
 
 	Weapon() {}
@@ -64,7 +64,7 @@ private:
 	int m_baseSoundCooldown = 0;
 
 	std::string m_type;
-	std::string m_fireAnimation;
+	std::string m_fireAnimationScript;
 
 	Projectile m_projectile;
 

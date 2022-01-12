@@ -408,4 +408,7 @@
     <ClCompile Include="src\gamepch.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="data\scripts\laserAnimation.lua" />
+  </ItemGroup>
 </Project>

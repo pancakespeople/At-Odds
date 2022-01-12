@@ -9,22 +9,7 @@
 #include "Random.h"
 #include "TOMLCache.h"
 #include "Renderer.h"
-
-void laserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
-	float angle = Math::angleBetween(sourcePos, endPos);
-	sf::RectangleShape shape;
-
-	shape.setRotation(-angle);
-	shape.setPosition(sourcePos);
-	shape.setSize(sf::Vector2f(Math::distance(sourcePos, endPos), 25.0f));
-	shape.setFillColor(sf::Color(255, 0, 0, 255 * (1.0 / step)));
-
-	renderer.draw(shape);
-}
-
-const std::unordered_map<std::string, std::function<void(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step)>> fireAnimationFunctions = {
-	{"laserAnimation", &laserAnimation},
-};
+#include "Script.h"
 
 Weapon::Weapon(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
@@ -39,7 +24,7 @@ Weapon::Weapon(const std::string& type) {
 	m_accuracy = table[type]["accuracy"].value_or(1.0f);
 	m_baseSoundCooldown = table[type]["baseSoundCooldown"].value_or(0);
 	m_numProjectiles = table[type]["numProjectiles"].value_or(1);
-	m_fireAnimation = table[type]["fireAnimation"].value_or("");
+	m_fireAnimationScript = table[type]["fireAnimationScript"].value_or("");
 	m_instaHit = table[type]["instaHit"].value_or(false);
 }
 
@@ -125,8 +110,9 @@ std::string Weapon::getSoundPath() const {
 
 void Weapon::drawFireAnimation(Renderer& renderer, Unit* unit) {
 	if (isOnCooldown()) {
-		if (m_fireAnimation != "") {
-			fireAnimationFunctions.at(m_fireAnimation)(renderer, unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
+		if (m_fireAnimationScript != "") {
+			Script::RunScript(m_fireAnimationScript);
+			Script::CallFunction<void>("drawAnimation", renderer, unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
 		}
 	}
 }
