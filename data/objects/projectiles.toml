@@ -38,19 +38,19 @@ speed = 15.0
 
 [ROCKET]
 texturePath = "data/art/rocket.png"
-deathFunction = "smallExplosion"
+onDeathScript = "smallExplosion.lua"
 life = 400.0
 damage = 15.0
 
 [FLAK]
 texturePath = "data/art/flak.png"
-deathFunction = "smallExplosion"
+onDeathScript = "smallExplosion.lua"
 life = 175.0
 damage = 10.0
 
 [MEGA_LASER]
 texturePath = "data/art/megalaser.png"
-deathFunction = "laserRing"
+onDeathScript = "laserRing.lua"
 scaleX = 2.0
 scaleY = 2.0
 life = 500.0
@@ -59,7 +59,7 @@ speed = 20.0
 
 [LIGHTNING]
 texturePath = "data/art/lightningproj.png"
-deathFunction = "lightningAOE"
+onDeathScript = "lightningAOE.lua"
 life = 250.0
 damage = 10.0
 speed = 20.0
@@ -73,7 +73,7 @@ diesOnCollision = false
 
 [CRUSHER_BOLT]
 texturePath = "data/art/crusher.png"
-deathFunction = "knockAll"
+onDeathScript = "knockAll.lua"
 scaleX = 2.0
 scaleY = 2.0
 life = 400.0
@@ -81,14 +81,14 @@ damage = 75.0
 
 [NUCLEAR_MISSILE]
 texturePath = "data/art/nuclearmissile.png"
-deathFunction = "largeExplosion"
+onDeathScript = "largeExplosion.lua"
 life = 100.0
 damage = 80.0
 orbitalBombardment = true
 
 [INVASION_POD]
 texturePath = "data/art/invasionpod.png"
-deathFunction = "smallExplosion"
+onDeathScript = "smallExplosion.lua"
 life = 100.0
 damage = 0.0
 planetaryInvasion = true
@@ -97,3 +97,10 @@ planetaryInvasion = true
 life = 2500.0
 speed = 1.0
 damage = 50.0
+
+[BLACK_HOLE]
+texturePath = "data/art/blackholeproj.png"
+life = 600.0
+damage = 80.0
+speed = 5.0
+onDeathScript = "blackHole.lua"

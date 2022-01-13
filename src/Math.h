@@ -41,4 +41,8 @@ namespace Math {
 	inline double lerp(double v0, double v1, double t) {
 		return (1 - t) * v0 + t * v1;
 	}
+
+	inline double clamp(double val, double min, double max) {
+		return std::clamp(val, min, max);
+	}
 }

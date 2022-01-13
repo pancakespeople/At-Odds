@@ -6,6 +6,7 @@
 #include "Spaceship.h"
 #include "Math.h"
 #include "Renderer.h"
+#include "Sounds.h"
 
 void addUserTypes(sol::state& lua) {
 	// SFML stuff
@@ -39,14 +40,19 @@ void addUserTypes(sol::state& lua) {
 	lua["Random"]["randVec"] = &Random::randVec;
 
 	// Math
-	lua.create_table("Math");
-	lua["Math"]["pi"] = Math::pi;
-	lua["Math"]["toRadians"] = Math::toRadians;
-	lua["Math"]["toDegrees"] = Math::toDegrees;
-	lua["Math"]["distance"] = &Math::distance;
-	lua["Math"]["angleBetween"] = &Math::angleBetween;
-	lua["Math"]["magnitude"] = &Math::magnitude;
-	lua["Math"]["lerp"] = &Math::lerp;
+	lua.create_table("AOMath");
+	lua["AOMath"]["pi"] = Math::pi;
+	lua["AOMath"]["toRadians"] = Math::toRadians;
+	lua["AOMath"]["toDegrees"] = Math::toDegrees;
+	lua["AOMath"]["distance"] = &Math::distance;
+	lua["AOMath"]["angleBetween"] = &Math::angleBetween;
+	lua["AOMath"]["magnitude"] = &Math::magnitude;
+	lua["AOMath"]["lerp"] = &Math::lerp;
+	lua["AOMath"]["clamp"] = &Math::clamp;
+
+	// Sounds
+	lua.create_table("Sounds");
+	lua["Sounds"]["playSoundLocal"] = &Sounds::playSoundLocal;
 
 	// Renderer
 	lua.new_usertype<Renderer>("Renderer",
@@ -57,26 +63,37 @@ void addUserTypes(sol::state& lua) {
 	lua.new_usertype<Projectile>("Projectile",
 		sol::constructors<Projectile(const std::string&)>(),
 		"setPos", &Projectile::setPos,
+		"getPos", &Projectile::getPos,
 		"setRotation", &Projectile::setRotation,
-		"setAllegiance", &Projectile::setAllegiance
+		"setAllegiance", &Projectile::setAllegiance,
+		"getAllegiance", &Projectile::getAllegiance
+	);
+
+	// Animation
+	lua.new_usertype<Animation>("Animation",
+		sol::constructors<Animation(const std::string&, sf::Vector2f)>()
 	);
 
 	// Star
 	lua.new_usertype<Star>("Star",
-		"addProjectile", &Star::addProjectile
+		"addProjectile", &Star::addProjectile,
+		"addAnimation", &Star::addAnimation,
+		"getSpaceships", &Star::getSpaceships
 	);
 
 	// Spaceship
 	lua.new_usertype<Spaceship>("Spaceship",
 		"getPos", &Spaceship::getPos,
-		"getAllegiance", &Spaceship::getAllegiance
+		"getAllegiance", &Spaceship::getAllegiance,
+		"addVelocity", &Spaceship::addVelocity,
+		"getMass", &Spaceship::getMass
 	);
 }
 
 bool Script::RunScript(const std::string& filePath) {
 	if (!initialized) {
 		// Initialize script engine if not initialized
-		lua.open_libraries(sol::lib::base);
+		lua.open_libraries(sol::lib::base, sol::lib::math);
 		addUserTypes(Script::lua);
 		initialized = true;
 		DEBUG_PRINT("Initialized lua engine");
@@ -86,10 +103,8 @@ bool Script::RunScript(const std::string& filePath) {
 	auto result = lua.script_file("data/scripts/" + filePath);
 	
 	if (!result.valid()) {
-		DEBUG_PRINT("Script error in " << filePath);
-		for (auto& error : result) {
-			DEBUG_PRINT(error.as<std::string>());
-		}
+		sol::error err = result;
+		DEBUG_PRINT("Script error in " << filePath << ": " << err.what());
 	}
 	
 	return result.valid();

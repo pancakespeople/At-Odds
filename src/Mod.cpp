@@ -776,7 +776,7 @@ void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 		}
 	}
 
-	if ((m_lifetimeTicks + 1) % m_spawnNewBaseTime == 0) {
+	if ((m_lifetimeTicks + 1) % m_spawnNewBaseTime == 0 && currentStar->getConnectedStars().size() > 0) {
 		// Send out a ship to create a new pirate base
 		Spaceship* ship = currentStar->createSpaceship("BIG_SPACE_TRUCK", unit->getPos(), -1, Faction::neutralColor);
 		ship->setPirate(true);

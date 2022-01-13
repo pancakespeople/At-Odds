@@ -93,3 +93,10 @@ sound = "data/sound/pew1.wav"
 cooldownRecovery = 0.25
 fireAnimationScript = "laserAnimation.lua"
 instaHit = true
+
+[BLACK_HOLE_GUN]
+name = "Black Hole Gun"
+weaponPoints = 3.0
+cost = [["RARE_ORE", 75.0]]
+projectile = "BLACK_HOLE"
+cooldownRecovery = 0.25

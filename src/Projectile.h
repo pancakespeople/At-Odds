@@ -57,7 +57,7 @@ private:
 		archive & m_allegiance;
 		archive & m_damage;
 		archive & m_collider;
-		archive & m_deathFunctionName;
+		archive & m_onDeathScript;
 		archive & m_diesOnCollision;
 		archive & m_orbitalBombardment;
 		archive & m_planetaryInvasion;
@@ -72,7 +72,7 @@ private:
 	int m_allegiance;
 	float m_damage;
 	Collider m_collider;
-	std::string m_deathFunctionName;
+	std::string m_onDeathScript;
 	bool m_diesOnCollision = true;
 	bool m_orbitalBombardment = false;
 	bool m_planetaryInvasion = false;

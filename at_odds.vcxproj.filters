@@ -410,5 +410,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="data\scripts\laserAnimation.lua" />
+    <None Include="data\scripts\smallExplosion.lua" />
+    <None Include="data\scripts\largeExplosion.lua" />
+    <None Include="data\scripts\laserRing.lua" />
+    <None Include="data\scripts\lightningAOE.lua" />
+    <None Include="data\scripts\knockAll.lua" />
+    <None Include="data\scripts\blackHole.lua" />
   </ItemGroup>
 </Project>
