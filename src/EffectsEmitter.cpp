@@ -289,3 +289,15 @@ void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& windo
 		window.draw(sprite);
 	}
 }
+
+void EffectsEmitter::drawLaserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
+	float angle = Math::angleBetween(sourcePos, endPos);
+	sf::RectangleShape shape;
+
+	shape.setRotation(-angle);
+	shape.setPosition(sourcePos);
+	shape.setSize(sf::Vector2f(Math::distance(sourcePos, endPos), 25.0f));
+	shape.setFillColor(sf::Color(255, 0, 0, 255 * (1.0 / step)));
+
+	renderer.draw(shape);
+}

@@ -91,7 +91,7 @@ cost = [["COMMON_ORE", 50.0]]
 projectile = "BEAM_LASER"
 sound = "data/sound/pew1.wav"
 cooldownRecovery = 0.25
-fireAnimationScript = "laserAnimation.lua"
+fireAnimation = "beamLaser"
 instaHit = true
 
 [BLACK_HOLE_GUN]

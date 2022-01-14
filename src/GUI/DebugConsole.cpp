@@ -275,11 +275,16 @@ void DebugConsole::open(tgui::Gui& gui) {
 	m_editBox->onReturnKeyPress([this]() {
 		m_chatBox->addLine(">>> " + m_editBox->getText());
 		processCommand(m_editBox->getText().toStdString());
+		m_lastCommand = m_editBox->getText().toStdString();
 		m_editBox->setText("");
 		});
 	m_console->add(m_editBox);
-
 	gui.add(m_console);
+
+	for (const std::string& line : m_savedLines) {
+		m_chatBox->addLine(line);
+	}
+	m_savedLines.clear();
 
 	addCommand("spawnship", spawnShip);
 	addCommand("planetdebug", planetDebug);
@@ -299,18 +304,33 @@ void DebugConsole::open(tgui::Gui& gui) {
 
 void DebugConsole::close(tgui::Gui& gui) {
 	if (m_console != nullptr) {
+		for (int i = 0; i < m_chatBox->getLineAmount(); i++) {
+			m_savedLines.push_back(m_chatBox->getLine(i).toStdString());
+
+			if (m_savedLines.size() >= 20) {
+				break;
+			}
+		}
+		
 		gui.remove(m_console);
 		m_console = nullptr;
 	}
 }
 
 void DebugConsole::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
-	if (ev.type == sf::Event::EventType::KeyReleased && ev.key.code == sf::Keyboard::Tilde) {
-		if (isOpen()) {
-			close(gui);
+	if (ev.type == sf::Event::EventType::KeyReleased) {
+		if (ev.key.code == sf::Keyboard::Tilde) {
+			if (isOpen()) {
+				close(gui);
+			}
+			else {
+				open(gui);
+			}
 		}
-		else {
-			open(gui);
+		else if (ev.key.code == sf::Keyboard::Up && m_editBox->isFocused()) {
+			if (m_lastCommand != "") {
+				m_editBox->setText(m_lastCommand);
+			}
 		}
 	}
 }

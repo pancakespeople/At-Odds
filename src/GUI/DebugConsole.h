@@ -42,4 +42,6 @@ private:
 
 	std::queue<Command> m_commandQueue;
 	std::unordered_map<std::string, std::function<void(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies)>> m_commands;
+	std::vector<std::string> m_savedLines;
+	std::string m_lastCommand;
 };

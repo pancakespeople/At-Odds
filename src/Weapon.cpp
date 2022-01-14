@@ -24,7 +24,7 @@ Weapon::Weapon(const std::string& type) {
 	m_accuracy = table[type]["accuracy"].value_or(1.0f);
 	m_baseSoundCooldown = table[type]["baseSoundCooldown"].value_or(0);
 	m_numProjectiles = table[type]["numProjectiles"].value_or(1);
-	m_fireAnimationScript = table[type]["fireAnimationScript"].value_or("");
+	m_fireAnimation = table[type]["fireAnimation"].value_or("");
 	m_instaHit = table[type]["instaHit"].value_or(false);
 }
 
@@ -110,9 +110,8 @@ std::string Weapon::getSoundPath() const {
 
 void Weapon::drawFireAnimation(Renderer& renderer, Unit* unit) {
 	if (isOnCooldown()) {
-		if (m_fireAnimationScript != "") {
-			Script::RunScript(m_fireAnimationScript);
-			Script::CallFunction<void>("drawAnimation", renderer, unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
+		if (m_fireAnimation == "beamLaser") {
+			renderer.effects.drawLaserAnimation(renderer, unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
 		}
 	}
 }
