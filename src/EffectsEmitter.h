@@ -32,6 +32,7 @@ public:
 	void drawAsteroidBelt(Renderer& renderer, sf::Vector2f pos, float radius, float seed);
 	void drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state);
 	void drawLaserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
+	void drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void updateTime(float time);
 
 private:

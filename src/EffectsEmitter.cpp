@@ -6,6 +6,7 @@
 #include "Star.h"
 #include "Renderer.h"
 #include "GameState.h"
+#include "Random.h"
 
 EffectsEmitter::EffectsEmitter(sf::Vector2i resolution, Renderer& renderer) :
 m_renderer(renderer) {
@@ -300,4 +301,23 @@ void EffectsEmitter::drawLaserAnimation(Renderer& renderer, sf::Vector2f sourceP
 	shape.setFillColor(sf::Color(255, 0, 0, 255 * (1.0 / step)));
 
 	renderer.draw(shape);
+}
+
+void EffectsEmitter::drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
+	float angle = Math::angleBetween(sourcePos, endPos);
+	float dist = Math::distance(sourcePos, endPos);
+	float offset = 10000.0f * std::fmodf(step * 10.0f, 1.0f);
+
+	if (offset < dist && step < 0.5f) {
+		sf::Vector2f pos(sourcePos.x + std::cos(angle * Math::toRadians) * offset, sourcePos.y + -std::sin(angle * Math::toRadians) * offset);
+
+		sf::RectangleShape shape;
+
+		shape.setRotation(-angle);
+		shape.setPosition(pos);
+		shape.setSize(sf::Vector2f(75.0f, 25.0f));
+		shape.setFillColor(sf::Color(255, 255, 0, 255));
+
+		renderer.draw(shape);
+	}
 }

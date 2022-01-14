@@ -7,7 +7,7 @@ function onProjectileDeath(star, proj)
 	for i, ship in pairs(spaceships) do
 		local dist = AOMath.distance(proj:getPos(), ship:getPos())
 		local accel = 1000000000.0 / ship:getMass() / (dist * 4.0)
-		local angle = AOMath.angleBetween(proj:getPos(), ship:getPos()) + 180.0
-		ship:addVelocity(sf.Vector2f.new(math.cos(angle * AOMath.toRadians), math.sin(angle * AOMath.toRadians) * accel))
+		local angle = AOMath.angleBetween(proj:getPos(), ship:getPos())
+		ship:addVelocity(sf.Vector2f.new(math.cos(angle * AOMath.toRadians) * accel, -math.sin(angle * AOMath.toRadians) * accel))
 	end
 end

@@ -6,7 +6,7 @@ function onProjectileDeath(star, proj)
 		if dist < 1000.0 then
 			local accel = AOMath.clamp(dist * 2.0, 0.0, 50.0)
 			local angle = AOMath.angleBetween(proj:getPos(), ship:getPos()) + 180.0
-			ship:addVelocity(sf.Vector2f.new(-math.cos(angle * AOMath.toRadians), -math.sin(angle * AOMath.toRadians) * accel))
+			ship:addVelocity(sf.Vector2f.new(math.cos(angle * AOMath.toRadians) * accel, -math.sin(angle * AOMath.toRadians) * accel))
 		end
 	end
 end

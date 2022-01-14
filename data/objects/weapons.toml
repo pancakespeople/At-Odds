@@ -91,7 +91,7 @@ cost = [["COMMON_ORE", 50.0]]
 projectile = "BEAM_LASER"
 sound = "data/sound/pew1.wav"
 cooldownRecovery = 0.25
-fireAnimation = "beamLaser"
+fireAnimation = "beamlaser"
 instaHit = true
 
 [BLACK_HOLE_GUN]
@@ -100,3 +100,13 @@ weaponPoints = 3.0
 cost = [["RARE_ORE", 75.0]]
 projectile = "BLACK_HOLE"
 cooldownRecovery = 0.25
+
+[GATLING_GUN]
+name = "Gatling Gun"
+weaponPoints = 2.0
+cost = [["COMMON_ORE", 17.0]]
+projectile = "GATLING"
+cooldownRecovery = 0.5
+fireAnimation = "gatlinggun"
+instaHit = true
+sound = "data/sound/machinegun.wav"
