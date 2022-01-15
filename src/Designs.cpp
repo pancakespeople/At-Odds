@@ -1,6 +1,7 @@
 #include "gamepch.h"
 #include "Designs.h"
 #include "TOMLCache.h"
+#include "Util.h"
 
 std::unordered_map<std::string, float> DesignerShip::getTotalResourceCost() {
 	std::unordered_map<std::string, float> totalResourceCost;
@@ -55,6 +56,15 @@ DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 	for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
 		std::string resourceType = table[typeStr]["cost"][i][0].value_or("");
 		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
+	}
+}
+
+std::string DesignerWeapon::getFullName() {
+	if (upgradeLevel == 1) {
+		return name;
+	}
+	else {
+		return name + " " + Util::toRomanNumeral(upgradeLevel);
 	}
 }
 

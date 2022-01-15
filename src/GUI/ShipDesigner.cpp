@@ -39,7 +39,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 					shipWeaponsListBox->removeAllItems();
 					for (auto& weapon : ship.weapons) {
-						shipWeaponsListBox->addItem(weapon.name);
+						shipWeaponsListBox->addItem(weapon.getFullName(), weapon.type);
 					}
 					if (shipWeaponsListBox->getItemCount() > 0) {
 						shipWeaponsListBox->setSelectedItemByIndex(shipWeaponsListBox->getItemCount() - 1);
@@ -85,10 +85,10 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 					weaponInfoGroup->setPosition("weaponsListBox.right + 2.5%", "weaponsListBox.top");
 					m_window->add(weaponInfoGroup, "weaponInfoGroup");
 
-					DesignerWeapon weapon = playerFaction->getWeaponByName(weaponsListBox->getSelectedItem().toStdString());
+					DesignerWeapon weapon(weaponsListBox->getSelectedItemId().toStdString());
 					Weapon weaponObj(weapon.type);
 					
-					auto weaponNameLabel = tgui::Label::create(weapon.name);
+					auto weaponNameLabel = tgui::Label::create(weapon.getFullName());
 					weaponNameLabel->getRenderer()->setTextStyle(tgui::TextStyle::Underlined);
 					weaponInfoGroup->add(weaponNameLabel);
 					
@@ -120,7 +120,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 			// Add weapons to list box
 			for (auto& weapon : playerFaction->getWeapons()) {
-				weaponsListBox->addItem(weapon.name);
+				weaponsListBox->addItem(weapon.getFullName(), weapon.type);
 			}
 
 			auto shipChassisListBox = tgui::ListBox::create();
@@ -158,8 +158,8 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 						DesignerShip ship;
 						ship.chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
 						
-						for (tgui::String& weapon : shipWeaponsListBox->getItems()) {
-							ship.weapons.push_back(playerFaction->getWeaponByName(weapon.toStdString()));
+						for (tgui::String& weapon : shipWeaponsListBox->getItemIds()) {
+							ship.weapons.push_back(playerFaction->getWeapon(weapon.toStdString()));
 						}
 						
 						if (designNameTextBox->getText().size() == 0) {
@@ -209,7 +209,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			weaponsAdderButton->setPosition("weaponsListBox.left + weaponsListBox.width * 0.25", "42.5%");
 			weaponsAdderButton->onClick([this, playerFaction, weaponsListBox, shipWeaponsListBox, shipChassisListBox]() {
 				if (weaponsListBox->getSelectedItemIndex() != -1 && shipChassisListBox->getItemCount() > 0) {
-					shipWeaponsListBox->addItem(weaponsListBox->getSelectedItem());
+					shipWeaponsListBox->addItem(weaponsListBox->getSelectedItem(), weaponsListBox->getSelectedItemId());
 					//if (!canChassisFitWeapons(playerFaction)) {
 					//	shipWeaponsListBox->removeItemByIndex(shipWeaponsListBox->getItemCount() - 1);
 					//}
@@ -267,8 +267,8 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 
 		float totalWeaponPoints = 0.0f;
 
-		for (tgui::String& str : shipWeaponsListBox->getItems()) {
-			DesignerWeapon weapon = playerFaction->getWeaponByName(str.toStdString());
+		for (tgui::String& str : shipWeaponsListBox->getItemIds()) {
+			DesignerWeapon weapon = playerFaction->getWeapon(str.toStdString());
 			totalWeaponPoints += weapon.weaponPoints;
 			for (auto& resource : weapon.resourceCost) {
 				totalResourceCost[resource.first] += resource.second;
@@ -315,8 +315,8 @@ bool ShipDesignerGUI::canChassisFitWeapons(Faction* playerFaction) {
 	DesignerChassis chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
 
 	float total = 0.0f;
-	for (tgui::String& weaponString : shipWeaponsListBox->getItems()) {
-		DesignerWeapon weapon = playerFaction->getWeaponByName(weaponString.toStdString());
+	for (tgui::String& weaponString : shipWeaponsListBox->getItemIds()) {
+		DesignerWeapon weapon = playerFaction->getWeapon(weaponString.toStdString());
 		total += weapon.weaponPoints;
 	}
 

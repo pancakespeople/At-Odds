@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#include "Designs.h"
+
 class Faction;
 
 class Tech {
@@ -22,6 +24,8 @@ public:
 	void setResearching(bool researching) { m_researching = researching; }
 	void setRequiredResearchPoints(float points) { m_researchPointsRequired = points; }
 	void resetResearchPoints() { m_researchPoints = 0.0f; }
+	
+	static Tech generateWeaponUpgradeTech(const DesignerWeapon& weapon);
 	
 	bool isResearched() const { return m_researchPoints >= m_researchPointsRequired; }
 	bool isResearching() const { return m_researching; }

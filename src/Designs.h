@@ -29,9 +29,12 @@ struct DesignerWeapon {
 	DesignerWeapon() {}
 	DesignerWeapon(const std::string& typeStr);
 
-	std::string type;
+	std::string getFullName();
+
 	std::string name;
+	std::string type;
 	float weaponPoints = 1.0f;
+	int upgradeLevel = 1;
 	std::unordered_map<std::string, float> resourceCost;
 
 private:
@@ -42,7 +45,9 @@ private:
 		archive & name;
 		archive & weaponPoints;
 		archive & resourceCost;
+		archive & upgradeLevel;
 	}
+
 };
 
 struct DesignerShip {

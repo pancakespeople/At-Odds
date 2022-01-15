@@ -26,7 +26,7 @@ public:
 	void addResource(const std::string& type, float num);
 	void subtractResource(const std::string& type, float num);
 	void addChassis(const DesignerChassis& chassis) { if (!hasChassis(chassis.type)) m_chassis.push_back(chassis); }
-	void addWeapon(const DesignerWeapon& weapon) { if (!hasWeapon(weapon.type)) m_weapons.push_back(weapon); }
+	void addWeapon(const DesignerWeapon& weapon);
 	void addShipDesign(const DesignerShip& ship);
 	void subtractResources(const std::unordered_map<std::string, float>& resources);
 	void addAnnouncementEvent(const std::string& text);
@@ -43,6 +43,7 @@ public:
 	void addNewsEvent(const std::string& text, sf::Color color = sf::Color::White);
 	void onColonization(Planet* planet, Star* star);
 	void addTech(const Tech& tech) { m_techs.push_back(tech); }
+	void upgradeWeapon(const std::string& type);
 
 	int getID() { return m_id; }
 	int numUnbuiltBuildings(Star* star);
@@ -102,6 +103,7 @@ public:
 
 	DesignerChassis getChassisByName(const std::string& name);
 	DesignerWeapon getWeaponByName(const std::string& name);
+	DesignerWeapon getWeapon(const std::string& type);
 	DesignerShip getShipDesignByName(const std::string& name);
 	DesignerWeapon addRandomWeapon();
 	DesignerWeapon addRandomUndiscoveredWeapon();

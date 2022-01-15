@@ -25,3 +25,7 @@ const toml::table& TOMLCache::getTable(const std::string& filePath) {
 		return m_tables[filePath];
 	}
 }
+
+void TOMLCache::setTable(const std::string& filePath, const toml::table& table) {
+	m_tables[filePath] = table;
+}

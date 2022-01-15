@@ -346,6 +346,11 @@ void Faction::reinitAfterLoad(Constellation* constellation) {
 		m_ships.push_back(constellation->getShipByID(id));
 	}
 
+	// Regenerate weapon upgrades
+	for (auto& weapon : m_weapons) {
+		Tech::generateWeaponUpgradeTech(weapon);
+	}
+
 	m_ai.reinitAfterLoad(constellation);
 }
 
@@ -577,6 +582,12 @@ void Faction::onResearchFinish(Tech& tech) {
 		addTech(Tech(unlockedTech));
 	}
 
+	// Upgrade weapon
+	std::string weaponType = table[tech.getType()]["upgradesWeapon"].value_or("");
+	if (weaponType != "") {
+		upgradeWeapon(weaponType);
+	}
+
 	DEBUG_PRINT(getName() << " completed research " << tech.getName());
 	addAnnouncementEvent("Research completed on " + tech.getName());
 
@@ -696,4 +707,39 @@ bool Faction::hasChassis(const std::string& type) {
 		}
 	}
 	return false;
+}
+
+void Faction::addWeapon(const DesignerWeapon& weapon) {
+	if (!hasWeapon(weapon.type)) {
+		m_weapons.push_back(weapon);
+		addTech(Tech::generateWeaponUpgradeTech(weapon));
+	}
+}
+
+void Faction::upgradeWeapon(const std::string& type) {
+	for (auto& weapon : m_weapons) {
+		if (weapon.type == type) {
+			weapon.upgradeLevel++;
+			addTech(Tech::generateWeaponUpgradeTech(weapon));
+
+			// Automatically update designs to use the new upgrade
+			for (auto& design : m_designerShips) {
+				for (auto& designWeapon : design.weapons) {
+					if (designWeapon.type == type) {
+						designWeapon.upgradeLevel++;
+					}
+				}
+			}
+		}
+	}
+}
+
+DesignerWeapon Faction::getWeapon(const std::string& type) {
+	for (auto& weapon : m_weapons) {
+		if (weapon.type == type) {
+			return weapon;
+		}
+	}
+	assert(false);
+	return DesignerWeapon();
 }
