@@ -306,7 +306,7 @@ void EffectsEmitter::drawLaserAnimation(Renderer& renderer, sf::Vector2f sourceP
 void EffectsEmitter::drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
 	float angle = Math::angleBetween(sourcePos, endPos);
 	float dist = Math::distance(sourcePos, endPos);
-	float offset = 10000.0f * std::fmodf(step * 10.0f, 1.0f);
+	float offset = 10000.0f * std::fmod(step * 10.0f, 1.0f);
 
 	if (offset < dist && step < 0.5f) {
 		sf::Vector2f pos(sourcePos.x + std::cos(angle * Math::toRadians) * offset, sourcePos.y + -std::sin(angle * Math::toRadians) * offset);
