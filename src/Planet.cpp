@@ -433,3 +433,85 @@ bool Planet::isMouseInRadius(const sf::RenderWindow& window, const Renderer& ren
 	}
 	return false;
 }
+
+std::string Planet::getHabitabilityText() {
+	float hab = getHabitability();
+	if (hab < 0.1f) {
+		return "Nightmare";
+	}
+	else if (hab < 0.25f) {
+		return "Terrible";
+	}
+	else if (hab < 0.5f) {
+		return "Challenging";
+	}
+	else if (hab < 0.9f) {
+		return "Reasonable";
+	}
+	else if (hab < 1.5f) {
+		return "Earthlike";
+	}
+	else {
+		return "Earth";
+	}
+}
+
+std::string Planet::getTemperatureText() {
+	if (m_temperature < 200.0f) {
+		return "Extremely Cold";
+	}
+	else if (m_temperature < 273.15f) {
+		return "Frozen";
+	}
+	else if (m_temperature < 280.0f) {
+		return "Cold";
+	}
+	else if (m_temperature < 295.0f) {
+		return "Earthlike";
+	}
+	else if (m_temperature < 315.0f) {
+		return "Hot";
+	}
+	else if (m_temperature < 373.15f) {
+		return "Very Hot";
+	}
+	else if (m_temperature < 500.0f) {
+		return "Boiling";
+	}
+	else {
+		return "Melting";
+	}
+}
+
+std::string Planet::getAtmosphereText() {
+	if (m_atmosphere < 0.1f) {
+		return "Nonexistent";
+	}
+	else if (m_atmosphere < 0.8f) {
+		return "Thin";
+	}
+	else if (m_atmosphere < 1.1f) {
+		return "Earthlike";
+	}
+	else if (m_atmosphere < 50.0f) {
+		return "Heavy";
+	}
+	else {
+		return "Crushing";
+	}
+}
+
+std::string Planet::getWaterText() {
+	if (m_water < 0.1f) {
+		return "Devoid";
+	}
+	else if (m_water < 0.5f) {
+		return "Dry";
+	}
+	else if (m_water < 0.8f) {
+		return "Earthlike";
+	}
+	else {
+		return "Water World";
+	}
+}

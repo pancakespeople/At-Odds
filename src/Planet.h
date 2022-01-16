@@ -80,6 +80,10 @@ public:
 	std::vector<Resource>& getResources() { return m_resources; }
 	const std::vector<PlanetEvent>& getEvents() const { return m_events; }
 	std::string getName(const Star* star);
+	std::string getHabitabilityText();
+	std::string getTemperatureText();
+	std::string getAtmosphereText();
+	std::string getWaterText();
 
 private:
 	friend class boost::serialization::access;

@@ -148,22 +148,22 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	m_planetInfoPanel->add(planetTypeLabel);
 
 	auto planetTemperatureLabel = tgui::Label::create();
-	planetTemperatureLabel->setText("Temperature: " + std::to_string(planet.getTemperature()));
+	planetTemperatureLabel->setText("Temperature: " + Util::cutOffDecimal(planet.getTemperature(), 2) + " (" + planet.getTemperatureText() + ")");
 	planetTemperatureLabel->setPosition("0%", "15%");
 	m_planetInfoPanel->add(planetTemperatureLabel);
 
 	auto planetAtmosLabel = tgui::Label::create();
-	planetAtmosLabel->setText("Atmosphere: " + std::to_string(planet.getAtmosphericPressure()));
+	planetAtmosLabel->setText("Atmosphere: " + Util::cutOffDecimal(planet.getAtmosphericPressure(), 2) + " (" + planet.getAtmosphereText() + ")");
 	planetAtmosLabel->setPosition("0%", "25%");
 	m_planetInfoPanel->add(planetAtmosLabel);
 
 	auto planetWaterLabel = tgui::Label::create();
-	planetWaterLabel->setText("Water: " + std::to_string(planet.getWater()));
+	planetWaterLabel->setText("Water: " + Util::cutOffDecimal(planet.getWater(), 2) + +" (" + planet.getWaterText() + ")");
 	planetWaterLabel->setPosition("0%", "35%");
 	m_planetInfoPanel->add(planetWaterLabel);
 
 	auto planetHabitabilityLabel = tgui::Label::create();
-	planetHabitabilityLabel->setText("Habitability: " + std::to_string(planet.getHabitability()));
+	planetHabitabilityLabel->setText("Habitability: " + Util::cutOffDecimal(planet.getHabitability(), 2) + " (" + planet.getHabitabilityText() + ")");
 	planetHabitabilityLabel->setPosition("0%", "45%");
 	m_planetInfoPanel->add(planetHabitabilityLabel);
 
