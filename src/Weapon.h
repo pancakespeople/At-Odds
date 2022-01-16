@@ -21,6 +21,8 @@ public:
 	void triggerCooldown() { m_cooldownPercent = 100.0f; }
 	void playFireSound(sf::Vector2f sourcePos, Star* star);
 	void drawFireAnimation(Renderer& renderer, Unit* unit);
+	void setDamage(float damage) { m_projectile.setDamage(damage); }
+	void setUpgradeLevel(int level);
 	
 	// Insta hit makes the projectile hit the target always, instantly
 	void instaHitFireAt(sf::Vector2f sourcePos, Unit* target, Star* star);

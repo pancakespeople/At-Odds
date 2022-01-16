@@ -28,6 +28,7 @@ public:
 	void setPos(const sf::Vector2f& pos);
 	void setRotation(float angleDegrees);
 	void setAllegiance(int allegiance);
+	void setDamage(float damage) { m_damage = damage; }
 	void onDeath(Star* star);
 
 	float getDamage() const { return m_damage; }
@@ -77,11 +78,3 @@ private:
 	bool m_orbitalBombardment = false;
 	bool m_planetaryInvasion = false;
 };
-
-namespace DeathFunctions {
-	void smallExplosion(Star* star, Projectile* proj);
-	void largeExplosion(Star* star, Projectile* proj);
-	void laserRing(Star* star, Projectile* proj);
-	void lightningAOE(Star* star, Projectile* proj);
-	void knockAll(Star* star, Projectile* proj);
-}

@@ -118,3 +118,8 @@ void Weapon::drawFireAnimation(Renderer& renderer, Unit* unit) {
 		}
 	}
 }
+
+void Weapon::setUpgradeLevel(int level) {
+	setDamage(getDamage() + getDamage() * (level - 1) * 0.25f);
+	m_cooldownRecovery *= 1.0f + ((level - 1) * 0.1f);
+}

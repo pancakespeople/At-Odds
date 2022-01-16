@@ -146,8 +146,9 @@ Tech Tech::generateWeaponUpgradeTech(const DesignerWeapon& weapon) {
 		toml::table data;
 
 		data.insert("name", newWeapon.getFullName());
-		data.insert("description", "Upgrades the " + newWeapon.name);
-		data.insert("researchRequired", 10);
+		data.insert("description", "Upgrades the " + newWeapon.name + ". Increases damage by 25% and reduces cooldown by 10%.\nUnlocks tech: "
+			+ newWeapon.name + " " + Util::toRomanNumeral(newWeapon.upgradeLevel + 1));
+		data.insert("researchRequired", 1000 * std::pow(2.0f, weapon.upgradeLevel - 1));
 		data.insert("category", "Weapons");
 		data.insert("upgradesWeapon", newWeapon.type);
 

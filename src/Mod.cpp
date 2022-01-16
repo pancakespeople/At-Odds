@@ -77,6 +77,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			// Add weapons
 			for (DesignerWeapon& weapon : shipDesign.weapons) {
 				shipPtr->addWeapon(weapon.type);
+				shipPtr->getWeapons().back().setUpgradeLevel(weapon.upgradeLevel);
 			}
 
 			// Add construction gun
