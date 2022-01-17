@@ -15,6 +15,7 @@ public:
 	void displayToWindow(sf::RenderWindow& window, GameState& state);
 	void draw(const sf::Drawable& drawable);
 	void draw(const sf::Drawable& drawable, const sf::RenderStates& states);
+	sf::Vector2f worldToScreenPos(sf::Vector2f pos);
 	void draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type, const sf::RenderStates& states = sf::RenderStates::Default) { m_texture.draw(vertices, vertexCount, type, states); }
 	void setView(const sf::View& view) { m_texture.setView(view); }
 	void clear() { m_texture.clear(); }

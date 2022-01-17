@@ -39,3 +39,10 @@ void Renderer::draw(const sf::Drawable& drawable) {
 void Renderer::draw(const sf::Drawable& drawable, const sf::RenderStates& states) {
 	m_texture.draw(drawable, states);
 }
+
+sf::Vector2f Renderer::worldToScreenPos(sf::Vector2f pos) {
+	sf::Vector2f viewPos = getView().getCenter() - pos;
+	sf::Vector2f viewSize = getView().getSize();
+	sf::Vector2f viewPosNorm = sf::Vector2f(1.0f - (viewPos.x + viewSize.x / 2.0f) / viewSize.x, (viewPos.y + viewSize.y / 2.0f) / viewSize.y);
+	return viewPosNorm;
+}

@@ -378,13 +378,13 @@ void Constellation::generateFactions(int numFactions) {
     }
 }
 
-void Constellation::update(const Player& player) {
+void Constellation::update(const Player& player, EffectsEmitter& emitter) {
     updatePirates();
     for (auto& f : m_factions) {
         f.update();
     }
     for (std::unique_ptr<Star>& s : m_stars) {
-        s->update(this, player);
+        s->update(this, player, emitter);
     }
     cleanUpDeadShips();
 

@@ -106,6 +106,12 @@ void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellati
 				close(gui);
 			}
 		}
+		else {
+			if (ev.key.code == sf::Keyboard::F2) {
+				m_panel->setVisible(!m_panel->isVisible());
+				m_title->setVisible(!m_title->isVisible());
+			}
+		}
 	}
 }
 

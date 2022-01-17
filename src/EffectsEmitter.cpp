@@ -209,10 +209,12 @@ void EffectsEmitter::drawSelection(Renderer& renderer, const sf::RectangleShape&
 }
 
 void EffectsEmitter::updateTime(float time) {
+	m_lastTime = time;
 	m_selectionShader.setUniform("time", time);
 	m_mapStarShader.setUniform("time", time);
 	m_ringsShader.setUniform("time", time);
 	m_asteroidBeltShader.setUniform("time", time);
+	m_postEffectsShader.setUniform("time", time);
 }
 
 void EffectsEmitter::drawBorders(Renderer& renderer, const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color) {
@@ -263,32 +265,44 @@ void EffectsEmitter::drawAsteroidBelt(Renderer& renderer, sf::Vector2f pos, floa
 
 void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state) {
 	Star* star = state.getLocalViewStar();
+	bool blackHole = false;
 
 	if (star != nullptr) {
-		if (star->isBlackHole()) {
-			// Black hole post processing effect
-			sf::Vector2f texSize = sf::Vector2f(sprite.getTexture()->getSize());
+		blackHole = star->isBlackHole();
+	}
 
-			m_postEffectsShader.setUniform("size", texSize);
-			m_postEffectsShader.setUniform("screen", *sprite.getTexture());
-			m_postEffectsShader.setUniform("aspect", texSize.x / texSize.y);
+	// Black hole post processing effect
+	sf::Vector2f texSize = sf::Vector2f(sprite.getTexture()->getSize());
 
-			sf::Vector2f bhPos = star->getLocalViewCenter();
-			sf::Vector2f viewPos = m_renderer.getView().getCenter() - bhPos;
-			sf::Vector2f viewSize = m_renderer.getView().getSize();
-			sf::Vector2f viewPosNorm = sf::Vector2f(1.0f - (viewPos.x + viewSize.x / 2.0f) / viewSize.x, (viewPos.y + viewSize.y / 2.0f) / viewSize.y);
+	m_postEffectsShader.setUniform("size", texSize);
+	m_postEffectsShader.setUniform("screen", *sprite.getTexture());
+	m_postEffectsShader.setUniform("aspect", texSize.x / texSize.y);
+	m_postEffectsShader.setUniform("zoom", state.getCamera().getZoomFactor());
 
-			m_postEffectsShader.setUniform("pos", viewPosNorm);
-			m_postEffectsShader.setUniform("zoom", state.getCamera().getZoomFactor());
-			window.draw(sprite, &m_postEffectsShader);
-		}
-		else {
-			window.draw(sprite);
+	if (blackHole) {
+		sf::Vector2f bhPos = star->getLocalViewCenter();
+		m_postEffectsShader.setUniform("blackHole", blackHole);
+		m_postEffectsShader.setUniform("blackHolePos", m_renderer.worldToScreenPos(bhPos));
+	}
+
+	std::vector<sf::Glsl::Vec2> explosionPoints;
+	for (int i = 0; i < m_explosionPoints.size(); i++) {
+		explosionPoints.push_back(m_renderer.worldToScreenPos(m_explosionPoints[i]));
+	}
+
+	m_postEffectsShader.setUniform("numExplosions", (int)explosionPoints.size());
+
+	if (m_explosionTimes.size() > 0) {
+		m_postEffectsShader.setUniformArray("explosionPoints", explosionPoints.data(), explosionPoints.size());
+		m_postEffectsShader.setUniformArray("explosionTimes", m_explosionTimes.data(), m_explosionTimes.size());
+
+		if (m_lastTime - m_explosionTimes[0] > 3.0f) {
+			m_explosionTimes.erase(m_explosionTimes.begin());
+			m_explosionPoints.erase(m_explosionPoints.begin());
 		}
 	}
-	else {
-		window.draw(sprite);
-	}
+
+	window.draw(sprite, &m_postEffectsShader);
 }
 
 void EffectsEmitter::drawLaserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
@@ -320,4 +334,9 @@ void EffectsEmitter::drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourc
 
 		renderer.draw(shape);
 	}
+}
+
+void EffectsEmitter::addExplosionEffect(sf::Vector2f pos) {
+	m_explosionPoints.push_back(pos);
+	m_explosionTimes.push_back(m_lastTime);
 }

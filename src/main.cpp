@@ -129,7 +129,7 @@ int main(int argc, const char* argv[])
         // Maintain a constant update rate
         updateStep = playerGui.timescaleGUI.getUpdatesPerSecondTarget() / (1.0f / playerGui.timescaleGUI.getUpdateClock().getElapsedTime().asSeconds());
         for (int i = 0; i < std::round(updateStep); i++) {
-            constellation.update(state.getPlayer());
+            constellation.update(state.getPlayer(), renderer.effects);
             playerGui.updateSync(window, state, constellation, gui);
             mainMenu.updateArena(updates, constellation);
             updates++;

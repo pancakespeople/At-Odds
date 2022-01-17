@@ -38,7 +38,7 @@ public:
 	void addProjectile(Projectile proj);
 	void addAnimation(const Animation& anim);
 	void cleanUpAnimations();
-	void update(Constellation* constellation, const Player& player);
+	void update(Constellation* constellation, const Player& player, EffectsEmitter& emitter);
 	void destroyAllShips();
 	void clearAnimations() { m_localViewAnimations.clear(); }
 	void moveShipToOtherStar(Spaceship* ship, Star* other);

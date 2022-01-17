@@ -33,6 +33,7 @@ public:
 	void drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state);
 	void drawLaserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
+	void addExplosionEffect(sf::Vector2f pos);
 	void updateTime(float time);
 
 private:
@@ -65,7 +66,10 @@ private:
 
 	sf::Vector2i m_resolution;
 
-	sf::RenderTexture m_renderTexture;
+	std::vector<sf::Glsl::Vec2> m_explosionPoints;
+	std::vector<float> m_explosionTimes;
+
+	float m_lastTime = 0.0f;
 
 	inline static const std::string m_vertexShaderPath = "data/shaders/vertexshader.shader";
 };

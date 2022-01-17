@@ -26,7 +26,7 @@ public:
 	void onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state);
 	void setupStars();
 	void generateFactions(int numFactions);
-	void update(const Player& player);
+	void update(const Player& player, EffectsEmitter& emitter);
 	void generateNeutralSquatters();
 	void moveShipToPurgatory(std::unique_ptr<Spaceship>& ship);
 	void reinitAfterLoad();
