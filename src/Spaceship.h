@@ -57,6 +57,7 @@ public:
 	bool isPlanetAttackShip() const;
 	bool hasFighterAI() const { return m_fighterAI; }
 	bool isPirate() const { return m_pirate; }
+	bool diesSilently() const { return m_diesSilently; }
 	
 	// Returns false if there is nothing to attack
 	bool attack(Star* star, bool urgent = false);

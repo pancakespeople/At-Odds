@@ -33,10 +33,16 @@ public:
 	void drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state);
 	void drawLaserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
-	void addExplosionEffect(sf::Vector2f pos);
+	void addExplosionEffect(sf::Vector2f pos, Star* star);
 	void updateTime(float time);
 
 private:
+	struct ExplosionEffect {
+		sf::Glsl::Vec2 point;
+		float time;
+		Star* star;
+	};
+	
 	void initShaders(sf::Vector2i resolution);
 	
 	Renderer& m_renderer;
@@ -66,8 +72,7 @@ private:
 
 	sf::Vector2i m_resolution;
 
-	std::vector<sf::Glsl::Vec2> m_explosionPoints;
-	std::vector<float> m_explosionTimes;
+	std::vector<ExplosionEffect> m_explosionEffects;
 
 	float m_lastTime = 0.0f;
 

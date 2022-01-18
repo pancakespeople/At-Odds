@@ -406,7 +406,11 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 		}
 		if (m_localShips[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_localShips[i]->getPos(), m_localShips[i]->getCollider().getColor(), 10.0f, 100);
-			emitter.addExplosionEffect(m_localShips[i]->getPos());
+			
+			if (!m_localShips[i]->diesSilently()) {
+				emitter.addExplosionEffect(m_localShips[i]->getPos(), this);
+			}
+			
 			m_localShips[i]->onDeath(this);
 			constellation->moveShipToPurgatory(m_localShips[i]);
 
@@ -421,7 +425,7 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 		m_buildings[i]->update(this);
 		if (m_buildings[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_buildings[i]->getPos(), m_buildings[i]->getCollider().getColor(), 10.0f, 100);
-			emitter.addExplosionEffect(m_buildings[i]->getPos());
+			emitter.addExplosionEffect(m_buildings[i]->getPos(), this);
 			m_buildings[i]->onDeath(this);
 
 			m_buildings.erase(m_buildings.begin() + i);

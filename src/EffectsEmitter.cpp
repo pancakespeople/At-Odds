@@ -279,27 +279,46 @@ void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& windo
 	m_postEffectsShader.setUniform("aspect", texSize.x / texSize.y);
 	m_postEffectsShader.setUniform("zoom", state.getCamera().getZoomFactor());
 
+	// Black hole effect
 	if (blackHole) {
 		sf::Vector2f bhPos = star->getLocalViewCenter();
-		m_postEffectsShader.setUniform("blackHole", blackHole);
+		m_postEffectsShader.setUniform("blackHole", true);
 		m_postEffectsShader.setUniform("blackHolePos", m_renderer.worldToScreenPos(bhPos));
 	}
-
-	std::vector<sf::Glsl::Vec2> explosionPoints;
-	for (int i = 0; i < m_explosionPoints.size(); i++) {
-		explosionPoints.push_back(m_renderer.worldToScreenPos(m_explosionPoints[i]));
+	else {
+		m_postEffectsShader.setUniform("blackHole", false);
 	}
 
-	m_postEffectsShader.setUniform("numExplosions", (int)explosionPoints.size());
+	// Explosion effect
+	if (m_explosionEffects.size() > 0) {
+		if (state.getState() == GameState::State::LOCAL_VIEW) {
+			std::vector<sf::Glsl::Vec2> explosionPoints;
+			std::vector<float> explosionTimes;
 
-	if (m_explosionTimes.size() > 0) {
-		m_postEffectsShader.setUniformArray("explosionPoints", explosionPoints.data(), explosionPoints.size());
-		m_postEffectsShader.setUniformArray("explosionTimes", m_explosionTimes.data(), m_explosionTimes.size());
+			for (ExplosionEffect& explosion : m_explosionEffects) {
+				if (explosion.star == star) {
+					explosionPoints.push_back(m_renderer.worldToScreenPos(explosion.point));
+					explosionTimes.push_back(explosion.time);
+				}
+			}
 
-		if (m_lastTime - m_explosionTimes[0] > 3.0f) {
-			m_explosionTimes.erase(m_explosionTimes.begin());
-			m_explosionPoints.erase(m_explosionPoints.begin());
+			m_postEffectsShader.setUniform("numExplosions", (int)explosionPoints.size());
+
+			if (explosionPoints.size() > 0) {
+				m_postEffectsShader.setUniformArray("explosionPoints", explosionPoints.data(), explosionPoints.size());
+				m_postEffectsShader.setUniformArray("explosionTimes", explosionTimes.data(), explosionTimes.size());
+			}
 		}
+		else {
+			m_postEffectsShader.setUniform("numExplosions", 0);
+		}
+
+		if (m_lastTime - m_explosionEffects[0].time > 3.0f) {
+			m_explosionEffects.erase(m_explosionEffects.begin());
+		}
+	}
+	else {
+		m_postEffectsShader.setUniform("numExplosions", 0);
 	}
 
 	window.draw(sprite, &m_postEffectsShader);
@@ -336,7 +355,10 @@ void EffectsEmitter::drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourc
 	}
 }
 
-void EffectsEmitter::addExplosionEffect(sf::Vector2f pos) {
-	m_explosionPoints.push_back(pos);
-	m_explosionTimes.push_back(m_lastTime);
+void EffectsEmitter::addExplosionEffect(sf::Vector2f pos, Star* star) {
+	m_explosionEffects.push_back(ExplosionEffect{
+		pos,
+		m_lastTime,
+		star
+	});
 }
