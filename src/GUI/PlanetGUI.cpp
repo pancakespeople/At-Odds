@@ -169,7 +169,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	// Buttons
 
-	createColonyAndResourcesButtons(gui, state, planet);
+	createColonyAndResourcesButtons(gui, state, planet, playerFaction);
 
 	if (state.getPlayer().getFaction() != -1) {
 		createLawsButton(gui, state, planet);
@@ -271,7 +271,7 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, F
 	}
 }
 
-void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet) {
+void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet, Faction* playerFaction) {
 	// Colony button
 	auto colonyInfoButton = tgui::Button::create();
 	colonyInfoButton->setPosition("75%", "80%");
@@ -371,10 +371,15 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 	resourceInfoButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 10.0%");
 	resourceInfoButton->setTextSize(10);
 	resourceInfoButton->setSize("25%", "10%");
-	auto openResourceInfo = [this, &gui, &planet]() {
+	auto openResourceInfo = [this, &gui, &planet, playerFaction]() {
 		switchSideWindow("Resources", gui);
 
 		if (m_sideWindow == nullptr) return;
+
+		int playerAllegiance = -1;
+		if (playerFaction != nullptr) {
+			playerAllegiance = playerFaction->getID();
+		}
 
 		auto abundanceLabel = tgui::Label::create();
 		abundanceLabel->setPosition("50%", "0%");
@@ -385,19 +390,28 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 		resourceListBox->setPosition("2.5%", "5%");
 		resourceListBox->setSize("47.5%", "90%");
 
-		for (auto& resource : planet.getResources()) {
-			resourceListBox->addItem(resource.getName());
-		}
-
-		resourceListBox->onItemSelect([this, &planet]() {
-			auto listBox = m_sideWindow->get<tgui::ListBox>("resourceListBox");
-			auto abundanceLabel = m_sideWindow->get<tgui::Label>("abundanceLabel");
-			if (listBox->getSelectedItemIndex() >= 0 && listBox->getSelectedItemIndex() < listBox->getItemCount()) {
-				abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
+		if (planet.getColony().getAllegiance() == playerAllegiance) {
+			for (auto& resource : planet.getResources()) {
+				if (!resource.hidden) {
+					resourceListBox->addItem(resource.getName());
+				}
 			}
-			});
 
-		m_sideWindow->add(resourceListBox, "resourceListBox");
+			resourceListBox->onItemSelect([this, &planet]() {
+				auto listBox = m_sideWindow->get<tgui::ListBox>("resourceListBox");
+				auto abundanceLabel = m_sideWindow->get<tgui::Label>("abundanceLabel");
+				if (listBox->getSelectedItemIndex() >= 0 && listBox->getSelectedItemIndex() < listBox->getItemCount()) {
+					abundanceLabel->setText("Abundance: " + std::to_string(planet.getResources()[listBox->getSelectedItemIndex()].abundance));
+				}
+				});
+
+			m_sideWindow->add(resourceListBox, "resourceListBox");
+		}
+		else {
+			auto infoLabel = tgui::Label::create("Colonize this planet to discover its resources.");
+			infoLabel->setSize("100%", "20%");
+			m_sideWindow->add(infoLabel);
+		}
 	};
 
 	/*if (planet.getColony().getPopulation() > 0) {

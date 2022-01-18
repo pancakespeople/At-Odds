@@ -29,6 +29,7 @@ public:
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);
 	bool hasBuildingFlag(const std::string& flag);
+	bool hasUndiscoveredResources(Planet& planet);
 
 	// Buys a building for a faction, returns false if failed
 	bool buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet);
@@ -46,6 +47,7 @@ public:
 	void removeWealth(float wealth);
 	void addStability(float stab);
 	void removeStability(float stab);
+	void onColonization(Planet& planet);
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
@@ -73,6 +75,7 @@ private:
 		archive & m_stability;
 		archive & m_wealth;
 		archive & m_newBuildingNames;
+		archive & m_revealResourceTimer;
 	}
 
 	int m_population = 0;
@@ -81,6 +84,7 @@ private:
 	int m_ticksToNextBus = 500;
 	int m_ticksToNextResourceExploit = 1000;
 	int m_explorationEventTimer = 0;
+	int m_revealResourceTimer = 0;
 
 	float m_wealth = 0.0f;
 	float m_stability = 1.0f;

@@ -57,7 +57,6 @@ public:
 	void setMoonOf(int planetIndex) { m_parentPlanetIndex = planetIndex; }
 	void setRadius(float radius);
 
-	
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }
 	float getWater() const { return m_water; }

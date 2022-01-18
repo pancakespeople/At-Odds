@@ -15,7 +15,7 @@ private:
 	void switchSideWindow(const std::string& name, tgui::Gui& gui);
 	void createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
 	void createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet);
-	void createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet);
+	void createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet, Faction* playerFaction);
 	void displayBuildingInfo(ColonyBuilding& building, Planet& planet, bool buildInfo);
 	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
 	void createEventsButton(tgui::Gui& gui, const Planet& planet);

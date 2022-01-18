@@ -69,8 +69,10 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	if (faction != nullptr) {
 		if (m_ticksToNextResourceExploit == 0) {
 			for (Resource& resource : planet->getResources()) {
-				float amount = getResourceExploitation(resource.type, *planet);
-				faction->addResource(resource.type, amount);
+				if (!resource.hidden) {
+					float amount = getResourceExploitation(resource.type, *planet);
+					faction->addResource(resource.type, amount);
+				}
 			}
 			m_ticksToNextResourceExploit = 1000;
 		}
@@ -109,6 +111,24 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 			faction->addNewsEvent("The construction of the " + m_newBuildingNames.front() + " on " + planet->getName(currentStar) + " has completed.");
 		}
 		m_newBuildingNames.pop_front();
+	}
+
+	// Reveal resources
+	if (faction != nullptr) {
+		if (hasUndiscoveredResources(*planet)) {
+			if (m_revealResourceTimer == 0) {
+				int rnd = Random::randInt(0, planet->getResources().size() - 1);
+
+				Resource& resource = planet->getResources()[rnd];
+				resource.hidden = false;
+				m_revealResourceTimer = Random::randInt(300, 12500);
+
+				faction->addNewsEvent("We have discovered " + resource.getName() + " on " + planet->getName(currentStar) + ".");
+			}
+			else {
+				m_revealResourceTimer--;
+			}
+		}
 	}
 }
 
@@ -365,4 +385,22 @@ float Colony::getResourceExploitation(const std::string& type, const Planet& pla
 	}
 
 	return (m_population * planet.getResourceAbundance(type) / 250.0f) * multiplier;
+}
+
+void Colony::onColonization(Planet& planet) {
+	if (hasUndiscoveredResources(planet)) {
+		m_revealResourceTimer = Random::randInt(300, 12500);
+	}
+	else {
+		m_revealResourceTimer = 0;
+	}
+}
+
+bool Colony::hasUndiscoveredResources(Planet& planet) {
+	for (Resource& resource : planet.getResources()) {
+		if (resource.hidden) {
+			return true;
+		}
+	}
+	return false;
 }

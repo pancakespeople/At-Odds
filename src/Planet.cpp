@@ -353,6 +353,8 @@ void Planet::onColonization() {
 	m_colony.getTradeGoods().addSupply("WATER", 100.0f);
 	m_colony.getTradeGoods().addSupply("FOOD", 100.0f);
 
+	m_colony.onColonization(*this);
+
 	addEvent("COLONY_START");
 }
 
