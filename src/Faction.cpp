@@ -604,7 +604,11 @@ float Faction::getResourceCount(const std::string& type) const {
 float Faction::getResourceExploitation(const std::string& type) const {
 	float exploitation = 0.0f;
 	for (Planet* planet : getOwnedPlanets()) {
-		exploitation += planet->getColony().getResourceExploitation(type, *planet);
+		for (const Resource& resource : planet->getResources()) {
+			if (resource.type == type) {
+				exploitation += planet->getColony().getResourceExploitation(resource, *planet);
+			}
+		}
 	}
 	return exploitation;
 }

@@ -70,7 +70,7 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 		if (m_ticksToNextResourceExploit == 0) {
 			for (Resource& resource : planet->getResources()) {
 				if (!resource.hidden) {
-					float amount = getResourceExploitation(resource.type, *planet);
+					float amount = getResourceExploitation(resource, *planet);
 					faction->addResource(resource.type, amount);
 				}
 			}
@@ -117,13 +117,20 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	if (faction != nullptr) {
 		if (hasUndiscoveredResources(*planet)) {
 			if (m_revealResourceTimer == 0) {
-				int rnd = Random::randInt(0, planet->getResources().size() - 1);
+				std::vector<int> undiscoveredIndices;
+				std::vector<Resource>& resources = planet->getResources();
+				for (int i = 0; i < resources.size(); i++) {
+					if (resources[i].hidden) {
+						undiscoveredIndices.push_back(i);
+					}
+				}
 
-				Resource& resource = planet->getResources()[rnd];
+				int rnd = Random::randInt(0, undiscoveredIndices.size() - 1);
+				Resource& resource = resources[undiscoveredIndices[rnd]];
 				resource.hidden = false;
 				m_revealResourceTimer = Random::randInt(300, 12500);
 
-				faction->addNewsEvent("We have discovered " + resource.getName() + " on " + planet->getName(currentStar) + ".");
+				faction->addNewsEvent("We have discovered " + resource.getName() + " on " + planet->getName(currentStar) + ".", sf::Color::Green);
 			}
 			else {
 				m_revealResourceTimer--;
@@ -375,7 +382,11 @@ std::vector<std::string> ColonyBuilding::getFlags() const {
 	return flags;
 }
 
-float Colony::getResourceExploitation(const std::string& type, const Planet& planet) const {
+float Colony::getResourceExploitation(const Resource& resource, const Planet& planet) const {
+	if (resource.hidden) {
+		return 0.0f;
+	}
+
 	float multiplier = 1.0f;
 
 	for (const ColonyBuilding& building : m_buildings) {
@@ -384,7 +395,7 @@ float Colony::getResourceExploitation(const std::string& type, const Planet& pla
 		}
 	}
 
-	return (m_population * planet.getResourceAbundance(type) / 250.0f) * multiplier;
+	return (m_population * planet.getResourceAbundance(resource.type) / 250.0f) * multiplier;
 }
 
 void Colony::onColonization(Planet& planet) {

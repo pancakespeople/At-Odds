@@ -9,6 +9,7 @@ class Star;
 class Faction;
 class Planet;
 class ColonyBuilding;
+struct Resource;
 
 class Colony {
 public:
@@ -24,7 +25,7 @@ public:
 	float getBuildingEffects(const std::string& effect) const;
 	float getWealth() const { return m_wealth * m_stability; }
 	float getStability() const { return m_stability; }
-	float getResourceExploitation(const std::string& type, const Planet& planet) const;
+	float getResourceExploitation(const Resource& resource, const Planet& planet) const;
 
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);
