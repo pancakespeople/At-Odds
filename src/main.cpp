@@ -140,7 +140,7 @@ int main(int argc, const char* argv[])
         window.clear();
         renderer.clear();
 
-        background.draw(renderer);
+        background.draw(renderer, state.getCamera());
 
         state.getCamera().update(renderer, gui.getFocusedLeaf());
 

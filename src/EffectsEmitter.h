@@ -5,6 +5,7 @@ class Planet;
 class Star;
 class Renderer;
 class GameState;
+class Camera;
 
 class EffectsEmitter {
 public:
@@ -34,6 +35,7 @@ public:
 	void drawLaserAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void addExplosionEffect(sf::Vector2f pos, Star* star);
+	void drawParallaxBackground(Camera& camera);
 	void updateTime(float time);
 
 private:
@@ -69,6 +71,7 @@ private:
 	sf::Shader m_ringsShader;
 	sf::Shader m_asteroidBeltShader;
 	sf::Shader m_postEffectsShader;
+	sf::Shader m_parallaxShader;
 
 	sf::Vector2i m_resolution;
 

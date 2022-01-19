@@ -20,6 +20,7 @@ public:
 	sf::Vector2f getInitialWidthHeight() const { return sf::Vector2f(m_initialRect.width, m_initialRect.height); }
 	sf::Vector2f getPos() const { return m_view.getCenter(); }
 	sf::FloatRect getRect() const;
+	const sf::View getView() const { return m_view; }
 
 	float getZoomFactor() const { return m_camZoomFactor; }
 

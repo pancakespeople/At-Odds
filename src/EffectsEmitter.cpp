@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "GameState.h"
 #include "Random.h"
+#include "Camera.h"
 
 EffectsEmitter::EffectsEmitter(sf::Vector2i resolution, Renderer& renderer) :
 m_renderer(renderer) {
@@ -57,6 +58,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_ringsShader.loadFromFile(m_vertexShaderPath, "data/shaders/ringsshader.shader");
 	m_asteroidBeltShader.loadFromFile(m_vertexShaderPath, "data/shaders/asteroidbeltshader.shader");
 	m_postEffectsShader.loadFromFile(m_vertexShaderPath, "data/shaders/posteffectsshader.shader");
+	m_parallaxShader.loadFromFile(m_vertexShaderPath, "data/shaders/parallaxshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -361,4 +363,14 @@ void EffectsEmitter::addExplosionEffect(sf::Vector2f pos, Star* star) {
 		m_lastTime,
 		star
 	});
+}
+
+void EffectsEmitter::drawParallaxBackground(Camera& camera) {
+	sf::RectangleShape shape;
+	shape.setSize(sf::Vector2f(m_resolution));
+	m_parallaxShader.setUniform("size", sf::Glsl::Vec2(m_resolution));
+	m_parallaxShader.setUniform("cameraPos", sf::Glsl::Vec2(camera.getPos()));
+	m_parallaxShader.setUniform("zoom", camera.getZoomFactor());
+
+	m_renderer.draw(shape, &m_parallaxShader);
 }
