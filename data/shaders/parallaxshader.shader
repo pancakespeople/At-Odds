@@ -24,11 +24,9 @@ vec4 layer(vec2 uv) {
             vec2 offset = vec2(x, y);
 
             vec2 pos = random2(gridPos + offset);
-            float brightness = random(pos.x + pos.y) * 0.005;
+            float brightness = random(pos.x + pos.y) * 0.01;
             vec2 newUv = gv - pos - offset;
-            //float angle = atan(newUv.y, newUv.x);
-            //float light = dot(vec2(cos(iTime), sin(iTime)), vec2(cos(angle), sin(angle)));
-
+            
             col += brightness / length(newUv) * smoothstep(1.0, 0.5, length(newUv));
         }
     }
@@ -39,19 +37,19 @@ void main()
 {
     vec2 uv = uv2;
     uv.x *= size.x / size.y;
-
-    uv *= 2.0;
+    uv *= zoom;
 
     vec4 col = vec4(0.0);
 
-    for (float i = 0.0; i < 4.0; i++) {
-        vec2 newUv = (uv + random(i)) * 2.0;
-        newUv.x += cameraPos.x / 10000.0 * random(i);
-        newUv.y += cameraPos.y / 10000.0 * random(i);
+    for (float i = 0.0; i < 1.0; i += 1.0/4.0) {
+        float depth = i;
+        vec2 newUv = uv * depth + random(i);
+        
+        newUv.x += cameraPos.x / 10000.0;
+        newUv.y += cameraPos.y / 10000.0;
 
-        col += layer(newUv); //* smoothstep(15.0, 10.0, zoom);
+        col += layer(newUv) * smoothstep(0.0, 0.1, depth);
     }
-
 
     gl_FragColor = col;
 }
