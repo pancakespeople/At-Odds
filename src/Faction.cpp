@@ -621,7 +621,12 @@ bool Faction::hasResearchedTech(const std::string& type) const {
 }
 
 int Faction::getScienceLabMax(Star* star) const {
-	return star->getPlanets().size() / 3;
+	if (star->getPlanets().size() == 0) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 std::vector<Tech> Faction::getUnresearchedTechs() {

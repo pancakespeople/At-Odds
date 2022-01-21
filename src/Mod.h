@@ -211,6 +211,7 @@ public:
 	ScienceMod() = default;
 
 	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;;
 
 private:
 	friend class boost::serialization::access;
@@ -218,9 +219,11 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_research;
+		archive & m_checkResearchTimer;
 	}
 
-	float m_research = 0.1f;
+	int m_checkResearchTimer = 0;
+	float m_research = 0.0f;
 };
 
 class PirateBaseMod : public Mod {

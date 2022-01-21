@@ -751,7 +751,31 @@ void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 void ScienceMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
+
+	if (m_checkResearchTimer == 0) {
+		m_research = 0.0f;
+		for (Planet& planet : currentStar->getPlanets()) {
+			if (planet.getColony().getAllegiance() == faction->getID()) {
+				m_research += planet.getColony().getPopulation() / 50000.0f;
+			}
+		}
+
+		m_checkResearchTimer = 1000;
+	}
+	else {
+		m_checkResearchTimer--;
+	}
+
 	faction->addResearchPoints(m_research);
+}
+
+void ScienceMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
+	auto label = tgui::Label::create();
+	label->setSize("100%", "100%");
+	label->setText("Research point generation: " + std::to_string(m_research) + "\n" +
+	"Info: Research point generation is based on the total population of the colonies in this system.");
+	window->add(label);
+	window->setSize("25%", "15%");
 }
 
 void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
