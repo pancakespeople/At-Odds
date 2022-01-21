@@ -276,7 +276,6 @@ void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& windo
 	// Black hole post processing effect
 	sf::Vector2f texSize = sf::Vector2f(sprite.getTexture()->getSize());
 
-	m_postEffectsShader.setUniform("size", texSize);
 	m_postEffectsShader.setUniform("screen", *sprite.getTexture());
 	m_postEffectsShader.setUniform("aspect", texSize.x / texSize.y);
 	m_postEffectsShader.setUniform("zoom", state.getCamera().getZoomFactor());
