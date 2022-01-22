@@ -42,7 +42,15 @@ namespace Math {
 		return (1 - t) * v0 + t * v1;
 	}
 
+	inline sf::Vector2f lerp(const sf::Vector2f& vec1, const sf::Vector2f vec2, double t) {
+		return sf::Vector2f(lerp(vec1.x, vec2.x, t), lerp(vec1.y, vec2.y, t));
+	}
+
 	inline double clamp(double val, double min, double max) {
 		return std::clamp(val, min, max);
+	}
+
+	inline sf::Color mix(const sf::Color& color1, const sf::Color& color2, double t) {
+		return sf::Color(lerp(color1.r, color2.r, t), lerp(color1.g, color2.g, t), lerp(color1.b, color2.b, t), lerp(color1.a, color2.a, t));
 	}
 }

@@ -4,6 +4,7 @@
 #include "Debug.h"
 #include "Constellation.h"
 #include "Renderer.h"
+#include "Math.h"
 
 Hyperlane::Hyperlane(Star* begin, Star* end) : m_beginStar(begin), m_endStar(end) {
 	setColor(sf::Color(255, 255, 255, 100));
@@ -90,6 +91,29 @@ void Hyperlane::draw(Renderer& renderer, int playerFaction) {
 		m_vertices[3].color = sf::Color(255, 255, 255, 100);
 	}
 	
+	if (m_beginStar->isDiscovered(playerFaction) && m_endStar->isDiscovered(playerFaction)) {
+		if (m_jumpEffects.size() > 0) {
+			if (m_jumpEffects.front().clock.getElapsedTime().asSeconds() > 1.0f) {
+				m_jumpEffects.pop_front();
+			}
+		}
+
+		for (JumpEffect& effect : m_jumpEffects) {
+			float t = effect.clock.getElapsedTime().asSeconds();
+			if (t < 1.0f) {
+				if (effect.beginToEndJumped) {
+					renderer.effects.drawGlow(renderer, Math::lerp(m_beginStar->getCenter(), m_endStar->getCenter(), t), 100.0f, effect.color);
+				}
+				else {
+					renderer.effects.drawGlow(renderer, Math::lerp(m_endStar->getCenter(), m_beginStar->getCenter(), t), 100.0f, effect.color);
+				}
+			}
+		}
+	}
+	else {
+		m_jumpEffects.clear();
+	}
+
 	renderer.draw(&m_vertices[0], m_vertices.size(), sf::Quads);
 
 	if (m_pathEffectEnabled) {
@@ -119,4 +143,29 @@ void Hyperlane::enablePathEffect() {
 void Hyperlane::reinitAfterLoad(Constellation* constellation) {
 	m_beginStar = constellation->getStarByID(m_beginStarID);
 	m_endStar = constellation->getStarByID(m_endStarID);
+}
+
+void Hyperlane::addJumpEffect(const sf::Color& color, const Star* star) {
+	if (m_jumpEffects.size() < 100) {
+		bool beginToEndJumped = false;
+		if (m_endStar == star) {
+			beginToEndJumped = false;
+		}
+		else {
+			beginToEndJumped = true;
+		}
+
+		m_jumpEffects.push_back({ sf::Clock(), beginToEndJumped, color });
+	}
+}
+
+void Hyperlane::onJump() {
+	while (m_jumpEffects.size() > 0) {
+		if (m_jumpEffects.front().clock.getElapsedTime().asSeconds() > 1.0f) {
+			m_jumpEffects.pop_front();
+		}
+		else {
+			break;
+		}
+	}
 }

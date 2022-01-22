@@ -17,6 +17,8 @@ public:
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
 	void enablePathEffect();
 	void reinitAfterLoad(Constellation* constellation);
+	void addJumpEffect(const sf::Color& color, const Star* star);
+	void onJump();
 
 	Star* getBeginStar() { return m_beginStar; }
 	Star* getEndStar() { return m_endStar; }
@@ -49,8 +51,16 @@ private:
 
 	float m_angleDegrees = 0;
 	bool m_pathEffectEnabled = false;
+	
 	sf::Clock m_pathEffectClock;
 
+	struct JumpEffect {
+		sf::Clock clock;
+		bool beginToEndJumped = false;
+		sf::Color color;
+	};
+
 	std::vector<sf::Vertex> m_vertices;
+	std::deque<JumpEffect> m_jumpEffects;
 };
 

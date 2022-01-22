@@ -47,7 +47,7 @@ void addUserTypes(sol::state& lua) {
 	lua["AOMath"]["distance"] = &Math::distance;
 	lua["AOMath"]["angleBetween"] = &Math::angleBetween;
 	lua["AOMath"]["magnitude"] = &Math::magnitude;
-	lua["AOMath"]["lerp"] = &Math::lerp;
+	lua["AOMath"]["lerp"] = static_cast<double (*)(double, double, double)>(&Math::lerp);
 	lua["AOMath"]["clamp"] = &Math::clamp;
 
 	// Sounds

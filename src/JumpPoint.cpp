@@ -82,6 +82,9 @@ void JumpPoint::jumpShipThrough(Spaceship* ship, Star* currentStar) {
 
 	sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
 	ship->addVelocity(randVel);
+
+	m_hyperlane->addJumpEffect(ship->getFactionColor(), currentStar);
+	m_hyperlane->onJump();
 }
 
 bool JumpPoint::isPointInRadius(sf::Vector2f point) {
