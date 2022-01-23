@@ -35,7 +35,9 @@ bool Random::randBool() {
 }
 
 std::string Random::getGeneratorState() {
-	return (std::stringstream() << getGen()).str();
+	std::stringstream stream;
+	stream << getGen();
+	return stream.str();
 }
 
 void Random::setGeneratorState(const std::string& str) {
