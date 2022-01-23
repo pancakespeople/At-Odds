@@ -33,3 +33,11 @@ bool Random::randBool() {
 	std::uniform_int_distribution<int> distr(0, 1);
 	return distr(getGen());
 }
+
+std::string Random::getGeneratorState() {
+	return (std::stringstream() << getGen()).str();
+}
+
+void Random::setGeneratorState(const std::string& str) {
+	std::stringstream(str) >> getGen();
+}

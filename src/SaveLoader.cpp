@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "Identifiable.h"
 #include "Background.h"
+#include "Random.h"
 
 void SaveLoader::saveGame(std::string filePath, const Constellation& constellation, const GameState& state, const Background& background) {
 	std::ofstream file(filePath, std::ios::binary);
@@ -13,6 +14,7 @@ void SaveLoader::saveGame(std::string filePath, const Constellation& constellati
 	archive << Identifiable::numObjects;
 	archive << state;
 	archive << background.getNebulaSeed();
+	archive << Random::getGeneratorState();
 }
 
 bool SaveLoader::loadGame(std::string filePath, Constellation& constellation, GameState& state, Background& background) {
@@ -27,8 +29,12 @@ bool SaveLoader::loadGame(std::string filePath, Constellation& constellation, Ga
 
 		float nebulaSeed;
 		archive >> nebulaSeed;
-
 		background.setNebulaSeed(nebulaSeed);
+		
+		std::string rngState;
+		archive >> rngState;
+		Random::setGeneratorState(rngState);
+
 		constellation.reinitAfterLoad();
 		state.reinitAfterLoad(constellation);
 
