@@ -41,3 +41,16 @@ std::string Random::getGeneratorState() {
 void Random::setGeneratorState(const std::string& str) {
 	std::stringstream(str) >> getGen();
 }
+
+std::string Random::randString(int numChars) {
+	const std::string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+	std::string rand;
+	for (int i = 0; i < numChars; i++) {
+		rand += chars[randInt(0, chars.length() - 1)];
+	}
+	return rand;
+}
+
+void Random::setGeneratorSeed(uint64_t seed) {
+	getGen().seed(seed);
+}

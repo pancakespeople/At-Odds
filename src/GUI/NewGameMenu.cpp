@@ -3,6 +3,7 @@
 #include "../Constellation.h"
 #include "../Sounds.h"
 #include "MainMenu.h"
+#include "../Random.h"
 
 void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu) {
 	auto guiWindow = tgui::ChildWindow::create("New Game");
@@ -62,9 +63,19 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	guiWindow->add(numFactionsNumLabel, "numFactions");
 
 	//
+	
+	auto seedLabel = tgui::Label::create("Seed");
+	seedLabel->setPosition("5%", "30%");
+	guiWindow->add(seedLabel);
+
+	auto seedEditBox = tgui::EditBox::create();
+	seedEditBox->setPosition("5%", "35%");
+	seedEditBox->setSize("20%", "5%");
+	seedEditBox->setText(Random::randString(10));
+	guiWindow->add(seedEditBox, "seedEditBox");
 
 	auto spectateCheckbox = tgui::CheckBox::create("Spectate");
-	spectateCheckbox->setPosition("5%", "30%");
+	spectateCheckbox->setPosition("5%", "45%");
 	guiWindow->add(spectateCheckbox, "spectateCheckBox");
 }
 
@@ -95,6 +106,9 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 
 	state = GameState(camera);
 	constellation = Constellation();
+
+	auto seedEditBox = m_window->get<tgui::EditBox>("seedEditBox");
+	Random::setGeneratorSeed(std::hash<std::string>{}(seedEditBox->getText().toStdString()));
 
 	//constellation.generateModernMegaRobustFinalConstellation(800, 800, starsNum);
 	constellation.generateTheReallyFinalRobustConstellationIMeanItReally(3000, 3000, starsNum);
