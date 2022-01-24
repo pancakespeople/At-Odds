@@ -69,15 +69,25 @@ void addUserTypes(sol::state& lua) {
 		"getAllegiance", &Projectile::getAllegiance
 	);
 
-	// Animation
+	// Animations
 	lua.new_usertype<Animation>("Animation",
 		sol::constructors<Animation(const std::string&, sf::Vector2f)>()
+	);
+
+	lua.new_usertype<EffectAnimation>("EffectAnimation",
+		sol::constructors<EffectAnimation(EffectAnimation::Effect, sf::Vector2f, int)>()
+	);
+
+	lua.new_enum<EffectAnimation::Effect>("Effect", {
+		{"LIGHTNING", EffectAnimation::Effect::LIGHTNING} 
+	}
 	);
 
 	// Star
 	lua.new_usertype<Star>("Star",
 		"addProjectile", &Star::addProjectile,
 		"addAnimation", &Star::addAnimation,
+		"addEffectAnimation", &Star::addEffectAnimation,
 		"getSpaceships", &Star::getSpaceships
 	);
 

@@ -59,6 +59,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_asteroidBeltShader.loadFromFile(m_vertexShaderPath, "data/shaders/asteroidbeltshader.shader");
 	m_postEffectsShader.loadFromFile(m_vertexShaderPath, "data/shaders/posteffectsshader.shader");
 	m_parallaxShader.loadFromFile(m_vertexShaderPath, "data/shaders/parallaxshader.shader");
+	m_lightningShader.loadFromFile(m_vertexShaderPath, "data/shaders/lightning.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -372,4 +373,16 @@ void EffectsEmitter::drawParallaxBackground(Camera& camera) {
 	m_parallaxShader.setUniform("zoom", camera.getZoomFactor());
 
 	m_renderer.draw(shape, &m_parallaxShader);
+}
+
+void EffectsEmitter::drawLightningEffect(sf::Vector2f pos, float time) {
+	sf::RectangleShape shape;
+	shape.setPosition(pos);
+	shape.setSize({ 5000.0f, 5000.0f });
+	shape.setOrigin({ 2500.0f, 2500.0f });
+
+	m_lightningShader.setUniform("size", sf::Glsl::Vec2(5000.0f, 5000.0f));
+	m_lightningShader.setUniform("time", time);
+
+	m_renderer.draw(shape, &m_lightningShader);
 }

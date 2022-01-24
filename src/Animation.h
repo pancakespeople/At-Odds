@@ -6,19 +6,13 @@ class Renderer;
 
 class Animation {
 public:
-	enum class ANIMATION_TYPE {
-		EXPLOSION
-	};
-	
 	Animation(const std::string& type, sf::Vector2f pos);
-
 	Animation(const std::string& filePath, int frameWidth, int frameHeight, sf::Vector2f pos, int frameDelay = 0, float scale = 1.0f);
 
 	void draw(Renderer& renderer);
+	void nextFrame();
 
 	bool isDone() { return m_done; }
-
-	void nextFrame();
 
 private:
 	friend class boost::serialization::access;
@@ -42,3 +36,34 @@ private:
 	bool m_done = false;
 };
 
+class EffectAnimation {
+public:
+	enum class Effect {
+		LIGHTNING
+	};
+
+	EffectAnimation(Effect effect, sf::Vector2f pos, int ticksAlive);
+	void draw(Renderer& renderer);
+	void update();
+
+	bool isDone() { return m_done; }
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & m_type;
+		archive & m_pos;
+		archive & m_endTimer;
+		archive & m_updatesAlive;
+		archive & m_done;
+	}
+
+	EffectAnimation() {}
+
+	Effect m_type;
+	sf::Vector2f m_pos;
+	int m_endTimer = 0;
+	int m_updatesAlive = 0;
+	bool m_done = false;
+};

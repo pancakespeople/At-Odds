@@ -63,3 +63,32 @@ void Animation::nextFrame() {
 void Animation::draw(Renderer& renderer) {
 	renderer.draw(m_frames[m_frameIndex]);
 }
+
+EffectAnimation::EffectAnimation(Effect effect, sf::Vector2f pos, int updatesAlive) {
+	m_type = effect;
+	m_pos = pos;
+	m_updatesAlive = updatesAlive;
+	m_endTimer = updatesAlive;
+}
+
+void EffectAnimation::draw(Renderer& renderer) {
+	if (!m_done) {
+		float time = (m_updatesAlive - m_endTimer) / 60.0f;
+		//DEBUG_PRINT(time);
+
+		switch (m_type) {
+		case Effect::LIGHTNING:
+			renderer.effects.drawLightningEffect(m_pos, time);
+			break;
+		}
+	}
+}
+
+void EffectAnimation::update() {
+	if (m_endTimer == 0) {
+		m_done = true;
+	}
+	else {
+		m_endTimer--;
+	}
+}

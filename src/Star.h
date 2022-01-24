@@ -37,6 +37,7 @@ public:
 	void setupJumpPoints();
 	void addProjectile(Projectile proj);
 	void addAnimation(const Animation& anim);
+	void addEffectAnimation(const EffectAnimation& anim) { m_effectAnimations.push_back(anim); }
 	void cleanUpAnimations();
 	void update(Constellation* constellation, const Player& player, EffectsEmitter& emitter);
 	void destroyAllShips();
@@ -132,6 +133,7 @@ private:
 		archive & m_blackHole;
 		archive & m_asteroidBelts;
 		archive & m_peaceful;
+		archive & m_effectAnimations;
 	}
 	
 	void handleCollisions();
@@ -154,6 +156,7 @@ private:
 	std::vector<Projectile> m_projectiles;
 	std::vector<std::unique_ptr<Building>> m_buildings;
 	std::vector<Animation> m_localViewAnimations;	
+	std::vector<EffectAnimation> m_effectAnimations;
 	std::vector<Planet> m_planets;
 	std::vector<Derelict> m_derelicts;
 	std::vector<AsteroidBelt> m_asteroidBelts;

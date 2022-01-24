@@ -198,6 +198,9 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		for (Animation& a : m_localViewAnimations) {
 			a.draw(renderer);
 		}
+		for (EffectAnimation& ea : m_effectAnimations) {
+			ea.draw(renderer);
+		}
 		m_particleSystem.drawParticles(renderer);
 
 		for (AsteroidBelt& ab : m_asteroidBelts) {
@@ -385,6 +388,13 @@ void Star::cleanUpAnimations() {
 			i--;
 		}
 	}
+
+	for (int i = 0; i < m_effectAnimations.size(); i++) {
+		if (m_effectAnimations[i].isDone()) {
+			m_effectAnimations.erase(m_effectAnimations.begin() + i);
+			i--;
+		}
+	}
 }
 
 void Star::update(Constellation* constellation, const Player& player, EffectsEmitter& emitter) {
@@ -470,6 +480,9 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 	}
 	for (Animation& a : m_localViewAnimations) {
 		a.nextFrame();
+	}
+	for (EffectAnimation& ea : m_effectAnimations) {
+		ea.update();
 	}
 	for (Planet& planet : m_planets) {
 		planet.update(this, constellation->getFaction(planet.getColony().getAllegiance()));

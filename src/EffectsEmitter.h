@@ -36,6 +36,7 @@ public:
 	void drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void addExplosionEffect(sf::Vector2f pos, Star* star);
 	void drawParallaxBackground(Camera& camera);
+	void drawLightningEffect(sf::Vector2f pos, float time);
 	void updateTime(float time);
 
 private:
@@ -72,6 +73,7 @@ private:
 	sf::Shader m_asteroidBeltShader;
 	sf::Shader m_postEffectsShader;
 	sf::Shader m_parallaxShader;
+	sf::Shader m_lightningShader;
 
 	sf::Vector2i m_resolution;
 

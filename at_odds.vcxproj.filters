@@ -417,5 +417,6 @@
     <None Include="data\scripts\knockAll.lua" />
     <None Include="data\scripts\blackHole.lua" />
     <None Include="data\shaders\parallaxshader.shader" />
+    <None Include="data\shaders\lightning.shader" />
   </ItemGroup>
 </Project>
