@@ -1,11 +1,12 @@
 
 in vec2 uv2;
 uniform float time;
+uniform float seed;
 
 vec2 random2(vec2 st) {
 	st = vec2(dot(st, vec2(127.1, 311.7)),
 		dot(st, vec2(269.5, 183.3)));
-	return -1.0 + 2.0 * fract(sin(st) * 43758.5453123 * 0.7897);
+	return -1.0 + 2.0 * fract(sin(st) * 43758.5453123 * seed);
 }
 
 // Gradient Noise by Inigo Quilez - iq/2013
@@ -37,7 +38,7 @@ float fbm(vec2 x) {
 }
 
 float random(float x) {
-	return fract(sin(28572.0 * x + 56847.0));
+	return fract(sin(28572.0 * x + 56847.0 * seed));
 }
 
 float strike(float cycleTime, float strikeTime) {
@@ -55,7 +56,7 @@ void main()
 
 	for (float i = 0.0; i < numStrikes; i++) {
 		float radius = length(uv) * fbm(np + (100.0 * i)) * 20.0;
-		float strikeTime = random(i) * 8.0 + 1.0;
+		float strikeTime = random(i) * 4.0;
 		col += max(abs(0.1 / (radius - 0.25)) * vec4(0.7, 0.8, 1.0, 0.5) * strike(time, strikeTime), 0.0);
 	}
 

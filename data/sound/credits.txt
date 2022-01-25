@@ -12,3 +12,4 @@ gunshot4 - https://freesound.org/people/Rudmer_Rotteveel/sounds/336011/
 cargo - https://freesound.org/people/joedeshon/sounds/368737/
 money - https://freesound.org/people/Zott820/sounds/209578/
 machinegun - https://freesound.org/people/ShawnyBoy/sounds/165394/
+electric - https://freesound.org/people/pluralz/sounds/475806/

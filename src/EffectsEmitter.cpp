@@ -375,7 +375,7 @@ void EffectsEmitter::drawParallaxBackground(Camera& camera) {
 	m_renderer.draw(shape, &m_parallaxShader);
 }
 
-void EffectsEmitter::drawLightningEffect(sf::Vector2f pos, float time) {
+void EffectsEmitter::drawLightningEffect(sf::Vector2f pos, float time, float seed) {
 	sf::RectangleShape shape;
 	shape.setPosition(pos);
 	shape.setSize({ 5000.0f, 5000.0f });
@@ -383,6 +383,7 @@ void EffectsEmitter::drawLightningEffect(sf::Vector2f pos, float time) {
 
 	m_lightningShader.setUniform("size", sf::Glsl::Vec2(5000.0f, 5000.0f));
 	m_lightningShader.setUniform("time", time);
+	m_lightningShader.setUniform("seed", seed);
 
 	m_renderer.draw(shape, &m_lightningShader);
 }

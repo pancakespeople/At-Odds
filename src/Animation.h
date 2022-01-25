@@ -39,6 +39,7 @@ private:
 class EffectAnimation {
 public:
 	enum class Effect {
+		NONE,
 		LIGHTNING
 	};
 
@@ -57,13 +58,15 @@ private:
 		archive & m_endTimer;
 		archive & m_updatesAlive;
 		archive & m_done;
+		archive & m_seed;
 	}
 
 	EffectAnimation() {}
 
-	Effect m_type;
+	Effect m_type = Effect::NONE;
 	sf::Vector2f m_pos;
 	int m_endTimer = 0;
 	int m_updatesAlive = 0;
 	bool m_done = false;
+	float m_seed = 0.0f;
 };

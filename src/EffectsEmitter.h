@@ -36,7 +36,7 @@ public:
 	void drawGatlingAnimation(Renderer& renderer, sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void addExplosionEffect(sf::Vector2f pos, Star* star);
 	void drawParallaxBackground(Camera& camera);
-	void drawLightningEffect(sf::Vector2f pos, float time);
+	void drawLightningEffect(sf::Vector2f pos, float time, float seed);
 	void updateTime(float time);
 
 private:

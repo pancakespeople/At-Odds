@@ -4,6 +4,7 @@
 #include "TextureCache.h"
 #include "TOMLCache.h"
 #include "Renderer.h"
+#include "Random.h"
 
 Animation::Animation(const std::string& type, sf::Vector2f pos) {
 	const toml::table& table = TOMLCache::getTable("data/objects/animations.toml");
@@ -69,6 +70,7 @@ EffectAnimation::EffectAnimation(Effect effect, sf::Vector2f pos, int updatesAli
 	m_pos = pos;
 	m_updatesAlive = updatesAlive;
 	m_endTimer = updatesAlive;
+	m_seed = Random::randFloat(0.0f, 1.0f);
 }
 
 void EffectAnimation::draw(Renderer& renderer) {
@@ -78,7 +80,7 @@ void EffectAnimation::draw(Renderer& renderer) {
 
 		switch (m_type) {
 		case Effect::LIGHTNING:
-			renderer.effects.drawLightningEffect(m_pos, time);
+			renderer.effects.drawLightningEffect(m_pos, time, m_seed);
 			break;
 		}
 	}
