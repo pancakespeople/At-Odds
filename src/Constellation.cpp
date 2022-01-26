@@ -597,3 +597,18 @@ bool Constellation::verifyConnections() {
         return false;
     }
 }
+
+void Constellation::setupAlliances() {
+    int team1Size = m_factions.size() / 2;
+    int team2Size = m_factions.size() - team1Size;
+    
+    for (int i = 0; i < team1Size; i++) {
+        m_allianceList.add(0, m_factions[i].getID());
+        DEBUG_PRINT("Team 1: " << m_factions[i].getID());
+    }
+
+    for (int i = team1Size; i < m_factions.size(); i++) {
+        m_allianceList.add(1, m_factions[i].getID());
+        DEBUG_PRINT("Team 2: " << m_factions[i].getID());
+    }
+}

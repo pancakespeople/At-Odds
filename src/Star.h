@@ -20,6 +20,7 @@ class GameState;
 class EffectsEmitter;
 class Player;
 class Constellation;
+class AllianceList;
 
 class Star : public Identifiable {
 public:
@@ -27,7 +28,7 @@ public:
 
 	void draw(sf::RenderWindow& window);
 	void draw(const sf::RenderWindow & window, Renderer& renderer, Constellation& constellation, Player& player);
-	void drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, float time);
+	void drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, const AllianceList& alliances, float time);
 	void setPos(sf::Vector2f pos);
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
 	void connectHyperlane(Hyperlane* lane);
@@ -70,8 +71,11 @@ public:
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;
+	int numAlliedShips(const std::unordered_set<int>& allies) const;
 	int numAlliedBuildings(int allegiance, const std::string& type = "") const;
+	int numAlliedBuildings(const std::unordered_set<int>& allies, const std::string& type = "") const;
 	int numAllies(int allegiance) const;
+	int numAllies(const std::unordered_set<int>& allies) const;
 	int getPlanetIndex(Planet* planet) const;
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }

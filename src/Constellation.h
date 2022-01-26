@@ -8,6 +8,7 @@
 #include "Faction.h"
 #include "Animation.h"
 #include "NameGenerator.h"
+#include "AllianceList.h"
 
 class GameState;
 class Player;
@@ -33,6 +34,7 @@ public:
 	void onStart();
 	void generatePirates();
 	void updatePirates();
+	void setupAlliances();
 
 	std::vector<std::unique_ptr<Star>>& getStars() { return m_stars; }
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }
@@ -44,6 +46,8 @@ public:
 	Star* getStarByID(uint32_t id);
 	Hyperlane* getHyperlaneByID(uint32_t id);
 	Spaceship* getShipByID(uint32_t id);
+
+	const AllianceList& getAlliances() { return m_allianceList; }
 
 private:
 	friend class boost::serialization::access;
@@ -87,6 +91,7 @@ private:
 	std::vector<Faction> m_factions;
 	std::vector<std::pair<sf::Color, std::string>> m_availableFactionColors;
 	NameGenerator m_nameGenerator;
+	AllianceList m_allianceList;
 	sf::RectangleShape m_border;
 
 	int m_numUpdates = 0;

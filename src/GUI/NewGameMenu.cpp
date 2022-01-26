@@ -77,6 +77,10 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	auto spectateCheckbox = tgui::CheckBox::create("Spectate");
 	spectateCheckbox->setPosition("5%", "45%");
 	guiWindow->add(spectateCheckbox, "spectateCheckBox");
+
+	auto alliancesCheckbox = tgui::CheckBox::create("Alliances");
+	alliancesCheckbox->setPosition("5%", "55%");
+	guiWindow->add(alliancesCheckbox, "alliancesCheckbox");
 }
 
 void NewGameMenu::close() {
@@ -119,6 +123,11 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	constellation.generateFactions(factionsNum);
 	constellation.generateNeutralSquatters();
 	constellation.generatePirates();
+
+	auto alliancesCheckbox = m_window->get<tgui::CheckBox>("alliancesCheckbox");
+	if (alliancesCheckbox->isChecked()) {
+		constellation.setupAlliances();
+	}
 
 	state.getCamera().setPos(stars[0]->getPos());
 	state.getCamera().resetZoom();

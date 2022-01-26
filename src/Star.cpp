@@ -15,6 +15,7 @@
 #include "Fonts.h"
 #include "TOMLCache.h"
 #include "Renderer.h"
+#include "AllianceList.h"
 
 Star::Star(sf::Vector2f pos) {
 	init(pos);
@@ -156,11 +157,11 @@ void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellati
 	}
 }
 
-void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, float time) {
+void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, const AllianceList& alliances, float time) {
 	m_drawHidden = true;
 
 	if (player.hasFogOfWar()) {
-		if (numAllies(player.getFaction()) == 0) {
+		if (numAllies(alliances.getAllies(player.getFaction())) == 0) {
 			m_drawHidden = false;
 			renderer.effects.drawFogOfWar(renderer);
 		}
@@ -445,7 +446,10 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 
 	// Discover system for factions
 	for (int i : factions) {
-		m_factionsDiscovered.insert(i);
+		auto alliance = constellation->getAlliances().getAllies(i);
+		for (int j : alliance) {
+			m_factionsDiscovered.insert(j);
+		}
 	}
 
 	// For the flashy thing
@@ -589,6 +593,31 @@ int Star::numAlliedBuildings(int allegiance, const std::string& type) const {
 
 int Star::numAllies(int allegiance) const {
 	return numAlliedShips(allegiance) + numAlliedBuildings(allegiance);
+}
+
+int Star::numAllies(const std::unordered_set<int>& allies) const {
+	return numAlliedShips(allies) + numAlliedBuildings(allies);
+}
+
+int Star::numAlliedShips(const std::unordered_set<int>& allies) const {
+	int num = 0;
+	for (auto& ship : m_localShips) {
+		if (allies.count(ship->getAllegiance()) > 0) {
+			num++;
+		}
+	}
+	return num;
+}
+
+int Star::numAlliedBuildings(const std::unordered_set<int>& allies, const std::string& type) const {
+	int num = 0;
+	for (auto& building : m_buildings) {
+		if (allies.count(building->getAllegiance()) > 0) {
+			if (type != "" && building->getType() == type) num++;
+			else if (type == "") num++;
+		}
+	}
+	return num;
 }
 
 bool Star::containsBuildingType(const std::string& type, bool allegianceOnly, int allegiance) const {
