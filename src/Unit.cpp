@@ -7,11 +7,11 @@
 #include "Renderer.h"
 #include "Random.h"
 
-std::vector<Spaceship*> Unit::findEnemyShips() {
+std::vector<Spaceship*> Unit::findEnemyShips(const AllianceList& alliances) {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
 	std::vector<Spaceship*> enemies;
 	for (auto& s : allShips) {
-		if (s->getAllegiance() != m_allegiance) {
+		if (!alliances.isAllied(s->getAllegiance(), m_allegiance)) {
 			enemies.push_back(s.get());
 		}
 	}
@@ -36,15 +36,15 @@ void Unit::updateWeapons() {
 	}
 }
 
-std::vector<Unit*> Unit::findEnemyUnits() {
+std::vector<Unit*> Unit::findEnemyUnits(const AllianceList& alliances) {
 	std::vector<Unit*> units;
 	for (auto& ship : m_currentStar->getSpaceships()) {
-		if (ship->getAllegiance() != m_allegiance) {
+		if (!alliances.isAllied(ship->getAllegiance(), m_allegiance)) {
 			units.push_back(ship.get());
 		}
 	}
 	for (auto& building : m_currentStar->getBuildings()) {
-		if (building->getAllegiance() != m_allegiance) {
+		if (!alliances.isAllied(building->getAllegiance(), m_allegiance)) {
 			units.push_back(building.get());
 		}
 	}
@@ -57,9 +57,9 @@ void Unit::fireAllWeaponsAt(Unit* target) {
 	}
 }
 
-void Unit::updateMods(Star* currentStar, Faction* faction, Constellation* constellation) {
+void Unit::updateMods(Star& currentStar, Faction* faction, const AllianceList& alliances) {
 	for (auto& mod : m_mods) {
-		mod->update(this, currentStar, faction);
+		mod->update(*this, currentStar, faction, alliances);
 	}
 }
 

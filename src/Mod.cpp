@@ -29,7 +29,7 @@ void Mod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	window->add(text);
 }
 
-void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
+void FactoryMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
 	
@@ -72,7 +72,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			// Spawn the ship
 				
 			DesignerShip shipDesign = faction->getShipDesignByName(build.shipName);
-			Spaceship* shipPtr = currentStar->createSpaceship(shipDesign.chassis.type, unit->getPos(), faction->getID(), faction->getColor());
+			Spaceship* shipPtr = currentStar.createSpaceship(shipDesign.chassis.type, unit.getPos(), faction->getID(), faction->getColor());
 				
 			// Add weapons
 			for (DesignerWeapon& weapon : shipDesign.weapons) {
@@ -140,7 +140,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			Planet* mostSupplyPlanet = nullptr;
 			float mostSupply = 0.0f;
 			
-			for (Planet& planet : currentStar->getPlanets()) {
+			for (Planet& planet : currentStar.getPlanets()) {
 				auto& goods = planet.getColony().getTradeGoods().getGoods();
 
 				if (planet.getColony().getAllegiance() == faction->getID()) {
@@ -158,8 +158,8 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 			if (mostSupply > 0.0f) {
 				// Send space truck
 
-				Spaceship* ship = currentStar->createSpaceship("SPACE_TRUCK", mostSupplyPlanet->getPos(), faction->getID(), faction->getColor());
-				ship->addOrder(InteractWithUnitOrder(unit));
+				Spaceship* ship = currentStar.createSpaceship("SPACE_TRUCK", mostSupplyPlanet->getPos(), faction->getID(), faction->getColor());
+				ship->addOrder(InteractWithUnitOrder(&unit));
 				ship->addOrder(DieOrder(true));
 
 				TradeMod mod;
@@ -168,7 +168,7 @@ void FactoryMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 
 				ship->addMod(mod);
 
-				DEBUG_PRINT("Sent space truck to arm ship factory in " << currentStar->getName());
+				DEBUG_PRINT("Sent space truck to arm ship factory in " << currentStar.getName());
 			}
 		}
 		
@@ -420,49 +420,49 @@ FighterBayMod::FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::C
 	}
 }
 
-void FighterBayMod::update(Unit* unit, Star* currentStar, Faction* faction) {
-	if (unit->isDead()) {
+void FighterBayMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
+	if (unit.isDead()) {
 		if (!isEnabled()) {
-			killAllFighters(currentStar); // They just die if the building was never constructed, no free fighters!
+			killAllFighters(&currentStar); // They just die if the building was never constructed, no free fighters!
 		}
 		else {
-			launchFighters(currentStar); // Pop out fighters
+			launchFighters(&currentStar); // Pop out fighters
 		}
 		return;
 	}
 
 	if (!isEnabled()) return;
 	
-	int numEnemyUnits = unit->findEnemyUnits().size();
+	int numEnemyUnits = unit.findEnemyUnits(alliances).size();
 	
 	if (numEnemyUnits > 0 && m_fighterStatus == FIGHTER_STATUS::DOCKED) {
 		// Enable fighters if enemies are in system
 		
-		launchFighters(currentStar);
+		launchFighters(&currentStar);
 	}
 	
 	if (numEnemyUnits == 0 && m_fighterStatus == FIGHTER_STATUS::FIGHTING) {
 		//Recall fighters
 
-		recallFighters(currentStar, unit);
+		recallFighters(&currentStar, &unit);
 	}
 	
 	if (m_fighterStatus == FIGHTER_STATUS::RETURNING) {
 		// Disable fighters that have returned until all are docked
 		
-		dockReturningFighters(currentStar, unit);
+		dockReturningFighters(&currentStar, &unit);
 	}
 
 	// Delete ids for dead ships
 	for (int i = 0; i < m_fighterShipIds.size(); i++) {
-		if (currentStar->getShipByID(m_fighterShipIds[i]) == nullptr) {
+		if (currentStar.getShipByID(m_fighterShipIds[i]) == nullptr) {
 			m_fighterShipIds.erase(m_fighterShipIds.begin() + i);
 			i--;
 		}
 	}
 
 	if (m_fighterShipIds.size() < m_maxFighters) {
-		constructNewFighter(currentStar, unit, faction);
+		constructNewFighter(&currentStar, &unit, faction);
 	}
 }
 
@@ -569,7 +569,7 @@ HabitatMod::HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus) {
 	m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population);
 }
 
-void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
+void HabitatMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
 	if (m_faction == nullptr) {
 		m_faction = faction;
 	}
@@ -591,13 +591,13 @@ void HabitatMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 
 	if (m_spawnsSpaceBus) {
 		if (m_ticksToNextBus == 0) {
-			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
+			Star* targetStar = HabitatMod::findBusStarDestination(&currentStar, faction);;
 
 			if (targetStar->getPlanets().size() > 0) {
-				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(unit->getAllegiance(), targetStar);
+				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(unit.getAllegiance(), targetStar);
 				
 				if (targetPlanet != nullptr) {
-					HabitatMod::createSpaceBus(unit, currentStar, targetStar, targetPlanet);
+					HabitatMod::createSpaceBus(&unit, &currentStar, targetStar, targetPlanet);
 
 					m_population -= 1000;
 				}
@@ -748,13 +748,13 @@ void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	}
 }
 
-void ScienceMod::update(Unit* unit, Star* currentStar, Faction* faction) {
+void ScienceMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
 
 	if (m_checkResearchTimer == 0) {
 		m_research = 0.0f;
-		for (Planet& planet : currentStar->getPlanets()) {
+		for (Planet& planet : currentStar.getPlanets()) {
 			if (planet.getColony().getAllegiance() == faction->getID()) {
 				m_research += planet.getColony().getPopulation() / 50000.0f;
 			}
@@ -778,10 +778,10 @@ void ScienceMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	window->setSize("25%", "15%");
 }
 
-void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
+void PirateBaseMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
 	if (m_stolenDesigns.size() > 0) {
 		if (m_nextShipPercent >= 100.0f) {
-			Spaceship* ship = currentStar->createSpaceship(m_stolenDesigns.front().chassis.type, unit->getPos(), -1, Faction::neutralColor);
+			Spaceship* ship = currentStar.createSpaceship(m_stolenDesigns.front().chassis.type, unit.getPos(), -1, Faction::neutralColor);
 			for (const DesignerWeapon& weapon : m_stolenDesigns.front().weapons) {
 				ship->addWeapon(weapon.type);
 			}
@@ -801,12 +801,12 @@ void PirateBaseMod::update(Unit* unit, Star* currentStar, Faction* faction) {
 		}
 	}
 
-	if ((m_lifetimeTicks + 1) % m_spawnNewBaseTime == 0 && currentStar->getConnectedStars().size() > 0) {
+	if ((m_lifetimeTicks + 1) % m_spawnNewBaseTime == 0 && currentStar.getConnectedStars().size() > 0) {
 		// Send out a ship to create a new pirate base
-		Spaceship* ship = currentStar->createSpaceship("BIG_SPACE_TRUCK", unit->getPos(), -1, Faction::neutralColor);
+		Spaceship* ship = currentStar.createSpaceship("BIG_SPACE_TRUCK", unit.getPos(), -1, Faction::neutralColor);
 		ship->setPirate(true);
-		ship->addOrder(TravelOrder(currentStar->getConnectedStars()[Random::randInt(0, currentStar->getConnectedStars().size() - 1)]));
-		ship->addOrder(EstablishPirateBaseOrder(currentStar->getRandomLocalPos(-10000.0f, 10000.0f), m_theftAllegiance, m_stolenDesigns));
+		ship->addOrder(TravelOrder(currentStar.getConnectedStars()[Random::randInt(0, currentStar.getConnectedStars().size() - 1)]));
+		ship->addOrder(EstablishPirateBaseOrder(currentStar.getRandomLocalPos(-10000.0f, 10000.0f), m_theftAllegiance, m_stolenDesigns));
 		ship->addOrder(DieOrder());
 
 		m_spawnNewBaseTime *= 1.5f;

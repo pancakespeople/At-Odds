@@ -9,7 +9,7 @@
 #endif
 
 #ifndef NDEBUG
-#define AI_DEBUG_PRINT(X) (DEBUG_PRINT(faction->getName() << " Faction: " << X))
+#define AI_DEBUG_PRINT(X) (DEBUG_PRINT(faction.getName() << " Faction: " << X))
 #else
 #define AI_DEBUG_PRINT(X)
 #endif

@@ -83,7 +83,7 @@ void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellati
 	sf::Vector2f mouseCoordsWorld = renderer.mapPixelToCoords(mouseCoords);
 	bool flashing = false;
 
-	if (m_multipleFactionsPresent && isDiscovered(player.getFaction())) {
+	if (m_underAttack && isDiscovered(player.getFaction())) {
 		flashing = true;
 	}
 
@@ -161,7 +161,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 	m_drawHidden = true;
 
 	if (player.hasFogOfWar()) {
-		if (numAllies(alliances.getAllies(player.getFaction())) == 0) {
+		if (numAllies(player.getFaction(), alliances) == 0) {
 			m_drawHidden = false;
 			renderer.effects.drawFogOfWar(renderer);
 		}
@@ -400,11 +400,12 @@ void Star::cleanUpAnimations() {
 
 void Star::update(Constellation* constellation, const Player& player, EffectsEmitter& emitter) {
 	std::set<int> factions;
+	auto alliances = constellation->getAlliances();
 	
 	// Update spaceships
 	for (int i = 0; i < m_localShips.size(); i++) {
-		m_localShips[i]->updateMods(this, constellation->getFaction(m_localShips[i]->getAllegiance()), constellation);
-		m_localShips[i]->update(this);
+		m_localShips[i]->updateMods(*this, constellation->getFaction(m_localShips[i]->getAllegiance()), constellation->getAlliances());
+		m_localShips[i]->update(this, constellation->getAlliances());
 
 		if (m_localShips[i] == nullptr) {
 			// It left
@@ -432,8 +433,8 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 	
 	// Update buildings
 	for (int i = 0; i < m_buildings.size(); i++) {
-		m_buildings[i]->updateMods(this, constellation->getFaction(m_buildings[i]->getAllegiance()), constellation);
-		m_buildings[i]->update(this);
+		m_buildings[i]->updateMods(*this, constellation->getFaction(m_buildings[i]->getAllegiance()), constellation->getAlliances());
+		m_buildings[i]->update(this, constellation->getAlliances());
 		if (m_buildings[i]->isDead()) {
 			m_particleSystem.createParticleExplosion(m_buildings[i]->getPos(), m_buildings[i]->getCollider().getColor(), 10.0f, 100);
 			emitter.addExplosionEffect(m_buildings[i]->getPos(), this);
@@ -445,16 +446,21 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 	}
 
 	// Discover system for factions
+	int hostileFactions = 0;
 	for (int i : factions) {
 		auto alliance = constellation->getAlliances().getAllies(i);
 		for (int j : alliance) {
 			m_factionsDiscovered.insert(j);
 		}
+
+		if (!alliances.isAllied(i, m_allegiance)) {
+			hostileFactions++;
+		}
 	}
 
 	// For the flashy thing
-	if (factions.size() > 1) {
-		m_multipleFactionsPresent = true;
+	if (hostileFactions > 0) {
+		m_underAttack = true;
 
 		if (m_peaceful) {
 			m_peaceful = false;
@@ -465,7 +471,7 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 		}
 	}
 	else {
-		m_multipleFactionsPresent = false;
+		m_underAttack = false;
 
 		if (!m_peaceful) {
 			m_peaceful = true;
@@ -595,24 +601,24 @@ int Star::numAllies(int allegiance) const {
 	return numAlliedShips(allegiance) + numAlliedBuildings(allegiance);
 }
 
-int Star::numAllies(const std::unordered_set<int>& allies) const {
-	return numAlliedShips(allies) + numAlliedBuildings(allies);
+int Star::numAllies(int allegiance, const AllianceList& alliances) const {
+	return numAlliedShips(allegiance, alliances) + numAlliedBuildings(allegiance, alliances);
 }
 
-int Star::numAlliedShips(const std::unordered_set<int>& allies) const {
+int Star::numAlliedShips(int allegiance, const AllianceList& alliances) const {
 	int num = 0;
 	for (auto& ship : m_localShips) {
-		if (allies.count(ship->getAllegiance()) > 0) {
+		if (alliances.isAllied(ship->getAllegiance(), allegiance)) {
 			num++;
 		}
 	}
 	return num;
 }
 
-int Star::numAlliedBuildings(const std::unordered_set<int>& allies, const std::string& type) const {
+int Star::numAlliedBuildings(int allegiance, const AllianceList& alliances, const std::string& type) const {
 	int num = 0;
 	for (auto& building : m_buildings) {
-		if (allies.count(building->getAllegiance()) > 0) {
+		if (alliances.isAllied(building->getAllegiance(), allegiance)) {
 			if (type != "" && building->getType() == type) num++;
 			else if (type == "") num++;
 		}
@@ -767,20 +773,20 @@ void Star::setDiscovered(bool isDiscovered, int allegiance) {
 	}
 }
 
-std::vector<Planet*> Star::getEnemyPlanets(int allegiance) {
+std::vector<Planet*> Star::getEnemyPlanets(int allegiance, const AllianceList& alliances) {
 	std::vector<Planet*> planets;
 	for (Planet& planet : getPlanets()) {
-		if (planet.getColony().getAllegiance() != -1 && planet.getColony().getAllegiance() != allegiance) {
+		if (planet.getColony().getAllegiance() != -1 && !alliances.isAllied(planet.getColony().getAllegiance(), allegiance)) {
 			planets.push_back(&planet);
 		}
 	}
 	return planets;
 }
 
-std::vector<Spaceship*> Star::getEnemyCombatShips(int allegiance) {
+std::vector<Spaceship*> Star::getEnemyCombatShips(int allegiance, const AllianceList& alliances) {
 	std::vector<Spaceship*> ships;
 	for (auto& ship : m_localShips) {
-		if (ship->getAllegiance() != allegiance && !ship->isCivilian()) {
+		if (!alliances.isAllied(ship->getAllegiance(), allegiance) && !ship->isCivilian()) {
 			ships.push_back(ship.get());
 		}
 	}

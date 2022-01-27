@@ -381,7 +381,7 @@ void Constellation::generateFactions(int numFactions) {
 void Constellation::update(const Player& player, EffectsEmitter& emitter) {
     updatePirates();
     for (auto& f : m_factions) {
-        f.update();
+        f.update(getAlliances());
     }
     for (std::unique_ptr<Star>& s : m_stars) {
         s->update(this, player, emitter);
@@ -602,6 +602,9 @@ void Constellation::setupAlliances() {
     int team1Size = m_factions.size() / 2;
     int team2Size = m_factions.size() - team1Size;
     
+    m_allianceList.createAlliance();
+    m_allianceList.createAlliance();
+
     for (int i = 0; i < team1Size; i++) {
         m_allianceList.add(0, m_factions[i].getID());
         DEBUG_PRINT("Team 1: " << m_factions[i].getID());

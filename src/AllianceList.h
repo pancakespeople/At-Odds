@@ -2,6 +2,7 @@
 
 class AllianceList {
 public:
+	int createAlliance();
 	void add(int allianceID, int allegiance);
 	bool isAllied(int allegiance1, int allegiance2) const;
 	std::unordered_set<int> getAllies(int allegiance) const;
@@ -15,5 +16,5 @@ private:
 		archive & m_alliances;
 	}
 
-	std::unordered_map<int, std::unordered_set<int>> m_alliances;
+	std::vector<std::unordered_set<int>> m_alliances;
 };

@@ -6,8 +6,12 @@ void AllianceList::add(int allianceID, int allegiance) {
 }
 
 bool AllianceList::isAllied(int allegiance1, int allegiance2) const {
-	for (auto& pair : m_alliances) {
-		if (pair.second.count(allegiance1) > 0 && pair.second.count(allegiance2) > 0) {
+	if (allegiance1 == allegiance2) {
+		return true;
+	}
+
+	for (auto& alliance : m_alliances) {
+		if (alliance.count(allegiance1) > 0 && alliance.count(allegiance2) > 0) {
 			return true;
 		}
 	}
@@ -16,15 +20,20 @@ bool AllianceList::isAllied(int allegiance1, int allegiance2) const {
 }
 
 std::unordered_set<int> AllianceList::getAllies(int allegiance) const {
-	for (auto& pair : m_alliances) {
-		if (pair.second.count(allegiance) > 0) {
-			return pair.second;
+	for (auto& alliance : m_alliances) {
+		if (alliance.count(allegiance) > 0) {
+			return alliance;
 		}
 	}
 
-	return std::unordered_set<int>();
+	return std::unordered_set<int>({ allegiance });
 }
 
 std::unordered_set<int> AllianceList::getAlliance(int allianceID) const {
 	return m_alliances.at(allianceID);
+}
+
+int AllianceList::createAlliance() {
+	m_alliances.push_back(std::unordered_set<int>());
+	return m_alliances.size() - 1;
 }

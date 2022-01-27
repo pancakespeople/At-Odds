@@ -186,7 +186,7 @@ void Spaceship::accelerate(float amount) {
 	m_velocity.y += -std::sin(m_facingAngle * Math::toRadians) * amount;
 }
 
-void Spaceship::update(Star* currentStar) {
+void Spaceship::update(Star* currentStar, const AllianceList& alliances) {
 	if (m_disabled) return;
 	
 	m_currentStar = currentStar;
@@ -200,14 +200,14 @@ void Spaceship::update(Star* currentStar) {
 	}
 
 	if (!m_orders.empty()) {
-		if (m_orders.front()->execute(this, currentStar)) {
+		if (m_orders.front()->execute(*this, *currentStar, alliances)) {
 			m_orders.pop_front();
 		}
 	}
 	else if (m_weapons.size() > 0) {
 		// Attack enemies in system
 		
-		attack(currentStar);
+		attack(currentStar, alliances);
 	}
 	
 	m_velocity.x *= 0.99f;
@@ -332,22 +332,22 @@ Spaceship::JumpState Spaceship::jump(JumpPoint* point) {
 	}
 }
 
-std::vector<Spaceship*> Spaceship::findEnemyShips() {
+std::vector<Spaceship*> Spaceship::findEnemyShips(const AllianceList& alliances) {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
 	std::vector<Spaceship*> enemies;
 	for (auto& s : allShips) {
-		if (s->getAllegiance() != m_allegiance) {
+		if (!alliances.isAllied(s->getAllegiance(), m_allegiance)) {
 			enemies.push_back(s.get());
 		}
 	}
 	return enemies;
 }
 
-std::vector<Spaceship*> Spaceship::findEnemyCombatShips() {
+std::vector<Spaceship*> Spaceship::findEnemyCombatShips(const AllianceList& alliances) {
 	std::vector<std::unique_ptr<Spaceship>>& allShips = m_currentStar->getSpaceships();
 	std::vector<Spaceship*> enemies;
 	for (auto& s : allShips) {
-		if (s->getAllegiance() != m_allegiance && !s->isCivilian()) {
+		if (!alliances.isAllied(s->getAllegiance(), m_allegiance) && !s->isCivilian()) {
 			enemies.push_back(s.get());
 		}
 	}
@@ -387,9 +387,9 @@ void Spaceship::orbit(const sf::Vector2f& pos) {
 	}
 }
 
-void Spaceship::captureCurrentStar(Faction* faction) {
-	if (m_currentStar->getAllegiance() != m_allegiance) {
-		if (findEnemyCombatShips().size() == 0) {
+void Spaceship::captureCurrentStar(Faction* faction, const AllianceList& alliances) {
+	if (!alliances.isAllied(m_currentStar->getAllegiance(), m_allegiance)) {
+		if (findEnemyCombatShips(alliances).size() == 0) {
 			m_currentStar->factionTakeOwnership(faction);
 			m_currentStar->createSpaceship("CLAIM_SHIP", getPos(), m_allegiance, m_collider.getColor());
 		}
@@ -422,10 +422,10 @@ void Spaceship::attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent)
 	}
 }
 
-std::vector<Building*> Spaceship::findEnemyBuildings() {
+std::vector<Building*> Spaceship::findEnemyBuildings(const AllianceList& alliances) {
 	std::vector<Building*> buildings;
 	for (auto& b : m_currentStar->getBuildings()) {
-		if (b->getAllegiance() != m_allegiance) {
+		if (!alliances.isAllied(b->getAllegiance(), m_allegiance)) {
 			buildings.push_back(b.get());
 		}
 	}
@@ -461,10 +461,10 @@ bool Spaceship::isPlanetAttackShip() const {
 	return false;
 }
 
-Spaceship* Spaceship::findClosestEnemyCombatShip(Star* star) {
+Spaceship* Spaceship::findClosestEnemyCombatShip(Star* star, const AllianceList& alliances) {
 	Spaceship* closest = nullptr;
 	float closestDist = 0.0f;
-	for (Spaceship* ship : star->getEnemyCombatShips(m_allegiance)) {
+	for (Spaceship* ship : star->getEnemyCombatShips(m_allegiance, alliances)) {
 		float dist = Math::distance(getPos(), ship->getPos());
 		if (dist < closestDist || closest == nullptr) {
 			closest = ship;
@@ -474,11 +474,11 @@ Spaceship* Spaceship::findClosestEnemyCombatShip(Star* star) {
 	return closest;
 }
 
-Spaceship* Spaceship::findClosestEnemyShip(Star* star) {
+Spaceship* Spaceship::findClosestEnemyShip(Star* star, const AllianceList& alliances) {
 	Spaceship* closest = nullptr;
 	float closestDist = 0.0f;
 	for (auto& ship : star->getSpaceships()) {
-		if (ship->getAllegiance() != m_allegiance) {
+		if (!alliances.isAllied(ship->getAllegiance(), m_allegiance)) {
 			float dist = Math::distance(getPos(), ship->getPos());
 			if (dist < closestDist || closest == nullptr) {
 				closest = ship.get();
@@ -489,13 +489,13 @@ Spaceship* Spaceship::findClosestEnemyShip(Star* star) {
 	return closest;
 }
 
-bool Spaceship::attack(Star* star, bool urgent) {
+bool Spaceship::attack(Star* star, const AllianceList& alliances, bool urgent) {
 	Spaceship* enemy = nullptr;
 	if (!m_pirate) {
-		enemy = findClosestEnemyCombatShip(star);
+		enemy = findClosestEnemyCombatShip(star, alliances);
 	}
 	else {
-		enemy = findClosestEnemyShip(star);
+		enemy = findClosestEnemyShip(star, alliances);
 	}
 
 	if (enemy != nullptr) {
@@ -504,7 +504,7 @@ bool Spaceship::attack(Star* star, bool urgent) {
 		return true;
 	}
 	else {
-		std::vector<Building*> enemyBuildings = findEnemyBuildings();
+		std::vector<Building*> enemyBuildings = findEnemyBuildings(alliances);
 		if (enemyBuildings.size() > 0) {
 			attackRandomEnemyBuilding(enemyBuildings, urgent);
 			return true;

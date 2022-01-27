@@ -8,13 +8,14 @@ class Faction;
 class Planet;
 class Spaceship;
 class Constellation;
+class AllianceList;
 
 class Mod {
 public:
 	Mod() {}
 
 	// Faction can be nullptr, others cant
-	virtual void update(Unit* unit, Star* currentStar, Faction* faction) {}
+	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {}
 	virtual void interactWithPlanet(Unit*, Planet* planet, Star* star) {}
 	virtual void onUnitDeath(Star* currentStar) {}
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction);
@@ -41,7 +42,7 @@ private:
 class FactoryMod : public Mod {
 public:
 
-	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
 	virtual std::string getInfoString() override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
 	virtual void onShipInteract(Spaceship* ship);
@@ -113,7 +114,7 @@ public:
 	
 	FighterBayMod(const Unit* unit, Star* star, int allegiance, sf::Color color);
 	
-	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
 	virtual std::string getInfoString() override;
 	virtual void onUnitDeath(Star* currentStar) override;
 
@@ -145,7 +146,7 @@ class HabitatMod : public Mod {
 public:
 	HabitatMod(int population, int maxPopulation, bool spawnsSpaceBus);
 	
-	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
 	virtual void interactWithPlanet(Unit* unit, Planet* planet, Star* star) override;
 
 	virtual std::string getInfoString() override;
@@ -210,7 +211,7 @@ class ScienceMod : public Mod {
 public:
 	ScienceMod() = default;
 
-	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;;
 
 private:
@@ -230,7 +231,7 @@ class PirateBaseMod : public Mod {
 public:
 	PirateBaseMod() = default;
 	
-	virtual void update(Unit* unit, Star* currentStar, Faction* faction) override;
+	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
 	int getTheftAllegiance() { return m_theftAllegiance; }
 	void findTheftAllegiance(Star* currentStar, Constellation* constellation);
 	void stealDesignFrom(Faction* faction);

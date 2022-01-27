@@ -61,6 +61,7 @@ private:
 		archive & m_availableFactionColors;
 		archive & m_border;
 		archive & m_numUpdates;
+		archive & m_allianceList;
 	}
 	
 	template <typename T>

@@ -10,6 +10,7 @@ class Spaceship;
 class Faction;
 class Player;
 class EffectsEmitter;
+class AllianceList;
 
 class Building : public Unit {
 public:
@@ -27,7 +28,7 @@ public:
 	Building() {}
 
 	void draw(Renderer& renderer);
-	void update(Star* currentStar);
+	void update(Star* currentStar, const AllianceList& alliances);
 	void construct(const Spaceship* constructor);
 	void reinitAfterLoad(Star* star);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
@@ -53,7 +54,7 @@ private:
 		archive & m_type;
 	}
 
-	void attackEnemies();
+	void attackEnemies(const AllianceList& alliances);
 
 	sf::Sprite m_sprite;
 	

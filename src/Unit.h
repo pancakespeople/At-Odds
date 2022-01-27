@@ -12,6 +12,7 @@ class Faction;
 class EffectsEmitter;
 class Constellation;
 class Renderer;
+class AllianceList;
 
 class Unit : public Identifiable {
 public:
@@ -25,8 +26,8 @@ public:
 	sf::Color getFactionColor() const { return m_collider.getColor(); }
 
 	std::vector<Weapon>& getWeapons() { return m_weapons; }
-	std::vector<Spaceship*> findEnemyShips();
-	std::vector<Unit*> findEnemyUnits();
+	std::vector<Spaceship*> findEnemyShips(const AllianceList& alliances);
+	std::vector<Unit*> findEnemyUnits(const AllianceList& alliances);
 	std::vector<std::unique_ptr<Mod>>& getMods() { return m_mods; }
 
 	float getLongestWeaponRange();
@@ -41,7 +42,7 @@ public:
 	void addWeapon(Weapon weapon);
 	void updateWeapons();
 	void fireAllWeaponsAt(Unit* target);
-	void updateMods(Star* currentStar, Faction* faction, Constellation* constellation);
+	void updateMods(Star& currentStar, Faction* faction, const AllianceList& alliances);
 	void enableAllMods();
 	void onDeath(Star* currentStar);
 	void openModGUI(tgui::ChildWindow::Ptr window, Faction* faction);

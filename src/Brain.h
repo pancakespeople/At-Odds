@@ -5,13 +5,14 @@ class Brain;
 class Colony;
 class Planet;
 class Constellation;
+class AllianceList;
 
 class SubAI {
 public:
 	void sleep(uint32_t ticks);
 	bool sleepCheck();
 
-	virtual void update(Faction* faction, Brain* brain) = 0;
+	virtual void update(Faction& faction, Brain& brain, const AllianceList& alliances) = 0;
 
 private:
 	uint32_t m_sleepTime = 0;
@@ -25,7 +26,7 @@ public:
 		NONE,
 	};
 	
-	virtual void update(Faction* faction, Brain* brain) override;
+	virtual void update(Faction& faction, Brain& brain, const AllianceList& alliances) override;
 	void reinitAfterLoad(Constellation* constellation);
 
 private:
@@ -55,7 +56,7 @@ private:
 
 class DefenseAI : public SubAI {
 public:
-	virtual void update(Faction* faction, Brain* brain) override;
+	virtual void update(Faction& faction, Brain& brain, const AllianceList& alliances) override;
 
 private:
 	friend class boost::serialization::access;
@@ -75,9 +76,9 @@ public:
 		NONE
 	};
 	
-	virtual void update(Faction* faction, Brain* brain) override;
-	void researchRandomTech(Faction* faction);
-	bool researchStarterTechs(Faction* faction);
+	virtual void update(Faction& faction, Brain& brain, const AllianceList& alliances) override;
+	void researchRandomTech(Faction& faction);
+	bool researchStarterTechs(Faction& faction);
 
 private:
 	friend class boost::serialization::access;
@@ -88,7 +89,7 @@ private:
 	}
 
 	// Returns true if all wanted buildings were built
-	bool buildColonyBuilding(Planet& planet, Faction* faction);
+	bool buildColonyBuilding(Planet& planet, Faction& faction);
 
 	EconomyState m_state = EconomyState::NONE;
 	int m_stateChangeTimer = 0;
@@ -96,11 +97,11 @@ private:
 
 class Brain {
 public:
-	void onStart(Faction* faction);
-	void onStarTakeover(Faction* faction, Star* star);
-	void onResearchComplete(Faction* faction);
-	void controlFaction(Faction* faction);
-	void controlSubAI(Faction* faction, SubAI* subAI);
+	void onStart(Faction& faction);
+	void onStarTakeover(Faction& faction, Star& star);
+	void onResearchComplete(Faction& faction);
+	void controlFaction(Faction& faction, const AllianceList& alliances);
+	void controlSubAI(Faction& faction, SubAI& subAI, const AllianceList& alliances);
 	void reinitAfterLoad(Constellation* constellation);
 
 	MilitaryAI militaryAI;

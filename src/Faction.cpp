@@ -98,7 +98,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 void Faction::addOwnedSystem(Star* star) {
 	m_ownedSystems.push_back(star);
 	m_ownedSystemIDs.push_back(star->getID());
-	if (m_aiEnabled) m_ai.onStarTakeover(this, star);
+	if (m_aiEnabled) m_ai.onStarTakeover(*this, *star);
 }
 
 void Faction::makeCapital(Star* star) {
@@ -106,7 +106,7 @@ void Faction::makeCapital(Star* star) {
 	m_capitalID = star->getID();
 }
 
-void Faction::update() {
+void Faction::update(const AllianceList& alliances) {
 	if (m_capital->getAllegiance() != m_id) {
 		if (m_ownedSystems.size() > 0) {
 			makeCapital(m_ownedSystems[0]);
@@ -120,10 +120,10 @@ void Faction::update() {
 	}
 	
 	for (int i = 0; i < m_ships.size(); i++) {
-		m_ships[i]->captureCurrentStar(this);
+		m_ships[i]->captureCurrentStar(this, alliances);
 	}
 		
-	if (m_aiEnabled) m_ai.controlFaction(this);
+	if (m_aiEnabled) m_ai.controlFaction(*this, alliances);
 	
 	// Delete unowned systems from list
 	for (int i = 0; i < m_ownedSystems.size(); i++) {
@@ -498,10 +498,10 @@ std::vector<Planet*> Faction::getOwnedPlanets() const {
 	return planets;
 }
 
-std::vector<Star*> Faction::getUnderAttackStars() {
+std::vector<Star*> Faction::getUnderAttackStars(const AllianceList& alliances) {
 	std::vector<Star*> stars;
 	for (Star* star : m_ownedSystems) {
-		if (star->getEnemyCombatShips(m_id).size() > 0) {
+		if (star->getEnemyCombatShips(m_id, alliances).size() > 0) {
 			stars.push_back(star);
 		}
 	}
@@ -591,7 +591,7 @@ void Faction::onResearchFinish(Tech& tech) {
 	DEBUG_PRINT(getName() << " completed research " << tech.getName());
 	addAnnouncementEvent("Research completed on " + tech.getName());
 
-	if (m_aiEnabled) m_ai.onResearchComplete(this);
+	if (m_aiEnabled) m_ai.onResearchComplete(*this);
 }
 
 float Faction::getResourceCount(const std::string& type) const {
@@ -645,7 +645,7 @@ bool Faction::hasColonyBuilding(const std::string& type) const {
 }
 
 void Faction::onStart() {
-	if (m_aiEnabled) m_ai.onStart(this);
+	if (m_aiEnabled) m_ai.onStart(*this);
 }
 
 std::vector<Tech> Faction::getAllTechsOfCategory(const std::string& category, bool unresearchedOnly) {

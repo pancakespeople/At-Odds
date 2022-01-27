@@ -13,6 +13,7 @@ class JumpPoint;
 class EffectsEmitter;
 class Faction;
 class Building;
+class AllianceList;
 
 class Spaceship : public Unit {
 public:
@@ -27,11 +28,11 @@ public:
 	
 	void draw(Renderer& renderer, float time);
 	void accelerate(float amount);
-	void update(Star* currentStar);
+	void update(Star* currentStar, const AllianceList& alliances);
 	void keepSpeed(float speed);
 	void smartFireAt(Unit* target, int weaponIdx);
 	void orbit(const sf::Vector2f& pos);
-	void captureCurrentStar(Faction* faction);
+	void captureCurrentStar(Faction* faction, const AllianceList& alliances);
 	void attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent = false);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 	void clearOrders() { m_orders.clear(); }
@@ -60,7 +61,7 @@ public:
 	bool diesSilently() const { return m_diesSilently; }
 	
 	// Returns false if there is nothing to attack
-	bool attack(Star* star, bool urgent = false);
+	bool attack(Star* star, const AllianceList& alliances, bool urgent = false);
 
 	// Returns degrees
 	float angleTo(const sf::Vector2f& pos);
@@ -83,11 +84,11 @@ public:
 
 	Star* getCurrentStar() { return m_currentStar; }
 
-	std::vector<Building*> findEnemyBuildings();
-	std::vector<Spaceship*> findEnemyShips();
-	std::vector<Spaceship*> findEnemyCombatShips();
-	Spaceship* findClosestEnemyCombatShip(Star* star);
-	Spaceship * findClosestEnemyShip(Star * star);
+	std::vector<Building*> findEnemyBuildings(const AllianceList& alliances);
+	std::vector<Spaceship*> findEnemyShips(const AllianceList& alliances);
+	std::vector<Spaceship*> findEnemyCombatShips(const AllianceList& alliances);
+	Spaceship* findClosestEnemyCombatShip(Star* star, const AllianceList& alliances);
+	Spaceship * findClosestEnemyShip(Star * star, const AllianceList& alliances);
 
 	std::string getName();
 

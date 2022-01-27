@@ -71,11 +71,11 @@ public:
 
 	int getAllegiance() const { return m_allegiance; }
 	int numAlliedShips(int allegiance) const;
-	int numAlliedShips(const std::unordered_set<int>& allies) const;
+	int numAlliedShips(int allegiance, const AllianceList& alliances) const;
 	int numAlliedBuildings(int allegiance, const std::string& type = "") const;
-	int numAlliedBuildings(const std::unordered_set<int>& allies, const std::string& type = "") const;
+	int numAlliedBuildings(int allegiance, const AllianceList& alliances, const std::string& type = "") const;
 	int numAllies(int allegiance) const;
-	int numAllies(const std::unordered_set<int>& allies) const;
+	int numAllies(int allegiance, const AllianceList& alliances) const;
 	int getPlanetIndex(Planet* planet) const;
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
@@ -92,8 +92,8 @@ public:
 	std::vector<Planet>& getPlanets() { return m_planets; }
 	std::vector<Derelict>& getDerelicts() { return m_derelicts; }
 	std::vector<Spaceship*> getAllShipsOfAllegiance(int allegiance);
-	std::vector<Planet*> getEnemyPlanets(int allegiance);
-	std::vector<Spaceship*> getEnemyCombatShips(int allegiance);
+	std::vector<Planet*> getEnemyPlanets(int allegiance, const AllianceList& alliances);
+	std::vector<Spaceship*> getEnemyCombatShips(int allegiance, const AllianceList& alliances);
 	std::vector<Building*> getBuildingsOfType(const std::string& type);
 	
 	// First = allegiance, second = num ships
@@ -126,7 +126,7 @@ private:
 		archive & m_localViewAnimations;
 		archive & m_planets;
 		archive & m_localViewActive;
-		archive & m_multipleFactionsPresent;
+		archive & m_underAttack;
 		archive & m_allegiance;
 		archive & m_shaderRandomSeed;
 		archive & m_temperature;
@@ -167,7 +167,7 @@ private:
 	std::unordered_set<int> m_factionsDiscovered = {-1};
 
 	bool m_localViewActive = false;
-	bool m_multipleFactionsPresent = false;
+	bool m_underAttack = false;
 	bool m_drawHidden = true;
 	bool m_blackHole = false;
 	bool m_peaceful = true;

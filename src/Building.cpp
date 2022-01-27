@@ -116,7 +116,7 @@ void Building::draw(Renderer& renderer) {
 	}
 }
 
-void Building::update(Star* currentStar) {
+void Building::update(Star* currentStar, const AllianceList& alliances) {
 	m_currentStar = currentStar;
 	
 	if (!m_dead && m_health <= 0.0f) {
@@ -130,13 +130,13 @@ void Building::update(Star* currentStar) {
 	}
 	
 	updateWeapons();
-	attackEnemies();
+	attackEnemies(alliances);
 
 	m_sprite.rotate(0.1f);
 	m_collider.update(getPos());
 }
 
-void Building::attackEnemies() {
+void Building::attackEnemies(const AllianceList& alliances) {
 	if (m_weapons.size() == 0) {
 		return;
 	}
@@ -160,7 +160,7 @@ void Building::attackEnemies() {
 		}
 	}
 	else {
-		std::vector<Unit*> enemyUnits = findEnemyUnits();
+		std::vector<Unit*> enemyUnits = findEnemyUnits(alliances);
 
 		if (enemyUnits.size() > 0) {
 			float range = getLongestWeaponRange();

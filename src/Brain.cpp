@@ -8,6 +8,7 @@
 #include "Building.h"
 #include "Derelict.h"
 #include "Tech.h"
+#include "AllianceList.h"
 
 void SubAI::sleep(uint32_t ticks) {
 	m_sleepTime = ticks;
@@ -19,10 +20,10 @@ bool SubAI::sleepCheck() {
 	return false;
 }
 
-void Brain::onStart(Faction* faction) {
-	for (Planet& planet : faction->getCapital()->getPlanets()) {
+void Brain::onStart(Faction& faction) {
+	for (Planet& planet : faction.getCapital()->getPlanets()) {
 		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
-			planet.getColony().setFactionColonyLegality(faction->getID(), true);
+			planet.getColony().setFactionColonyLegality(faction.getID(), true);
 			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
 		}
 	}
@@ -30,22 +31,22 @@ void Brain::onStart(Faction* faction) {
 	onResearchComplete(faction);
 }
 
-void Brain::controlFaction(Faction* faction) {
-	controlSubAI(faction, &militaryAI);
-	controlSubAI(faction, &defenseAI);
-	controlSubAI(faction, &economyAI);
+void Brain::controlFaction(Faction& faction, const AllianceList& alliances) {
+	controlSubAI(faction, militaryAI, alliances);
+	controlSubAI(faction, defenseAI, alliances);
+	controlSubAI(faction, economyAI, alliances);
 }
 
-void Brain::controlSubAI(Faction* faction, SubAI* subAI) {
-	if (subAI->sleepCheck()) subAI->update(faction, this);
+void Brain::controlSubAI(Faction& faction, SubAI& subAI, const AllianceList& alliances) {
+	if (subAI.sleepCheck()) subAI.update(faction, *this, alliances);
 }
 
-void Brain::onStarTakeover(Faction* faction, Star* star) {
+void Brain::onStarTakeover(Faction& faction, Star& star) {
 	std::vector<Planet*> toBeColonized;
 	
-	for (Planet& planet : star->getPlanets()) {
+	for (Planet& planet : star.getPlanets()) {
 
-		if (!planet.getColony().isColonizationLegal(faction->getID())) {
+		if (!planet.getColony().isColonizationLegal(faction.getID())) {
 			if (planet.getResources().size() >= 2) {
 				toBeColonized.push_back(&planet);
 			}
@@ -59,13 +60,13 @@ void Brain::onStarTakeover(Faction* faction, Star* star) {
 	}
 
 	for (Planet* planet : toBeColonized) {
-		planet->getColony().setFactionColonyLegality(faction->getID(), true);
+		planet->getColony().setFactionColonyLegality(faction.getID(), true);
 		AI_DEBUG_PRINT("Made colonization of " << planet->getTypeString() << " legal");
 	}
 
 	// Send a ship to plunder each derelict
-	if (star->getDerelicts().size() > 0) {
-		std::vector<Spaceship*> ships = star->getAllShipsOfAllegiance(faction->getID());
+	if (star.getDerelicts().size() > 0) {
+		std::vector<Spaceship*> ships = star.getAllShipsOfAllegiance(faction.getID());
 		ships.erase(std::remove_if(ships.begin(), ships.end(), [](Spaceship* s) {
 			if (s->isCivilian() || s->isDead() || s->isDisabled() || !s->canReceiveOrders() ||
 				!s->canPlayerGiveOrders()) {
@@ -81,7 +82,7 @@ void Brain::onStarTakeover(Faction* faction, Star* star) {
 
 			AI_DEBUG_PRINT("Sending a ship to plunder a derelict");
 
-			for (Derelict& derelict : star->getDerelicts()) {
+			for (Derelict& derelict : star.getDerelicts()) {
 				ship->addOrder(FlyToOrder(derelict.getPos()));
 			}
 		}
@@ -92,14 +93,14 @@ void Brain::reinitAfterLoad(Constellation* constellation) {
 	militaryAI.reinitAfterLoad(constellation);
 }
 
-void Brain::onResearchComplete(Faction* faction) {
+void Brain::onResearchComplete(Faction& faction) {
 	if (economyAI.researchStarterTechs(faction)) {
 		economyAI.researchRandomTech(faction);
 	}
 }
 
-void MilitaryAI::update(Faction* faction, Brain* brain) {
-	if (faction->getAllCombatShips().size() == 0) {
+void MilitaryAI::update(Faction& faction, Brain& brain, const AllianceList& alliances) {
+	if (faction.getAllCombatShips().size() == 0) {
 		sleep(100);
 		return;
 	}
@@ -124,11 +125,11 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 		if (m_expansionTarget == nullptr) {
 			// Choose expansion target
 			
-			std::vector<Star*> borderStars = faction->getBorderStars();
+			std::vector<Star*> borderStars = faction.getBorderStars();
 
 			// Prioritize undiscovered stars first
 			for (Star* star : borderStars) {
-				if (!star->isDiscovered(faction->getID())) {
+				if (!star->isDiscovered(faction.getID())) {
 					m_expansionTarget = star;
 					m_expansionTargetID = star->getID();
 					AI_DEBUG_PRINT("Attacking undiscovered star");
@@ -160,14 +161,14 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 		}
 		else {
 			if (!m_launchingAttack) {
-				faction->giveAllCombatShipsOrder(TravelOrder(m_expansionTarget), true);
+				faction.giveAllCombatShipsOrder(TravelOrder(m_expansionTarget), true);
 				m_launchingAttack = true;
 				m_attackTimer = 1600;
 				//AI_DEBUG_PRINT("Begun attack");
 			}
 			else {
 				if (m_attackTimer == 0) {
-					if (m_expansionTarget->getAllegiance() == faction->getID()) {
+					if (m_expansionTarget->getAllegiance() == faction.getID()) {
 						m_expansionTarget = nullptr;
 						m_expansionTargetID = 0;
 						m_launchingAttack = false;
@@ -176,20 +177,20 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 					else {
 						m_attackTimer = 1600;
 
-						if (m_expansionTarget->numAlliedShips(faction->getID()) == 0) {
+						if (m_expansionTarget->numAlliedShips(faction.getID()) == 0) {
 							m_attackFrustration++;
 						}
 						else {
 							if (m_attackTimer % 400 == 0) {
 								// Micromanage the battle
-								std::vector<Spaceship*> alliedShips = m_expansionTarget->getAllShipsOfAllegiance(faction->getID());
-								std::vector<Spaceship*> enemyShips = m_expansionTarget->getEnemyCombatShips(faction->getID());
+								std::vector<Spaceship*> alliedShips = m_expansionTarget->getAllShipsOfAllegiance(faction.getID());
+								std::vector<Spaceship*> enemyShips = m_expansionTarget->getEnemyCombatShips(faction.getID(), alliances);
 
 								if (alliedShips.size() > enemyShips.size() * 2) {
 									// Take out any outposts
 									std::vector<Building*> outposts = m_expansionTarget->getBuildingsOfType("OUTPOST");
 									for (Building* outpost : outposts) {
-										if (outpost->getAllegiance() != faction->getID()) {
+										if (outpost->getAllegiance() != faction.getID()) {
 											for (Spaceship* ship : alliedShips) {
 												ship->clearOrders();
 												ship->addOrder(AttackOrder(outpost));
@@ -221,30 +222,30 @@ void MilitaryAI::update(Faction* faction, Brain* brain) {
 	}
 	else if (m_state == MilitaryState::RALLYING) {
 		if (m_rallyTimer == 0) {
-			std::vector<Star*> underAttackStars = faction->getUnderAttackStars();
+			std::vector<Star*> underAttackStars = faction.getUnderAttackStars(alliances);
 
 			if (underAttackStars.size() == 0) {
 				// Send an order to all combat ships to travel to the most recently conquered star
-				if (faction->getOwnedStars().size() > 0) {
-					for (Spaceship* ship : faction->getAllCombatShips()) {
+				if (faction.getOwnedStars().size() > 0) {
+					for (Spaceship* ship : faction.getAllCombatShips()) {
 						ship->clearOrders();
-						ship->addOrder(TravelOrder(faction->getOwnedStars().back()));
+						ship->addOrder(TravelOrder(faction.getOwnedStars().back()));
 					}
 				}
 			}
 			else {
 				// Defend the nation
-				for (Spaceship* ship : faction->getAllCombatShips()) {
+				for (Spaceship* ship : faction.getAllCombatShips()) {
 					ship->clearOrders();
 					ship->addOrder(TravelOrder(underAttackStars.front()));
 				}
 			}
 
 			// Send planet attack ships to attack enemy planets
-			for (Star* star : faction->getOwnedStars()) {
-				std::vector<Planet*> enemyPlanets = star->getEnemyPlanets(faction->getID());
+			for (Star* star : faction.getOwnedStars()) {
+				std::vector<Planet*> enemyPlanets = star->getEnemyPlanets(faction.getID(), alliances);
 				if (enemyPlanets.size() > 0) {
-					std::vector<Spaceship*> planetAttackShips = faction->getPlanetAttackShips();
+					std::vector<Spaceship*> planetAttackShips = faction.getPlanetAttackShips();
 
 					for (Spaceship* ship : planetAttackShips) {
 						if (!ship->isHeavy()) {
@@ -272,17 +273,17 @@ void MilitaryAI::reinitAfterLoad(Constellation* constellation) {
 	m_expansionTarget = constellation->getStarByID(m_expansionTargetID);
 }
 
-void DefenseAI::update(Faction* faction, Brain* brain) {
+void DefenseAI::update(Faction& faction, Brain& brain, const AllianceList& alliances) {
 	if (m_fortifyingTimer == 0) {
-		for (Star* star : faction->getOwnedStars()) {
+		for (Star* star : faction.getOwnedStars()) {
 			if (Random::randBool()) {
-				if (!star->containsBuildingType("OUTPOST", true, faction->getID()) && faction->numIdleConstructionShips() > 0) {
+				if (!star->containsBuildingType("OUTPOST", true, faction.getID()) && faction.numIdleConstructionShips() > 0) {
 					// Build outpost
 
-					Building* building = star->createBuilding("OUTPOST", star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
+					Building* building = star->createBuilding("OUTPOST", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
 
 					// Give idle construction ships order to build it
-					faction->orderConstructionShipsBuild(building, true);
+					faction.orderConstructionShipsBuild(building, true);
 
 					AI_DEBUG_PRINT("Building outpost");
 				}
@@ -290,24 +291,24 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 			else {
 				for (auto& building : star->getBuildings()) {
 					// Build any unbuilt buildings
-					if (building->getAllegiance() == faction->getID() && !building->isBuilt()) {
-						faction->orderConstructionShipsBuild(building.get(), true, true);
+					if (building->getAllegiance() == faction.getID() && !building->isBuilt()) {
+						faction.orderConstructionShipsBuild(building.get(), true, true);
 						//AI_DEBUG_PRINT("Ordering build of unbuilt building");
 					}
 				}
 
-				if (Random::randBool() && faction->numIdleConstructionShips() > 0) {
+				if (Random::randBool() && faction.numIdleConstructionShips() > 0) {
 					// Build turrets around jump points
 
 					std::vector<JumpPoint>& jumpPoints = star->getJumpPoints();
 
-					int numTurrets = Random::randInt(0, faction->numIdleConstructionShips() - 1);
+					int numTurrets = Random::randInt(0, faction.numIdleConstructionShips() - 1);
 					int randJumpPointIndex = Random::randInt(0, jumpPoints.size() - 1);
 
 					JumpPoint& point = jumpPoints[randJumpPointIndex];
 
 					// Get idle construction ships
-					std::vector<Spaceship*> conShips = faction->getConstructionShips(true);
+					std::vector<Spaceship*> conShips = faction.getConstructionShips(true);
 
 					for (int i = 0; i < numTurrets; i++) {
 						sf::Vector2f pos = point.getPos() + Random::randVec(-2500.0f, 2500.0f);
@@ -325,7 +326,7 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 						std::vector<std::string> allowedTurrets;
 
 						for (const std::string& turr : turrets) {
-							if (BuildingPrototype::meetsDisplayRequirements(turr, faction)) {
+							if (BuildingPrototype::meetsDisplayRequirements(turr, &faction)) {
 								allowedTurrets.push_back(turr);
 							}
 						}
@@ -334,7 +335,7 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 							int rndIndex = Random::randInt(0, allowedTurrets.size() - 1);
 
 							// Create turret
-							turret = star->createBuilding(allowedTurrets[rndIndex], pos, faction, false);
+							turret = star->createBuilding(allowedTurrets[rndIndex], pos, &faction, false);
 
 							// Order turret to be built
 							conShips[i]->addOrder(InteractWithBuildingOrder(turret));
@@ -351,7 +352,7 @@ void DefenseAI::update(Faction* faction, Brain* brain) {
 	m_fortifyingTimer--;
 }
 
-void EconomyAI::update(Faction* faction, Brain* brain) {
+void EconomyAI::update(Faction& faction, Brain& brain, const AllianceList& alliances) {
 	// Decide economy state
 	if (m_stateChangeTimer == 0 || m_state == EconomyState::NONE) {
 		if (Random::randBool()) {
@@ -369,14 +370,14 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		m_stateChangeTimer--;
 	}
 	
-	for (Star* star : faction->getOwnedStars()) {
+	for (Star* star : faction.getOwnedStars()) {
 
 		// Build science labs
-		if (star->numAlliedBuildings(faction->getID(), "SCIENCE_LAB") < faction->getScienceLabMax(star) && faction->numIdleConstructionShips() > 0) {
-			int numToBuild = faction->getScienceLabMax(star) - star->numAlliedBuildings(faction->getID(), "SCIENCE_LAB");
-			for (int i = 0; i < numToBuild && faction->numIdleConstructionShips() > 0; i++) {
-				Building* lab = star->createBuilding("SCIENCE_LAB", star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
-				faction->orderConstructionShipsBuild(lab, true, true);
+		if (star->numAlliedBuildings(faction.getID(), "SCIENCE_LAB") < faction.getScienceLabMax(star) && faction.numIdleConstructionShips() > 0) {
+			int numToBuild = faction.getScienceLabMax(star) - star->numAlliedBuildings(faction.getID(), "SCIENCE_LAB");
+			for (int i = 0; i < numToBuild && faction.numIdleConstructionShips() > 0; i++) {
+				Building* lab = star->createBuilding("SCIENCE_LAB", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
+				faction.orderConstructionShipsBuild(lab, true, true);
 
 				AI_DEBUG_PRINT("Building science lab");
 			}
@@ -385,11 +386,11 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		bool builtShipFactory = false;
 
 		// Build ship factories
-		if (star->numAlliedBuildings(faction->getID(), "SHIP_FACTORY") < 5 && faction->numIdleConstructionShips() > 0 &&
+		if (star->numAlliedBuildings(faction.getID(), "SHIP_FACTORY") < 5 && faction.numIdleConstructionShips() > 0 &&
 			!builtShipFactory) {
-			Building* factory = star->createBuilding("SHIP_FACTORY", star->getRandomLocalPos(-10000.0f, 10000.0f), faction, false);
+			Building* factory = star->createBuilding("SHIP_FACTORY", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
 
-			faction->orderConstructionShipsBuild(factory, true);
+			faction.orderConstructionShipsBuild(factory, true);
 
 			AI_DEBUG_PRINT("Building ship factory");
 			builtShipFactory = true;
@@ -403,18 +404,18 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		buildShips = true;
 	}
 
-	for (Building* factory : faction->getAllOwnedBuildingsOfType("SHIP_FACTORY")) {
+	for (Building* factory : faction.getAllOwnedBuildingsOfType("SHIP_FACTORY")) {
 		FactoryMod* mod = factory->getMod<FactoryMod>();
-		mod->updateDesigns(faction);
+		mod->updateDesigns(&faction);
 		mod->setBuildAll(buildShips);
 	}
 
 	// Handle ship designs
 
 	// Weapons
-	for (auto& weapon : faction->getWeapons()) {
+	for (auto& weapon : faction.getWeapons()) {
 		bool notUsed = true;
-		for (auto& design : faction->getShipDesigns()) {
+		for (auto& design : faction.getShipDesigns()) {
 			for (auto& w : design.weapons) {
 				if (w.type == weapon.type) {
 					notUsed = false;
@@ -427,7 +428,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 			DesignerShip newDesign;
 			std::vector<DesignerChassis> usableChassis;
 
-			for (auto& chassis : faction->getChassis()) {
+			for (auto& chassis : faction.getChassis()) {
 				if (chassis.maxWeaponCapacity > 0.0f) {
 					usableChassis.push_back(chassis);
 				}
@@ -451,7 +452,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 
 			if (newDesign.weapons.size() > 0) {
 				newDesign.name = newDesign.generateName();
-				faction->addShipDesign(newDesign);
+				faction.addShipDesign(newDesign);
 
 				AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
 			}
@@ -459,9 +460,9 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 	}
 
 	// Chassis
-	for (auto& chassis : faction->getChassis()) {
+	for (auto& chassis : faction.getChassis()) {
 		bool notUsed = true;
-		for (auto& design : faction->getShipDesigns()) {
+		for (auto& design : faction.getShipDesigns()) {
 			if (design.chassis.name == chassis.name) {
 				notUsed = false;
 			}
@@ -471,7 +472,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 			DesignerShip newDesign;
 			newDesign.chassis = chassis;
 
-			std::vector<DesignerWeapon> usableWeapons = faction->getWeaponsBelowOrEqualWeaponPoints(chassis.maxWeaponCapacity);
+			std::vector<DesignerWeapon> usableWeapons = faction.getWeaponsBelowOrEqualWeaponPoints(chassis.maxWeaponCapacity);
 
 			if (usableWeapons.size() > 0) {
 				int i = 0;
@@ -488,7 +489,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 
 				if (newDesign.weapons.size() > 0) {
 					newDesign.name = newDesign.generateName();
-					faction->addShipDesign(newDesign);
+					faction.addShipDesign(newDesign);
 
 					AI_DEBUG_PRINT("Created new ship design " << newDesign.name);
 				}
@@ -498,7 +499,7 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 
 	// Colonies
 	if (m_state == EconomyState::DEVELOPING_PLANETS) {
-		Planet* bestColony = faction->getMostHabitablePlanet();
+		Planet* bestColony = faction.getMostHabitablePlanet();
 		bool bestColonyDone = false;
 		
 		if (bestColony != nullptr) {
@@ -506,9 +507,9 @@ void EconomyAI::update(Faction* faction, Brain* brain) {
 		}
 
 		if (bestColonyDone) {
-			Star* rndStar = faction->getRandomOwnedStar();
+			Star* rndStar = faction.getRandomOwnedStar();
 			if (rndStar != nullptr) {
-				Planet* best = rndStar->getMostHabitablePlanet(faction->getID());
+				Planet* best = rndStar->getMostHabitablePlanet(faction.getID());
 				if (best != nullptr) {
 					buildColonyBuilding(*best, faction);
 				}
@@ -528,7 +529,7 @@ void removeBuildings(Planet& planet, std::vector<std::string>& wantedBuildings, 
 	}
 }
 
-bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
+bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 	std::vector<std::string> wantedBuildings = {
 				"FARMING",
 				"MINING",
@@ -547,15 +548,15 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
 		"WEAPONS_FACTORIES"
 	};
 
-	removeBuildings(planet, wantedBuildings, faction);
+	removeBuildings(planet, wantedBuildings, &faction);
 	if (wantedBuildings.size() == 0 ) wantedBuildings = lowPriorityBuildings;
-	removeBuildings(planet, wantedBuildings, faction);
+	removeBuildings(planet, wantedBuildings, &faction);
 
 	if (wantedBuildings.size() != 0) {
 		int rnd = Random::randInt(0, wantedBuildings.size() - 1);
 
 		ColonyBuilding toBuild(wantedBuildings[rnd]);
-		if (planet.getColony().buyBuilding(toBuild, faction, planet)) {
+		if (planet.getColony().buyBuilding(toBuild, &faction, planet)) {
 			AI_DEBUG_PRINT("Building colony building " << toBuild.getName());
 		}
 		return false;
@@ -566,23 +567,23 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction* faction) {
 	}
 }
 
-void EconomyAI::researchRandomTech(Faction* faction) {
-	std::vector<Tech> unresearched = faction->getUnresearchedTechs();
+void EconomyAI::researchRandomTech(Faction& faction) {
+	std::vector<Tech> unresearched = faction.getUnresearchedTechs();
 	if (unresearched.size() > 0) {
 		std::string type = unresearched[Random::randInt(0, unresearched.size() - 1)].getType();
-		faction->setResearchingTech(type, true);
+		faction.setResearchingTech(type, true);
 		AI_DEBUG_PRINT("Started researching " << type);
 	}
 }
 
-bool EconomyAI::researchStarterTechs(Faction* faction) {
+bool EconomyAI::researchStarterTechs(Faction& faction) {
 	std::vector<std::string> starterTechs = {
 		"FARMING",
 		"MINING"
 	};
 	
 	for (int i = 0; i < starterTechs.size(); i++) {
-		if (faction->hasResearchedTech(starterTechs[i])) {
+		if (faction.hasResearchedTech(starterTechs[i])) {
 			starterTechs.erase(starterTechs.begin() + i);
 			i--;
 		}
@@ -591,7 +592,7 @@ bool EconomyAI::researchStarterTechs(Faction* faction) {
 	if (starterTechs.size() == 0) return true;
 	else {
 		std::string tech = starterTechs[Random::randInt(0, starterTechs.size() - 1)];
-		faction->setResearchingTech(tech, true);
+		faction.setResearchingTech(tech, true);
 		AI_DEBUG_PRINT("Started researching " << tech);
 		return false;
 	}

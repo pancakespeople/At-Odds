@@ -9,6 +9,7 @@
 class Constellation;
 class Player;
 class Building;
+class AllianceList;
 
 class Faction {
 public:
@@ -19,7 +20,7 @@ public:
 	void spawnAtRandomStar(Constellation* constellation);
 	void addOwnedSystem(Star* star);
 	void makeCapital(Star* star);
-	void update();
+	void update(const AllianceList& alliances);
 	void controlByPlayer(Player& player);
 	void orderConstructionShipsBuild(Building* building, bool onlyIdleShips = false, bool onlyOne = false);
 	void addSpaceship(Spaceship* ship) { m_ships.push_back(ship); m_shipIDs.push_back(ship->getID()); }
@@ -83,7 +84,7 @@ public:
 	std::vector<DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
 	std::vector<ColonyBuilding> getColonyBuildings();
 	std::vector<Planet*> getOwnedPlanets() const;
-	std::vector<Star*> getUnderAttackStars();
+	std::vector<Star*> getUnderAttackStars(const AllianceList& alliances);
 	const std::vector<Tech>& getTechs() { return m_techs; }
 	std::vector<Tech> getUnresearchedTechs();
 	std::vector<Tech> getAllTechsOfCategory(const std::string& category, bool unresearchedOnly = false);
