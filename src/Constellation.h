@@ -47,7 +47,7 @@ public:
 	Hyperlane* getHyperlaneByID(uint32_t id);
 	Spaceship* getShipByID(uint32_t id);
 
-	const AllianceList& getAlliances() { return m_allianceList; }
+	const AllianceList& getAlliances() const { return m_allianceList; }
 
 private:
 	friend class boost::serialization::access;

@@ -132,7 +132,7 @@ void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellati
 
 	// Draw number of ships text
 	if (isDiscovered(player.getFaction())) {
-		if (!player.hasFogOfWar() || numAllies(player.getFaction()) > 0) {
+		if (!player.hasFogOfWar() || numAllies(player.getFaction(), constellation.getAlliances()) > 0) {
 			std::unordered_map<int, int> numFactionShips = countNumFactionShips();
 			sf::RectangleShape background;
 			background.setFillColor(sf::Color::Black);

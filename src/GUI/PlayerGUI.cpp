@@ -16,7 +16,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 #endif
 		buildGUI.open(gui, playerFaction);
 		unitGUI.open(gui);
-		planetGUI.open(gui, state, playerFaction);
+		planetGUI.open(gui, state, playerFaction, constellation);
 		timescaleGUI.open(gui);
 		resourceGUI.open(gui);
 		shipDesignerGUI.open(gui, playerFaction);
@@ -27,7 +27,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 	}
 	else if (guiState == PlayerGUIState::SPECTATOR) {
 		unitGUI.open(gui);
-		planetGUI.open(gui, state, playerFaction);
+		planetGUI.open(gui, state, playerFaction, constellation);
 		timescaleGUI.open(gui);
 	}
 
@@ -80,6 +80,6 @@ void PlayerGUI::draw(sf::RenderWindow& window, Renderer& renderer, GameState& st
 	if (m_state != PlayerGUIState::CLOSED) {
 		buildGUI.draw(window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()));
 		unitGUI.draw(window);
-		minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera());
+		minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera(), constellation.getAlliances());
 	}
 }

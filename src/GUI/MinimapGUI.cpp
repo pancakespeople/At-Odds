@@ -3,8 +3,9 @@
 #include "../Star.h"
 #include "../Math.h"
 #include "UnitGUI.h"
+#include "../AllianceList.h"
 
-void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance, Camera& camera) {
+void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance, Camera& camera, const AllianceList& alliances) {
 	if (currentStar != nullptr) {
 		sf::View oldView = window.getView();
 		float ratio = oldView.getSize().x / oldView.getSize().y;
@@ -70,6 +71,9 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 						if (ship->getAllegiance() == playerAllegiance) {
 							dot.setFillColor(sf::Color::Green);
 						}
+						else if (alliances.isAllied(ship->getAllegiance(), playerAllegiance)) {
+							dot.setFillColor(sf::Color::Blue);
+						}
 						else {
 							dot.setFillColor(sf::Color::Red);
 						}
@@ -93,6 +97,9 @@ void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAll
 					else {
 						if (building->getAllegiance() == playerAllegiance) {
 							dot.setFillColor(sf::Color::Green);
+						}
+						else if (alliances.isAllied(building->getAllegiance(), playerAllegiance)) {
+							dot.setFillColor(sf::Color::Blue);
 						}
 						else {
 							dot.setFillColor(sf::Color::Red);

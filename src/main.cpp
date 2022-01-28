@@ -116,7 +116,7 @@ int main(int argc, const char* argv[])
             buildGui.onEvent(event, window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
             console.onEvent(event, gui, state);
             playerGui.timescaleGUI.onEvent(event, gui);
-            playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, renderer, state.getLocalViewStar(), playerGui.mainPanel);
+            playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, renderer, state.getLocalViewStar(), playerGui.mainPanel, constellation);
             playerGui.onEvent(event, gui);
             renderer.onEvent(event);
         }

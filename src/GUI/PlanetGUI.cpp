@@ -6,8 +6,9 @@
 #include "../TOMLCache.h"
 #include "../Util.h"
 #include "../Renderer.h"
+#include "../Constellation.h"
 
-void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
+void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, const Constellation& constellation) {
 	if (m_planetPanel != nullptr) {
 		gui.remove(m_planetPanel);
 		m_planetPanel = nullptr;
@@ -29,7 +30,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 		m_planetIconPanel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
 	});
 
-	m_planetIconPanel->onClick([this, &gui, &state, playerFaction]() {
+	m_planetIconPanel->onClick([this, &gui, &state, &constellation, playerFaction]() {
 		if (m_planetPanel == nullptr) {
 			if (state.getLocalViewStar() != nullptr) {
 				m_planetPanel = tgui::Panel::create();
@@ -51,8 +52,8 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 				auto planetList = tgui::ComboBox::create();
 				planetList->setPosition("25%", "5%");
 				planetList->setSize("50%", "10%");
-				planetList->onItemSelect([this, planetList, &state, &gui, playerFaction]() {
-					setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex());
+				planetList->onItemSelect([this, planetList, &state, &gui, &constellation, playerFaction]() {
+					setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex(), constellation);
 					});
 				m_planetPanel->add(planetList, "planetList");
 
@@ -70,18 +71,18 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 
 				// Set first planet as selected
 				if (planetList->getItemCount() > 0) {
-					setSelectedPlanet(planetList, state, playerFaction, gui, 0);
+					setSelectedPlanet(planetList, state, playerFaction, gui, 0, constellation);
 				}
 
 				auto backButton = tgui::Button::create("<-");
 				backButton->setPosition("5%", "5%");
-				backButton->onClick([this, planetList, &state, &gui, playerFaction]() {
+				backButton->onClick([this, planetList, &state, &gui, &constellation, playerFaction]() {
 					if (planetList->getItemCount() > 1) {
 						if (planetList->getSelectedItemIndex() == 0) {
-							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getItemCount() - 1);
+							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getItemCount() - 1, constellation);
 						}
 						else {
-							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex() - 1);
+							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex() - 1, constellation);
 						}
 					}
 					});
@@ -89,13 +90,13 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 
 				auto forwardButton = tgui::Button::create("->");
 				forwardButton->setPosition("84%", "5%");
-				forwardButton->onClick([this, planetList, &state, &gui, playerFaction]() {
+				forwardButton->onClick([this, planetList, &state, &gui, &constellation, playerFaction]() {
 					if (planetList->getItemCount() > 1) {
 						if (planetList->getSelectedItemIndex() == planetList->getItemCount() - 1) {
-							setSelectedPlanet(planetList, state, playerFaction, gui, 0);
+							setSelectedPlanet(planetList, state, playerFaction, gui, 0, constellation);
 						}
 						else {
-							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex() + 1);
+							setSelectedPlanet(planetList, state, playerFaction, gui, planetList->getSelectedItemIndex() + 1, constellation);
 						}
 					}
 					});
@@ -131,7 +132,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction) {
 	m_planetIconPanel->add(picture);
 }
 
-void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, Faction* playerFaction, tgui::Gui& gui, int index) {
+void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, Faction* playerFaction, tgui::Gui& gui, int index, const Constellation& constellation) {
 	planetList->setSelectedItemByIndex(index);
 	m_planetInfoPanel->removeAllWidgets();
 
@@ -169,7 +170,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	// Buttons
 
-	createColonyAndResourcesButtons(gui, state, planet, playerFaction);
+	createColonyAndResourcesButtons(gui, state, planet, playerFaction, constellation);
 
 	if (state.getPlayer().getFaction() != -1) {
 		createLawsButton(gui, state, planet);
@@ -243,7 +244,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	m_updateFunction = nullptr;
 }
 
-void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel) {
+void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel, const Constellation& constellation) {
 	if (currentStar != nullptr && m_planetIconPanel != nullptr && mainPanel->isFocused()) {
 		static sf::Vector2f lastMousePressPos;
 
@@ -259,7 +260,7 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, F
 					if (m_planetPanel == nullptr) {
 						m_planetIconPanel->onClick.emit(m_planetIconPanel.get(), worldPos);
 					}
-					setSelectedPlanet(m_planetPanel->get<tgui::ComboBox>("planetList"), state, playerFaction, gui, i);
+					setSelectedPlanet(m_planetPanel->get<tgui::ComboBox>("planetList"), state, playerFaction, gui, i, constellation);
 					break;
 				}
 				i++;
@@ -271,13 +272,13 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, F
 	}
 }
 
-void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet, Faction* playerFaction) {
+void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet, Faction* playerFaction, const Constellation& constellation) {
 	// Colony button
 	auto colonyInfoButton = tgui::Button::create();
 	colonyInfoButton->setPosition("75%", "80%");
 	colonyInfoButton->setText("Colony");
 	colonyInfoButton->setSize("25%", "10%");
-	auto openColonyInfo = [this, &gui, &state, &planet]() {
+	auto openColonyInfo = [this, &gui, &state, &constellation, &planet]() {
 		switchSideWindow("Colony", gui);
 
 		if (m_sideWindow == nullptr) return;
@@ -296,6 +297,10 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 			if (state.getPlayer().getFaction() == colony.getAllegiance()) {
 				allegianceText->setText("Friendly");
 				allegianceText->getRenderer()->setTextColor(tgui::Color::Green);
+			}
+			else if (constellation.getAlliances().isAllied(state.getPlayer().getFaction(), colony.getAllegiance())) {
+				allegianceText->setText("Allied");
+				allegianceText->getRenderer()->setTextColor(tgui::Color::Blue);
 			}
 			else {
 				allegianceText->setText("Hostile");

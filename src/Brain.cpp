@@ -151,6 +151,12 @@ void MilitaryAI::update(Faction& faction, Brain& brain, const AllianceList& alli
 
 			// Choose random stars next
 			if (m_expansionTarget == nullptr) {
+				
+				// Don't attack allied stars
+				borderStars.erase(std::remove_if(borderStars.begin(), borderStars.end(), [&faction, &alliances](const Star* star) {
+					return alliances.isAllied(faction.getID(), star->getAllegiance());
+				}));
+
 				if (borderStars.size() > 0) {
 					int rnd = Random::randInt(0, borderStars.size() - 1);
 					m_expansionTarget = borderStars[rnd];
@@ -168,7 +174,7 @@ void MilitaryAI::update(Faction& faction, Brain& brain, const AllianceList& alli
 			}
 			else {
 				if (m_attackTimer == 0) {
-					if (m_expansionTarget->getAllegiance() == faction.getID()) {
+					if (alliances.isAllied(faction.getID(), m_expansionTarget->getAllegiance())) {
 						m_expansionTarget = nullptr;
 						m_expansionTargetID = 0;
 						m_launchingAttack = false;
@@ -190,7 +196,7 @@ void MilitaryAI::update(Faction& faction, Brain& brain, const AllianceList& alli
 									// Take out any outposts
 									std::vector<Building*> outposts = m_expansionTarget->getBuildingsOfType("OUTPOST");
 									for (Building* outpost : outposts) {
-										if (outpost->getAllegiance() != faction.getID()) {
+										if (!alliances.isAllied(outpost->getAllegiance(), faction.getID())) {
 											for (Spaceship* ship : alliedShips) {
 												ship->clearOrders();
 												ship->addOrder(AttackOrder(outpost));
