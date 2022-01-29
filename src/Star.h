@@ -140,7 +140,7 @@ private:
 		archive & m_effectAnimations;
 	}
 	
-	void handleCollisions();
+	void handleCollisions(const AllianceList& alliances);
 
 	void init(const sf::Vector2f& pos);
 

@@ -320,7 +320,7 @@ void Star::addProjectile(Projectile proj) {
 	m_projectiles.push_back(proj);
 }
 
-void Star::handleCollisions() {
+void Star::handleCollisions(const AllianceList& alliances) {
 	// Fill quadtree
 	m_quadtree = Quadtree(getLocalViewCenter(), 100000);
 
@@ -336,12 +336,14 @@ void Star::handleCollisions() {
 		m_quadtree.retrieve(nearUnits, p.getCollider());
 
 		for (Unit* unit : nearUnits) {
-			if (p.isCollidingWith(unit->getCollider()) && p.getAllegiance() != unit->getAllegiance()) {
-				unit->takeDamage(p.getDamage());
-				if (p.diesOnCollision()) p.kill();
-				m_particleSystem.createParticle(
-					ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), unit->getCollider().getColor()
-				);
+			if (p.isCollidingWith(unit->getCollider())) {
+				if (!alliances.isAllied(p.getAllegiance(), unit->getAllegiance())) {
+					unit->takeDamage(p.getDamage());
+					if (p.diesOnCollision()) p.kill();
+					m_particleSystem.createParticle(
+						ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), unit->getCollider().getColor()
+					);
+				}
 			}
 		}
 
@@ -508,7 +510,7 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 
 	m_particleSystem.updateParticles();
 
-	handleCollisions();
+	handleCollisions(alliances);
 	cleanUpAnimations();
 }
 
