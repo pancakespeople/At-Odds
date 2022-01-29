@@ -37,3 +37,13 @@ int AllianceList::createAlliance() {
 	m_alliances.push_back(std::unordered_set<int>());
 	return m_alliances.size() - 1;
 }
+
+int AllianceList::getAllianceIDOf(int allegiance) const {
+	for (int i = 0; i < m_alliances.size(); i++) {
+		if (m_alliances[i].count(allegiance) > 0) {
+			return i;
+		}
+	}
+
+	return -1;
+}

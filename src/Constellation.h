@@ -35,6 +35,7 @@ public:
 	void generatePirates();
 	void updatePirates();
 	void setupAlliances();
+	void setupWorldIsAgainstMe();
 
 	std::vector<std::unique_ptr<Star>>& getStars() { return m_stars; }
 	std::vector<std::unique_ptr<Hyperlane>>& getHyperlanes() { return m_hyperlanes; }

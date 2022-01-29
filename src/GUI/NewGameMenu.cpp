@@ -78,9 +78,25 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	spectateCheckbox->setPosition("5%", "45%");
 	guiWindow->add(spectateCheckbox, "spectateCheckBox");
 
+	tgui::ToolTip::setInitialDelay(0);
+
 	auto alliancesCheckbox = tgui::CheckBox::create("Alliances");
 	alliancesCheckbox->setPosition("5%", "55%");
+	alliancesCheckbox->setToolTip(tgui::Label::create("Divides all factions into 2 alliances"));
 	guiWindow->add(alliancesCheckbox, "alliancesCheckbox");
+
+	auto wiamCheckbox = tgui::CheckBox::create("The World Is Against Me");
+	wiamCheckbox->setPosition("5%", "65%");
+	wiamCheckbox->setToolTip(tgui::Label::create("Puts all AI factions into an alliance against the player"));
+	guiWindow->add(wiamCheckbox, "wiamCheckbox");
+	
+	alliancesCheckbox->onCheck([wiamCheckbox]() {
+		wiamCheckbox->setChecked(false);
+	});
+	
+	wiamCheckbox->onCheck([alliancesCheckbox]() {
+		alliancesCheckbox->setChecked(false);
+	});
 }
 
 void NewGameMenu::close() {
@@ -127,6 +143,11 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	auto alliancesCheckbox = m_window->get<tgui::CheckBox>("alliancesCheckbox");
 	if (alliancesCheckbox->isChecked()) {
 		constellation.setupAlliances();
+	}
+
+	auto wiamCheckbox = m_window->get<tgui::CheckBox>("wiamCheckbox");
+	if (wiamCheckbox->isChecked()) {
+		constellation.setupWorldIsAgainstMe();
 	}
 
 	state.getCamera().setPos(stars[0]->getPos());

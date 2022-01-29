@@ -615,3 +615,13 @@ void Constellation::setupAlliances() {
         DEBUG_PRINT("Team 2: " << m_factions[i].getID());
     }
 }
+
+void Constellation::setupWorldIsAgainstMe() {
+    m_allianceList.createAlliance();
+
+    for (int i = 0; i < m_factions.size(); i++) {
+        if (i != 0) {
+            m_allianceList.add(0, m_factions[i].getID());
+        }
+    }
+}

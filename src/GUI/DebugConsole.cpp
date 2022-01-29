@@ -88,8 +88,9 @@ void mostHabitable(const DebugConsole::Command& command, const DebugConsole::Goo
 void listFactions(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 0) && goodies.console->validateNotState(command, goodies.state, GameState::State::MAIN_MENU)) {
 		int i = 0;
+		const AllianceList& alliances = goodies.constellation.getAlliances();
 		for (Faction& faction : goodies.constellation.getFactions()) {
-			goodies.console->addLine(std::to_string(i) + ": " + faction.getName());
+			goodies.console->addLine(std::to_string(i) + ": " + faction.getName() + ", Alliance: " + std::to_string(alliances.getAllianceIDOf(faction.getID())));
 			i++;
 		}
 	}

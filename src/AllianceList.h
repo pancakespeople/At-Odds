@@ -7,6 +7,7 @@ public:
 	bool isAllied(int allegiance1, int allegiance2) const;
 	std::unordered_set<int> getAllies(int allegiance) const;
 	std::unordered_set<int> getAlliance(int allianceID) const;
+	int getAllianceIDOf(int allegiance) const;
 
 private:
 	friend class boost::serialization::access;
