@@ -59,14 +59,14 @@ void Sounds::playSound(const std::string& filePath, const sf::Vector2f& pos, flo
 	}
 }
 
-void Sounds::updateSounds(const Player& player, const Camera& camera) {
+void Sounds::updateSounds(const Player& player, const Camera& camera, const AllianceList& alliances) {
 	sf::Listener::setPosition(sf::Vector3f(camera.getPos().x, camera.getZoomFactor() * 100.0f, camera.getPos().y));
 	for (auto it = m_playingSounds.begin(); it != m_playingSounds.end();) {
 		if (!it->played) {
 			if (it->star != nullptr) {
 				if (player.getFaction() != -1) {
 					// Dont play sound if player isnt spectating and no allies in system
-					if (it->star->numAllies(player.getFaction()) > 0) {
+					if (it->star->numAllies(player.getFaction(), alliances) > 0) {
 						// Play sound if allies in system
 						it->sound.play();
 						it->played = true;

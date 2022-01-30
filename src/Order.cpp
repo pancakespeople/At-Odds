@@ -77,7 +77,7 @@ bool AttackOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList
 			return true;
 	}
 	
-	if (m_target->getCurrentStar() != ship.getCurrentStar() || m_target->getAllegiance() == ship.getAllegiance()) {
+	if (m_target->getCurrentStar() != ship.getCurrentStar() || alliances.isAllied(m_target->getAllegiance(), ship.getAllegiance())) {
 		return true;
 	}
 	
@@ -260,7 +260,7 @@ bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const 
 	if (Math::distance(ship.getPos(), m_planet->getPos()) < (m_planet->getRadius() + ship.getCollider().getRadius())) {
 		
 		// Mods interact if civilian or friendly planet
-		if (ship.isCivilian() || ship.getAllegiance() == m_planet->getColony().getAllegiance()) {
+		if (ship.isCivilian() || alliances.isAllied(ship.getAllegiance(), m_planet->getColony().getAllegiance())) {
 			for (auto& mod : ship.getMods()) {
 				mod->interactWithPlanet(&ship, m_planet, &currentStar);
 			}
@@ -268,7 +268,9 @@ bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const 
 		}
 	}
 
-	if (!ship.isCivilian() && ship.getAllegiance() != m_planet->getColony().getAllegiance()) {
+	bool allied = alliances.isAllied(ship.getAllegiance(), m_planet->getColony().getAllegiance());
+
+	if (!ship.isCivilian() && !allied) {
 		// Orbital bombardment
 
 		if (m_planet->getColony().getPopulation() == 0) return true;
@@ -289,7 +291,7 @@ bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const 
 	}
 
 	// No interaction for combat ships on friendly planets yet
-	if (m_planet->getColony().getAllegiance() == ship.getAllegiance() && !ship.isCivilian()) return true;
+	if (allied && !ship.isCivilian()) return true;
 
 	return false;
 }

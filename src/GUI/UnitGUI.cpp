@@ -7,6 +7,7 @@
 #include "../Hyperlane.h"
 #include "MinimapGUI.h"
 #include "../Renderer.h"
+#include "../AllianceList.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -214,7 +215,7 @@ void UnitGUI::draw(sf::RenderWindow& window) {
 	window.setView(oldView);
 }
 
-void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel) {
+void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel, const AllianceList& alliances) {
 	bool mainPanelFocused = true;
 	if (mainPanel != nullptr) {
 		mainPanelFocused = mainPanel->isFocused();
@@ -243,7 +244,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer
 
 					// Check if click was on an enemy ship
 					for (auto& s : state.getLocalViewStar()->getSpaceships()) {
-						if (s->getAllegiance() != m_selectedShips[0]->getAllegiance()) {
+						if (!alliances.isAllied(s->getAllegiance(), m_selectedShips[0]->getAllegiance())) {
 							if (s->getCollider().contains(worldClick)) {
 								attackTarget = s.get();
 								break;
@@ -276,7 +277,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer
 								s->addOrder(AttackOrder(attackTarget));
 							}
 							else if (buildingClick != nullptr) {
-								if (buildingClick->getAllegiance() != s->getAllegiance()) {
+								if (!alliances.isAllied(buildingClick->getAllegiance(), s->getAllegiance())) {
 									s->addOrder(AttackOrder(buildingClick)); // Attack enemy building
 								}
 								else {

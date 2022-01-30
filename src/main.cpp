@@ -109,7 +109,7 @@ int main(int argc, const char* argv[])
             state.getCamera().zoomEvent(event);
             constellation.onEvent(event, window, renderer, state);
             state.onEvent(event);
-            unitGui.onEvent(event, window, renderer, state, constellation.getStars(), playerGui.mainPanel);
+            unitGui.onEvent(event, window, renderer, state, constellation.getStars(), playerGui.mainPanel, constellation.getAlliances());
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
             playerGui.buildingGUI.onEvent(event, window, renderer, gui, state, constellation, playerGui.mainPanel);
@@ -145,7 +145,7 @@ int main(int argc, const char* argv[])
 
         state.getCamera().update(renderer, gui.getFocusedLeaf());
 
-        Sounds::updateSounds(state.getPlayer(), state.getCamera());
+        Sounds::updateSounds(state.getPlayer(), state.getCamera(), constellation.getAlliances());
         musicPlayer.playMusic();
 
         if (state.getState() == GameState::State::WORLD_VIEW) {

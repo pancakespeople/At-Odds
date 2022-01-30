@@ -9,6 +9,7 @@
 class Star;
 class Player;
 class Camera;
+class AllianceList;
 
 class Sounds {
 public:
@@ -21,7 +22,7 @@ public:
 	static void playSound(const std::string& filePath, const sf::Vector2f& pos, float volume = 100.0f, float pitch = 1.0f, Star* star = nullptr, bool noSpatial = false);
 	static void playSoundLocal(const std::string& filePath, Star* star, const sf::Vector2f& pos, float volume = 100.0f, float pitch = 1.0f, bool noSpatial = false);
 	static void loadSound(const std::string& filepath) { getSound(filepath); }
-	static void updateSounds(const Player& player, const Camera& camera);
+	static void updateSounds(const Player& player, const Camera& camera, const AllianceList& alliances);
 	static void clearSounds() { m_playingSounds.clear(); }
 
 private:
