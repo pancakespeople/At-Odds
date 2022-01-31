@@ -75,3 +75,8 @@ void GameState::reinitAfterLoad(Constellation& constellation) {
 		m_localViewStar = constellation.getStarByID(m_localViewStarID);
 	}
 }
+
+void GameState::setTimescale(int timescale) {
+	m_timescale = timescale;
+	m_updatesPerSecondTarget = 60 * m_timescale;
+}

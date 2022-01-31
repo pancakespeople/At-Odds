@@ -33,18 +33,18 @@ class TimescaleGUI {
 public:
 	TimescaleGUI() {}
 
-	void open(tgui::Gui& gui);
-	void onEvent(sf::Event& ev, tgui::Gui& gui);
+	void open(tgui::Gui& gui, GameState& state);
+	void onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state);
 
-	const sf::Clock& getUpdateClock() { return m_updateClock; }
+	/*const sf::Clock& getUpdateClock() { return m_updateClock; }
 	int getUpdatesPerSecondTarget() { return m_updatesPerSecondTarget; }
-	void restartUpdateClock() { m_updateClock.restart(); }
+	void restartUpdateClock() { m_updateClock.restart(); }*/
 
 private:
 	tgui::Label::Ptr m_timescaleLabel;
-	int m_timescale = 1;
+	/*int m_timescale = 1;
 	int m_updatesPerSecondTarget = 60;
-	sf::Clock m_updateClock;
+	sf::Clock m_updateClock;*/
 };
 
 namespace GameWidget {

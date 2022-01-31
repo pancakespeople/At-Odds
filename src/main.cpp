@@ -115,7 +115,7 @@ int main(int argc, const char* argv[])
             playerGui.buildingGUI.onEvent(event, window, renderer, gui, state, constellation, playerGui.mainPanel);
             buildGui.onEvent(event, window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
             console.onEvent(event, gui, state);
-            playerGui.timescaleGUI.onEvent(event, gui);
+            playerGui.timescaleGUI.onEvent(event, gui, state);
             playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, renderer, state.getLocalViewStar(), playerGui.mainPanel, constellation);
             playerGui.onEvent(event, gui);
             renderer.onEvent(event);
@@ -128,11 +128,12 @@ int main(int argc, const char* argv[])
         }
         
         // Maintain a constant update rate
-        updateStep = playerGui.timescaleGUI.getUpdatesPerSecondTarget() / (1.0f / playerGui.timescaleGUI.getUpdateClock().getElapsedTime().asSeconds());
+        updateStep = state.getUpdatesPerSecondTarget() / (1.0f / state.getUpdateClock().getElapsedTime().asSeconds());
         for (int i = 0; i < std::round(updateStep); i++) {
             constellation.update(state.getPlayer(), renderer.effects);
             playerGui.updateSync(window, state, constellation, gui);
             mainMenu.updateArena(updates, constellation);
+            state.restartUpdateClock();
             updates++;
         }
 
@@ -158,14 +159,14 @@ int main(int argc, const char* argv[])
         console.runCommands(constellation, state, window, renderer, gui, playerGui);
         
         //mainMenu.drawPreview(window, emitter, state, time);
-        //debugInfo.draw(window);
         renderer.displayToWindow(window, state);
+        //debugInfo.draw(window);
         playerGui.draw(window, renderer, state, constellation, player);
         gui.draw();
 
         window.display();
 
-        //debugInfo.update(fps, fpsClock.getElapsedTime().asMilliseconds(), ticks, updateStep, playerGui.timescaleGUI.getUpdatesPerSecondTarget());
+        //debugInfo.update(fps, fpsClock.getElapsedTime().asMilliseconds(), ticks, updateStep, state.getUpdatesPerSecondTarget());
         
         ticks++;
         time += fpsClock.getElapsedTime().asSeconds();

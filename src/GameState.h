@@ -40,6 +40,13 @@ public:
 	void addOnChangeStateCallback(std::function<void()> func) { m_changeStateCallbacks.push_back(func); }
 	void clearCallbacks() { m_changeStateCallbacks.clear(); }
 	void reinitAfterLoad(Constellation& constellation);
+	void setTimescale(int timescale);
+	void restartUpdateClock() { m_updateClock.restart(); }
+
+	int getTimescale() { return m_timescale; }
+	int getUpdatesPerSecondTarget() { return m_updatesPerSecondTarget; }
+
+	const sf::Clock& getUpdateClock() { return m_updateClock; }
 
 private:
 	friend class boost::serialization::access;
@@ -49,6 +56,8 @@ private:
 		archive & m_localViewStarID;
 		archive & m_camera;
 		archive & m_player;
+		archive & m_timescale;
+		archive & m_updatesPerSecondTarget;
 	}
 	
 	void callOnChangeStateCallbacks();
@@ -62,5 +71,8 @@ private:
 	std::vector<std::function<void()>> m_changeStateCallbacks;
 
 	int m_localViewStarID = 0;
+	int m_timescale = 1;
+	int m_updatesPerSecondTarget = 60;
+	sf::Clock m_updateClock;
 };
 

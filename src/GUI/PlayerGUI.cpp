@@ -17,7 +17,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		buildGUI.open(gui, playerFaction);
 		unitGUI.open(gui);
 		planetGUI.open(gui, state, playerFaction, constellation);
-		timescaleGUI.open(gui);
+		timescaleGUI.open(gui, state);
 		resourceGUI.open(gui);
 		shipDesignerGUI.open(gui, playerFaction);
 		announcerGUI.open(gui);
@@ -28,7 +28,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 	else if (guiState == PlayerGUIState::SPECTATOR) {
 		unitGUI.open(gui);
 		planetGUI.open(gui, state, playerFaction, constellation);
-		timescaleGUI.open(gui);
+		timescaleGUI.open(gui, state);
 	}
 
 	m_state = guiState;
@@ -49,7 +49,6 @@ void PlayerGUI::update(sf::RenderWindow& window, Renderer& renderer, GameState& 
 }
 
 void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
-	timescaleGUI.restartUpdateClock();
 	if (m_state != PlayerGUIState::CLOSED) {
 		planetGUI.update(state);
 	}

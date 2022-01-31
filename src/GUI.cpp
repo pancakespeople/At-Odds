@@ -53,16 +53,21 @@ void HelpWindow::close() {
 	}
 }
 
-void TimescaleGUI::open(tgui::Gui& gui) {
+void TimescaleGUI::open(tgui::Gui& gui, GameState& state) {
 	m_timescaleLabel = tgui::Label::create();
 	m_timescaleLabel->setOrigin(0.5f, 0.5f);
 	m_timescaleLabel->setPosition("50%", "10%");
 	m_timescaleLabel->setTextSize(25);
 	m_timescaleLabel->setVisible(false);
 	gui.add(m_timescaleLabel);
+
+	if (state.getTimescale() == 0) {
+		m_timescaleLabel->setText("Paused");
+		m_timescaleLabel->setVisible(true);
+	}
 }
 
-void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui) {
+void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
 	if (m_timescaleLabel != nullptr) {
 		tgui::Widget::Ptr focused = gui.getFocusedLeaf();
 		tgui::String focusedType;
@@ -71,51 +76,49 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui) {
 		}
 
 		if (focusedType != "EditBox") {
-			if (ev.type == sf::Event::KeyReleased && ((ev.key.code == sf::Keyboard::Equal && ev.key.shift) ||
-				(ev.key.code == sf::Keyboard::Dash))) {
+			if (ev.type == sf::Event::KeyReleased && (ev.key.code == sf::Keyboard::Equal ||
+				ev.key.code == sf::Keyboard::Dash)) {
 				// + or - pressed
 
-				gui.remove(m_timescaleLabel);
-				open(gui);
+				if (state.getTimescale() != 0) {
+					gui.remove(m_timescaleLabel);
+					open(gui, state);
 
-				if (ev.key.code == sf::Keyboard::Dash) {
-					if (m_timescale > 1) {
-						m_timescale = m_timescale >> 1;
+					if (ev.key.code == sf::Keyboard::Dash) {
+						if (state.getTimescale() > 1) {
+							state.setTimescale(state.getTimescale() >> 1);
+						}
 					}
-				}
-				else {
-					if (m_timescale < 64) {
-						m_timescale = m_timescale << 1;
+					else {
+						if (state.getTimescale() < 64) {
+							state.setTimescale(state.getTimescale() << 1);
+						}
 					}
+
+					m_timescaleLabel->setText("Timescale: " + std::to_string(state.getTimescale()) + "x");
+					m_timescaleLabel->setVisible(true);
+					m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
 				}
-
-				m_updatesPerSecondTarget = 60 * m_timescale;
-
-				m_timescaleLabel->setText("Timescale: " + std::to_string(m_timescale) + "x");
-				m_timescaleLabel->setVisible(true);
-				m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
 			}
 			else if (ev.type == sf::Event::KeyReleased && ev.key.code == sf::Keyboard::Space) {
 				gui.remove(m_timescaleLabel);
-				open(gui);
+				open(gui, state);
 
-				if (m_timescale != 0) {
-					m_timescale = 0;
+				if (state.getTimescale() != 0) {
+					state.setTimescale(0);
 
 					m_timescaleLabel->setText("Paused");
 					m_timescaleLabel->setVisible(true);
 				}
 				else {
-					m_timescale = 1;
+					state.setTimescale(1);
 
-					m_updateClock.restart();
+					state.restartUpdateClock();
 
 					m_timescaleLabel->setText("Unpaused");
 					m_timescaleLabel->setVisible(true);
 					m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
 				}
-
-				m_updatesPerSecondTarget = 60 * m_timescale;
 			}
 		}
 	}
