@@ -62,7 +62,7 @@ void main() {
 	vec2 noisePos;
 	float r = sqrt(dot(worldPos, worldPos)) / size.x;
 	float f = (1.0 - sqrt(1.0 - r)) / (r);
-	float light = dot(worldPos / 250.0, sunVec);
+	float light = dot(worldPos / 250.0, normalize(sunVec));
 	float alpha = 1.0;
 	vec3 cloudColor = vec3(1.0);
 
@@ -80,7 +80,7 @@ void main() {
 		noisePos.y += angleVector.y * time;*/
 	}
 
-	float noiseVal = fbm(noisePos * 0.5 + 0.5) * 2.0;
+	float noiseVal = fbm(noisePos * 200.0 / size + 0.5) * 4.0;
 	vec3 noiseVec = vec3(vec3(noiseVal) + 0.5 * 2.0);
 	float cloudNoise = fbm((worldPos * f * 2.0 * rotate(time / 16.0) / 300.0f) + 1000.0) + 0.5;
 
