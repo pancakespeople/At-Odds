@@ -10,14 +10,26 @@
 void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
 	if (goodies.console->validateArgs(command, 3) && goodies.console->validateState(command, goodies.state, GameState::State::LOCAL_VIEW)) {
 		std::string type = command.args[0];
+		std::string weapon = command.args[1];
+
 		int allegiance = std::atoi(command.args[2].c_str());
-		sf::Vector2f pos = goodies.renderer.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
+		
 		Star* star = goodies.state.getLocalViewStar();
 		Faction* faction = goodies.constellation.getFaction(allegiance);
+		
+		sf::Vector2f pos = goodies.renderer.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
 		sf::Color color = faction->getColor();
 
-		Spaceship* ship = star->createSpaceship(type, pos, allegiance, color);
-		ship->addWeapon(Weapon(command.args[1]));
+		Spaceship* ship = nullptr;
+
+		if (weapon == "RANDOM") {
+			ship = star->generateRandomShip(pos, allegiance, color, { type });
+		}
+		else {
+			ship = star->createSpaceship(type, pos, allegiance, color);
+			ship->addWeapon(Weapon(weapon));
+		}
+		
 		faction->addSpaceship(ship);
 
 		goodies.console->addLine("Created spaceship at mouse cursor");

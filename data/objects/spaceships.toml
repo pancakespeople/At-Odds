@@ -58,6 +58,18 @@ maxWeaponCapacity = 5.0
 cost = [["COMMON_ORE", 100.0], ["RARE_ORE", 5.0]]
 buildTimeMultiplier = 2.0
 
+[BATTLECRUISER]
+name = "Supernova"
+type = "Battlecruiser"
+texturePath = "data/art/bgbattleship.png"
+scale = 11.0
+mass = 600000.0
+health = 1500.0
+colliderRadius = 700.0
+maxWeaponCapacity = 10.0
+cost = [["COMMON_ORE", 350.0], ["UNCOMMON_ORE", 150.0], ["RARE_ORE", 50.0]]
+buildTimeMultiplier = 4.0
+
 [CLAIM_SHIP]
 name = "Flag"
 texturePath = "data/art/flag.png"

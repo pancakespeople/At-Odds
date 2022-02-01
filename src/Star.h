@@ -51,10 +51,10 @@ public:
 	void reinitAfterLoad(Constellation* constellation);
 	void setName(const std::string& name) { m_name = name; }
 	void generateAsteroidBelts();
-	void generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color);
 	void onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos);
 	
 	Spaceship* createSpaceship(const std::string& type, sf::Vector2f pos, int allegiance, sf::Color color);
+	Spaceship* generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color, std::vector<std::string> allowedChassis);
 	Building* createBuilding(const std::string& type, sf::Vector2f pos, Faction* faction, bool built = true);
 
 	float getRadius() const { return m_shape.getRadius(); }

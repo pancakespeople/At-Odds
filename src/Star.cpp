@@ -838,8 +838,9 @@ bool Star::hasHyperlaneConnectionTo(const Star* star) const {
 	return false;
 }
 
-void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color) {
-	std::array<std::string, 3> chassisList = { "FRIGATE", "DESTROYER", "CRUISER" };
+Spaceship* Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color, std::vector<std::string> allowedChassis) {
+	assert(allowedChassis.size() > 0);
+
 	std::vector<DesignerWeapon> weapons;
 	const toml::table& weaponTable = TOMLCache::getTable("data/objects/weapons.toml");
 	const toml::table& projectileTable = TOMLCache::getTable("data/objects/projectiles.toml");
@@ -856,7 +857,7 @@ void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color)
 		}
 	}
 
-	DesignerChassis chassis(chassisList[Random::randInt(0, chassisList.size() - 1)]);
+	DesignerChassis chassis(allowedChassis[Random::randInt(0, allowedChassis.size() - 1)]);
 	DesignerShip shipDesign;
 	shipDesign.chassis = chassis;
 
@@ -885,6 +886,8 @@ void Star::generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color)
 	for (DesignerWeapon& weapon : shipDesign.weapons) {
 		ship->addWeapon(Weapon(weapon.type));
 	}
+
+	return ship;
 }
 
 void Star::onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos) {

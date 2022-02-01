@@ -146,12 +146,13 @@ void MainMenu::spawnArena(tgui::Gui& gui, Constellation& constellation, GameStat
 
 	playerGUI.open(gui, state, constellation, PlayerGUIState::CLOSED);
 
+	const std::vector<std::string> chassis = { "FRIGATE", "DESTROYER", "CRUISER" };
 	for (int i = 0; i < 5; i++) {
-		star->generateRandomShip(sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue);
+		star->generateRandomShip(sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue, chassis);
 	}
 
 	for (int i = 0; i < 5; i++) {
-		star->generateRandomShip(sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red);
+		star->generateRandomShip(sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red, chassis);
 	}
 }
 
@@ -171,11 +172,12 @@ void MainMenu::updateArena(int ticks, Constellation& constellation) {
 		if (ticks % 180 == 0) {
 			int total = blues + reds;
 			if (total < 50) {
+				const std::vector<std::string> chassis = { "FRIGATE", "DESTROYER", "CRUISER" };
 				if (blues < reds) {
-					star->generateRandomShip(sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue);
+					star->generateRandomShip(sf::Vector2f(Random::randFloat(-10000.0f, 0.0f), Random::randFloat(-5000.0f, 5000.0f)), 0, sf::Color::Blue, chassis);
 				}
 				else {
-					star->generateRandomShip(sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red);
+					star->generateRandomShip(sf::Vector2f(Random::randFloat(0.0f, 10000.0f), Random::randFloat(-5000.0f, 5000.0f)), 1, sf::Color::Red, chassis);
 				}
 			}
 		}

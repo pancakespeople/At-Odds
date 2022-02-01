@@ -4,3 +4,4 @@ bgspeedship - MillionthVector http://millionthvector.blogspot.com/p/free-sprites
 medfighter = MillionthVector
 F5S1 = MillionthVector
 roundysh = MillionthVector
+bgbattleship - MillionthVector
