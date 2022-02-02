@@ -60,6 +60,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_postEffectsShader.loadFromFile(m_vertexShaderPath, "data/shaders/posteffectsshader.shader");
 	m_parallaxShader.loadFromFile(m_vertexShaderPath, "data/shaders/parallaxshader.shader");
 	m_lightningShader.loadFromFile(m_vertexShaderPath, "data/shaders/lightning.shader");
+	m_jumpShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumpshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -386,4 +387,17 @@ void EffectsEmitter::drawLightningEffect(sf::Vector2f pos, float time, float see
 	m_lightningShader.setUniform("seed", seed);
 
 	m_renderer.draw(shape, &m_lightningShader);
+}
+
+void EffectsEmitter::drawJumpEffect(sf::Vector2f pos, float time, float seed) {
+	sf::RectangleShape shape;
+	shape.setPosition(pos);
+	shape.setSize({ 1000.0f, 1000.0f });
+	shape.setOrigin({ 500.0f, 500.0f });
+
+	m_jumpShader.setUniform("size", sf::Glsl::Vec2(1000.0, 1000.0f));
+	m_jumpShader.setUniform("time", time);
+	m_jumpShader.setUniform("seed", seed);
+
+	m_renderer.draw(shape, &m_jumpShader);
 }

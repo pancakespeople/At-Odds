@@ -82,6 +82,9 @@ void EffectAnimation::draw(Renderer& renderer) {
 		case Effect::LIGHTNING:
 			renderer.effects.drawLightningEffect(m_pos, time, m_seed);
 			break;
+		case Effect::JUMP:
+			renderer.effects.drawJumpEffect(m_pos, time, m_seed);
+			break;
 		}
 	}
 }

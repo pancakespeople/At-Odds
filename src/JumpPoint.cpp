@@ -74,6 +74,8 @@ Star* JumpPoint::getConnectedOtherStar() {
 }
 
 void JumpPoint::jumpShipThrough(Spaceship* ship, Star* currentStar) {
+	currentStar->addEffectAnimation(EffectAnimation(EffectAnimation::Effect::JUMP, ship->getPos(), 60));
+
 	JumpPoint* nextPoint = getConnectedJumpPoint();
 	ship->setPos(nextPoint->getPos());
 	
@@ -82,6 +84,7 @@ void JumpPoint::jumpShipThrough(Spaceship* ship, Star* currentStar) {
 
 	sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
 	ship->addVelocity(randVel);
+
 
 	m_hyperlane->addJumpEffect(ship->getFactionColor(), currentStar);
 	m_hyperlane->onJump();

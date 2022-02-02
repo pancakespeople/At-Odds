@@ -37,6 +37,7 @@ public:
 	void addExplosionEffect(sf::Vector2f pos, Star* star);
 	void drawParallaxBackground(Camera& camera);
 	void drawLightningEffect(sf::Vector2f pos, float time, float seed);
+	void drawJumpEffect(sf::Vector2f pos, float time, float seed);
 	void updateTime(float time);
 
 private:
@@ -74,6 +75,7 @@ private:
 	sf::Shader m_postEffectsShader;
 	sf::Shader m_parallaxShader;
 	sf::Shader m_lightningShader;
+	sf::Shader m_jumpShader;
 
 	sf::Vector2i m_resolution;
 

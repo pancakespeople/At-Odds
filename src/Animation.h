@@ -40,7 +40,8 @@ class EffectAnimation {
 public:
 	enum class Effect {
 		NONE,
-		LIGHTNING
+		LIGHTNING,
+		JUMP
 	};
 
 	EffectAnimation(Effect effect, sf::Vector2f pos, int ticksAlive);
