@@ -421,5 +421,7 @@
     <None Include="data\shaders\parallaxshader.shader" />
     <None Include="data\shaders\lightning.shader" />
     <None Include="data\shaders\jumpshader.shader" />
+    <None Include="data\shaders\jumppointshader.shader" />
+    <None Include="data\shaders\jumptrailshader.shader" />
   </ItemGroup>
 </Project>

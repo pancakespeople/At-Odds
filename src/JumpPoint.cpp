@@ -10,10 +10,8 @@
 #include "Renderer.h"
 
 JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing) {
-	m_sprite.setTexture(TextureCache::getTexture("data/art/swirly2.png"));
-	m_sprite.setOrigin(m_sprite.getTextureRect().width / 2.0f, m_sprite.getTextureRect().height / 2.0f);
-	m_sprite.setPosition(pos);
-	
+	m_pos = pos;
+
 	// Nicer position
 	sf::Vector2f trailPos = pos;
 	trailPos.x += std::sin(angleRadians) * (250.0f / 2.0f);
@@ -27,18 +25,19 @@ JumpPoint::JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane,
 	m_hyperlane = hyperlane;
 	m_hyperlaneID = hyperlane->getID();
 	m_isOutgoing = isOutgoing;
+	m_shaderSeed = Random::randFloat(0.0f, 1.0f);
 }
 
 void JumpPoint::draw(Renderer& renderer, const sf::RenderWindow& window) {
-	m_sprite.rotate(60.0f / (1.0f / m_rotationClock.getElapsedTime().asSeconds()));
-	m_rotationClock.restart();
+	//m_sprite.rotate(60.0f / (1.0f / m_rotationClock.getElapsedTime().asSeconds()));
 
 	if (isMouseInRadius(window, renderer)) {
-		renderer.effects.drawGlow(renderer, m_sprite.getPosition(), getRadius() * 10.0f, sf::Color(255, 0, 255));
+		renderer.effects.drawGlow(renderer, m_pos, getRadius() * 10.0f, sf::Color(255, 0, 255));
 	}
 
-	renderer.effects.drawWithDistanceShader(renderer, m_trail, renderer.mapCoordsToPixel(m_sprite.getPosition()));
-	renderer.draw(m_sprite);
+	//renderer.effects.drawWithDistanceShader(renderer, m_trail, renderer.mapCoordsToPixel(m_sprite.getPosition()));
+	renderer.effects.drawJumpTrail(m_trail);
+	renderer.effects.drawJumpPoint(getPos(), m_rotationClock.getElapsedTime().asSeconds(), m_shaderSeed);
 }
 
 JumpPoint* JumpPoint::getConnectedJumpPoint() {
@@ -91,7 +90,7 @@ void JumpPoint::jumpShipThrough(Spaceship* ship, Star* currentStar) {
 }
 
 bool JumpPoint::isPointInRadius(sf::Vector2f point) {
-	float radius = m_sprite.getTextureRect().width / 2.0f;
+	float radius = getRadius();
 	sf::Vector2f thisPos = getPos();
 
 	float distX = point.x - thisPos.x;
@@ -105,7 +104,7 @@ bool JumpPoint::isPointInRadius(sf::Vector2f point) {
 
 bool JumpPoint::isMouseInRadius(const sf::RenderWindow& window, const Renderer& renderer) {
 	sf::Vector2f mouseWorldPos = renderer.mapPixelToCoords(sf::Mouse::getPosition(window));
-	if (Math::distance(mouseWorldPos, m_sprite.getPosition()) < getRadius()) {
+	if (Math::distance(mouseWorldPos, m_pos) < getRadius()) {
 		return true;
 	}
 	return false;

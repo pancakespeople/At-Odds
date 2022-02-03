@@ -61,6 +61,8 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_parallaxShader.loadFromFile(m_vertexShaderPath, "data/shaders/parallaxshader.shader");
 	m_lightningShader.loadFromFile(m_vertexShaderPath, "data/shaders/lightning.shader");
 	m_jumpShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumpshader.shader");
+	m_jumpPointShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumppointshader.shader");
+	m_jumpTrailShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumptrailshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -395,9 +397,27 @@ void EffectsEmitter::drawJumpEffect(sf::Vector2f pos, float time, float seed) {
 	shape.setSize({ 1000.0f, 1000.0f });
 	shape.setOrigin({ 500.0f, 500.0f });
 
-	m_jumpShader.setUniform("size", sf::Glsl::Vec2(1000.0, 1000.0f));
+	m_jumpShader.setUniform("size", sf::Glsl::Vec2(1000.0f, 1000.0f));
 	m_jumpShader.setUniform("time", time);
 	m_jumpShader.setUniform("seed", seed);
 
 	m_renderer.draw(shape, &m_jumpShader);
+}
+
+void EffectsEmitter::drawJumpPoint(sf::Vector2f pos, float time, float seed) {
+	sf::RectangleShape shape;
+	shape.setPosition(pos);
+	shape.setSize({ 1250.0f, 1250.0f });
+	shape.setOrigin({ 625.0f, 625.0f });
+
+	m_jumpPointShader.setUniform("size", sf::Glsl::Vec2(1250.0f, 1250.0f));
+	m_jumpPointShader.setUniform("time", time);
+	m_jumpPointShader.setUniform("seed", seed);
+
+	m_renderer.draw(shape, &m_jumpPointShader);
+}
+
+void EffectsEmitter::drawJumpTrail(const sf::RectangleShape& shape) {
+	m_jumpTrailShader.setUniform("size", sf::Glsl::Vec2(shape.getSize().x / 2.0f, shape.getSize().y / 2.0f));
+	m_renderer.draw(shape, &m_jumpTrailShader);
 }

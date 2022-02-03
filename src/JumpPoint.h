@@ -13,7 +13,7 @@ public:
 	JumpPoint(sf::Vector2f pos, float angleRadians, Hyperlane* hyperlane, bool isOutgoing);
 
 	void draw(Renderer& renderer, const sf::RenderWindow& window);
-	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
+	void setPos(sf::Vector2f pos) { m_pos = pos; }
 	void jumpShipThrough(Spaceship* ship, Star* currentStar);
 	void reinitAfterLoad(Star* star);
 	void onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos);
@@ -22,9 +22,9 @@ public:
 	bool isPointInRadius(sf::Vector2f point);
 	bool isMouseInRadius(const sf::RenderWindow& window, const Renderer& renderer);
 
-	float getRadius() { return m_sprite.getTextureRect().width / 2.0f; }
+	float getRadius() { return 256.0f; }
 
-	sf::Vector2f getPos() { return m_sprite.getPosition(); }
+	sf::Vector2f getPos() { return m_pos; }
 
 	Hyperlane* getHyperlane() { return m_hyperlane; }
 	JumpPoint* getConnectedJumpPoint();
@@ -35,19 +35,23 @@ private:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Identifiable>(*this);
-		archive & m_sprite;
+		archive & m_pos;
 		archive & m_trail;
 		archive & m_hyperlaneID;
 		archive & m_isOutgoing;
+		archive & m_shaderSeed;
 	}
 
 	JumpPoint() {}
 	
-	sf::Sprite m_sprite;
+	sf::Vector2f m_pos;
 	sf::RectangleShape m_trail;
-	Hyperlane* m_hyperlane = nullptr;
-	bool m_isOutgoing = false;
 	sf::Clock m_rotationClock;
+	
+	bool m_isOutgoing = false;
+	float m_shaderSeed = 1.0f;
+
+	Hyperlane* m_hyperlane = nullptr;
 	uint32_t m_hyperlaneID = 0;
 };
 

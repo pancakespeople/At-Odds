@@ -38,6 +38,8 @@ public:
 	void drawParallaxBackground(Camera& camera);
 	void drawLightningEffect(sf::Vector2f pos, float time, float seed);
 	void drawJumpEffect(sf::Vector2f pos, float time, float seed);
+	void drawJumpPoint(sf::Vector2f pos, float time, float seed);
+	void drawJumpTrail(const sf::RectangleShape& shape);
 	void updateTime(float time);
 
 private:
@@ -76,6 +78,8 @@ private:
 	sf::Shader m_parallaxShader;
 	sf::Shader m_lightningShader;
 	sf::Shader m_jumpShader;
+	sf::Shader m_jumpPointShader;
+	sf::Shader m_jumpTrailShader;
 
 	sf::Vector2i m_resolution;
 
