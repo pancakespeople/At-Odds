@@ -158,11 +158,14 @@ bool Colony::hasBuildingOfType(const std::string& string) {
 	return false;
 }
 
-float Colony::getGrowthRate(float planetHabitability) const {
+float Colony::getGrowthRate(float planetHabitability, std::string* outInfoString) const {
 	// Apply building modifiers
+	float buildingEffect = 0.0f;
 	for (const ColonyBuilding& building : m_buildings) {
 		if (building.isBuilt()) {
-			planetHabitability *= building.getEffect("habitabilityModifier", 1.0f);
+			float effect = building.getEffect("habitabilityModifier", 1.0f);
+			planetHabitability *= effect;
+			buildingEffect += effect;
 		}
 	}
 	
@@ -174,8 +177,37 @@ float Colony::getGrowthRate(float planetHabitability) const {
 	// Stability effect
 	planetHabitability *= m_stability;
 
+	// Overpopulation effect
+	float overpopulation = std::max(getPopulation() - getPopulationLimit(), 0.0f);
+	float overpopMult = 1.0f - (overpopulation / 10000.0f);
+	planetHabitability *= overpopMult;
+
 	// Negative growth rate if habitability is less than 1.0
-	float growthRate = (planetHabitability - 1.0f) / 10.0f;
+	float habitabilityEffect = (planetHabitability - 1.0f) / 10.0f;
+	float growthRate = habitabilityEffect;
+
+	// Fill out info string
+	if (outInfoString != nullptr) {
+		outInfoString->clear();
+		
+		outInfoString->append("Planet habitability: " + Util::percentify(habitabilityEffect) + "\n");
+
+		if (buildingEffect != 0.0f) {
+			outInfoString->append("Buildings: " + Util::percentify(buildingEffect) + "\n");
+		}
+
+		if (food * water != 1.0f) {
+			outInfoString->append("Food and/or water shortage: " + Util::percentify(food * water) + "\n");
+		}
+
+		if (m_stability != 1.0f) {
+			outInfoString->append("Stability: " + Util::percentify(m_stability) + "\n");
+		}
+
+		if (overpopMult != 1.0f) {
+			outInfoString->append("Overpopulation: " + Util::percentify(overpopMult) + "\n");
+		}
+	}
 
 	return growthRate;
 }
@@ -289,6 +321,14 @@ void Colony::removeWealth(float wealth) {
 	else m_wealth -= wealth;
 }
 
+float Colony::getPopulationLimit() const {
+	float limit = 10000.0f; // Population limit with no modifiers
+	for (auto& building : m_buildings) {
+		limit += building.getEffect("addsPopulationLimit", 0.0f);
+	}
+	return limit;
+}
+
 ColonyBuilding::ColonyBuilding(const std::string& type) {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
@@ -348,6 +388,13 @@ std::string ColonyBuilding::getEffectsString() const {
 	for (auto& item : *table["FLAGS"].as_table()) {
 		if (hasFlag(item.first)) {
 			effects << item.second.value_or("") << "\n";
+		}
+	}
+
+	for (auto& item : *table["ADDERS"].as_table()) {
+		float adder = getEffect(item.first, 0.0f);
+		if (adder != 0.0f) {
+			effects << item.second.value_or("") << ": " << Util::cutOffDecimal(adder, 2) << "\n";
 		}
 	}
 

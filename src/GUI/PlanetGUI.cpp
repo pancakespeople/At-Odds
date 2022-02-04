@@ -309,8 +309,17 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 			allegianceText->setPosition("allegianceLabel.right", "allegianceLabel.top");
 			m_sideWindow->add(allegianceText);
 
-			auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability()) * 100.0f) + "%");
+			std::string growthRateInfo;
+
+			auto growthRateLabel = tgui::Label::create("Growth Rate: " + std::to_string(colony.getGrowthRate(planet.getHabitability(), &growthRateInfo) * 100.0f) + "%");
 			growthRateLabel->setPosition("0%", "20%");
+			if (growthRateInfo.size() > 0) {
+				auto tooltip = tgui::Label::create(growthRateInfo);
+				tooltip->getRenderer()->setBackgroundColor(tgui::Color::White);
+				tooltip->getRenderer()->setTextColor(tgui::Color::Black);
+
+				growthRateLabel->setToolTip(tooltip);
+			}
 			m_sideWindow->add(growthRateLabel);
 
 			std::string wealthFlavor;

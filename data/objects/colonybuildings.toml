@@ -2,6 +2,7 @@
 name = "Infrastructure"
 description = "Roads, electricity, plumbing, you know, stuff like that."
 habitabilityModifier = 1.2
+addsPopulationLimit = 100000.0
 
 [FARMING]
 name = "Farms"

@@ -21,11 +21,12 @@ public:
 	int getPopulation() const { return m_population; }
 	int getAllegiance() const { return m_allegiance; }
 
-	float getGrowthRate(float planetHabitability) const;
+	float getGrowthRate(float planetHabitability, std::string* outInfoString = nullptr) const;
 	float getBuildingEffects(const std::string& effect) const;
 	float getWealth() const { return m_wealth * m_stability; }
 	float getStability() const { return m_stability; }
 	float getResourceExploitation(const Resource& resource, const Planet& planet) const;
+	float getPopulationLimit() const;
 
 	bool isColonizationLegal(int allegiance);
 	bool hasBuildingOfType(const std::string& string);

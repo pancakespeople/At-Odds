@@ -12,3 +12,6 @@ busSpawnTimeMultiplier = "Space Bus time to spawn"
 [FLAGS]
 ENABLE_ORBITAL_CANNON = "Enables orbital cannon"
 ENABLE_EXPLORATION_EVENTS = "Enables exploration events"
+
+[ADDERS]
+addsPopulationLimit = "Increases population capacity by"

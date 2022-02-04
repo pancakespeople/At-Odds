@@ -5,7 +5,7 @@
 
 namespace Util {
 	// Returns a string of a float multiplier as a percent. Ex: 1.75 = 75%, 0.5 = -50%
-	static std::string percentify(float num, int precision) {
+	static std::string percentify(float num, int precision = 2) {
 		std::string plus;
 		std::stringstream str;
 
