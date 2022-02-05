@@ -31,6 +31,10 @@ public:
 	bool isResearching() const { return m_researching; }
 	bool hasFlag(const std::string& flag) const;
 
+	bool Tech::operator==(const Tech& right) {
+		return getType() == right.getType();
+	}
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>

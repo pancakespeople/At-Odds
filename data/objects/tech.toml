@@ -93,3 +93,18 @@ description = "Seek... And destroy."
 researchRequired = 5000.0
 addsChassis = ["DESTROYER_2"]
 category = "Spaceship"
+
+[IMPROVED_INFRASTRUCTURE]
+name = "Improved Infrastructure"
+description = "To improve the well-being of our colonists."
+researchRequired = 1000.0
+addsColonyBuildings = ["IMPROVED_INFRASTRUCTURE"]
+category = "Colony"
+unlocksTech = ["ADVANCED_INFRASTRUCTURE"]
+
+[ADVANCED_INFRASTRUCTURE]
+name = "Advanced Infrastructure"
+description = "Ways of improving our colonist's well-being that you'd never dream of."
+researchRequired = 4000.0
+addsColonyBuildings = ["ADVANCED_INFRASTRUCTURE"]
+category = "Colony"

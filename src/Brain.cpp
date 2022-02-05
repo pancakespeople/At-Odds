@@ -528,7 +528,9 @@ void EconomyAI::update(Faction& faction, Brain& brain, const AllianceList& allia
 
 void removeBuildings(Planet& planet, std::vector<std::string>& wantedBuildings, Faction* faction) {
 	for (int i = 0; i < wantedBuildings.size(); i++) {
-		if (planet.getColony().hasBuildingOfType(wantedBuildings[i]) || !faction->hasColonyBuilding(wantedBuildings[i])) {
+		ColonyBuilding building(wantedBuildings[i]);
+		if (planet.getColony().hasBuildingOfType(building.getType()) || !faction->hasColonyBuilding(building.getType()) ||
+			!building.isBuildable(planet.getColony())) {
 			wantedBuildings.erase(wantedBuildings.begin() + i);
 			i--;
 		}
@@ -539,7 +541,9 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 	std::vector<std::string> wantedBuildings = {
 				"FARMING",
 				"MINING",
-				"SPACEPORT"
+				"SPACEPORT",
+				"IMPROVED_INFRASTRUCTURE",
+				"ADVANCED_INFRASTRUCTURE"
 	};
 
 	if (planet.hasResource("UNCOMMON_ORE")) {

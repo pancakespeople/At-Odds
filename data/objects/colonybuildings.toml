@@ -4,6 +4,22 @@ description = "Roads, electricity, plumbing, you know, stuff like that."
 habitabilityModifier = 1.2
 addsPopulationLimit = 100000.0
 
+[IMPROVED_INFRASTRUCTURE]
+name = "Improved Infrastructure"
+description = "Well, it turns out that dirt roads everywhere is not the way to go. If we want to support a higher population on this planet, we need to upgrade our infrastructure."
+requiresBuildings = ["INFRASTRUCTURE"]
+habitabilityModifier = 1.3
+addsPopulationLimit = 200000.0
+baseCost = [["COMMON_ORE", 50]]
+
+[ADVANCED_INFRASTRUCTURE]
+name = "Advanced Infrastructure"
+description = "Alright, we've finally paved over those dirt roads. But you know what would improve our infrastructure even more than roads? Trains. Yes, trains."
+requiresBuildings = ["IMPROVED_INFRASTRUCTURE"]
+habitabilityModifier = 1.5
+addsPopulationLimit = 500000.0
+baseCost = [["COMMON_ORE", 200], ["UNCOMMON_ORE", 50]]
+
 [FARMING]
 name = "Farms"
 description = "It produces food."

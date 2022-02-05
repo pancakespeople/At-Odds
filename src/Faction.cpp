@@ -91,6 +91,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	addTech(Tech("CRUISER_HULL"));
 	addTech(Tech("NUCLEAR_WEAPONS"));
 	addTech(Tech("INVASIONS"));
+	addTech(Tech("IMPROVED_INFRASTRUCTURE"));
 
 	addNewsEvent("Our glorious nation has been founded!");
 }
@@ -751,4 +752,29 @@ DesignerWeapon Faction::getWeapon(const std::string& type) {
 	}
 	assert(false);
 	return DesignerWeapon();
+}
+
+void Faction::addTech(const Tech& tech) {
+	if (std::find(m_techs.begin(), m_techs.end(), tech) == m_techs.end()) {
+		m_techs.push_back(tech);
+	}
+}
+
+void Faction::unlockAllTech() {
+	const toml::table& tech = TOMLCache::getTable("data/objects/tech.toml");
+
+	m_techs.clear();
+	for (auto& elem : tech) {
+		Tech t(elem.first);
+		t.addResearchPoints(t.getRequiredResearchPoints());
+		m_techs.push_back(t);
+	}
+
+	for (auto& t : m_techs) {
+		onResearchFinish(t);
+	}
+}
+
+void Faction::removeTech(const std::string& type) {
+	m_techs.erase(std::remove(m_techs.begin(), m_techs.end(), type));
 }

@@ -7,9 +7,9 @@
 #include "Util.h"
 #include "Random.h"
 
-bool Colony::isColonizationLegal(int allegiance) {
+bool Colony::isColonizationLegal(int allegiance) const {
 	if (m_factionColonyLegality.count(allegiance) == 0) return false;
-	else return m_factionColonyLegality[allegiance];
+	else return m_factionColonyLegality.at(allegiance);
 }
 
 void Colony::setFactionColonyLegality(int allegiance, bool legality) {
@@ -149,8 +149,8 @@ void Colony::addPopulation(int pop) {
 	}
 }
 
-bool Colony::hasBuildingOfType(const std::string& string) {
-	for (ColonyBuilding& building : m_buildings) {
+bool Colony::hasBuildingOfType(const std::string& string) const {
+	for (const ColonyBuilding& building : m_buildings) {
 		if (building.getType() == string) {
 			return true;
 		}
@@ -212,8 +212,8 @@ float Colony::getGrowthRate(float planetHabitability, std::string* outInfoString
 	return growthRate;
 }
 
-bool Colony::hasBuildingFlag(const std::string& flag) {
-	for (ColonyBuilding& building : m_buildings) {
+bool Colony::hasBuildingFlag(const std::string& flag) const {
+	for (const ColonyBuilding& building : m_buildings) {
 		if (building.hasFlag(flag) && building.isBuilt()) {
 			return true;
 		}
@@ -454,11 +454,25 @@ void Colony::onColonization(Planet& planet) {
 	}
 }
 
-bool Colony::hasUndiscoveredResources(Planet& planet) {
-	for (Resource& resource : planet.getResources()) {
+bool Colony::hasUndiscoveredResources(const Planet& planet) const {
+	for (const Resource& resource : planet.getResources()) {
 		if (resource.hidden) {
 			return true;
 		}
 	}
 	return false;
+}
+
+bool ColonyBuilding::isBuildable(const Colony& colony) const {
+	const auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	
+	// Check required buildings
+	bool hasRequiredBuildings = true;
+	if (table[m_type].as_table()->contains("requiresBuildings")) {
+		for (auto& arr : *table[m_type]["requiresBuildings"].as_array()) {
+			hasRequiredBuildings = colony.hasBuildingOfType(arr.value_or(""));
+		}
+	}
+
+	return hasRequiredBuildings;
 }

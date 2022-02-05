@@ -28,10 +28,10 @@ public:
 	float getResourceExploitation(const Resource& resource, const Planet& planet) const;
 	float getPopulationLimit() const;
 
-	bool isColonizationLegal(int allegiance);
-	bool hasBuildingOfType(const std::string& string);
-	bool hasBuildingFlag(const std::string& flag);
-	bool hasUndiscoveredResources(Planet& planet);
+	bool isColonizationLegal(int allegiance) const;
+	bool hasBuildingOfType(const std::string& string) const;
+	bool hasBuildingFlag(const std::string& flag) const;
+	bool hasUndiscoveredResources(const Planet& planet) const;
 
 	// Buys a building for a faction, returns false if failed
 	bool buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet);
@@ -54,6 +54,7 @@ public:
 	sf::Color getFactionColor() { return m_factionColor; }
 
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
+	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);
 
 	TradeGoods& getTradeGoods() { return m_tradeGoods; }
@@ -119,6 +120,7 @@ public:
 
 	bool isBuilt() const { return m_percentBuilt >= 100.0f; }
 	bool hasFlag(const std::string& flag) const;
+	bool isBuildable(const Colony& colony) const;
 
 	float getPercentBuilt() const { return m_percentBuilt; }
 

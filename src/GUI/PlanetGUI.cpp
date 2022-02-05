@@ -548,7 +548,9 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 
 				// Add buildable buildings to listbox
 				for (const ColonyBuilding& building : buildings) {
-					listBox->addItem(building.getName());
+					if (building.isBuildable(planet.getColony())) {
+						listBox->addItem(building.getName());
+					}
 				}
 
 				listBox->onItemSelect([this, listBox, &planet, playerFaction]() {

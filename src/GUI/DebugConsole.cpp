@@ -172,6 +172,7 @@ void unlockAll(const DebugConsole::Command& command, const DebugConsole::Goodies
 		const toml::table& ships = TOMLCache::getTable("data/objects/spaceships.toml");
 
 		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
+		//playerFaction->unlockAllTech(); fix me later
 
 		for (auto& elem : resources) {
 			playerFaction->addResource(elem.first, 100000);
@@ -273,6 +274,22 @@ void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies
 	}
 }
 
+void unlockTech(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
+	if (goodies.console->validateArgs(command, 1)) {
+		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
+		if (playerFaction != nullptr) {
+			
+			playerFaction->removeTech(command.args[0]);
+
+			Tech t(command.args[0]);
+			t.addResearchPoints(t.getRequiredResearchPoints());
+			playerFaction->addTech(t);
+			playerFaction->onResearchFinish(t);
+			goodies.console->addLine("Unlocked tech " + t.getName());
+		}
+	}
+}
+
 void DebugConsole::open(tgui::Gui& gui) {
 	m_console = tgui::Group::create();
 	m_console->getRenderer()->setOpacity(0.75f);
@@ -313,6 +330,7 @@ void DebugConsole::open(tgui::Gui& gui) {
 	addCommand("ownplanet", ownPlanet);
 	addCommand("spawnbuilding", spawnBuilding);
 	addCommand("benchmark", benchmark);
+	addCommand("unlocktech", unlockTech);
 }
 
 void DebugConsole::close(tgui::Gui& gui) {

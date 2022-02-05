@@ -77,6 +77,7 @@ public:
 	PLANET_TYPE getType() const { return m_type; }
 	std::string getTypeString() const;
 	std::vector<Resource>& getResources() { return m_resources; }
+	const std::vector<Resource>& getResources() const { return m_resources; }
 	const std::vector<PlanetEvent>& getEvents() const { return m_events; }
 	std::string getName(const Star* star);
 	std::string getHabitabilityText();
