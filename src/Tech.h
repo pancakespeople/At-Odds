@@ -31,7 +31,7 @@ public:
 	bool isResearching() const { return m_researching; }
 	bool hasFlag(const std::string& flag) const;
 
-	bool Tech::operator==(const Tech& right) {
+	bool operator==(const Tech& right) {
 		return getType() == right.getType();
 	}
 

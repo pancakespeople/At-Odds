@@ -44,7 +44,6 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_glowShader.loadFromFile(m_vertexShaderPath, "data/shaders/glow.shader");
 
 	m_nebulaShader.loadFromFile(m_vertexShaderPath, "data/shaders/nebulashader.shader");
-	m_nebulaShader.setUniform("size", sf::Glsl::Vec2(resolution.x, resolution.y));
 
 	m_selectionShader.loadFromFile(m_vertexShaderPath, "data/shaders/selectionshader.shader");
 	m_borderShader.loadFromFile(m_vertexShaderPath, "data/shaders/bordershader.shader");

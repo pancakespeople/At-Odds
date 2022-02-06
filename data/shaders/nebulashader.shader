@@ -2,7 +2,6 @@
 
 #define NUM_OCTAVES 5
 
-in vec4 uv2;
 in vec4 color;
 
 uniform sampler2D background;
