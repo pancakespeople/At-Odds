@@ -482,122 +482,132 @@ void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* p
 	auto buildingsButton = tgui::Button::create("Buildings");
 	buildingsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 30.0%");
 	buildingsButton->setSize("25%", "10%");
-	buildingsButton->onPress([this, &gui, &planet, playerFaction]() {
-		switchSideWindow("Buildings", gui);
+	buildingsButton->onPress(&PlanetGUI::openBuildingsPanel, this, std::ref(gui), std::ref(planet), playerFaction);
+	m_planetInfoPanel->add(buildingsButton);
+}
 
-		if (m_sideWindow == nullptr) return;
+void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* playerFaction) {
+	switchSideWindow("Buildings", gui);
 
-		m_sideWindow->setSize(m_sideWindow->getSize() * 2.0f);
+	if (m_sideWindow == nullptr) return;
 
-		auto buildingsBox = tgui::ListBox::create();
-		buildingsBox->setPosition("2.5%", "5%");
-		buildingsBox->setSize("47.5%", "90%");
-		m_sideWindow->add(buildingsBox, "buildingsBox");
+	m_sideWindow->setSize(m_sideWindow->getSize() * 2.0f);
 
-		auto buildings = planet.getColony().getBuildings();
+	auto buildingsBox = tgui::ListBox::create();
+	buildingsBox->setPosition("2.5%", "5%");
+	buildingsBox->setSize("47.5%", "90%");
+	m_sideWindow->add(buildingsBox, "buildingsBox");
 
-		int buildQueuePos = 1;
-		for (ColonyBuilding& building : buildings) {
-			if (!building.isBuilt()) {
-				buildingsBox->addItem(building.getName() + " (" + std::to_string(buildQueuePos) + ")");
-				buildQueuePos++;
-			}
-			else buildingsBox->addItem(building.getName());
-			buildingsBox->setItemData(buildingsBox->getItemCount() - 1, building.getType());
+	auto buildings = planet.getColony().getBuildings();
+
+	int buildQueuePos = 1;
+	for (ColonyBuilding& building : buildings) {
+		if (!building.isBuilt()) {
+			buildingsBox->addItem(building.getName() + " (" + std::to_string(buildQueuePos) + ")");
+			buildQueuePos++;
+		}
+		else buildingsBox->addItem(building.getName());
+		buildingsBox->setItemData(buildingsBox->getItemCount() - 1, building.getType());
+	}
+
+	buildingsBox->onItemSelect([this, buildingsBox, &planet]() {
+		auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
+		if (infoGroup != nullptr) {
+			m_sideWindow->remove(infoGroup);
 		}
 
-		buildingsBox->onItemSelect([this, buildingsBox, &planet]() {
-			auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
-			if (infoGroup != nullptr) {
-				m_sideWindow->remove(infoGroup);
-			}
-
-			if (buildingsBox->getSelectedItemIndex() != -1) {
-				std::string type = buildingsBox->getItemData<std::string>(buildingsBox->getSelectedItemIndex());
-				auto& allBuildings = planet.getColony().getBuildings();
-				for (ColonyBuilding& building : allBuildings) {
-					if (building.getType() == type) {
-						displayBuildingInfo(building, planet, false);
-						break;
-					}
+		if (buildingsBox->getSelectedItemIndex() != -1) {
+			std::string type = buildingsBox->getItemData<std::string>(buildingsBox->getSelectedItemIndex());
+			auto& allBuildings = planet.getColony().getBuildings();
+			for (ColonyBuilding& building : allBuildings) {
+				if (building.getType() == type) {
+					displayBuildingInfo(building, planet, false);
+					break;
 				}
 			}
-			});
-
-		int playerAllegiance = -1;
-		if (playerFaction != nullptr) {
-			playerAllegiance = playerFaction->getID();
-		}
-
-		if (planet.getColony().getAllegiance() == playerAllegiance && playerAllegiance != -1) {
-			auto buildButton = tgui::Button::create("Build");
-			buildButton->setPosition("buildingsBox.right + 2.5%", "85%");
-			buildButton->onPress([this, &gui, &planet, playerFaction]() {
-				switchSideWindow("Build Colony Buildings", gui);
-
-				if (m_sideWindow == nullptr) return;
-
-				m_sideWindow->setSize(m_sideWindow->getSize() * 2.0f);
-
-				auto listBox = tgui::ListBox::create();
-				listBox->setPosition("2.5%", "5%");
-				listBox->setSize("47.5%", "90%");
-				m_sideWindow->add(listBox);
-
-				auto buildings = playerFaction->getColonyBuildings();
-
-				// Add buildable buildings to listbox
-				for (const ColonyBuilding& building : buildings) {
-					if (building.isBuildable(planet.getColony())) {
-						listBox->addItem(building.getName());
-					}
-				}
-
-				listBox->onItemSelect([this, listBox, &planet, playerFaction]() {
-					auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
-					if (infoGroup != nullptr) {
-						m_sideWindow->remove(infoGroup);
-					}
-
-					if (listBox->getSelectedItemIndex() != -1) {
-						auto allBuildings = playerFaction->getColonyBuildings();
-						for (ColonyBuilding& building : allBuildings) {
-							if (building.getName() == listBox->getSelectedItem()) {
-								displayBuildingInfo(building, planet, true);
-
-								if (!planet.getColony().hasBuildingOfType(building.getType())) {
-									auto buildButton = tgui::Button::create("Build");
-									buildButton->setPosition("2.5%", "85%");
-									m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
-
-									buildButton->onPress([this, buildButton, building, &planet, playerFaction]() {
-										if (!planet.getColony().hasBuildingOfType(building.getType())) {
-											auto cost = building.getResourceCost(planet);
-
-											if (playerFaction->canSubtractResources(cost)) {
-												planet.getColony().addBuilding(building);
-												playerFaction->subtractResources(cost);
-
-												m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
-												createBuildStatusLabel(planet, building);
-											}
-										}
-										});
-								}
-								else {
-									createBuildStatusLabel(planet, building);
-								}
-
-								break;
-							}
-						}
-					}
-					});
-				});
-			m_sideWindow->add(buildButton);
 		}
 		});
-	m_planetInfoPanel->add(buildingsButton);
+
+	int playerAllegiance = -1;
+	if (playerFaction != nullptr) {
+		playerAllegiance = playerFaction->getID();
+	}
+
+	if (planet.getColony().getAllegiance() == playerAllegiance && playerAllegiance != -1) {
+		auto buildButton = tgui::Button::create("Build");
+		buildButton->setPosition("buildingsBox.right + 2.5%/2", "85%");
+		buildButton->onPress([this, &gui, &planet, playerFaction]() {
+			switchSideWindow("Build Colony Buildings", gui);
+
+			if (m_sideWindow == nullptr) return;
+
+			m_sideWindow->setSize(m_sideWindow->getSize() * 2.0f);
+
+			auto backButton = tgui::Button::create("Back");
+			backButton->setPosition("50% + 2.5%/2", "90%");
+			//backButton->setOrigin({ 1.0, 0.0 });
+			backButton->onPress([this, &gui, &planet, playerFaction]() {
+				openBuildingsPanel(gui, planet, playerFaction);
+			});
+			m_sideWindow->add(backButton);
+
+			auto listBox = tgui::ListBox::create();
+			listBox->setPosition("2.5%", "5%");
+			listBox->setSize("47.5%", "90%");
+			m_sideWindow->add(listBox);
+
+			auto buildings = playerFaction->getColonyBuildings();
+
+			// Add buildable buildings to listbox
+			for (const ColonyBuilding& building : buildings) {
+				if (building.isBuildable(planet.getColony())) {
+					listBox->addItem(building.getName());
+				}
+			}
+
+			listBox->onItemSelect([this, listBox, &planet, playerFaction]() {
+				auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
+				if (infoGroup != nullptr) {
+					m_sideWindow->remove(infoGroup);
+				}
+
+				if (listBox->getSelectedItemIndex() != -1) {
+					auto allBuildings = playerFaction->getColonyBuildings();
+					for (ColonyBuilding& building : allBuildings) {
+						if (building.getName() == listBox->getSelectedItem()) {
+							displayBuildingInfo(building, planet, true);
+
+							if (!planet.getColony().hasBuildingOfType(building.getType())) {
+								auto buildButton = tgui::Button::create("Build");
+								buildButton->setPosition("2.5%", "85%");
+								m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
+
+								buildButton->onPress([this, buildButton, building, &planet, playerFaction]() {
+									if (!planet.getColony().hasBuildingOfType(building.getType())) {
+										auto cost = building.getResourceCost(planet);
+
+										if (playerFaction->canSubtractResources(cost)) {
+											planet.getColony().addBuilding(building);
+											playerFaction->subtractResources(cost);
+
+											m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
+											createBuildStatusLabel(planet, building);
+										}
+									}
+									});
+							}
+							else {
+								createBuildStatusLabel(planet, building);
+							}
+
+							break;
+						}
+					}
+				}
+				});
+			});
+		m_sideWindow->add(buildButton);
+	}
 }
 
 void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, Planet& planet, bool buildInfo) {
