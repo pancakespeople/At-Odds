@@ -149,12 +149,16 @@ void Colony::addPopulation(int pop) {
 	}
 }
 
-bool Colony::hasBuildingOfType(const std::string& string) const {
+bool Colony::hasBuildingOfType(const std::string& string, bool builtOnly) const {
 	for (const ColonyBuilding& building : m_buildings) {
 		if (building.getType() == string) {
+			if (builtOnly) {
+				return building.isBuilt();
+			}
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -470,7 +474,7 @@ bool ColonyBuilding::isBuildable(const Colony& colony) const {
 	bool hasRequiredBuildings = true;
 	if (table[m_type].as_table()->contains("requiresBuildings")) {
 		for (auto& arr : *table[m_type]["requiresBuildings"].as_array()) {
-			hasRequiredBuildings = colony.hasBuildingOfType(arr.value_or(""));
+			hasRequiredBuildings = colony.hasBuildingOfType(arr.value_or(""), true);
 		}
 	}
 

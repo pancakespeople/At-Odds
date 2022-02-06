@@ -29,7 +29,7 @@ public:
 	float getPopulationLimit() const;
 
 	bool isColonizationLegal(int allegiance) const;
-	bool hasBuildingOfType(const std::string& string) const;
+	bool hasBuildingOfType(const std::string& string, bool builtOnly = false) const;
 	bool hasBuildingFlag(const std::string& flag) const;
 	bool hasUndiscoveredResources(const Planet& planet) const;
 
