@@ -32,7 +32,7 @@ void JumpPoint::draw(Renderer& renderer, const sf::RenderWindow& window) {
 	//m_sprite.rotate(60.0f / (1.0f / m_rotationClock.getElapsedTime().asSeconds()));
 
 	if (isMouseInRadius(window, renderer)) {
-		renderer.effects.drawGlow(renderer, m_pos, getRadius() * 10.0f, sf::Color(255, 0, 255));
+		renderer.effects.drawGlow(m_pos, getRadius() * 10.0f, sf::Color(255, 0, 255));
 	}
 
 	//renderer.effects.drawWithDistanceShader(renderer, m_trail, renderer.mapCoordsToPixel(m_sprite.getPosition()));

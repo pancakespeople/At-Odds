@@ -102,10 +102,10 @@ void Hyperlane::draw(Renderer& renderer, int playerFaction) {
 			float t = effect.clock.getElapsedTime().asSeconds();
 			if (t < 1.0f) {
 				if (effect.beginToEndJumped) {
-					renderer.effects.drawGlow(renderer, Math::lerp(m_beginStar->getCenter(), m_endStar->getCenter(), t), 100.0f, effect.color);
+					renderer.effects.drawGlow(Math::lerp(m_beginStar->getCenter(), m_endStar->getCenter(), t), 100.0f, effect.color);
 				}
 				else {
-					renderer.effects.drawGlow(renderer, Math::lerp(m_endStar->getCenter(), m_beginStar->getCenter(), t), 100.0f, effect.color);
+					renderer.effects.drawGlow(Math::lerp(m_endStar->getCenter(), m_beginStar->getCenter(), t), 100.0f, effect.color);
 				}
 			}
 		}

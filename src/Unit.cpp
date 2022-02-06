@@ -106,7 +106,7 @@ void Unit::drawSelectionCircle(Renderer& renderer) {
 	selectionIndicator.setFillColor(sf::Color::Yellow);
 	selectionIndicator.setSize(sf::Vector2f(m_collider.getRadius() * 4.0f, m_collider.getRadius() * 4.0f));
 
-	renderer.effects.drawSelection(renderer, selectionIndicator);
+	renderer.effects.drawSelection(selectionIndicator);
 }
 
 void Unit::drawHealthBar(Renderer& renderer) {

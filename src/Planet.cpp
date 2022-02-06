@@ -58,19 +58,19 @@ void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, floa
 	//m_orbit.draw(window);
 	
 	if (isMouseInRadius(window, renderer)) {
-		renderer.effects.drawGlow(renderer, m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
+		renderer.effects.drawGlow(m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
 	}
 
 	switch (m_type) {
 	case PLANET_TYPE::TERRA:
-		renderer.effects.drawTerraPlanet(renderer, m_shape, this, star, m_shaderRandomSeed, time);
+		renderer.effects.drawTerraPlanet(m_shape, this, star, m_shaderRandomSeed, time);
 		break;
 	case PLANET_TYPE::LAVA:
 	case PLANET_TYPE::VOLCANIC:
-		renderer.effects.drawLavaPlanet(renderer, m_shape, this, star, m_shaderRandomSeed);
+		renderer.effects.drawLavaPlanet(m_shape, this, star, m_shaderRandomSeed);
 		break;
 	default:
-		renderer.effects.drawPlanet(renderer, m_shape, this, star, m_shaderRandomSeed, time);
+		renderer.effects.drawPlanet(m_shape, this, star, m_shaderRandomSeed, time);
 	}
 
 	if (m_colony.getAllegiance() != -1) {
@@ -90,7 +90,7 @@ void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, floa
 		proj.draw(renderer);
 	}
 
-	if (m_rings) renderer.effects.drawRings(renderer, getPos(), getRadius() * 8.0f, m_shaderRandomSeed);
+	if (m_rings) renderer.effects.drawRings(getPos(), getRadius() * 8.0f, m_shaderRandomSeed);
 }
 
 void Planet::update(Star* currentStar, Faction* faction) {

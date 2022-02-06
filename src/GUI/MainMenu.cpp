@@ -117,8 +117,8 @@ void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellati
 
 void MainMenu::drawPreview(Renderer& renderer, const GameState& state, float time) {
 	if (state.getState() == GameState::State::MAIN_MENU) {
-		renderer.effects.drawLocalStar(renderer, m_starRect, time, m_starSeed);
-		renderer.effects.drawTerraPlanet(renderer, m_planetRect, m_planetRect.getSize().x / 2.0f, m_planetRect.getPosition(), m_starRect.getPosition(), m_starSeed, time);
+		renderer.effects.drawLocalStar(m_starRect, time, m_starSeed);
+		renderer.effects.drawTerraPlanet(m_planetRect, m_planetRect.getSize().x / 2.0f, m_planetRect.getPosition(), m_starRect.getPosition(), m_starSeed, time);
 	}
 }
 

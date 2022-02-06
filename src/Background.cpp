@@ -29,34 +29,11 @@ Background::Background(std::string texturePath, int w, int h) {
 
 	m_texturePath = texturePath;
 	m_nebulaSeed = Random::randFloat(0.0f, 1.0f);
-
-	/*for (int i = 0; i < 50; i++) {
-		ParallaxAsteroid p;
-		p.zoomLevel = Random::randFloat(1.0f, 2.0f);
-		p.pos = Random::randVec(-10000.0f, 10000.0f);
-
-		m_asteroids.push_back(p);
-	}*/
 }
 
 void Background::draw(Renderer& renderer, Camera& camera) {
 	renderer.setView(renderer.getDefaultView());
-	renderer.effects.drawNebula(renderer, m_sprite, m_nebulaSeed);
+	renderer.effects.drawNebula(m_sprite, m_nebulaSeed);
 	renderer.effects.drawParallaxBackground(camera);
-
-	//sf::View parallaxView = camera.getView();
-	//sf::Vector2f baseSize = parallaxView.getSize();
-
-	/*sf::CircleShape circle;
-	circle.setRadius(100.0f);
-	circle.setOrigin(sf::Vector2f(50.0f, 50.0f));
-	for (ParallaxAsteroid& asteroid : m_asteroids) {
-		parallaxView.setSize(baseSize * asteroid.zoomLevel);
-
-		renderer.setView(parallaxView);
-
-		circle.setPosition(asteroid.pos);
-		renderer.draw(circle);
-	}*/
 }
 

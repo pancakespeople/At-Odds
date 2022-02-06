@@ -2,11 +2,10 @@
 
 #define NUM_OCTAVES 5
 
-in vec4 vertPos;
+in vec4 uv2;
 in vec4 color;
 
 uniform sampler2D background;
-uniform vec2 size;
 uniform float seed;
 
 vec2 random2(vec2 st) {
@@ -44,15 +43,15 @@ float fbm(vec2 x) {
 }
 
 void main() {
-	vec2 pixel = gl_FragCoord.xy / size;
+	vec2 uv = gl_TexCoord[0].xy;
 	
-	float r = fbm(pixel * 1.75 + 0.5);
-	float g = fbm((pixel + 50.0) * 1.75 + 0.5);
-	float b = fbm((pixel + 100.0) * 1.75 + 0.5);
+	float r = fbm(uv * 1.75 + 0.5);
+	float g = fbm((uv + 50.0) * 1.75 + 0.5);
+	float b = fbm((uv + 100.0) * 1.75 + 0.5);
 
 	vec4 neb1 = vec4(r, 0.0, 0.0, r);
 	vec4 neb2 = vec4(0.0, g, 0.0, g);
 	vec4 neb3 = vec4(0.0, 0.0, b, b);
 
-	gl_FragColor = color * texture(background, pixel) + neb1 + neb2 + neb3;
+	gl_FragColor = color * texture(background, uv) + neb1 + neb2 + neb3;
 }

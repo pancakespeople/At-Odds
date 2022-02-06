@@ -102,7 +102,7 @@ void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellati
 			drawUndiscovered(renderer);
 		}
 		else {
-			renderer.effects.drawMapStar(renderer, m_shape, flashing);
+			renderer.effects.drawMapStar(m_shape, flashing);
 		}
 		
 		setRadius(getRadius() / 2);
@@ -113,7 +113,7 @@ void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellati
 			drawUndiscovered(renderer);
 		}
 		else {
-			renderer.effects.drawMapStar(renderer, m_shape, flashing);
+			renderer.effects.drawMapStar(m_shape, flashing);
 		}
 	}
 
@@ -163,7 +163,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 	if (player.hasFogOfWar()) {
 		if (numAllies(player.getFaction(), alliances) == 0) {
 			m_drawHidden = false;
-			renderer.effects.drawFogOfWar(renderer);
+			renderer.effects.drawFogOfWar();
 		}
 	}
 	
@@ -171,7 +171,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		//renderer.effects.drawBlackHole(renderer, m_localViewRect, time, m_shaderRandomSeed);
 	}
 	else {
-		renderer.effects.drawLocalStar(renderer, m_localViewRect, time, m_shaderRandomSeed);
+		renderer.effects.drawLocalStar(m_localViewRect, time, m_shaderRandomSeed);
 	}
 	
 	for (JumpPoint& j : m_jumpPoints) {
@@ -205,7 +205,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		m_particleSystem.drawParticles(renderer);
 
 		for (AsteroidBelt& ab : m_asteroidBelts) {
-			renderer.effects.drawAsteroidBelt(renderer, getLocalViewCenter(), ab.radius, ab.seed);
+			renderer.effects.drawAsteroidBelt(getLocalViewCenter(), ab.radius, ab.seed);
 		}
 	}
 }
@@ -699,7 +699,7 @@ void Star::drawUndiscovered(Renderer& renderer) {
 	sf::Color oldColor;
 	oldColor = m_shape.getFillColor();
 	m_shape.setFillColor(sf::Color(166, 166, 166));
-	renderer.effects.drawMapStar(renderer, m_shape, false);
+	renderer.effects.drawMapStar(m_shape, false);
 	m_shape.setFillColor(oldColor);
 }
 

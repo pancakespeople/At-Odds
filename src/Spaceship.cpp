@@ -94,7 +94,7 @@ void Spaceship::draw(Renderer& renderer, float time) {
 	renderer.draw(m_collider);
 	
 	if (m_percentJumpDriveCharged > 0.0f) {
-		renderer.effects.drawJumpBubble(renderer, m_collider.getPosition(), m_collider.getRadius(), m_percentJumpDriveCharged);
+		renderer.effects.drawJumpBubble(m_collider.getPosition(), m_collider.getRadius(), m_percentJumpDriveCharged);
 	}
 
 	if (m_selected) {

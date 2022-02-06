@@ -225,7 +225,7 @@ void Constellation::draw(const sf::RenderWindow& window, Renderer& renderer, Pla
             else points.push_back(sf::Glsl::Vec3(pos.x, pos.y, 0.0f));
         }
         
-        if (points.size() > 0) renderer.effects.drawBorders(renderer, m_border, points, faction.getColor());
+        if (points.size() > 0) renderer.effects.drawBorders(m_border, points, faction.getColor());
     }
     
     for (std::unique_ptr<Hyperlane>& h : m_hyperlanes) {
