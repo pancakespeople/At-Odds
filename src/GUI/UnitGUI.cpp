@@ -8,6 +8,7 @@
 #include "MinimapGUI.h"
 #include "../Renderer.h"
 #include "../AllianceList.h"
+#include "../Constellation.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -49,129 +50,6 @@ void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* c
 
 	if (!mainPanel->isFocused()) return;
 
-	// Mouse begins to be held down - Begin selection
-	if (!mouseHeld && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		sf::Vector2i mpos = sf::Mouse::getPosition(window);
-		m_mouseSelectionBox.setPosition(sf::Vector2f(mpos.x, mpos.y));
-		
-		if (minimap.isMouseInMinimap(window)) {
-			m_selecting = false;
-			return;
-		}
-		
-		m_selecting = true;
-	}
-
-	// Mouse held - Create selection area
-	else if (mouseHeld && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		sf::Vector2i mpos = sf::Mouse::getPosition(window);
-		sf::Vector2f selectionOriginPos = m_mouseSelectionBox.getPosition();
-
-		sf::Vector2f newSize = sf::Vector2f(mpos.x - selectionOriginPos.x, mpos.y - selectionOriginPos.y);
-		m_mouseSelectionBox.setSize(newSize);
-		m_selecting = true;
-	}
-
-	// Mouse let go - select ships
-	else if (mouseHeld && !sf::Mouse::isButtonPressed(sf::Mouse::Left)
-		&& std::abs(m_mouseSelectionBox.getSize().x) >= 5.0f
-		&& std::abs(m_mouseSelectionBox.getSize().y) >= 5.0f) {
-		bool allowConstructionShips = true;
-
-		m_selecting = false;
-		m_selectedShips.clear();
-
-		if (currentStar != nullptr) {
-			
-			// Select spaceships
-			for (auto& s : currentStar->getSpaceships()) {
-				if (s->getCurrentStar()->isLocalViewActive() && s->getAllegiance() == playerFaction) {
-
-					sf::Vector2i screenPos = renderer.mapCoordsToPixel(s->getPos());
-					sf::FloatRect selection = m_mouseSelectionBox.getGlobalBounds();
-
-					if (screenPos.x >= selection.left && screenPos.x <= selection.left + selection.width &&
-						screenPos.y >= selection.top && screenPos.y <= selection.top + selection.height) {
-						if (s->getConstructionSpeed() == 0.0f) {
-							allowConstructionShips = false;
-						}
-
-						s->onSelected();
-						m_selectedShips.push_back(s.get());
-					}
-					else if (s->isSelected()) {
-						s->onDeselected();
-					}
-				}
-			}
-
-			// Deselect all buildings
-			for (auto& building : currentStar->getBuildings()) {
-				if (building->isSelected()) building->onDeselected();
-			}
-
-			// Don't mix combat and construction ships - delete from container
-			if (!allowConstructionShips) {
-				auto it = std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* ship) {
-					if (ship->getConstructionSpeed() > 0.0f) {
-						ship->onDeselected();
-						return true;
-					}
-					return false;
-					});
-
-				m_selectedShips.erase(it, m_selectedShips.end());
-			}
-		}
-
-		m_mouseSelectionBox.setSize(sf::Vector2f(0.0f, 0.0f));
-	}
-
-	// Mouse click - deselect ships or select individual unit
-	else if (mouseHeld && !sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_mouseSelectionBox.getSize().x < 5.0f && m_mouseSelectionBox.getSize().y < 5.0f) {
-		for (Spaceship* s : m_selectedShips) {
-			if (s->isSelected()) {
-				s->onDeselected();
-			}
-		}
-		for (Building* b : m_selectedBuildings) {
-			if (b->isSelected()) {
-				b->onDeselected();
-			}
-		}
-		m_selectedShips.clear();
-		m_selectedBuildings.clear();
-
-		// Select an individual unit
-
-		if (currentStar != nullptr) {
-
-			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-			sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
-
-			for (auto& s : currentStar->getSpaceships()) {
-				if (s->getCollider().contains(worldClick)) {
-					if (s->getAllegiance() == playerFaction) {
-						m_selectedShips.push_back(s.get());
-						s->onSelected();
-						break;
-					}
-				}
-			}
-
-			for (auto& building : currentStar->getBuildings()) {
-				if (building->getCollider().contains(worldClick) && building->getAllegiance() == playerFaction) {
-					m_selectedBuildings.push_back(building.get());
-					building->onSelected();
-					break;
-				}
-			}
-
-		}
-	}
-
-	mouseHeld = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-
 	if (m_selectedShips.size() > 0) {
 		m_panel->setVisible(true);
 		
@@ -208,19 +86,41 @@ void UnitGUI::draw(sf::RenderWindow& window) {
 	sf::View oldView = window.getView();
 	window.setView(window.getDefaultView());
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		window.draw(m_mouseSelectionBox);
-	}
+	window.draw(m_mouseSelectionBox);
 
 	window.setView(oldView);
 }
 
-void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel, const AllianceList& alliances) {
+void UnitGUI::onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
 	bool mainPanelFocused = true;
 	if (mainPanel != nullptr) {
 		mainPanelFocused = mainPanel->isFocused();
 	}
 
+	if (ev.type == sf::Event::MouseMoved && m_mouseDown) {
+		// Mouse held, change size of selection box
+
+		sf::Vector2i mpos = { ev.mouseMove.x, ev.mouseMove.y };
+		sf::Vector2f selectionOriginPos = m_mouseSelectionBox.getPosition();
+
+		sf::Vector2f newSize = sf::Vector2f(mpos.x - selectionOriginPos.x, mpos.y - selectionOriginPos.y);
+		m_mouseSelectionBox.setSize(newSize);
+	}
+	else if (ev.type == sf::Event::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left && !minimap.isMouseInMinimap(window)) {
+		// Mouse begins to be held down, set position of selection box
+
+		m_mouseSelectionBox.setPosition(sf::Vector2f(ev.mouseButton.x, ev.mouseButton.y));
+		m_mouseDown = true;
+	}
+	else if (ev.type == sf::Event::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
+		// Mouse released, select units
+
+		onSelect(renderer, state.getLocalViewStar(), state.getPlayer().getFaction());
+		onMouseClick(ev, renderer, state.getLocalViewStar(), state.getPlayer().getFaction());
+		m_mouseDown = false;
+	}
+
+	// Right click events
 	if (state.getState() == GameState::State::LOCAL_VIEW && mainPanelFocused) {
 		if (ev.type == sf::Event::MouseButtonPressed) {
 			if (ev.mouseButton.button == sf::Mouse::Right) {
@@ -233,6 +133,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer
 					Spaceship* attackTarget = nullptr;
 					Building* buildingClick = nullptr;
 					Planet* planetClick = nullptr;
+					const AllianceList& alliances = constellation.getAlliances();
 
 					// Check if click was on a jump point
 					for (JumpPoint& j : state.getLocalViewStar()->getJumpPoints()) {
@@ -311,7 +212,7 @@ void UnitGUI::onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer
 			Star* star = nullptr;
 
 			// Check if click on star
-			for (std::unique_ptr<Star>& s : stars) {
+			for (std::unique_ptr<Star>& s : constellation.getStars()) {
 				if (s->isInShapeRadius(worldClick.x, worldClick.y)) {
 					star = s.get();
 					break;
@@ -357,4 +258,85 @@ sf::Vector2f UnitGUI::getAveragePosOfSelectedShips() {
 	}
 	pos = sf::Vector2f(pos.x / m_selectedShips.size(), pos.y / m_selectedShips.size());
 	return pos;
+}
+
+void UnitGUI::onSelect(const Renderer& renderer, Star* star, int playerAllegiance) {
+	bool allowConstructionShips = true;
+
+	m_selecting = false;
+	m_selectedShips.clear();
+
+	if (star != nullptr) {
+
+		// Select spaceships
+		for (auto& s : star->getSpaceships()) {
+			if (s->getCurrentStar()->isLocalViewActive() && s->getAllegiance() == playerAllegiance) {
+
+				sf::Vector2i screenPos = renderer.mapCoordsToPixel(s->getPos());
+				sf::FloatRect selection = m_mouseSelectionBox.getGlobalBounds();
+
+				if (screenPos.x >= selection.left && screenPos.x <= selection.left + selection.width &&
+					screenPos.y >= selection.top && screenPos.y <= selection.top + selection.height) {
+					if (s->getConstructionSpeed() == 0.0f) {
+						allowConstructionShips = false;
+					}
+
+					s->onSelected();
+					m_selectedShips.push_back(s.get());
+				}
+				else if (s->isSelected()) {
+					s->onDeselected();
+				}
+			}
+		}
+
+		// Deselect all buildings
+		for (auto& building : star->getBuildings()) {
+			if (building->isSelected()) building->onDeselected();
+		}
+
+		// Don't mix combat and construction ships - delete from container
+		if (!allowConstructionShips) {
+			auto it = std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* ship) {
+				if (ship->getConstructionSpeed() > 0.0f) {
+					ship->onDeselected();
+					return true;
+				}
+				return false;
+				});
+
+			m_selectedShips.erase(it, m_selectedShips.end());
+		}
+	}
+
+	m_mouseSelectionBox.setSize(sf::Vector2f(0.0f, 0.0f));
+}
+
+void UnitGUI::onMouseClick(const sf::Event& ev, const Renderer& renderer, Star* currentStar, int playerFaction) {
+	// Select an individual unit
+
+	if (currentStar != nullptr) {
+
+		sf::Vector2i screenPos = { ev.mouseButton.x, ev.mouseButton.y };
+		sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
+
+		for (auto& s : currentStar->getSpaceships()) {
+			if (s->getCollider().contains(worldClick)) {
+				if (s->getAllegiance() == playerFaction) {
+					m_selectedShips.push_back(s.get());
+					s->onSelected();
+					break;
+				}
+			}
+		}
+
+		for (auto& building : currentStar->getBuildings()) {
+			if (building->getCollider().contains(worldClick) && building->getAllegiance() == playerFaction) {
+				m_selectedBuildings.push_back(building.get());
+				building->onSelected();
+				break;
+			}
+		}
+
+	}
 }

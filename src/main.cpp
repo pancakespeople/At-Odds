@@ -109,7 +109,7 @@ int main(int argc, const char* argv[])
             state.getCamera().zoomEvent(event);
             constellation.onEvent(event, window, renderer, state);
             state.onEvent(event);
-            unitGui.onEvent(event, window, renderer, state, constellation.getStars(), playerGui.mainPanel, constellation.getAlliances());
+            unitGui.onEvent(event, window, renderer, state, constellation, playerGui.mainPanel, playerGui.minimapGUI);
             mainMenu.onEvent(event, gui, constellation, state);
             gui.handleEvent(event);
             playerGui.buildingGUI.onEvent(event, window, renderer, gui, state, constellation, playerGui.mainPanel);

@@ -11,7 +11,7 @@ public:
 	void open(tgui::Gui& gui);
 	void update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
 	void draw(sf::RenderWindow& window);
-	void onEvent(sf::Event ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, std::vector<std::unique_ptr<Star>>& stars, tgui::Panel::Ptr mainPanel, const AllianceList& alliances);
+	void onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
 
 	bool isSelecting() const { return m_selecting; }
 
@@ -19,6 +19,9 @@ public:
 
 private:
 	void drawStarPath(Star* begin, Star* end);
+	void onMouseClick(const sf::Event& ev, const Renderer& renderer, Star* currentStar, int playerFaction);
+	void onSelect(const Renderer& renderer, Star* star, int playerAllegiance);
+	
 	sf::Vector2f getAveragePosOfSelectedShips();
 
 	sf::RectangleShape m_mouseSelectionBox;
@@ -30,4 +33,5 @@ private:
 	tgui::Label::Ptr m_label = nullptr;
 
 	bool m_selecting = false;
+	bool m_mouseDown = false;
 };
