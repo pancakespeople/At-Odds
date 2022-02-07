@@ -163,6 +163,8 @@ bool Colony::hasBuildingOfType(const std::string& string, bool builtOnly) const 
 }
 
 float Colony::getGrowthRate(float planetHabitability, std::string* outInfoString) const {
+	float originalHabitability = planetHabitability;
+
 	// Apply building modifiers
 	float buildingEffect = 0.0f;
 	for (const ColonyBuilding& building : m_buildings) {
@@ -172,7 +174,7 @@ float Colony::getGrowthRate(float planetHabitability, std::string* outInfoString
 			buildingEffect += effect;
 		}
 	}
-	
+
 	// Food and water shortages affect habitability
 	float food = m_tradeGoods.getSupply("FOOD") == 0.0f ? 0.5f : 1.0f;
 	float water = m_tradeGoods.getSupply("WATER") == 0.0f ? 0.5f : 1.0f;
@@ -193,8 +195,8 @@ float Colony::getGrowthRate(float planetHabitability, std::string* outInfoString
 	// Fill out info string
 	if (outInfoString != nullptr) {
 		outInfoString->clear();
-		
-		outInfoString->append("Planet habitability: " + Util::percentify(habitabilityEffect) + "\n");
+
+		outInfoString->append("Planet habitability: " + Util::percentify(originalHabitability) + "\n");
 
 		if (buildingEffect != 0.0f) {
 			outInfoString->append("Buildings: " + Util::percentify(buildingEffect) + "\n");

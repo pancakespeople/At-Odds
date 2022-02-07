@@ -155,7 +155,7 @@ void MilitaryAI::update(Faction& faction, Brain& brain, const AllianceList& alli
 				// Don't attack allied stars
 				borderStars.erase(std::remove_if(borderStars.begin(), borderStars.end(), [&faction, &alliances](const Star* star) {
 					return alliances.isAllied(faction.getID(), star->getAllegiance());
-				}));
+				}), borderStars.end());
 
 				if (borderStars.size() > 0) {
 					int rnd = Random::randInt(0, borderStars.size() - 1);

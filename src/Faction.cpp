@@ -158,6 +158,12 @@ void Faction::update(const AllianceList& alliances) {
 		}
 	}
 
+	// Add queued techs
+	for (Tech& tech : m_toAddTechs) {
+		m_techs.push_back(tech);
+	}
+	m_toAddTechs.clear();
+
 	m_researchPointProduction = 0.1f * m_currentResearchPoints;
 	m_currentResearchPoints = 0.0f;
 	m_numTicksAlive++;
@@ -580,7 +586,8 @@ void Faction::onResearchFinish(Tech& tech) {
 	// Add unlocked techs
 	auto techs = tech.getUnlocked("unlocksTech");
 	for (const std::string& unlockedTech : techs) {
-		addTech(Tech(unlockedTech));
+		// Add to techs later to avoid invalidating iterators
+		m_toAddTechs.push_back(Tech(unlockedTech));
 	}
 
 	// Upgrade weapon
@@ -722,7 +729,7 @@ bool Faction::hasChassis(const std::string& type) {
 void Faction::addWeapon(const DesignerWeapon& weapon) {
 	if (!hasWeapon(weapon.type)) {
 		m_weapons.push_back(weapon);
-		addTech(Tech::generateWeaponUpgradeTech(weapon));
+		m_toAddTechs.push_back(Tech::generateWeaponUpgradeTech(weapon));
 	}
 }
 
@@ -730,7 +737,7 @@ void Faction::upgradeWeapon(const std::string& type) {
 	for (auto& weapon : m_weapons) {
 		if (weapon.type == type) {
 			weapon.upgradeLevel++;
-			addTech(Tech::generateWeaponUpgradeTech(weapon));
+			m_toAddTechs.push_back(Tech::generateWeaponUpgradeTech(weapon));
 
 			// Automatically update designs to use the new upgrade
 			for (auto& design : m_designerShips) {

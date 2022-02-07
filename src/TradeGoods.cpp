@@ -64,23 +64,25 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 
 		// Production from resources
 		for (Resource& resource : planet->getResources()) {
-			if (resource.type == "COMMON_ORE") {
-				float industrialGoodsProduction = planet->getColony().getPopulation() * 0.1f * resource.abundance;
-				addSupply("INDUSTRIAL_GOODS", industrialGoodsProduction);
-			}
-			if (resource.type == "UNCOMMON_ORE") {
-				float consumerGoodsProduction = planet->getColony().getPopulation() * 0.085f * resource.abundance * planet->getColony().getBuildingEffects("consumerGoodsMultiplier");
-				float deficit = removeSupply("INDUSTRIAL_GOODS", consumerGoodsProduction);
-				addSupply("CONSUMER_GOODS", consumerGoodsProduction - deficit);
+			if (!resource.hidden) {
+				if (resource.type == "COMMON_ORE") {
+					float industrialGoodsProduction = planet->getColony().getPopulation() * 0.1f * resource.abundance;
+					addSupply("INDUSTRIAL_GOODS", industrialGoodsProduction);
+				}
+				if (resource.type == "UNCOMMON_ORE") {
+					float consumerGoodsProduction = planet->getColony().getPopulation() * 0.085f * resource.abundance * planet->getColony().getBuildingEffects("consumerGoodsMultiplier");
+					float deficit = removeSupply("INDUSTRIAL_GOODS", consumerGoodsProduction);
+					addSupply("CONSUMER_GOODS", consumerGoodsProduction - deficit);
 
-				float armamentsProduction = planet->getColony().getPopulation() * 0.005f * resource.abundance * planet->getColony().getBuildingEffects("armamentsMultiplier");
-				deficit = removeSupply("INDUSTRIAL_GOODS", armamentsProduction);
-				addSupply("ARMAMENTS", armamentsProduction - deficit);
-			}
-			if (resource.type == "RARE_ORE") {
-				float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;
-				float deficit = removeSupply("INDUSTRIAL_GOODS", luxuryGoodsProduction * 2.0f);
-				addSupply("LUXURY_GOODS", luxuryGoodsProduction - deficit);
+					float armamentsProduction = planet->getColony().getPopulation() * 0.005f * resource.abundance * planet->getColony().getBuildingEffects("armamentsMultiplier");
+					deficit = removeSupply("INDUSTRIAL_GOODS", armamentsProduction);
+					addSupply("ARMAMENTS", armamentsProduction - deficit);
+				}
+				if (resource.type == "RARE_ORE") {
+					float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;
+					float deficit = removeSupply("INDUSTRIAL_GOODS", luxuryGoodsProduction * 2.0f);
+					addSupply("LUXURY_GOODS", luxuryGoodsProduction - deficit);
+				}
 			}
 		}
 

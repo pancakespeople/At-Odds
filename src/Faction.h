@@ -158,6 +158,7 @@ private:
 		archive & m_newsEvents;
 		archive & m_neverColonized;
 		archive & m_numTicksAlive;
+		archive & m_toAddTechs;
 	}
 	
 	Faction() {}
@@ -182,6 +183,7 @@ private:
 	std::vector<std::string> m_availableColonyBuildings;
 	std::deque<std::pair<std::string, sf::Color>> m_newsEvents;
 	std::vector<Tech> m_techs;
+	std::vector<Tech> m_toAddTechs;
 	
 	Brain m_ai;
 	

@@ -11,7 +11,9 @@
 void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, const Constellation& constellation) {
 	if (m_planetPanel != nullptr) {
 		gui.remove(m_planetPanel);
+		gui.remove(m_buttonPanel);
 		m_planetPanel = nullptr;
+		m_buttonPanel = nullptr;
 	}
 
 	m_planetIconPanel = tgui::Panel::create();
@@ -33,10 +35,13 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 	m_planetIconPanel->onClick([this, &gui, &state, &constellation, playerFaction]() {
 		if (m_planetPanel == nullptr) {
 			if (state.getLocalViewStar() != nullptr) {
-				m_planetPanel = tgui::Panel::create();
+				m_planetPanel = tgui::ChildWindow::create("Planets");
 				m_planetPanel->setInheritedOpacity(0.75);
 				m_planetPanel->setPosition("2.5%", "61%");
 				m_planetPanel->setSize("20%", "29%");
+				m_planetPanel->onClose([this, &gui]() {
+					closePanel(gui);
+				});
 				gui.add(m_planetPanel, "planetPanel");
 
 				m_planetInfoPanel = tgui::Panel::create();
@@ -46,6 +51,11 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 				m_planetInfoPanel->setPosition("0%", "20%");
 				m_planetInfoPanel->setSize("100%", "80%");
 				m_planetPanel->add(m_planetInfoPanel);
+
+				m_buttonPanel = tgui::Panel::create();
+				m_buttonPanel->setPosition("planetPanel.right", "planetPanel.y");
+				m_buttonPanel->setSize("10%", "planetPanel.height");
+				gui.add(m_buttonPanel, "buttonPanel");
 
 				std::vector<Planet>& planets = state.getLocalViewStar()->getPlanets();
 
@@ -104,25 +114,12 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 			}
 		}
 		else {
-			gui.remove(m_planetPanel);
-			m_planetPanel = nullptr;
-
-			if (m_sideWindow != nullptr) {
-				gui.remove(m_sideWindow);
-				m_sideWindow = nullptr;
-			}
+			closePanel(gui);
 		}
 		});
 
 	state.addOnChangeStateCallback([this, &gui]() {
-		if (m_planetPanel != nullptr) {
-			gui.remove(m_planetPanel);
-			m_planetPanel = nullptr;
-		}
-		if (m_sideWindow != nullptr) {
-			gui.remove(m_sideWindow);
-			m_sideWindow = nullptr;
-		}
+		closePanel(gui);
 		});
 
 	gui.add(m_planetIconPanel);
@@ -221,7 +218,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	if (m_sideWindow == nullptr) {
 		m_sideWindow = tgui::ChildWindow::create(name);
 		m_sideWindow->setOrigin(0.0f, 1.0f);
-		m_sideWindow->setPosition("planetPanel.right", "planetPanel.bottom");
+		m_sideWindow->setPosition("buttonPanel.right", "buttonPanel.bottom");
 		m_sideWindow->setSize("20%", "29%");
 		m_sideWindow->getRenderer()->setOpacity(0.75f);
 		m_sideWindow->setPositionLocked(true);
@@ -275,9 +272,9 @@ void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, F
 void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state, Planet& planet, Faction* playerFaction, const Constellation& constellation) {
 	// Colony button
 	auto colonyInfoButton = tgui::Button::create();
-	colonyInfoButton->setPosition("75%", "80%");
+	colonyInfoButton->setPosition("0%", "16.66% * 5");
 	colonyInfoButton->setText("Colony");
-	colonyInfoButton->setSize("25%", "10%");
+	colonyInfoButton->setSize("100%", "16.66%");
 	auto openColonyInfo = [this, &gui, &state, &constellation, &planet]() {
 		switchSideWindow("Colony", gui);
 
@@ -378,13 +375,12 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 		}
 	};
 	colonyInfoButton->onClick(openColonyInfo);
-	m_planetInfoPanel->add(colonyInfoButton, "colonyInfoButton");
+	m_buttonPanel->add(colonyInfoButton, "colonyInfoButton");
 
 	// Resources button
 	auto resourceInfoButton = tgui::Button::create("Resources");
-	resourceInfoButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 10.0%");
-	resourceInfoButton->setTextSize(10);
-	resourceInfoButton->setSize("25%", "10%");
+	resourceInfoButton->setPosition("0%", "16.66% * 4");
+	resourceInfoButton->setSize("100%", "16.66%");
 	auto openResourceInfo = [this, &gui, &planet, playerFaction]() {
 		switchSideWindow("Resources", gui);
 
@@ -436,14 +432,14 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 	}*/
 
 	resourceInfoButton->onClick(openResourceInfo);
-	m_planetInfoPanel->add(resourceInfoButton);
+	m_buttonPanel->add(resourceInfoButton);
 
 }
 
 void PlanetGUI::createLawsButton(tgui::Gui& gui, GameState& state, Planet& planet) {
 	auto lawsButton = tgui::Button::create("Laws");
-	lawsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 20.0%");
-	lawsButton->setSize("25%", "10%");
+	lawsButton->setPosition("0%", "16.66% * 3");
+	lawsButton->setSize("100%", "16.66%");
 	lawsButton->onPress([this, &gui, &state, &planet]() {
 		switchSideWindow("Laws", gui);
 
@@ -475,15 +471,15 @@ void PlanetGUI::createLawsButton(tgui::Gui& gui, GameState& state, Planet& plane
 
 		m_sideWindow->add(colonyLawComboBox);
 		});
-	m_planetInfoPanel->add(lawsButton, "lawsButton");
+	m_buttonPanel->add(lawsButton, "lawsButton");
 }
 
 void PlanetGUI::createBuildingsButton(tgui::Gui& gui, Planet& planet, Faction* playerFaction) {
 	auto buildingsButton = tgui::Button::create("Buildings");
-	buildingsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 30.0%");
-	buildingsButton->setSize("25%", "10%");
+	buildingsButton->setPosition("0%", "16.66% * 2");
+	buildingsButton->setSize("100%", "16.66%");
 	buildingsButton->onPress(&PlanetGUI::openBuildingsPanel, this, std::ref(gui), std::ref(planet), playerFaction);
-	m_planetInfoPanel->add(buildingsButton);
+	m_buttonPanel->add(buildingsButton);
 }
 
 void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* playerFaction) {
@@ -692,8 +688,8 @@ void PlanetGUI::createBuildStatusLabel(Planet& planet, const ColonyBuilding& bui
 
 void PlanetGUI::createEventsButton(tgui::Gui& gui, const Planet& planet) {
 	auto eventsButton = tgui::Button::create("Events");
-	eventsButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 40.0%");
-	eventsButton->setSize("25%", "10%");
+	eventsButton->setPosition("0%", "16.66%");
+	eventsButton->setSize("100%", "16.66%");
 	eventsButton->onPress([this, &gui, &planet]() {
 		switchSideWindow("Events", gui);
 
@@ -734,13 +730,13 @@ void PlanetGUI::createEventsButton(tgui::Gui& gui, const Planet& planet) {
 		descriptionText->setSize("100%", "100%");
 		descriptionPanel->add(descriptionText, "descriptionText");
 	});
-	m_planetInfoPanel->add(eventsButton);
+	m_buttonPanel->add(eventsButton);
 }
 
 void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 	auto tradeButton = tgui::Button::create("Trade");
-	tradeButton->setPosition("colonyInfoButton.left", "colonyInfoButton.top - 50.0%");
-	tradeButton->setSize("25%", "10%");
+	tradeButton->setPosition("0%", "0%");
+	tradeButton->setSize("100%", "16.66%");
 	tradeButton->onPress([this, &gui, &planet]() {
 		switchSideWindow("Trade", gui);
 
@@ -850,7 +846,7 @@ void PlanetGUI::createTradeButton(tgui::Gui& gui, Planet& planet) {
 			}
 		};
 	});
-	m_planetInfoPanel->add(tradeButton);
+	m_buttonPanel->add(tradeButton);
 }
 
 void PlanetGUI::updateTrendWidget(tgui::Label::Ptr& label, float trend) {
@@ -865,5 +861,18 @@ void PlanetGUI::updateTrendWidget(tgui::Label::Ptr& label, float trend) {
 	else {
 		label->setText("~");
 		label->getRenderer()->setTextColor(tgui::Color::Yellow);
+	}
+}
+
+void PlanetGUI::closePanel(tgui::Gui& gui) {
+	if (m_planetPanel != nullptr) {
+		gui.remove(m_planetPanel);
+		gui.remove(m_buttonPanel);
+		m_planetPanel = nullptr;
+		m_buttonPanel = nullptr;
+	}
+	if (m_sideWindow != nullptr) {
+		gui.remove(m_sideWindow);
+		m_sideWindow = nullptr;
 	}
 }

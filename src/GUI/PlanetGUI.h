@@ -21,11 +21,13 @@ private:
 	void createEventsButton(tgui::Gui& gui, const Planet& planet);
 	void createTradeButton(tgui::Gui& gui, Planet& planet);
 	void openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
+	void closePanel(tgui::Gui& gui);
 	static void updateTrendWidget(tgui::Label::Ptr& label, float trend);
 
 	tgui::Panel::Ptr m_planetIconPanel;
-	tgui::Panel::Ptr m_planetPanel;
 	tgui::Panel::Ptr m_planetInfoPanel;
+	tgui::Panel::Ptr m_buttonPanel;
+	tgui::ChildWindow::Ptr m_planetPanel;
 	tgui::ChildWindow::Ptr m_sideWindow;
 	std::function<void(Planet&)> m_updateFunction = nullptr;
 };
