@@ -341,7 +341,7 @@ void Star::handleCollisions(const AllianceList& alliances) {
 					unit->takeDamage(p.getDamage());
 					if (p.diesOnCollision()) p.kill();
 					m_particleSystem.createParticle(
-						ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), unit->getCollider().getColor()
+						ParticleSystem::Particle{ 1000, Random::randVec(-10.0f, 10.0f) }, p.getPos(), { 255, 204, 179 }, 50
 					);
 				}
 			}
@@ -419,7 +419,7 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 			factions.insert(m_localShips[i]->getAllegiance());
 		}
 		if (m_localShips[i]->isDead()) {
-			m_particleSystem.createParticleExplosion(m_localShips[i]->getPos(), m_localShips[i]->getCollider().getColor(), 10.0f, 100);
+			m_particleSystem.createParticleExplosion(m_localShips[i]->getPos(), 10.0f, 10, (m_localShips[i]->getSize().x + m_localShips[i]->getSize().y) * m_localShips[i]->getScale().x / 2.0f);
 			
 			if (!m_localShips[i]->diesSilently()) {
 				emitter.addExplosionEffect(m_localShips[i]->getPos(), this);
@@ -438,7 +438,7 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 		m_buildings[i]->updateMods(*this, constellation->getFaction(m_buildings[i]->getAllegiance()), constellation->getAlliances());
 		m_buildings[i]->update(this, constellation->getAlliances());
 		if (m_buildings[i]->isDead()) {
-			m_particleSystem.createParticleExplosion(m_buildings[i]->getPos(), m_buildings[i]->getCollider().getColor(), 10.0f, 100);
+			m_particleSystem.createParticleExplosion(m_buildings[i]->getPos(), 10.0f, 10, (m_buildings[i]->getSize().x + m_buildings[i]->getSize().y) * m_buildings[i]->getScale().x / 2.0f);
 			emitter.addExplosionEffect(m_buildings[i]->getPos(), this);
 			m_buildings[i]->onDeath(this);
 

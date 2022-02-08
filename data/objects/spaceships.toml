@@ -8,6 +8,7 @@ health = 100.0
 colliderRadius = 100.0
 maxWeaponCapacity = 1.0
 cost = [["COMMON_ORE", 7.5]]
+thrusterPoints = [[97, 124]]
 
 [FRIGATE_2]
 name = "Meteor"
@@ -33,6 +34,10 @@ colliderRadius = 125.0
 maxWeaponCapacity = 2.0
 cost = [["COMMON_ORE", 15.0]]
 buildTimeMultiplier = 1.25
+thrusterPoints = [
+	[47, 104],
+	[72, 104]
+]
 
 [DESTROYER_2]
 name = "Seeker"
@@ -45,6 +50,10 @@ colliderRadius = 200.0
 maxWeaponCapacity = 3.0
 cost = [["COMMON_ORE", 35.0], ["UNCOMMON_ORE", 12.5], ["RARE_ORE", 1.0]]
 buildTimeMultiplier = 1.25
+thrusterPoints = [
+	[62, 175],
+	[74, 175]
+]
 
 [CRUISER]
 name = "Pummeler"
@@ -57,6 +66,11 @@ colliderRadius = 300.0
 maxWeaponCapacity = 5.0
 cost = [["COMMON_ORE", 100.0], ["RARE_ORE", 5.0]]
 buildTimeMultiplier = 2.0
+thrusterPoints = [
+	[31, 79],
+	[53, 79]
+]
+thrusterSize = 200
 
 [BATTLECRUISER]
 name = "Supernova"
@@ -69,6 +83,11 @@ colliderRadius = 700.0
 maxWeaponCapacity = 10.0
 cost = [["COMMON_ORE", 350.0], ["UNCOMMON_ORE", 150.0], ["RARE_ORE", 50.0]]
 buildTimeMultiplier = 4.0
+thrusterPoints = [
+	[34, 105],
+	[85, 105]
+]
+thrusterSize = 300
 
 [CLAIM_SHIP]
 name = "Flag"
@@ -91,6 +110,10 @@ constructionSpeed = 10.0
 maxWeaponCapacity = 0.0
 cost = [["COMMON_ORE", 10.0]]
 hasDesign = false
+thrusterPoints = [
+	[88, 502],
+	[428, 502]
+]
 
 [FIGHTER]
 name = "Fighter"
@@ -102,6 +125,7 @@ colliderRadius = 50.0
 fighterAI = true
 playerCanGiveOrders = false
 hasDesign = false
+thrusterPoints = [[97, 124]]
 
 [SPACE_BUS]
 name = "Space Bus"
@@ -112,6 +136,11 @@ colliderRadius = 150.0
 civilian = true
 playerCanGiveOrders = false
 hasDesign = false
+thrusterPoints = [
+	[92, 247],
+	[121, 247],
+	[152, 247]
+]
 
 [SPACE_TRAIN]
 name = "Space Train"
@@ -123,6 +152,11 @@ civilian = true
 playerCanGiveOrders = false
 scale = 2.0
 hasDesign = false
+thrusterPoints = [
+	[205, 490],
+	[259, 490],
+	[313, 490]
+]
 
 [SPACE_TRUCK]
 name = "Space Truck"
@@ -133,6 +167,7 @@ colliderRadius = 150.0
 civilian = true
 playerCanGiveOrders = false
 hasDesign = false
+thrusterPoints = [[131, 235]]
 
 [BIG_SPACE_TRUCK]
 name = "Big Space Truck"
@@ -144,6 +179,7 @@ colliderRadius = 300.0
 civilian = true
 playerCanGiveOrders = false
 hasDesign = false
+thrusterPoints = [[131, 235]]
 
 [FREIGHTER]
 name = "Freighter"
@@ -155,3 +191,4 @@ colliderRadius = 300.0
 civilian = true
 playerCanGiveOrders = false
 hasDesign = false
+thrusterPoints = [[131, 235]]

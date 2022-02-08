@@ -21,7 +21,7 @@ public:
 	const Collider& getCollider() const { return m_collider; }
 
 	sf::Vector2f getPos() const { return m_collider.getPosition(); }
-	sf::Vector2f getVelocity() { return m_velocity; }
+	sf::Vector2f getVelocity() const { return m_velocity; }
 
 	sf::Color getFactionColor() const { return m_collider.getColor(); }
 

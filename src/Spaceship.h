@@ -45,6 +45,7 @@ public:
 	void reinitOrdersAfterLoad(Constellation* constellation);
 	void setPirate(bool pirate) { m_pirate = pirate; }
 	void onDeath(Star* currentStar);
+	void createThrusterParticles();
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
@@ -73,6 +74,8 @@ public:
 	int numOrders() { return m_orders.size(); }
 
 	sf::Vector2f getPos() const { return m_sprite.getPosition(); }
+	sf::Vector2f getSize() const { return sf::Vector2f(m_sprite.getTextureRect().width , m_sprite.getTextureRect().height); }
+	sf::Vector2f getScale() const { return m_sprite.getScale(); }
 
 	template <typename T>
 	void addOrder(const T order) { if (m_canReceiveOrders) m_orders.push_back(std::make_unique<T>(order)); }
@@ -112,6 +115,8 @@ private:
 		archive & m_diesSilently;
 		archive & m_civilian;
 		archive & m_pirate;
+		archive & m_thrusterPoints;
+		archive & m_thrusterSize;
 	}
 
 	Spaceship() {}
@@ -121,6 +126,7 @@ private:
 	sf::Sprite m_sprite;
 	
 	std::deque<std::unique_ptr<Order>> m_orders;
+	std::vector<sf::Vector2f> m_thrusterPoints;
 	
 	float m_mass = 100.0; // kg
 	float m_maxAcceleration = 10.0;
@@ -128,6 +134,7 @@ private:
 	float m_facingAngle = 90.0f;
 	float m_rotationSpeed = 1.0;
 	float m_constructionSpeed = 0.0f;
+	float m_thrusterSize = 100.0f;
 
 	bool m_canReceiveOrders = true;
 	bool m_playerCanGiveOrders = true;

@@ -42,6 +42,9 @@ public:
 	std::string getType() { return m_type; }
 	std::string getInfoString();
 
+	sf::Vector2f getSize() const { return sf::Vector2f(m_sprite.getTextureRect().width , m_sprite.getTextureRect().height); }
+	sf::Vector2f getScale() const { return m_sprite.getScale(); }
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>

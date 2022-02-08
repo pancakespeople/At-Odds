@@ -40,6 +40,7 @@ public:
 	void drawJumpEffect(sf::Vector2f pos, float time, float seed);
 	void drawJumpPoint(sf::Vector2f pos, float time, float seed);
 	void drawJumpTrail(const sf::RectangleShape& shape);
+	void drawParticles(const std::vector<sf::Vertex>& vertices);
 	void updateTime(float time);
 
 private:
@@ -80,6 +81,7 @@ private:
 	sf::Shader m_jumpShader;
 	sf::Shader m_jumpPointShader;
 	sf::Shader m_jumpTrailShader;
+	sf::Shader m_particleShader;
 
 	sf::Vector2i m_resolution;
 

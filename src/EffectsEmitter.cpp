@@ -62,6 +62,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_jumpShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumpshader.shader");
 	m_jumpPointShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumppointshader.shader");
 	m_jumpTrailShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumptrailshader.shader");
+	m_particleShader.loadFromFile(m_vertexShaderPath, "data/shaders/particleshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -419,4 +420,8 @@ void EffectsEmitter::drawJumpPoint(sf::Vector2f pos, float time, float seed) {
 void EffectsEmitter::drawJumpTrail(const sf::RectangleShape& shape) {
 	m_jumpTrailShader.setUniform("size", sf::Glsl::Vec2(shape.getSize().x / 2.0f, shape.getSize().y / 2.0f));
 	m_renderer.draw(shape, &m_jumpTrailShader);
+}
+
+void EffectsEmitter::drawParticles(const std::vector<sf::Vertex>& vertices) {
+	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, &m_particleShader);
 }

@@ -110,6 +110,7 @@ public:
 
 	Planet& getMostHabitablePlanet();
 	Planet* getMostHabitablePlanet(int allegiance);
+	ParticleSystem& getParticleSystem() { return m_particleSystem; }
 
 private:
 	friend class boost::serialization::access;

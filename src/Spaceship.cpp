@@ -74,6 +74,15 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 
 	if (spriteTakesFactionColor) m_sprite.setColor(color);
 
+	auto* thrusterPoints = table[type]["thrusterPoints"].as_array();
+	if (thrusterPoints != nullptr) {
+		for (int i = 0; i < thrusterPoints->size(); i++) {
+			m_thrusterPoints.push_back({ table[type]["thrusterPoints"][i][0].value_or(0.0f), table[type]["thrusterPoints"][i][1].value_or(0.0f) });
+		}
+	}
+
+	m_thrusterSize = table[type]["thrusterSize"].value_or(100.0f);
+
 	init(pos, star, allegiance, color);
 }
 
@@ -184,6 +193,8 @@ void Spaceship::accelerate(float amount) {
 
 	m_velocity.x += std::cos(m_facingAngle * Math::toRadians) * amount;
 	m_velocity.y += -std::sin(m_facingAngle * Math::toRadians) * amount;
+
+	createThrusterParticles();
 }
 
 void Spaceship::update(Star* currentStar, const AllianceList& alliances) {
@@ -528,5 +539,13 @@ void Spaceship::onDeath(Star* currentStar) {
 	if (onDeathScript != "") {
 		Script::RunScript(onDeathScript);
 		Script::CallFunction<void>("onUnitDeath", *currentStar, *this);
+	}
+}
+
+void Spaceship::createThrusterParticles() {
+	for (sf::Vector2f thrusterPos : m_thrusterPoints) {
+		sf::Vector2f pos = m_sprite.getTransform().transformPoint(thrusterPos);
+
+		m_currentStar->getParticleSystem().createParticle({ 10, {0.0f, 0.0f} }, pos, { 255, 204, 179 }, m_thrusterSize);
 	}
 }
