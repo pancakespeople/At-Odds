@@ -41,6 +41,7 @@ public:
 	void drawJumpPoint(sf::Vector2f pos, float time, float seed);
 	void drawJumpTrail(const sf::RectangleShape& shape);
 	void drawParticles(const std::vector<sf::Vertex>& vertices);
+	void drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void updateTime(float time, float gameTime);
 
 private:

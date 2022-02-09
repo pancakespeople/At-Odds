@@ -110,3 +110,13 @@ cooldownRecovery = 0.5
 fireAnimation = "gatlinggun"
 instaHit = true
 sound = "data/sound/machinegun.wav"
+
+[GATLING_LASER]
+name = "Gatling Laser"
+weaponPoints = 2.0
+cost = [["UNCOMMON_ORE", 35.0]]
+projectile = "GATLING_LASER"
+cooldownRecovery = 0.3
+fireAnimation = "gatlinglaser"
+instaHit = true
+sound = "data/sound/pew1.wav"

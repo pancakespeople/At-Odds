@@ -109,3 +109,8 @@ onDeathScript = "blackHole.lua"
 life = 1000.0
 speed = 10.0
 damage = 20.0
+
+[GATLING_LASER]
+life = 500.0
+speed = 10.0
+damage = 40.0

@@ -53,4 +53,9 @@ namespace Math {
 	inline sf::Color mix(const sf::Color& color1, const sf::Color& color2, double t) {
 		return sf::Color(lerp(color1.r, color2.r, t), lerp(color1.g, color2.g, t), lerp(color1.b, color2.b, t), lerp(color1.a, color2.a, t));
 	}
+
+	inline sf::Vector2f normalize(const sf::Vector2f vec) {
+		float mag = magnitude(vec);
+		return vec / mag;
+	}
 }

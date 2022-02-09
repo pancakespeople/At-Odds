@@ -360,6 +360,26 @@ void EffectsEmitter::drawGatlingAnimation(sf::Vector2f sourcePos, sf::Vector2f e
 	}
 }
 
+void EffectsEmitter::drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
+	float angle = Math::angleBetween(sourcePos, endPos);
+	float dist = Math::distance(sourcePos, endPos);
+	float offset = 10000.0f * std::fmod(step * 10.0f, 1.0f);
+
+	if (offset < dist && step < 0.5f) {
+		sf::Vector2f pos(sourcePos.x + std::cos(angle * Math::toRadians) * offset, sourcePos.y + -std::sin(angle * Math::toRadians) * offset);
+
+		sf::Sprite sprite;
+
+		sprite.setTexture(TextureCache::getTexture("data/art/laser.png"));
+		sprite.setScale({ 2.0f, 2.0f });
+		sprite.setRotation(-angle);
+		sprite.setOrigin({ sprite.getTextureRect().width / 2.0f, sprite.getTextureRect().height / 2.0f });
+		sprite.setPosition(pos);
+
+		m_renderer.draw(sprite);
+	}
+}
+
 void EffectsEmitter::addExplosionEffect(sf::Vector2f pos, Star* star) {
 	m_explosionEffects.push_back(ExplosionEffect{
 		pos,

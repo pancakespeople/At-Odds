@@ -110,11 +110,15 @@ std::string Weapon::getSoundPath() const {
 
 void Weapon::drawFireAnimation(Renderer& renderer, Unit* unit) {
 	if (isOnCooldown()) {
+		float step = (100.0f - m_cooldownPercent) / 100.0f;
 		if (m_fireAnimation == "beamlaser") {
-			renderer.effects.drawLaserAnimation(unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
+			renderer.effects.drawLaserAnimation(unit->getPos(), m_lastFireLocation, step);
 		}
 		else if (m_fireAnimation == "gatlinggun") {
-			renderer.effects.drawGatlingAnimation(unit->getPos(), m_lastFireLocation, (100.0f - m_cooldownPercent) / 100.0f);
+			renderer.effects.drawGatlingAnimation(unit->getPos(), m_lastFireLocation, step);
+		}
+		else if (m_fireAnimation == "gatlinglaser") {
+			renderer.effects.drawGatlingLaserAnimation(unit->getPos(), m_lastFireLocation, step);
 		}
 	}
 }
