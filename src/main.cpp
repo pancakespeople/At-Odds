@@ -90,7 +90,8 @@ int main(int argc, const char* argv[])
         DEBUG_PRINT("Randomized nebula seed");
     });
 
-    float time = 0;
+    float time = 0.0f;
+    float gameTime = 0.0f;
     int ticks = 0;
     int updates = 0;
     
@@ -135,9 +136,10 @@ int main(int argc, const char* argv[])
             mainMenu.updateArena(updates, constellation);
             state.restartUpdateClock();
             updates++;
+            gameTime += (float)state.getTimescale() / 60.0f;
         }
 
-        renderer.effects.updateTime(time);
+        renderer.effects.updateTime(time, gameTime);
 
         window.clear();
         renderer.clear();

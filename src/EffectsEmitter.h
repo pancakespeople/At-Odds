@@ -41,7 +41,7 @@ public:
 	void drawJumpPoint(sf::Vector2f pos, float time, float seed);
 	void drawJumpTrail(const sf::RectangleShape& shape);
 	void drawParticles(const std::vector<sf::Vertex>& vertices);
-	void updateTime(float time);
+	void updateTime(float time, float gameTime);
 
 private:
 	struct ExplosionEffect {
@@ -87,7 +87,7 @@ private:
 
 	std::vector<ExplosionEffect> m_explosionEffects;
 
-	float m_lastTime = 0.0f;
+	float m_lastGameTime = 0.0f;
 
 	inline static const std::string m_vertexShaderPath = "data/shaders/vertexshader.shader";
 };

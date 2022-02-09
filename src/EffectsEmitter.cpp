@@ -214,13 +214,13 @@ void EffectsEmitter::drawSelection(const sf::RectangleShape& shape) {
 	m_renderer.draw(shape, &m_selectionShader);
 }
 
-void EffectsEmitter::updateTime(float time) {
-	m_lastTime = time;
+void EffectsEmitter::updateTime(float time, float gameTime) {
+	m_lastGameTime = gameTime;
 	m_selectionShader.setUniform("time", time);
 	m_mapStarShader.setUniform("time", time);
 	m_ringsShader.setUniform("time", time);
 	m_asteroidBeltShader.setUniform("time", time);
-	m_postEffectsShader.setUniform("time", time);
+	m_postEffectsShader.setUniform("time", gameTime);
 }
 
 void EffectsEmitter::drawBorders(const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color) {
@@ -318,7 +318,7 @@ void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& windo
 			m_postEffectsShader.setUniform("numExplosions", 0);
 		}
 
-		if (m_lastTime - m_explosionEffects[0].time > 3.0f) {
+		if (m_lastGameTime - m_explosionEffects[0].time > 3.0f) {
 			m_explosionEffects.erase(m_explosionEffects.begin());
 		}
 	}
@@ -363,7 +363,7 @@ void EffectsEmitter::drawGatlingAnimation(sf::Vector2f sourcePos, sf::Vector2f e
 void EffectsEmitter::addExplosionEffect(sf::Vector2f pos, Star* star) {
 	m_explosionEffects.push_back(ExplosionEffect{
 		pos,
-		m_lastTime,
+		m_lastGameTime,
 		star
 	});
 }
