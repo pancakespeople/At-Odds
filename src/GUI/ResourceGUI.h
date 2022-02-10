@@ -13,7 +13,7 @@ private:
 	tgui::Label::Ptr m_commonLabel;
 	tgui::Label::Ptr m_uncommonLabel;
 	tgui::Label::Ptr m_rareLabel;
-	tgui::Label::Ptr m_labCounter;
+	tgui::Label::Ptr m_scienceLabel;
 
 	int m_timeUntilChangesUpdate = 0;
 	float m_commonChange = 0.0f;

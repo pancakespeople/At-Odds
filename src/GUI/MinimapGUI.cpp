@@ -6,7 +6,7 @@
 #include "../AllianceList.h"
 
 void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance, Camera& camera, const AllianceList& alliances) {
-	if (currentStar != nullptr) {
+	if (currentStar != nullptr && !m_hidden) {
 		sf::View oldView = window.getView();
 		float ratio = oldView.getSize().x / oldView.getSize().y;
 
@@ -187,4 +187,12 @@ void MinimapGUI::update(const sf::RenderWindow& window, GameState& state, const 
 bool MinimapGUI::isMouseInMinimap(const sf::RenderWindow& window) {
 	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 	return m_view.getViewport().contains(sf::Vector2f(static_cast<float>(mousePos.x) / window.getSize().x, static_cast<float>(mousePos.y) / window.getSize().y));
+}
+
+void MinimapGUI::onEvent(const sf::Event& ev) {
+	if (ev.type == sf::Event::KeyPressed) {
+		if (ev.key.code == sf::Keyboard::F2) {
+			m_hidden = !m_hidden;
+		}
+	}
 }

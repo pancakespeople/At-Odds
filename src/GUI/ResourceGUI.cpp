@@ -63,11 +63,11 @@ void ResourceGUI::open(tgui::Gui& gui) {
 	scienceIcon->setScale(0.5f);
 	m_panel->add(scienceIcon, "scienceIcon");
 
-	m_labCounter = tgui::Label::create();
-	m_labCounter->setPosition("scienceIcon.right", "50%");
-	m_labCounter->setOrigin(0.0, 0.5);
-	m_labCounter->setToolTip(tgui::Label::create("Science Labs"));
-	m_panel->add(m_labCounter);
+	m_scienceLabel = tgui::Label::create();
+	m_scienceLabel->setPosition("scienceIcon.right", "50%");
+	m_scienceLabel->setOrigin(0.0, 0.5);
+	m_scienceLabel->setToolTip(tgui::Label::create("Research Point Production"));
+	m_panel->add(m_scienceLabel);
 }
 
 void ResourceGUI::update(Constellation& constellation, Player& player, Star* currentStar) {
@@ -90,46 +90,8 @@ void ResourceGUI::update(Constellation& constellation, Player& player, Star* cur
 				m_uncommonLabel->setText(Util::cutOffDecimal(faction->getResourceCount("UNCOMMON_ORE"), 2) + " (+" + Util::cutOffDecimal(m_uncommonChange, 2) + ")");
 				m_rareLabel->setText(Util::cutOffDecimal(faction->getResourceCount("RARE_ORE"), 2) + " (+" + Util::cutOffDecimal(m_rareChange, 2) + ")");
 				
-				if (currentStar != nullptr) {
-					if (currentStar->isDiscovered(faction->getID())) {
-						m_labCounter->setText(std::to_string(currentStar->numAlliedBuildings(faction->getID(), "SCIENCE_LAB")) + "/" + std::to_string(faction->getScienceLabMax(currentStar)));
-					}
-					else {
-						m_labCounter->setText("");
-					}
-				}
-				else {
-					m_labCounter->setText("");
-				}
+				m_scienceLabel->setText(std::to_string(faction->getResearchPointProduction()));
 			}
-
-			/*if (m_resourceGroup->get<tgui::Label>("resourceLabel") == nullptr) {
-				auto resourceLabel = tgui::Label::create("Resources");
-				resourceLabel->setTextSize(20);
-				m_resourceGroup->add(resourceLabel, "resourceLabel");
-			}
-
-			int pos = 15;
-
-			for (auto& resource : resources) {
-				Resource r;
-				r.type = resource.first;
-
-				auto label = m_resourceGroup->get<tgui::Label>(r.getName());
-
-				if (label == nullptr) {
-					label = tgui::Label::create();
-					label->setPosition("0%", (std::to_string(pos) + "%").c_str());
-					label->setTextSize(20);
-					m_resourceGroup->add(label, r.getName());
-				}
-
-				std::stringstream ss;
-				ss << r.getName() << ": " << std::fixed << std::setprecision(1) << resource.second;
-
-				label->setText(ss.str());
-				pos += 15;
-			}*/
 		}
 	}
 }

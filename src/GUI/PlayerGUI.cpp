@@ -62,6 +62,8 @@ void PlayerGUI::onEvent(const sf::Event& ev, tgui::Gui& gui) {
 			}
 		}
 	}
+
+	minimapGUI.onEvent(ev);
 }
 
 void PlayerGUI::setVisible(tgui::Gui& gui, bool visible) {

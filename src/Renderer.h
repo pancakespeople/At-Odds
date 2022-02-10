@@ -11,7 +11,7 @@ public:
 
 	Renderer(sf::Vector2i resolution);
 	void setResolution(sf::Vector2i resolution);
-	void onEvent(const sf::Event& ev);
+	void onEvent(const sf::Event& ev, const sf::RenderWindow& window);
 	void displayToWindow(sf::RenderWindow& window, GameState& state);
 	void draw(const sf::Drawable& drawable);
 	void draw(const sf::Drawable& drawable, const sf::RenderStates& states);

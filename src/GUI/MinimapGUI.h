@@ -10,6 +10,7 @@ public:
 
 	void draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance, Camera& camera, const AllianceList& alliances);
 	void update(const sf::RenderWindow& window, GameState& state, const UnitGUI& unitGUI);
+	void onEvent(const sf::Event& ev);
 
 	bool isMouseInMinimap(const sf::RenderWindow& window);
 
@@ -18,4 +19,5 @@ public:
 private:
 	sf::CircleShape m_minimapCircle;
 	sf::View m_view;
+	bool m_hidden = false;
 };

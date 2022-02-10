@@ -354,3 +354,4 @@ MigrationBackup/
 data/saves/*.save
 
 data/config/config.toml
+data/screenshots/*

@@ -1,6 +1,7 @@
 #include "gamepch.h"
 #include "Renderer.h"
 #include "GameState.h"
+#include "Random.h"
 
 Renderer::Renderer(sf::Vector2i resolution) :
 effects(resolution, *this),
@@ -20,8 +21,15 @@ void Renderer::setResolution(sf::Vector2i resolution) {
 	effects.init(resolution);
 }
 
-void Renderer::onEvent(const sf::Event& ev) {
+void Renderer::onEvent(const sf::Event& ev, const sf::RenderWindow& window) {
 	effects.onEvent(ev);
+
+	if (ev.type == sf::Event::KeyPressed) {
+		if (ev.key.code == sf::Keyboard::F3) {
+			sf::Image img = window.capture();
+			img.saveToFile("data/screenshots/" + Random::randString(8) + ".png");
+		}
+	}
 }
 
 void Renderer::displayToWindow(sf::RenderWindow& window, GameState& state) {
