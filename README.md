@@ -1,9 +1,9 @@
 # At-Odds
 Space 4x/rts game
 
-![Discord](https://img.shields.io/discord/891524090131775548?style=plastic)
-![GitHub all releases](https://img.shields.io/github/downloads/pancakespeople/At-Odds/total)
-![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCIUXVi3ZoedXWo1I7xZqjoA?style=social)
+[![Discord](https://img.shields.io/discord/891524090131775548?style=plastic)](https://discord.gg/tDcPRuTUcm)
+[![GitHub all releases](https://img.shields.io/github/downloads/pancakespeople/At-Odds/total)](https://github.com/pancakespeople/At-Odds/releases)
+[![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCIUXVi3ZoedXWo1I7xZqjoA?style=social)](https://www.youtube.com/channel/UCIUXVi3ZoedXWo1I7xZqjoA)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/pancakespeople/At-Odds?style=plastic)
 
 ![1](img/1.png)
