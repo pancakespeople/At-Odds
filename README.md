@@ -1,13 +1,17 @@
 # At-Odds
 Space 4x/rts game
 
-![const](img/const1.png)
+![Discord](https://img.shields.io/discord/891524090131775548?style=plastic)
+![GitHub all releases](https://img.shields.io/github/downloads/pancakespeople/At-Odds/total)
+![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCIUXVi3ZoedXWo1I7xZqjoA?style=social)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/pancakespeople/At-Odds?style=plastic)
 
-![battle 4](img/battle4.png)
+![1](img/1.png)
 
-![planet](img/planet5.png)
+![2](img/2.png)
 
-![battle](img/battle.png)
+![3](img/3.png)
+
 
 # Building
 
