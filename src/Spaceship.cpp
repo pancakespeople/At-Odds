@@ -185,16 +185,13 @@ bool Spaceship::rotateTo(float angleDegrees) {
 
 void Spaceship::accelerate(float amount) {
 	float speed = std::sqrt(std::pow(m_velocity.x, 2) + std::pow(m_velocity.y, 2));
-	/*if (speed > m_maxSpeed && amount > 0.0f) {
-		m_velocity.x = std::sqrt(std::pow(m_maxSpeed, 2) - std::pow(m_velocity.y, 2)) * std::cos(m_facingAngle * Math::toRadians);
-		m_velocity.y = std::sqrt(std::pow(m_maxSpeed, 2) - std::pow(m_velocity.x, 2)) * -std::sin(m_facingAngle * Math::toRadians);
-		return;
-	}*/
-
+	
 	m_velocity.x += std::cos(m_facingAngle * Math::toRadians) * amount;
 	m_velocity.y += -std::sin(m_facingAngle * Math::toRadians) * amount;
 
-	createThrusterParticles();
+	if (m_currentStar->isLocalViewActive()) {
+		createThrusterParticles();
+	}
 }
 
 void Spaceship::update(Star* currentStar, const AllianceList& alliances) {

@@ -22,7 +22,7 @@ bool SubAI::sleepCheck() {
 
 void Brain::onStart(Faction& faction) {
 	for (Planet& planet : faction.getCapital()->getPlanets()) {
-		if (planet.getHabitability() > 0.5f || planet.getResources().size() > 0) {
+		if (planet.getHabitability() > 0.25f) {
 			planet.getColony().setFactionColonyLegality(faction.getID(), true);
 			AI_DEBUG_PRINT("Made colonization of " << planet.getTypeString() << " legal");
 		}
@@ -47,10 +47,7 @@ void Brain::onStarTakeover(Faction& faction, Star& star) {
 	for (Planet& planet : star.getPlanets()) {
 
 		if (!planet.getColony().isColonizationLegal(faction.getID())) {
-			if (planet.getResources().size() >= 2) {
-				toBeColonized.push_back(&planet);
-			}
-			else if (planet.getHabitability() > 0.5f) {
+			if (planet.getHabitability() > 0.33f) {
 				toBeColonized.push_back(&planet);
 			}
 			else if (planet.getWater() > 0.0f) {
