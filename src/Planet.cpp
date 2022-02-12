@@ -10,6 +10,7 @@
 #include "Util.h"
 #include "SmoothCircle.h"
 #include "Renderer.h"
+#include "Fonts.h"
 
 Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, float starTemperature, bool moon) {
 	m_shape.setFillColor(sf::Color(155, 155, 155));
@@ -59,6 +60,16 @@ void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, floa
 	
 	if (isMouseInRadius(window, renderer)) {
 		renderer.effects.drawGlow(m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
+
+		// Hover text
+		sf::Text text;
+		text.setFont(Fonts::getFont("data/fonts/consola.ttf"));
+		text.setString(getName(star) + " - Population: " + std::to_string(getColony().getPopulation()));
+		text.setPosition(getPos() - sf::Vector2f{0.0f, getRadius()*2.0f});
+		text.setScale({ getRadius() / 100.0f, getRadius() / 100.0f });
+		text.setOrigin({ text.getLocalBounds().width / 2.0f, 0.0f });
+
+		renderer.draw(text);
 	}
 
 	switch (m_type) {
