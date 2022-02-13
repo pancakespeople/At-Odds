@@ -14,9 +14,8 @@ void DebugInfo::draw(sf::RenderWindow& window) {
     window.setView(oldView);
 }
 
-void DebugInfo::update(float fps, int frameTime, int ticks, float updateStep, float updateTarget) {
+void DebugInfo::update(float fps, int frameTime, int ticks, int upf) {
     m_fpsTimes.push_back(fps);
-    m_upsTimes.push_back(std::round(updateStep) * updateTarget);
     if (ticks % 60 == 0) {
         m_realFps = 0;
         for (int i = 0; i < m_fpsTimes.size(); i++) {
@@ -24,14 +23,7 @@ void DebugInfo::update(float fps, int frameTime, int ticks, float updateStep, fl
         }
         m_realFps /= m_fpsTimes.size();
         m_fpsTimes.clear();
-
-        m_realUps = 0;
-        for (int i = 0; i < m_upsTimes.size(); i++) {
-            m_realUps += m_upsTimes[i];
-        }
-        m_realUps /= m_upsTimes.size();
-        m_upsTimes.clear();
     }
 
-    m_text.setString("FPS: " + std::to_string(m_realFps) + " Frametime: " + std::to_string(frameTime) + " UPS: " + std::to_string(m_realUps));
+    m_text.setString("FPS: " + std::to_string(m_realFps) + " Frametime: " + std::to_string(frameTime) + " Updates: " + std::to_string(upf));
 }

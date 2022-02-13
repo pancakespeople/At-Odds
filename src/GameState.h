@@ -42,9 +42,12 @@ public:
 	void reinitAfterLoad(Constellation& constellation);
 	void setTimescale(int timescale);
 	void restartUpdateClock() { m_updateClock.restart(); }
+	void setArenaGame(bool enabled) { m_arenaGame = enabled; }
 
 	int getTimescale() { return m_timescale; }
 	int getUpdatesPerSecondTarget() { return m_updatesPerSecondTarget; }
+
+	bool isArenaGameEnabled() const { return m_arenaGame; }
 
 	const sf::Clock& getUpdateClock() { return m_updateClock; }
 
@@ -72,7 +75,8 @@ private:
 
 	int m_localViewStarID = 0;
 	int m_timescale = 1;
-	int m_updatesPerSecondTarget = 60;
+	int m_updatesPerSecondTarget = 80;
+	bool m_arenaGame = true;
 	sf::Clock m_updateClock;
 };
 

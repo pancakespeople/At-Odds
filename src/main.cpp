@@ -94,12 +94,14 @@ int main(int argc, const char* argv[])
     float gameTime = 0.0f;
     int ticks = 0;
     int updates = 0;
+    int updatesPerFrame = 0;
     
     optionsMenu.updateGameSettings(window, renderer, gui, musicPlayer, state.getCamera(), true);
 
     sf::Clock fpsClock;
-    float fps = 60;
-    float updateStep = 1.0f;
+    float fps = 60.0f;
+    float frameTime = 0.0f;
+    float updateStep = 0.0f;
 
     while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
         state.getMetaState() != GameState::MetaState::EXIT_AND_SAVE) {
@@ -129,14 +131,19 @@ int main(int argc, const char* argv[])
         }
         
         // Maintain a constant update rate
-        updateStep = state.getUpdatesPerSecondTarget() / (1.0f / state.getUpdateClock().getElapsedTime().asSeconds());
-        for (int i = 0; i < std::round(updateStep); i++) {
+        updateStep += frameTime;
+
+        while (updateStep >= 1.0f / state.getUpdatesPerSecondTarget()) {
+            state.restartUpdateClock();
+            
             constellation.update(state.getPlayer(), renderer.effects);
             playerGui.updateSync(window, state, constellation, gui);
-            mainMenu.updateArena(updates, constellation);
-            state.restartUpdateClock();
+            mainMenu.updateArena(updates, constellation, state);
+            
             updates++;
-            gameTime += (float)state.getTimescale() / 60.0f;
+            updatesPerFrame++;
+            updateStep -= 1.0f / state.getUpdatesPerSecondTarget();
+            gameTime += 1.0f / state.getUpdatesPerSecondTarget();
         }
 
         renderer.effects.updateTime(time, gameTime);
@@ -168,12 +175,14 @@ int main(int argc, const char* argv[])
 
         window.display();
 
-        //debugInfo.update(fps, fpsClock.getElapsedTime().asMilliseconds(), ticks, updateStep, state.getUpdatesPerSecondTarget());
+        //debugInfo.update(fps, fpsClock.getElapsedTime().asMilliseconds(), ticks, updatesPerFrame);
         
         ticks++;
         time += fpsClock.getElapsedTime().asSeconds();
 
         fps = 1.0f / fpsClock.getElapsedTime().asSeconds();
+        frameTime = fpsClock.getElapsedTime().asSeconds();
+        updatesPerFrame = 0;
         fpsClock.restart();
 
         if (state.getMetaState() == GameState::MetaState::LOAD_GAME) {

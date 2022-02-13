@@ -54,9 +54,7 @@ void ParticleSystem::updateParticles() {
 
 		if (m_particles[i].life == 0) {
 			m_particles.erase(m_particles.begin() + i);
-			for (int j = 0; j < 4; j++) {
-				m_particleVertices.erase(m_particleVertices.begin() + (i * 4));
-			}
+			m_particleVertices.erase(m_particleVertices.begin() + (i * 4), m_particleVertices.begin() + (i * 4) + 4);
 			i--;
 		}
 		else {

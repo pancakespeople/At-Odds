@@ -229,7 +229,7 @@ void spawnBuilding(const DebugConsole::Command& command, const DebugConsole::Goo
 }
 
 void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies& goodies) {
-	if (goodies.console->validateArgs(command, 1) && goodies.console->validateState(command, goodies.state, GameState::State::MAIN_MENU)) {
+	if (goodies.console->validateArgs(command, 1)) {
 		Camera camera = goodies.state.getCamera();
 
 		goodies.state = GameState(camera);
@@ -253,6 +253,8 @@ void benchmark(const DebugConsole::Command& command, const DebugConsole::Goodies
 
 		goodies.playerGUI.open(goodies.gui, goodies.state, goodies.constellation, PlayerGUIState::SPECTATOR);
 		goodies.playerGUI.setVisible(goodies.gui, true);
+
+		goodies.state.setArenaGame(false);
 
 		int shipsPerSide = std::stoi(command.args[0]);
 

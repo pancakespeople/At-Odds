@@ -156,8 +156,8 @@ void MainMenu::spawnArena(tgui::Gui& gui, Constellation& constellation, GameStat
 	}
 }
 
-void MainMenu::updateArena(int ticks, Constellation& constellation) {
-	if (m_forceOpen) {
+void MainMenu::updateArena(int ticks, Constellation& constellation, const GameState& state) {
+	if (state.isArenaGameEnabled()) {
 		int blues = 0;
 		int reds = 0;
 

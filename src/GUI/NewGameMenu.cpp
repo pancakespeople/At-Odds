@@ -191,5 +191,6 @@ void NewGameMenu::startNewGame(tgui::Gui& gui, Constellation& constellation, Gam
 	}
 
 	mainMenu->setForceOpen(false);
+	state.setArenaGame(false);
 	close();
 }

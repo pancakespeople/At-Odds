@@ -14,7 +14,7 @@ public:
 	void onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state);
 	void drawPreview(Renderer& renderer, const GameState& state, float time);
 	void spawnArena(tgui::Gui& gui, Constellation& constellation, GameState& state, PlayerGUI& playerGUI);
-	void updateArena(int ticks, Constellation& constellation);
+	void updateArena(int ticks, Constellation& constellation, const GameState& state);
 	void setForceOpen(bool forceOpen) { m_forceOpen = forceOpen; }
 	OptionsMenu& getOptionsMenu() { return m_optionsMenu; }
 	NewGameMenu& getNewGameMenu() { return m_newGameMenu; }

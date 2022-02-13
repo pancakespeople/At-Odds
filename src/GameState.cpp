@@ -78,5 +78,5 @@ void GameState::reinitAfterLoad(Constellation& constellation) {
 
 void GameState::setTimescale(int timescale) {
 	m_timescale = timescale;
-	m_updatesPerSecondTarget = 60 * m_timescale;
+	m_updatesPerSecondTarget = 80 * m_timescale;
 }
