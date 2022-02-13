@@ -131,7 +131,9 @@ int main(int argc, const char* argv[])
         }
         
         // Maintain a constant update rate
-        updateStep += frameTime;
+        if (state.getTimescale() != 0) {
+            updateStep += frameTime;
+        }
 
         while (updateStep >= 1.0f / state.getUpdatesPerSecondTarget()) {
             state.restartUpdateClock();
