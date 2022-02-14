@@ -443,5 +443,8 @@ void EffectsEmitter::drawJumpTrail(const sf::RectangleShape& shape) {
 }
 
 void EffectsEmitter::drawParticles(const std::vector<sf::Vertex>& vertices) {
-	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, &m_particleShader);
+	sf::RenderStates states;
+	states.blendMode = sf::BlendAdd;
+	states.shader = &m_particleShader;
+	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, states);
 }

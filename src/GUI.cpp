@@ -86,16 +86,16 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
 
 					if (ev.key.code == sf::Keyboard::Dash) {
 						if (state.getTimescale() > 1) {
-							state.setTimescale(state.getTimescale() >> 1);
+							state.setTimescale(state.getTimescale() - 1.0f);
 						}
 					}
 					else {
 						if (state.getTimescale() < 64) {
-							state.setTimescale(state.getTimescale() << 1);
+							state.setTimescale(state.getTimescale() + 1.0f);
 						}
 					}
 
-					m_timescaleLabel->setText("Timescale: " + std::to_string(state.getTimescale()) + "x");
+					m_timescaleLabel->setText("Timescale: " + std::to_string((int)state.getTimescale()) + "x");
 					m_timescaleLabel->setVisible(true);
 					m_timescaleLabel->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
 				}

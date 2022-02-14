@@ -53,8 +53,32 @@ void ParticleSystem::updateParticles() {
 		m_particleVertices[i * 4 + 3].color.a = static_cast<sf::Uint8>(255.0 * (m_particles[i].life / (float)m_particles[i].initialLife));
 
 		if (m_particles[i].life == 0) {
-			m_particles.erase(m_particles.begin() + i);
-			m_particleVertices.erase(m_particleVertices.begin() + (i * 4), m_particleVertices.begin() + (i * 4) + 4);
+			/*m_particles.erase(m_particles.begin() + i);
+			m_particleVertices.erase(m_particleVertices.begin() + (i * 4), m_particleVertices.begin() + (i * 4) + 4);*/
+			
+			if (i < m_particles.size() - 1) {
+				std::swap(m_particles[i], m_particles[m_particles.size() - 1]);
+				m_particles.pop_back();
+
+				std::swap(m_particleVertices[i * 4], m_particleVertices[m_particleVertices.size() - 4]);
+				std::swap(m_particleVertices[i * 4 + 1], m_particleVertices[m_particleVertices.size() - 3]);
+				std::swap(m_particleVertices[i * 4 + 2], m_particleVertices[m_particleVertices.size() - 2]);
+				std::swap(m_particleVertices[i * 4 + 3], m_particleVertices[m_particleVertices.size() - 1]);
+
+				m_particleVertices.pop_back();
+				m_particleVertices.pop_back();
+				m_particleVertices.pop_back();
+				m_particleVertices.pop_back();
+			}
+			else {
+				m_particles.pop_back();
+
+				m_particleVertices.pop_back();
+				m_particleVertices.pop_back();
+				m_particleVertices.pop_back();
+				m_particleVertices.pop_back();
+			}
+
 			i--;
 		}
 		else {

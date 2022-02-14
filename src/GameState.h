@@ -40,11 +40,11 @@ public:
 	void addOnChangeStateCallback(std::function<void()> func) { m_changeStateCallbacks.push_back(func); }
 	void clearCallbacks() { m_changeStateCallbacks.clear(); }
 	void reinitAfterLoad(Constellation& constellation);
-	void setTimescale(int timescale);
+	void setTimescale(float timescale);
 	void restartUpdateClock() { m_updateClock.restart(); }
 	void setArenaGame(bool enabled) { m_arenaGame = enabled; }
 
-	int getTimescale() { return m_timescale; }
+	float getTimescale() { return m_timescale; }
 	int getUpdatesPerSecondTarget() { return m_updatesPerSecondTarget; }
 
 	bool isArenaGameEnabled() const { return m_arenaGame; }
@@ -74,8 +74,8 @@ private:
 	std::vector<std::function<void()>> m_changeStateCallbacks;
 
 	int m_localViewStarID = 0;
-	int m_timescale = 1;
 	int m_updatesPerSecondTarget = 80;
+	float m_timescale = 1.0f;
 	bool m_arenaGame = true;
 	sf::Clock m_updateClock;
 };
