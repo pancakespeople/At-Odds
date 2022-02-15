@@ -349,14 +349,13 @@ void EffectsEmitter::drawGatlingAnimation(sf::Vector2f sourcePos, sf::Vector2f e
 	if (offset < dist && step < 0.5f) {
 		sf::Vector2f pos(sourcePos.x + std::cos(angle * Math::toRadians) * offset, sourcePos.y + -std::sin(angle * Math::toRadians) * offset);
 
-		sf::RectangleShape shape;
+		sf::Sprite sprite;
 
-		shape.setRotation(-angle);
-		shape.setPosition(pos);
-		shape.setSize(sf::Vector2f(75.0f, 25.0f));
-		shape.setFillColor(sf::Color(255, 255, 0, 255));
+		sprite.setTexture(TextureCache::getTexture("data/art/bullet2.png"));
+		sprite.setRotation(-angle + 90.0f);
+		sprite.setPosition(pos);
 
-		m_renderer.draw(shape);
+		m_renderer.draw(sprite);
 	}
 }
 
@@ -372,7 +371,7 @@ void EffectsEmitter::drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vecto
 
 		sprite.setTexture(TextureCache::getTexture("data/art/laser.png"));
 		sprite.setScale({ 2.0f, 2.0f });
-		sprite.setRotation(-angle);
+		sprite.setRotation(-angle + 90.0f);
 		sprite.setOrigin({ sprite.getTextureRect().width / 2.0f, sprite.getTextureRect().height / 2.0f });
 		sprite.setPosition(pos);
 
