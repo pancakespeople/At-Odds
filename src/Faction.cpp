@@ -785,3 +785,11 @@ void Faction::unlockAllTech() {
 void Faction::removeTech(const std::string& type) {
 	m_techs.erase(std::remove(m_techs.begin(), m_techs.end(), type));
 }
+
+int Faction::getColonyPopulation() const {
+	int population = 0;
+	for (Planet* planet : getOwnedPlanets()) {
+		population += planet->getColony().getPopulation();
+	}
+	return population;
+}

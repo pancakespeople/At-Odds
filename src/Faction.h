@@ -53,6 +53,7 @@ public:
 	int numIdleConstructionShips();
 	int getScienceLabMax(Star* star) const;
 	int getNumTicksAlive() const { return m_numTicksAlive; }
+	int getColonyPopulation() const;
 
 	float getResourceCount(const std::string& type) const;
 	float getResourceExploitation(const std::string& type) const;
