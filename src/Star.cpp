@@ -66,7 +66,7 @@ void Star::init(const sf::Vector2f& pos) {
 
 		m_blackHole = true;
 		m_localViewRect.setScale(8.0f, 8.0f);
-		m_temperature = Random::randFloat(50000.0f, 100000.0f);
+		m_temperature = Random::randFloat(100.0f, 1000.0f);
 	}
 
 	generatePlanets();
