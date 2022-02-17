@@ -772,7 +772,7 @@ void ScienceMod::update(Unit& unit, Star& currentStar, Faction* faction, const A
 void ScienceMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 	auto label = tgui::Label::create();
 	label->setSize("100%", "100%");
-	label->setText("Research point generation: " + std::to_string(m_research) + "\n" +
+	label->setText("Research point generation: " + std::to_string(0.1f * m_research) + "\n" +
 	"Info: Research point generation is based on the total population of the colonies in this system.");
 	window->add(label);
 	window->setSize("25%", "15%");

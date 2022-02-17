@@ -109,14 +109,14 @@ int main(int argc, const char* argv[])
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+            gui.handleEvent(event);
             state.getCamera().zoomEvent(event);
             constellation.onEvent(event, window, renderer, state);
             state.onEvent(event);
+            buildGui.onEvent(event, window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
             unitGui.onEvent(event, window, renderer, state, constellation, playerGui.mainPanel, playerGui.minimapGUI);
             mainMenu.onEvent(event, gui, constellation, state);
-            gui.handleEvent(event);
             playerGui.buildingGUI.onEvent(event, window, renderer, gui, state, constellation, playerGui.mainPanel);
-            buildGui.onEvent(event, window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
             console.onEvent(event, gui, state);
             playerGui.timescaleGUI.onEvent(event, gui, state);
             playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, renderer, state.getLocalViewStar(), playerGui.mainPanel, constellation);

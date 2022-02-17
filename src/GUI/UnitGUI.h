@@ -12,6 +12,7 @@ public:
 	void update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
 	void draw(sf::RenderWindow& window);
 	void onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
+	void setDisabled(bool disabled) { m_disabled = disabled; }
 
 	bool isSelecting() const { return m_selecting; }
 
@@ -34,4 +35,5 @@ private:
 
 	bool m_selecting = false;
 	bool m_mouseDown = false;
+	bool m_disabled = false;
 };

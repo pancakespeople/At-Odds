@@ -83,18 +83,24 @@ void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* c
 }
 
 void UnitGUI::draw(sf::RenderWindow& window) {
-	sf::View oldView = window.getView();
-	window.setView(window.getDefaultView());
+	if (m_mouseDown) {
+		sf::View oldView = window.getView();
+		window.setView(window.getDefaultView());
 
-	window.draw(m_mouseSelectionBox);
+		window.draw(m_mouseSelectionBox);
 
-	window.setView(oldView);
+		window.setView(oldView);
+	}
 }
 
 void UnitGUI::onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
 	bool mainPanelFocused = true;
 	if (mainPanel != nullptr) {
 		mainPanelFocused = mainPanel->isFocused();
+	}
+
+	if (!mainPanelFocused || m_disabled) {
+		return;
 	}
 
 	if (ev.type == sf::Event::MouseMoved && m_mouseDown) {
@@ -106,18 +112,22 @@ void UnitGUI::onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& r
 		sf::Vector2f newSize = sf::Vector2f(mpos.x - selectionOriginPos.x, mpos.y - selectionOriginPos.y);
 		m_mouseSelectionBox.setSize(newSize);
 	}
-	else if (ev.type == sf::Event::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left && !minimap.isMouseInMinimap(window)) {
-		// Mouse begins to be held down, set position of selection box
+	else if (ev.type == sf::Event::MouseButtonPressed && !minimap.isMouseInMinimap(window)) {
+		if (ev.mouseButton.button == sf::Mouse::Left) {
+			// Mouse begins to be held down, set position of selection box
 
-		m_mouseSelectionBox.setPosition(sf::Vector2f(ev.mouseButton.x, ev.mouseButton.y));
-		m_mouseDown = true;
+			m_mouseSelectionBox.setPosition(sf::Vector2f(ev.mouseButton.x, ev.mouseButton.y));
+			m_mouseDown = true;
+		}
 	}
-	else if (ev.type == sf::Event::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Left) {
-		// Mouse released, select units
+	else if (ev.type == sf::Event::MouseButtonReleased) {
+		if (ev.mouseButton.button == sf::Mouse::Left) {
+			// Mouse released, select units
 
-		onSelect(renderer, state.getLocalViewStar(), state.getPlayer().getFaction());
-		onMouseClick(ev, renderer, state.getLocalViewStar(), state.getPlayer().getFaction());
-		m_mouseDown = false;
+			onSelect(renderer, state.getLocalViewStar(), state.getPlayer().getFaction());
+			onMouseClick(ev, renderer, state.getLocalViewStar(), state.getPlayer().getFaction());
+			m_mouseDown = false;
+		}
 	}
 
 	// Right click events

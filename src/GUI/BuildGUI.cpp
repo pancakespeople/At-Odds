@@ -174,19 +174,19 @@ void BuildGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, Rend
 				}
 			}
 		}
-		else if (ev.type == sf::Event::EventType::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Left) {
+		if (ev.type == sf::Event::EventType::MouseButtonPressed && (ev.mouseButton.button == sf::Mouse::Left || ev.mouseButton.button == sf::Mouse::Right)) {
 			if (mainPanel != nullptr && m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
-				mainPanel->setFocused(false);
+				unitGUI.setDisabled(true);
 			}
 		}
-		else if (ev.type == sf::Event::EventType::MouseButtonReleased && ev.mouseButton.button == sf::Mouse::Right) {
-			if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
-				m_selectedBuildingIdx = -1;
-
-				if (mainPanel != nullptr) {
-					mainPanel->setFocused(false);
+		if (ev.type == sf::Event::EventType::MouseButtonReleased && (ev.mouseButton.button == sf::Mouse::Left || ev.mouseButton.button == sf::Mouse::Right)) {
+			if (ev.mouseButton.button == sf::Mouse::Right) {
+				if (m_selectedBuildingIdx > -1 && currentLocalStar != nullptr && m_buildingSelectors.size() > 0) {
+					m_selectedBuildingIdx = -1;
 				}
 			}
+
+			unitGUI.setDisabled(false);
 		}
 	}
 }

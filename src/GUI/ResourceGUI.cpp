@@ -20,7 +20,7 @@ void ResourceGUI::open(tgui::Gui& gui) {
 
 	m_commonLabel = tgui::Label::create();
 	m_commonLabel->setPosition("commonPicture.right", "50%");
-	m_commonLabel->setOrigin(0.2, 0.5);
+	m_commonLabel->setOrigin(0.0, 0.5);
 	m_commonLabel->setToolTip(tgui::Label::create("Kathium"));
 	m_commonLabel->getRenderer()->setTextColor(tgui::Color::Red);
 	m_panel->add(m_commonLabel);
@@ -33,7 +33,7 @@ void ResourceGUI::open(tgui::Gui& gui) {
 
 	m_uncommonLabel = tgui::Label::create();
 	m_uncommonLabel->setPosition("uncommonPicture.right", "50%");
-	m_uncommonLabel->setOrigin(0.2, 0.5);
+	m_uncommonLabel->setOrigin(0.0, 0.5);
 	m_uncommonLabel->setToolTip(tgui::Label::create("Oscillite"));
 	m_uncommonLabel->getRenderer()->setTextColor(tgui::Color::Cyan);
 	m_panel->add(m_uncommonLabel);
@@ -46,7 +46,7 @@ void ResourceGUI::open(tgui::Gui& gui) {
 
 	m_rareLabel = tgui::Label::create();
 	m_rareLabel->setPosition("rarePicture.right", "50%");
-	m_rareLabel->setOrigin(0.2, 0.5);
+	m_rareLabel->setOrigin(0.0, 0.5);
 	m_rareLabel->setToolTip(tgui::Label::create("Valkrosium"));
 	m_rareLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
 	m_panel->add(m_rareLabel);
@@ -59,7 +59,7 @@ void ResourceGUI::open(tgui::Gui& gui) {
 
 	m_scienceLabel = tgui::Label::create();
 	m_scienceLabel->setPosition("scienceIcon.right", "50%");
-	m_scienceLabel->setOrigin(0.2, 0.5);
+	m_scienceLabel->setOrigin(0.0, 0.5);
 	m_scienceLabel->setToolTip(tgui::Label::create("Research Point Production"));
 	m_panel->add(m_scienceLabel);
 
@@ -71,7 +71,7 @@ void ResourceGUI::open(tgui::Gui& gui) {
 
 	m_populationLabel = tgui::Label::create();
 	m_populationLabel->setPosition("populationIcon.right", "50%");
-	m_populationLabel->setOrigin(0.2, 0.5);
+	m_populationLabel->setOrigin(0.0, 0.5);
 	m_populationLabel->setToolTip(tgui::Label::create("Colony Population"));
 	m_panel->add(m_populationLabel);
 }
