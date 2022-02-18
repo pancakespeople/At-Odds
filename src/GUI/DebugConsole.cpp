@@ -351,18 +351,20 @@ void DebugConsole::close(tgui::Gui& gui) {
 }
 
 void DebugConsole::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
-	if (ev.type == sf::Event::EventType::KeyReleased) {
-		if (ev.key.code == sf::Keyboard::Tilde) {
-			if (isOpen()) {
-				close(gui);
+	if (m_console != nullptr) {
+		if (ev.type == sf::Event::EventType::KeyReleased) {
+			if (ev.key.code == sf::Keyboard::Tilde) {
+				if (isOpen()) {
+					close(gui);
+				}
+				else {
+					open(gui);
+				}
 			}
-			else {
-				open(gui);
-			}
-		}
-		else if (ev.key.code == sf::Keyboard::Up && m_editBox->isFocused()) {
-			if (m_lastCommand != "") {
-				m_editBox->setText(m_lastCommand);
+			else if (ev.key.code == sf::Keyboard::Up && m_editBox->isFocused()) {
+				if (m_lastCommand != "") {
+					m_editBox->setText(m_lastCommand);
+				}
 			}
 		}
 	}

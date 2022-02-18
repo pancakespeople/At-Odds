@@ -330,7 +330,9 @@ void Colony::removeWealth(float wealth) {
 float Colony::getPopulationLimit() const {
 	float limit = 10000.0f; // Population limit with no modifiers
 	for (auto& building : m_buildings) {
-		limit += building.getEffect("addsPopulationLimit", 0.0f);
+		if (building.isBuilt()) {
+			limit += building.getEffect("addsPopulationLimit", 0.0f);
+		}
 	}
 	return limit;
 }
