@@ -229,7 +229,7 @@ void Constellation::draw(const sf::RenderWindow& window, Renderer& renderer, Pla
     }
     
     for (std::unique_ptr<Hyperlane>& h : m_hyperlanes) {
-        h->draw(renderer, player.getFaction());
+        h->draw(renderer, player.getFaction(), m_allianceList);
     }
     for (std::unique_ptr<Star>& s : m_stars) {
         s->draw(window, renderer, *this, player);

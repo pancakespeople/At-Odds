@@ -13,7 +13,7 @@ class Hyperlane : public Identifiable {
 public:
 	Hyperlane(Star* begin, Star* end);
 
-	void draw(Renderer& renderer, int playerFaction);
+	void draw(Renderer& renderer, int playerFaction, const AllianceList& alliances);
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
 	void enablePathEffect();
 	void reinitAfterLoad(Constellation* constellation);

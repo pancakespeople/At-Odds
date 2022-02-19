@@ -59,7 +59,7 @@ Hyperlane::Hyperlane(Star* begin, Star* end) : m_beginStar(begin), m_endStar(end
 	m_endStarID = end->getID();
 }
 
-void Hyperlane::draw(Renderer& renderer, int playerFaction) {
+void Hyperlane::draw(Renderer& renderer, int playerFaction, const AllianceList& alliances) {
 	// Set faction colors
 	if (m_beginStar->isDiscovered(playerFaction)) {
 		if (m_beginStar->getAllegiance() != -1) {
@@ -98,14 +98,16 @@ void Hyperlane::draw(Renderer& renderer, int playerFaction) {
 			}
 		}
 
-		for (JumpEffect& effect : m_jumpEffects) {
-			float t = effect.clock.getElapsedTime().asSeconds();
-			if (t < 1.0f) {
-				if (effect.beginToEndJumped) {
-					renderer.effects.drawGlow(Math::lerp(m_beginStar->getCenter(), m_endStar->getCenter(), t), 100.0f, effect.color);
-				}
-				else {
-					renderer.effects.drawGlow(Math::lerp(m_endStar->getCenter(), m_beginStar->getCenter(), t), 100.0f, effect.color);
+		if (m_beginStar->numAllies(playerFaction, alliances) > 0 && m_endStar->numAllies(playerFaction, alliances) > 0 || playerFaction == -1) {
+			for (JumpEffect& effect : m_jumpEffects) {
+				float t = effect.clock.getElapsedTime().asSeconds();
+				if (t < 1.0f) {
+					if (effect.beginToEndJumped) {
+						renderer.effects.drawGlow(Math::lerp(m_beginStar->getCenter(), m_endStar->getCenter(), t), 100.0f, effect.color);
+					}
+					else {
+						renderer.effects.drawGlow(Math::lerp(m_endStar->getCenter(), m_beginStar->getCenter(), t), 100.0f, effect.color);
+					}
 				}
 			}
 		}
