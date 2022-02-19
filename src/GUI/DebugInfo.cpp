@@ -3,7 +3,7 @@
 #include "../Fonts.h"
 
 DebugInfo::DebugInfo(const sf::RenderWindow& window) {
-    m_text.setFont(Fonts::getFont("data/fonts/consola.ttf"));
+    m_text.setFont(Fonts::getFont("data/fonts/OpenSans-Regular.ttf"));
     m_text.setPosition(sf::Vector2f(0.0f, window.getSize().y - m_text.getCharacterSize()));
 }
 

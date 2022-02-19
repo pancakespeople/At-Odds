@@ -69,6 +69,7 @@ int main(int argc, const char* argv[])
     window.setVerticalSyncEnabled(true);
 
     tgui::GuiSFML gui(window);
+    gui.setFont("data/fonts/OpenSans-Regular.ttf");
     tgui::Theme::setDefault("data/tgui/newUI.txt");
 
     Renderer renderer(resolution);

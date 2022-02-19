@@ -19,7 +19,8 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 	m_title->setText("At Odds");
 	m_title->setTextSize(250);
 	m_title->getRenderer()->setTextColor(tgui::Color::Red);
-	m_title->getRenderer()->setFont("data/fonts/LCALLIG.TTF");
+	m_title->getRenderer()->setFont("data/fonts/Dirga.ttf");
+	m_title->getRenderer()->setTextStyle(tgui::TextStyle::Italic);
 	gui.add(m_title);
 
 	auto newGameButton = tgui::Button::create("New Game");

@@ -63,7 +63,7 @@ void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, floa
 
 		// Hover text
 		sf::Text text;
-		text.setFont(Fonts::getFont("data/fonts/consola.ttf"));
+		text.setFont(Fonts::getFont("data/fonts/OpenSans-Regular.ttf"));
 		text.setString(getName(star) + " - Population: " + std::to_string(getColony().getPopulation()));
 		text.setPosition(getPos() - sf::Vector2f{0.0f, getRadius()*2.0f});
 		text.setScale({ getRadius() / 100.0f, getRadius() / 100.0f });
