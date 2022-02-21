@@ -89,6 +89,23 @@ thrusterPoints = [
 ]
 thrusterSize = 300
 
+[BATTLESHIP]
+name = "Jackhammer"
+type = "Battleship"
+texturePath = "data/art/heavyfreighter.png"
+scale = 20.0
+mass = 1000000.0
+health = 5000.0
+colliderRadius = 1500.0
+maxWeaponCapacity = 20.0
+cost = [["COMMON_ORE", 1250.0], ["UNCOMMON_ORE", 500.0], ["RARE_ORE", 300.0]]
+buildTimeMultiplier = 10.0
+thrusterPoints = [
+	[37, 114],
+	[82, 114]
+]
+thrusterSize = 1000
+
 [CLAIM_SHIP]
 name = "Flag"
 texturePath = "data/art/flag.png"

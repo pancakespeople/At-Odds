@@ -5,3 +5,4 @@ medfighter = MillionthVector
 F5S1 = MillionthVector
 roundysh = MillionthVector
 bgbattleship - MillionthVector
+heavyfreighter = MillionthVector

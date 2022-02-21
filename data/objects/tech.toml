@@ -64,6 +64,14 @@ description = "Battlecruisers are more expensive than cruisers, but less expensi
 researchRequired = 7500.0
 addsChassis = ["BATTLECRUISER"]
 category = "Spaceship"
+unlocksTech = ["BATTLESHIP_HULL"]
+
+[BATTLESHIP_HULL]
+name = "Battleship Hull"
+description = "Battleships are really big, like really."
+researchRequired = 20000.0
+addsChassis = ["BATTLESHIP"]
+category = "Spaceship"
 
 [INVASIONS]
 name = "Invasions"
