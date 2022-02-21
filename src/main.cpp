@@ -192,7 +192,8 @@ int main(int argc, const char* argv[])
             if (saveLoader.loadGame("data/saves/game.save", constellation, state, background)) {
                 mainMenu.close(gui);
                 mainMenu.setForceOpen(false);
-
+                
+                state.setArenaGame(false);
                 state.resetMetaState();
                 state.clearCallbacks();
                 Sounds::clearSounds();
