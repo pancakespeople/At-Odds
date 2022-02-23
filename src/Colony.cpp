@@ -68,10 +68,12 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	// Resource exploitation
 	if (faction != nullptr) {
 		if (m_ticksToNextResourceExploit == 0) {
-			for (Resource& resource : planet->getResources()) {
-				if (!resource.hidden) {
-					float amount = getResourceExploitation(resource, *planet);
-					faction->addResource(resource.type, amount);
+			if (hasBuildingOfType("BASIC_MINING", true)) {
+				for (Resource& resource : planet->getResources()) {
+					if (!resource.hidden) {
+						float amount = getResourceExploitation(resource, *planet);
+						faction->addResource(resource.type, amount);
+					}
 				}
 			}
 			m_ticksToNextResourceExploit = 1000;
@@ -375,7 +377,7 @@ std::unordered_map<std::string, float> ColonyBuilding::getResourceCost(Planet& p
 
 void ColonyBuilding::build(Colony& colony) {
 	if (!isBuilt()) {
-		m_percentBuilt += 0.01;
+		m_percentBuilt += getEffect("buildProgress", 0.01f);
 		if (isBuilt()) colony.onBuildingBuild(*this);
 	}
 }

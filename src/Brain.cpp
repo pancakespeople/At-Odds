@@ -537,10 +537,9 @@ void removeBuildings(Planet& planet, std::vector<std::string>& wantedBuildings, 
 bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 	std::vector<std::string> wantedBuildings = {
 				"FARMING",
-				"MINING",
-				"SPACEPORT",
-				"IMPROVED_INFRASTRUCTURE",
-				"ADVANCED_INFRASTRUCTURE"
+				"BASIC_MINING",
+				"WATER_PUMP",
+				"INFRASTRUCTURE"
 	};
 
 	if (planet.hasResource("UNCOMMON_ORE")) {
@@ -548,11 +547,15 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 	}
 
 	std::vector<std::string> lowPriorityBuildings = {
+		"SPACEPORT",
 		"EXPLORING",
 		"ORBITAL_DEFENSE",
 		"BOMB_SHELTER",
 		"MILITARY_BASE",
-		"WEAPONS_FACTORIES"
+		"WEAPONS_FACTORIES",
+		"MINING",
+		"IMPROVED_INFRASTRUCTURE",
+		"ADVANCED_INFRASTRUCTURE"
 	};
 
 	removeBuildings(planet, wantedBuildings, &faction);

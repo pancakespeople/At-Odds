@@ -3,6 +3,7 @@ name = "Infrastructure"
 description = "Roads, electricity, plumbing, you know, stuff like that."
 habitabilityModifier = 1.2
 addsPopulationLimit = 100000.0
+baseCost = [["COMMON_ORE", 20]]
 
 [IMPROVED_INFRASTRUCTURE]
 name = "Improved Infrastructure"
@@ -40,11 +41,16 @@ baseCost = [["COMMON_ORE", 35]]
 truckSpawnTimeMultiplier = 0.5
 busSpawnTimeMultiplier = 0.5
 
-[MINING]
-name = "Mine"
+[BASIC_MINING]
+name = "Basic Mine"
 description = "All your ores will be mine."
+
+[MINING]
+name = "Advanced Mine"
+description = "All your ores will be mine!"
 baseCost = [["COMMON_ORE", 40], ["UNCOMMON_ORE", 10]]
 exploitationModifier = 1.7
+requiresBuildings = ["BASIC_MINING"]
 
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"
@@ -75,3 +81,19 @@ name = "Bomb Shelter"
 baseCost = [["COMMON_ORE", 40]]
 description = "A place for people to hide when someone decides to rain hellfire upon the planet."
 bombardDamageMultiplier = 0.75
+
+[FACTORY]
+name = "Factory"
+description = "A generic factory that generically produces the generic 'industrial goods'. So generic. Requires kathium."
+baseCost = [["COMMON_ORE", 25], ["UNCOMMON_ORE", 5]]
+
+[WATER_PUMP]
+name = "Water Pump"
+description = "You definitely want one of these. Otherwise we'll all die of thirst. Wait, you did settle us on a planet with water on it, right?"
+baseCost = [["COMMON_ORE", 10]]
+buildProgress = 0.05
+
+[LUXURY_GOODS_FACTORY]
+name = "Luxury Goods Factory"
+description = "Luxury goods may delay the revolt of our people by a little bit."
+baseCost = [["UNCOMMON_ORE", 15], ["RARE_ORE", 40]]

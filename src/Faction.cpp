@@ -80,9 +80,11 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	addColonyBuilding("INFRASTRUCTURE");
 	addColonyBuilding("SPACEPORT");
+	addColonyBuilding("FARMING");
+	addColonyBuilding("WATER_PUMP");
+	addColonyBuilding("BASIC_MINING");
 
 	addTech(Tech("WEAPONS_RESEARCH"));
-	addTech(Tech("FARMING"));
 	addTech(Tech("DEFENSE"));
 	addTech(Tech("EXPLORATION"));
 	addTech(Tech("MANUFACTURING"));
@@ -612,9 +614,11 @@ float Faction::getResourceCount(const std::string& type) const {
 float Faction::getResourceExploitation(const std::string& type) const {
 	float exploitation = 0.0f;
 	for (Planet* planet : getOwnedPlanets()) {
-		for (const Resource& resource : planet->getResources()) {
-			if (resource.type == type) {
-				exploitation += planet->getColony().getResourceExploitation(resource, *planet);
+		if (planet->getColony().hasBuildingOfType("BASIC_MINING", true)) {
+			for (const Resource& resource : planet->getResources()) {
+				if (resource.type == type) {
+					exploitation += planet->getColony().getResourceExploitation(resource, *planet);
+				}
 			}
 		}
 	}

@@ -48,15 +48,19 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 	}
 	
 	if (m_ticksUntilUpdate == 0) {
-		float waterHarvest = planet->getColony().getPopulation() * 0.025f * planet->getWater();
-		addSupply("WATER", waterHarvest);
+		if (planet->getColony().hasBuildingOfType("WATER_PUMP", true)) {
+			float waterHarvest = planet->getColony().getPopulation() * 0.025f * planet->getWater();
+			addSupply("WATER", waterHarvest);
+		}
 
 		float waterConsumption = planet->getColony().getPopulation() * 0.01f;
 		float waterDeficit = removeSupply("WATER", waterConsumption);
 		if (waterDeficit > 0.0f) planet->getColony().removeStability(waterDeficit / 2000.0f);
 
-		float foodHarvest = planet->getColony().getPopulation() * 0.01f * planet->getHabitability() * planet->getColony().getBuildingEffects("foodProductionMultiplier");
-		addSupply("FOOD", foodHarvest);
+		if (planet->getColony().hasBuildingOfType("FARMING", true)) {
+			float foodHarvest = planet->getColony().getPopulation() * 0.01f * planet->getHabitability() * planet->getColony().getBuildingEffects("foodProductionMultiplier");
+			addSupply("FOOD", foodHarvest);
+		}
 
 		float foodConsumption = planet->getColony().getPopulation() * 0.008f;
 		float foodDeficit = removeSupply("FOOD", foodConsumption);
@@ -66,22 +70,30 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 		for (Resource& resource : planet->getResources()) {
 			if (!resource.hidden) {
 				if (resource.type == "COMMON_ORE") {
-					float industrialGoodsProduction = planet->getColony().getPopulation() * 0.1f * resource.abundance;
-					addSupply("INDUSTRIAL_GOODS", industrialGoodsProduction);
+					if (planet->getColony().hasBuildingOfType("FACTORY", true)) {
+						float industrialGoodsProduction = planet->getColony().getPopulation() * 0.1f * resource.abundance;
+						addSupply("INDUSTRIAL_GOODS", industrialGoodsProduction);
+					}
 				}
 				if (resource.type == "UNCOMMON_ORE") {
-					float consumerGoodsProduction = planet->getColony().getPopulation() * 0.085f * resource.abundance * planet->getColony().getBuildingEffects("consumerGoodsMultiplier");
-					float deficit = removeSupply("INDUSTRIAL_GOODS", consumerGoodsProduction);
-					addSupply("CONSUMER_GOODS", consumerGoodsProduction - deficit);
+					if (planet->getColony().hasBuildingOfType("CONSUMER_GOODS_FACTORIES", true)) {
+						float consumerGoodsProduction = planet->getColony().getPopulation() * 0.085f * resource.abundance * planet->getColony().getBuildingEffects("consumerGoodsMultiplier");
+						float deficit = removeSupply("INDUSTRIAL_GOODS", consumerGoodsProduction);
+						addSupply("CONSUMER_GOODS", consumerGoodsProduction - deficit);
+					}
 
-					float armamentsProduction = planet->getColony().getPopulation() * 0.005f * resource.abundance * planet->getColony().getBuildingEffects("armamentsMultiplier");
-					deficit = removeSupply("INDUSTRIAL_GOODS", armamentsProduction);
-					addSupply("ARMAMENTS", armamentsProduction - deficit);
+					if (planet->getColony().hasBuildingOfType("WEAPONS_FACTORIES", true)) {
+						float armamentsProduction = planet->getColony().getPopulation() * 0.005f * resource.abundance * planet->getColony().getBuildingEffects("armamentsMultiplier");
+						float deficit = removeSupply("INDUSTRIAL_GOODS", armamentsProduction);
+						addSupply("ARMAMENTS", armamentsProduction - deficit);
+					}
 				}
 				if (resource.type == "RARE_ORE") {
-					float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;
-					float deficit = removeSupply("INDUSTRIAL_GOODS", luxuryGoodsProduction * 2.0f);
-					addSupply("LUXURY_GOODS", luxuryGoodsProduction - deficit);
+					if (planet->getColony().hasBuildingOfType("WEAPONS_FACTORIES", true)) {
+						float luxuryGoodsProduction = planet->getColony().getPopulation() * 0.05f * resource.abundance;
+						float deficit = removeSupply("INDUSTRIAL_GOODS", luxuryGoodsProduction * 2.0f);
+						addSupply("LUXURY_GOODS", luxuryGoodsProduction - deficit);
+					}
 				}
 			}
 		}

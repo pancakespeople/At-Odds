@@ -23,17 +23,25 @@ researchRequired = 1250.0
 category = "Colony"
 
 [EXPLORATION]
-name = "The Exploration of Planets"
+name = "Exploration"
 description = "It's a big universe out there, but most of it is uninteresting. However, through careful observation, we may find something worth taking a look at..."
 researchRequired = 1000.0
 addsColonyBuildings = ["EXPLORING"]
 category = "Colony"
 
 [MANUFACTURING]
-name = "Production Networks"
+name = "Manufacturing"
 description = "No empire can thrive without a solid manufacturing base."
 researchRequired = 1600.0
-addsColonyBuildings = ["CONSUMER_GOODS_FACTORIES", "WEAPONS_FACTORIES"]
+addsColonyBuildings = ["FACTORY", "CONSUMER_GOODS_FACTORIES", "WEAPONS_FACTORIES"]
+category = "Colony"
+unlocksTech = ["LUXURIES"]
+
+[LUXURIES]
+name = "Luxuries"
+description = "Shall we fancy some luxuries upon our domain? That would be quite exquisite indeed."
+researchRequired = 2500.0
+addsColonyBuildings = ["LUXURY_GOODS_FACTORY"]
 category = "Colony"
 
 [MINING]
