@@ -24,6 +24,7 @@ public:
 
 	void enable() { m_enabled = true; }
 	void disable() { m_enabled = false; }
+	void setEnabled(bool enabled) { m_enabled = enabled; }
 
 	bool isEnabled() { return m_enabled; }
 
@@ -212,7 +213,10 @@ public:
 	ScienceMod() = default;
 
 	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
-	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;;
+	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
+	void onBuild(Unit* unit, Star* currentStar) override;
+
+	inline static const float resourceConsumption = 5.0f;
 
 private:
 	friend class boost::serialization::access;
@@ -221,10 +225,15 @@ private:
 		archive & boost::serialization::base_object<Mod>(*this);
 		archive & m_research;
 		archive & m_checkResearchTimer;
+		archive & m_resourceType;
 	}
+
+	void updateInfoLabel(tgui::ChildWindow::Ptr window);
 
 	int m_checkResearchTimer = 0;
 	float m_research = 0.0f;
+	std::string m_resourceType = "COMMON_ORE";
+	bool m_researching = false;
 };
 
 class PirateBaseMod : public Mod {

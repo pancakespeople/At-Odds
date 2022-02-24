@@ -1,8 +1,11 @@
 [COMMON_ORE]
 name = "Kathium"
+researchMultiplier = 0.5
 
 [UNCOMMON_ORE]
 name = "Oscillite"
+researchMultiplier = 1.0
 
 [RARE_ORE]
 name = "Valkrosium"
+researchMultiplier = 2.0

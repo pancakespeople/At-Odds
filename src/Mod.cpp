@@ -748,15 +748,33 @@ void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	}
 }
 
+void ScienceMod::onBuild(Unit* unit, Star* currentStar) {
+	m_researching = true;
+}
+
 void ScienceMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;
+	if (!m_researching) return;
 
 	if (m_checkResearchTimer == 0) {
 		m_research = 0.0f;
-		for (Planet& planet : currentStar.getPlanets()) {
-			if (planet.getColony().getAllegiance() == faction->getID()) {
-				m_research += planet.getColony().getPopulation() / 50000.0f;
+		const toml::table& resources = TOMLCache::getTable("data/objects/resources.toml");
+		float researchMultiplier = resources[m_resourceType]["researchMultiplier"].value_or(1.0f);
+
+		if (faction->getResourceCount(m_resourceType) > 5.0f) {
+			float totalPop = 0.0f;
+
+			for (Planet& planet : currentStar.getPlanets()) {
+				if (planet.getColony().getAllegiance() == faction->getID()) {
+					m_research += (planet.getColony().getPopulation() / 50000.0f) * researchMultiplier;
+					totalPop += planet.getColony().getPopulation();
+				}
+			}
+
+			// Only subtract resources if there is any population in the system
+			if (totalPop > 0.0f) {
+				faction->subtractResource(m_resourceType, 5.0f);
 			}
 		}
 
@@ -770,12 +788,51 @@ void ScienceMod::update(Unit& unit, Star& currentStar, Faction* faction, const A
 }
 
 void ScienceMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
+	auto researchCheckbox = tgui::CheckBox::create("Researching");
+	researchCheckbox->setChecked(m_researching);
+	researchCheckbox->onChange([this, researchCheckbox](bool checked) {
+		m_researching = checked;
+	});
+	window->add(researchCheckbox, "researchCheckbox");
+
+	auto resourceLabel = tgui::Label::create("Research resource: ");
+	resourceLabel->setPosition("0%", "researchCheckbox.bottom");
+	window->add(resourceLabel, "resourceLabel");
+	
+	auto resourceDropdown = tgui::ComboBox::create();
+	resourceDropdown->setPosition("resourceLabel.right", "resourceLabel.top");
+	for (auto& resource : faction->getResources()) {
+		resourceDropdown->addItem(Resource(resource.first).getName(), resource.first);
+	}
+	resourceDropdown->setSelectedItem(Resource(m_resourceType).getName());
+	resourceDropdown->onItemSelect([this, resourceDropdown, window]() {
+		m_resourceType = resourceDropdown->getSelectedItemId().toStdString();
+		updateInfoLabel(window);
+	});
+	window->add(resourceDropdown);
+
 	auto label = tgui::Label::create();
+	label->setPosition("0%", "resourceLabel.bottom + 5%");
 	label->setSize("100%", "100%");
-	label->setText("Research point generation: " + std::to_string(0.1f * m_research) + "\n" +
-	"Info: Research point generation is based on the total population of the colonies in this system.");
-	window->add(label);
-	window->setSize("25%", "15%");
+	window->add(label, "infoLabel");
+	updateInfoLabel(window);
+
+	window->setSize("25%", "30%");
+}
+
+void ScienceMod::updateInfoLabel(tgui::ChildWindow::Ptr window) {
+	auto label = window->get<tgui::Label>("infoLabel");
+	
+	if (label != nullptr) {
+		const toml::table& resources = TOMLCache::getTable("data/objects/resources.toml");
+
+		label->setText(
+			"Resource boost: " + Util::percentify(resources[m_resourceType]["researchMultiplier"].value_or(1.0f) + 1.0f) + "\n" +
+			"Research point generation: " + std::to_string(0.1f * m_research) + "\n" +
+			"Resource consumption rate: " + std::to_string(resourceConsumption / (1000.0f / 80.0f)) + " per second \n\n" +
+			"Info: Research point generation is based on the selected resource and the total population of the colonies in this system."
+		);
+	}
 }
 
 void PirateBaseMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
