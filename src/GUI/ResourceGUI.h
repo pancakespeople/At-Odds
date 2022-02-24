@@ -19,4 +19,8 @@ private:
 	float m_commonChange = 0.0f;
 	float m_uncommonChange = 0.0f;
 	float m_rareChange = 0.0f;
+
+	float m_common = 0.0f;
+	float m_uncommon = 0.0f;
+	float m_rare = 0.0f;
 };

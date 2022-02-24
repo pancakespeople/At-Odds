@@ -748,10 +748,6 @@ void TradeMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	}
 }
 
-void ScienceMod::onBuild(Unit* unit, Star* currentStar) {
-	m_researching = true;
-}
-
 void ScienceMod::update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) {
 	if (!isEnabled()) return;
 	if (faction == nullptr) return;

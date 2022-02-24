@@ -82,19 +82,23 @@ void ResourceGUI::update(Constellation& constellation, Player& player, Star* cur
 			Faction* faction = constellation.getFaction(player.getFaction());
 			
 			if (m_timeUntilUpdate == 0) {
-				m_commonChange = faction->getResourceExploitation("COMMON_ORE");
-				m_uncommonChange = faction->getResourceExploitation("UNCOMMON_ORE");
-				m_rareChange = faction->getResourceExploitation("RARE_ORE");
+				m_commonChange = faction->getResourceCount("COMMON_ORE") - m_common;
+				m_uncommonChange = faction->getResourceCount("UNCOMMON_ORE") - m_uncommon;
+				m_rareChange = faction->getResourceCount("RARE_ORE") - m_rare;
+
+				m_common = faction->getResourceCount("COMMON_ORE");
+				m_uncommon = faction->getResourceCount("UNCOMMON_ORE");
+				m_rare = faction->getResourceCount("RARE_ORE");
 
 				m_populationLabel->setText(std::to_string(faction->getColonyPopulation()));
 
 				m_timeUntilUpdate = 1000;
 			}
 			else m_timeUntilUpdate--;
-				
-			m_commonLabel->setText(Util::cutOffDecimal(faction->getResourceCount("COMMON_ORE"), 2) + " (+" + Util::cutOffDecimal(m_commonChange, 2) + ")");
-			m_uncommonLabel->setText(Util::cutOffDecimal(faction->getResourceCount("UNCOMMON_ORE"), 2) + " (+" + Util::cutOffDecimal(m_uncommonChange, 2) + ")");
-			m_rareLabel->setText(Util::cutOffDecimal(faction->getResourceCount("RARE_ORE"), 2) + " (+" + Util::cutOffDecimal(m_rareChange, 2) + ")");
+			
+			m_commonLabel->setText(Util::cutOffDecimal(faction->getResourceCount("COMMON_ORE"), 2) + " (" + Util::cutOffDecimal(m_commonChange, 2) + ")");
+			m_uncommonLabel->setText(Util::cutOffDecimal(faction->getResourceCount("UNCOMMON_ORE"), 2) + " (" + Util::cutOffDecimal(m_uncommonChange, 2) + ")");
+			m_rareLabel->setText(Util::cutOffDecimal(faction->getResourceCount("RARE_ORE"), 2) + " (" + Util::cutOffDecimal(m_rareChange, 2) + ")");
 				
 			m_scienceLabel->setText(std::to_string(faction->getResearchPointProduction()));
 		}

@@ -214,7 +214,6 @@ public:
 
 	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
-	void onBuild(Unit* unit, Star* currentStar) override;
 
 	inline static const float resourceConsumption = 5.0f;
 
@@ -226,6 +225,7 @@ private:
 		archive & m_research;
 		archive & m_checkResearchTimer;
 		archive & m_resourceType;
+		archive & m_researching;
 	}
 
 	void updateInfoLabel(tgui::ChildWindow::Ptr window);
@@ -233,7 +233,7 @@ private:
 	int m_checkResearchTimer = 0;
 	float m_research = 0.0f;
 	std::string m_resourceType = "COMMON_ORE";
-	bool m_researching = false;
+	bool m_researching = true;
 };
 
 class PirateBaseMod : public Mod {
