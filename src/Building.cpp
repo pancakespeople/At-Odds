@@ -114,6 +114,10 @@ void Building::draw(Renderer& renderer) {
 		drawSelectionCircle(renderer);
 		drawHealthBar(renderer);
 	}
+
+	for (Weapon& weapon : m_weapons) {
+		weapon.drawFireAnimation(renderer, this);
+	}
 }
 
 void Building::update(Star* currentStar, const AllianceList& alliances) {
