@@ -214,6 +214,12 @@ public:
 
 	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
 	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
+	void setResourceType(const std::string& type) { m_resourceType = type; }
+	void setResearching(bool researching) { m_researching = researching; }
+
+	bool isResearching() { return m_researching; }
+
+	std::string getResourceType() { return m_resourceType; }
 
 	inline static const float resourceConsumption = 5.0f;
 

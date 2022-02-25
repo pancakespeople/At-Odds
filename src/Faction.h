@@ -76,6 +76,7 @@ public:
 	std::vector<Spaceship*> getConstructionShips(bool onlyIdleShips = false);
 	std::vector<Star*>& getOwnedStars() { return m_ownedSystems; }
 	std::unordered_map<std::string, float>& getResources() { return m_resources; }
+	const std::unordered_map<std::string, float>& getResources() const { return m_resources; }
 	std::vector<Building*> getAllOwnedBuildings();
 	std::vector<Building*> getAllOwnedBuildingsOfType(const std::string& type);
 	std::vector<Spaceship*> getAllCombatShips();
@@ -92,6 +93,7 @@ public:
 	std::vector<Tech> getUnresearchedTechs();
 	std::vector<Tech> getAllTechsOfCategory(const std::string& category, bool unresearchedOnly = false);
 	std::deque<std::pair<std::string, sf::Color>>& getNewsEvents() { return m_newsEvents; }
+	std::pair<std::string, float> getMostAbundantResource() const;
 	
 	// Gets stars that are connected to this faction's owned stars
 	std::vector<Star*> getBorderStars();

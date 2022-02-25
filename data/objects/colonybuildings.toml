@@ -44,6 +44,7 @@ busSpawnTimeMultiplier = 0.5
 [BASIC_MINING]
 name = "Basic Mine"
 description = "All your ores will be mine."
+buildProgress = 0.05
 
 [MINING]
 name = "Advanced Mine"

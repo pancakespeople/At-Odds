@@ -77,6 +77,10 @@ public:
 	};
 	
 	virtual void update(Faction& faction, Brain& brain, const AllianceList& alliances) override;
+	void handleColonies(Faction & faction);
+	void handleShipDesigns(Faction & faction);
+	void handleShips(Faction & faction);
+	void handleStars(Faction & faction);
 	void researchRandomTech(Faction& faction);
 	bool researchStarterTechs(Faction& faction);
 
@@ -100,6 +104,7 @@ public:
 	void onStart(Faction& faction);
 	void onStarTakeover(Faction& faction, Star& star);
 	void onResearchComplete(Faction& faction);
+	void onColonization(Faction& faction, Planet& planet);
 	void controlFaction(Faction& faction, const AllianceList& alliances);
 	void controlSubAI(Faction& faction, SubAI& subAI, const AllianceList& alliances);
 	void reinitAfterLoad(Constellation* constellation);

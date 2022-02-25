@@ -167,8 +167,6 @@ void FactoryMod::update(Unit& unit, Star& currentStar, Faction* faction, const A
 				mostSupplyPlanet->getColony().getTradeGoods().removeSupply("ARMAMENTS", std::min(100.0f, mostSupply), true);
 
 				ship->addMod(mod);
-
-				DEBUG_PRINT("Sent space truck to arm ship factory in " << currentStar.getName());
 			}
 		}
 		
@@ -183,7 +181,6 @@ void FactoryMod::onShipInteract(Spaceship* ship) {
 		if (tradeMod->getGoods().count("ARMAMENTS") > 0) {
 			m_weaponsStockpile += tradeMod->getGoods().at("ARMAMENTS");
 			tradeMod->setItem("ARMAMENTS", 0.0f);
-			DEBUG_PRINT("New weapon stockpile: " << m_weaponsStockpile);
 		}
 	}
 }

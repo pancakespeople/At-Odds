@@ -719,6 +719,8 @@ void Faction::onColonization(Planet* planet, Star* star) {
 			break;
 		}
 	}
+
+	if (m_aiEnabled) m_ai.onColonization(*this, *planet);
 }
 
 bool Faction::hasChassis(const std::string& type) {
@@ -796,4 +798,17 @@ int Faction::getColonyPopulation() const {
 		population += planet->getColony().getPopulation();
 	}
 	return population;
+}
+
+std::pair<std::string, float> Faction::getMostAbundantResource() const {
+	std::pair<std::string, float> mostResource = {"", 0.0f};
+	if (getResources().size() > 0) {
+		mostResource = *getResources().begin();
+		for (auto& resource : getResources()) {
+			if (resource.second > mostResource.second) {
+				mostResource = resource;
+			}
+		}
+	}
+	return mostResource;
 }

@@ -41,6 +41,10 @@ void Brain::controlSubAI(Faction& faction, SubAI& subAI, const AllianceList& all
 	if (subAI.sleepCheck()) subAI.update(faction, *this, alliances);
 }
 
+void Brain::onColonization(Faction& faction, Planet& planet) {
+	planet.getColony().buyBuilding(ColonyBuilding("BASIC_MINING"), &faction, planet);
+}
+
 void Brain::onStarTakeover(Faction& faction, Star& star) {
 	std::vector<Planet*> toBeColonized;
 	
@@ -373,46 +377,37 @@ void EconomyAI::update(Faction& faction, Brain& brain, const AllianceList& allia
 		m_stateChangeTimer--;
 	}
 	
-	for (Star* star : faction.getOwnedStars()) {
+	handleStars(faction);
+	handleShips(faction);
+	handleShipDesigns(faction);
+	handleColonies(faction);
 
-		// Build science labs
-		if (star->numAlliedBuildings(faction.getID(), "SCIENCE_LAB") < faction.getScienceLabMax(star) && faction.numIdleConstructionShips() > 0) {
-			int numToBuild = faction.getScienceLabMax(star) - star->numAlliedBuildings(faction.getID(), "SCIENCE_LAB");
-			for (int i = 0; i < numToBuild && faction.numIdleConstructionShips() > 0; i++) {
-				Building* lab = star->createBuilding("SCIENCE_LAB", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
-				faction.orderConstructionShipsBuild(lab, true, true);
+	sleep(1000);
+}
 
-				AI_DEBUG_PRINT("Building science lab");
+void EconomyAI::handleColonies(Faction & faction) {
+	// Colonies
+	if (m_state == EconomyState::DEVELOPING_PLANETS) {
+		Planet* bestColony = faction.getMostHabitablePlanet();
+		bool bestColonyDone = false;
+
+		if (bestColony != nullptr) {
+			bestColonyDone = buildColonyBuilding(*bestColony, faction);
+		}
+
+		if (bestColonyDone) {
+			Star* rndStar = faction.getRandomOwnedStar();
+			if (rndStar != nullptr) {
+				Planet* best = rndStar->getMostHabitablePlanet(faction.getID());
+				if (best != nullptr) {
+					buildColonyBuilding(*best, faction);
+				}
 			}
 		}
-
-		bool builtShipFactory = false;
-
-		// Build ship factories
-		if (star->numAlliedBuildings(faction.getID(), "SHIP_FACTORY") < 5 && faction.numIdleConstructionShips() > 0 &&
-			!builtShipFactory) {
-			Building* factory = star->createBuilding("SHIP_FACTORY", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
-
-			faction.orderConstructionShipsBuild(factory, true);
-
-			AI_DEBUG_PRINT("Building ship factory");
-			builtShipFactory = true;
-		}
-
 	}
+}
 
-	// Handle building ships
-	bool buildShips = false;
-	if (m_state == EconomyState::BUILDING_SHIPS) {
-		buildShips = true;
-	}
-
-	for (Building* factory : faction.getAllOwnedBuildingsOfType("SHIP_FACTORY")) {
-		FactoryMod* mod = factory->getMod<FactoryMod>();
-		mod->updateDesigns(&faction);
-		mod->setBuildAll(buildShips);
-	}
-
+void EconomyAI::handleShipDesigns(Faction & faction) {
 	// Handle ship designs
 
 	// Weapons
@@ -499,28 +494,74 @@ void EconomyAI::update(Faction& faction, Brain& brain, const AllianceList& allia
 			}
 		}
 	}
+}
 
-	// Colonies
-	if (m_state == EconomyState::DEVELOPING_PLANETS) {
-		Planet* bestColony = faction.getMostHabitablePlanet();
-		bool bestColonyDone = false;
-		
-		if (bestColony != nullptr) {
-			bestColonyDone = buildColonyBuilding(*bestColony, faction);
+void EconomyAI::handleShips(Faction & faction) {
+	// Handle building ships
+	bool buildShips = false;
+	if (m_state == EconomyState::BUILDING_SHIPS) {
+		buildShips = true;
+	}
+
+	for (Building* factory : faction.getAllOwnedBuildingsOfType("SHIP_FACTORY")) {
+		FactoryMod* mod = factory->getMod<FactoryMod>();
+		mod->updateDesigns(&faction);
+		mod->setBuildAll(buildShips);
+	}
+}
+
+void EconomyAI::handleStars(Faction & faction) {
+	
+	// Find the most abundant resource
+	auto mostResource = faction.getMostAbundantResource();
+
+	for (Star* star : faction.getOwnedStars()) {
+
+		// Build science labs
+		if (star->numAlliedBuildings(faction.getID(), "SCIENCE_LAB") < faction.getScienceLabMax(star) && faction.numIdleConstructionShips() > 0) {
+			int numToBuild = faction.getScienceLabMax(star) - star->numAlliedBuildings(faction.getID(), "SCIENCE_LAB");
+			for (int i = 0; i < numToBuild && faction.numIdleConstructionShips() > 0; i++) {
+				Building* lab = star->createBuilding("SCIENCE_LAB", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
+				faction.orderConstructionShipsBuild(lab, true, true);
+
+				AI_DEBUG_PRINT("Building science lab");
+			}
 		}
 
-		if (bestColonyDone) {
-			Star* rndStar = faction.getRandomOwnedStar();
-			if (rndStar != nullptr) {
-				Planet* best = rndStar->getMostHabitablePlanet(faction.getID());
-				if (best != nullptr) {
-					buildColonyBuilding(*best, faction);
+		bool builtShipFactory = false;
+
+		// Build ship factories
+		if (star->numAlliedBuildings(faction.getID(), "SHIP_FACTORY") < 5 && faction.numIdleConstructionShips() > 0 &&
+			!builtShipFactory) {
+			Building* factory = star->createBuilding("SHIP_FACTORY", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
+
+			faction.orderConstructionShipsBuild(factory, true);
+
+			AI_DEBUG_PRINT("Building ship factory");
+			builtShipFactory = true;
+		}
+
+		// Manage science labs
+		for (Building* lab : faction.getAllOwnedBuildingsOfType("SCIENCE_LAB")) {
+			ScienceMod* scienceMod = lab->getMod<ScienceMod>();
+
+			if (mostResource.second < 50.0f) {
+				if (scienceMod->isResearching()) {
+
+					scienceMod->setResearching(false);
+					AI_DEBUG_PRINT("Turned off a science lab due to not enough resources");
+				}
+			}
+			else {
+				scienceMod->setResearching(true);
+
+				if (scienceMod->getResourceType() != mostResource.first) {
+					scienceMod->setResourceType(mostResource.first);
+					AI_DEBUG_PRINT("Set science lab resource to " << mostResource.first);
 				}
 			}
 		}
 	}
-
-	sleep(1000);
 }
 
 void removeBuildings(Planet& planet, std::vector<std::string>& wantedBuildings, Faction* faction) {
@@ -588,7 +629,6 @@ void EconomyAI::researchRandomTech(Faction& faction) {
 
 bool EconomyAI::researchStarterTechs(Faction& faction) {
 	std::vector<std::string> starterTechs = {
-		"FARMING",
 		"MINING"
 	};
 	
