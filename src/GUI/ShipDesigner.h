@@ -12,6 +12,7 @@ public:
 
 private:
 	void displayChassisInfo(const std::string& chassisType);
+	void displayWeaponInfo(const std::string& weaponType);
 
 	GameWidget::Icon m_icon;
 	tgui::ChildWindow::Ptr m_window;
