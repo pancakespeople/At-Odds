@@ -8,8 +8,9 @@ class UnitGUI {
 public:
 	UnitGUI();
 
-	void open(tgui::Gui& gui);
-	void update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
+	void open(tgui::Gui& gui, Player& player);
+	void update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, Player& player, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
+	void updatePanel();
 	void draw(sf::RenderWindow& window);
 	void onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
 	void setDisabled(bool disabled) { m_disabled = disabled; }
@@ -32,6 +33,7 @@ private:
 
 	tgui::Panel::Ptr m_panel = nullptr;
 	tgui::Label::Ptr m_label = nullptr;
+	tgui::Button::Ptr m_possessButton = nullptr;
 
 	bool m_selecting = false;
 	bool m_mouseDown = false;

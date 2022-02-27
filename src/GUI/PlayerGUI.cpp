@@ -15,7 +15,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		helpWindow.open(gui);
 #endif
 		buildGUI.open(gui, playerFaction);
-		unitGUI.open(gui);
+		unitGUI.open(gui, state.getPlayer());
 		planetGUI.open(gui, state, playerFaction, constellation);
 		timescaleGUI.open(gui, state);
 		resourceGUI.open(gui);
@@ -26,7 +26,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		newsGUI.open(gui);
 	}
 	else if (guiState == PlayerGUIState::SPECTATOR) {
-		unitGUI.open(gui);
+		unitGUI.open(gui, state.getPlayer());
 		planetGUI.open(gui, state, playerFaction, constellation);
 		timescaleGUI.open(gui, state);
 	}
@@ -38,7 +38,7 @@ void PlayerGUI::update(sf::RenderWindow& window, Renderer& renderer, GameState& 
 	if (m_state != PlayerGUIState::CLOSED) {
 		Faction* playerFaction = constellation.getFaction(state.getPlayer().getFaction());
 
-		unitGUI.update(window, renderer, state.getLocalViewStar(), state.getPlayer().getFaction(), mainPanel, minimapGUI);
+		unitGUI.update(window, renderer, state.getLocalViewStar(), state.getPlayer(), mainPanel, minimapGUI);
 		resourceGUI.update(constellation, state.getPlayer(), state.getLocalViewStar());
 		announcerGUI.update(gui, playerFaction);
 		buildingGUI.update();

@@ -15,6 +15,7 @@ public:
 	void setAbsoluteZoom(float factor);
 	void resetZoom();
 	void setScreenSize(sf::Vector2f size);
+	void setAllowMovement(bool allow) { m_allowMovement = allow; }
 
 	sf::FloatRect getInitialRect() const { return m_initialRect; }
 	sf::Vector2f getInitialWidthHeight() const { return sf::Vector2f(m_initialRect.width, m_initialRect.height); }
@@ -50,5 +51,7 @@ private:
 	float m_camZoomFactor = 1.0f;
 	float m_wantedZoomFactor = 1.0f;
 	const inline static float zoomChange = 0.5f;
+
+	bool m_allowMovement = true;
 };
 

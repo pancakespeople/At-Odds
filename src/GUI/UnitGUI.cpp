@@ -14,7 +14,7 @@ UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
 }
 
-void UnitGUI::open(tgui::Gui& gui) {
+void UnitGUI::open(tgui::Gui& gui, Player& player) {
 	m_selectedShips.clear();
 
 	m_panel = tgui::Panel::create();
@@ -28,40 +28,36 @@ void UnitGUI::open(tgui::Gui& gui) {
 	m_label->setOrigin(0.5f, 0.5f);
 	m_label->setPosition("50%", "50%");
 	m_label->setAutoSize(true);
+	m_panel->add(m_label, "label");
+		
+	m_possessButton = tgui::Button::create("Possess");
+	m_possessButton->setOrigin(0.0f, 0.5f);
+	m_possessButton->setPosition("0%", "50%");
+	m_panel->add(m_possessButton);
 
-	std::string text;
-	if (m_selectedShips.size() > 1) {
-		text = std::to_string(m_selectedShips.size()) + "x " + "selected";
-	}
-	else if (m_selectedShips.size() == 1) {
-		text = "Selected: " + m_selectedShips.front()->getName();
-	}
+	m_possessButton->onClick([this, &player]() {
+		if (player.getControlledShip() != m_selectedShips[0]) {
+			player.setControlledShip(m_selectedShips[0]);
+			m_possessButton->setText("Depossess");
+		}
+		else {
+			player.setControlledShip(nullptr);
+			m_possessButton->setText("Possess");
+		}
+	});
 
-	m_label->setText(text);
-	m_panel->add(m_label);
+	m_panel->setVisible(false);
+	updatePanel();
 }
 
-void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, int playerFaction, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
-	static bool mouseHeld = false;
-
+void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, Player& player, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
 	// Remove dead or unselected stuff
 	m_selectedShips.erase(std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* s) {return s->isDead() || !s->isSelected(); }), m_selectedShips.end());
 	m_selectedBuildings.erase(std::remove_if(m_selectedBuildings.begin(), m_selectedBuildings.end(), [](Building* b) {return b->isDead() || !b->isSelected(); }), m_selectedBuildings.end());
 
-	if (!mainPanel->isFocused()) return;
-
 	if (m_selectedShips.size() > 0) {
 		m_panel->setVisible(true);
-		
-		std::string text;
-		if (m_selectedShips.size() > 1) {
-			text = std::to_string(m_selectedShips.size()) + "x " + "selected";
-		}
-		else if (m_selectedShips.size() == 1) {
-			text = "Selected: " + m_selectedShips.front()->getName();
-		}
-
-		m_label->setText(text);
+		updatePanel();
 
 		sf::FloatRect minimapViewport = minimap.getViewport();
 		sf::Vector2f pos = sf::Vector2f(minimapViewport.left, minimapViewport.top - 0.05f);
@@ -79,7 +75,28 @@ void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* c
 	}
 	else {
 		m_panel->setVisible(false);
+		if (m_possessButton->getText() != "Possess") {
+			m_possessButton->setText("Possess");
+		}
+
+		if (player.getControlledShip() != nullptr) {
+			player.setControlledShip(nullptr);
+		}
 	}
+}
+
+void UnitGUI::updatePanel() {
+	std::string text;
+	if (m_selectedShips.size() > 1) {
+		text = std::to_string(m_selectedShips.size()) + "x " + "selected";
+		m_possessButton->setVisible(false);
+	}
+	else if (m_selectedShips.size() == 1) {
+		text = "Selected: " + m_selectedShips.front()->getName();
+		m_possessButton->setVisible(true);
+	}
+
+	m_label->setText(text);
 }
 
 void UnitGUI::draw(sf::RenderWindow& window) {

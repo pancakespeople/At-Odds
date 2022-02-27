@@ -207,15 +207,17 @@ void Spaceship::update(Star* currentStar, const AllianceList& alliances) {
 		}
 	}
 
-	if (!m_orders.empty()) {
-		if (m_orders.front()->execute(*this, *currentStar, alliances)) {
-			m_orders.pop_front();
+	if (m_AIEnabled) {
+		if (!m_orders.empty()) {
+			if (m_orders.front()->execute(*this, *currentStar, alliances)) {
+				m_orders.pop_front();
+			}
 		}
-	}
-	else if (m_weapons.size() > 0) {
-		// Attack enemies in system
-		
-		attack(currentStar, alliances);
+		else if (m_weapons.size() > 0) {
+			// Attack enemies in system
+
+			attack(currentStar, alliances);
+		}
 	}
 	
 	m_velocity.x *= 0.99f;

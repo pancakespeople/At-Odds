@@ -148,8 +148,8 @@ private:
 	Star() {}
 
 	friend void GameState::changeToLocalView(Star* star);
-
 	friend void GameState::changeToWorldView();
+	friend void GameState::switchLocalViews(Star* star);
 	
 	sf::CircleShape m_shape;
 	sf::RectangleShape m_localViewRect;

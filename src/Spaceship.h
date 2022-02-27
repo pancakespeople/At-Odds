@@ -46,6 +46,7 @@ public:
 	void setPirate(bool pirate) { m_pirate = pirate; }
 	void onDeath(Star* currentStar);
 	void createThrusterParticles();
+	void setAIEnabled(bool enabled) { m_AIEnabled = enabled; }
 
 	// Returns true if angle equals the direction the ship is facing, otherwise rotates the ship based on its rotation speed
 	bool rotateTo(float angleDegrees);
@@ -70,6 +71,7 @@ public:
 	float getConstructionSpeed() const { return m_constructionSpeed; }
 	float getMass() const { return m_mass; }
 	float getFacingAngle() const { return m_facingAngle; }
+	float getMaxAcceleration() const { return m_maxAcceleration; }
 
 	int numOrders() { return m_orders.size(); }
 
@@ -117,6 +119,7 @@ private:
 		archive & m_pirate;
 		archive & m_thrusterPoints;
 		archive & m_thrusterSize;
+		archive & m_AIEnabled;
 	}
 
 	Spaceship() {}
@@ -143,5 +146,6 @@ private:
 	bool m_diesSilently = false;
 	bool m_civilian = false;
 	bool m_pirate = false;
+	bool m_AIEnabled = true;
 };
 

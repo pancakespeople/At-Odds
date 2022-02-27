@@ -22,29 +22,31 @@ void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
 		widgetType = focusedWidget->getWidgetType();
 	}
 	
-	// Move the camera by clicking and dragging
-	static sf::Vector2i lastpos = sf::Mouse::getPosition();
+	if (m_allowMovement) {
+		// Move the camera by clicking and dragging
+		static sf::Vector2i lastpos = sf::Mouse::getPosition();
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
-		sf::Vector2i nextpos = lastpos - sf::Mouse::getPosition();
-		m_view.move(sf::Vector2f(nextpos.x * m_camZoomFactor, nextpos.y * m_camZoomFactor));
-	}
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
+			sf::Vector2i nextpos = lastpos - sf::Mouse::getPosition();
+			m_view.move(sf::Vector2f(nextpos.x * m_camZoomFactor, nextpos.y * m_camZoomFactor));
+		}
 
-	lastpos = sf::Mouse::getPosition();
+		lastpos = sf::Mouse::getPosition();
 
-	// Use WASD or arrow keys to move camera
-	if (widgetType != "EditBox") {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-			m_view.move(sf::Vector2f(-10.0f * m_camZoomFactor, 0.0f));
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-			m_view.move(sf::Vector2f(0.0f, -10.0f * m_camZoomFactor));
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-			m_view.move(sf::Vector2f(0.0f, 10.0f * m_camZoomFactor));
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-			m_view.move(sf::Vector2f(10.0f * m_camZoomFactor, 0.0f));
+		// Use WASD or arrow keys to move camera
+		if (widgetType != "EditBox") {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+				m_view.move(sf::Vector2f(-10.0f * m_camZoomFactor, 0.0f));
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+				m_view.move(sf::Vector2f(0.0f, -10.0f * m_camZoomFactor));
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+				m_view.move(sf::Vector2f(0.0f, 10.0f * m_camZoomFactor));
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+				m_view.move(sf::Vector2f(10.0f * m_camZoomFactor, 0.0f));
+			}
 		}
 	}
 

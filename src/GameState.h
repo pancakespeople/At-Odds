@@ -33,6 +33,7 @@ public:
 
 	void changeToLocalView(Star* star);
 	void changeToWorldView();
+	void switchLocalViews(Star* star);
 	void onEvent(sf::Event ev);
 	void exitGame();
 	void loadGame() { m_metaState = MetaState::LOAD_GAME; }

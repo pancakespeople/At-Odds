@@ -40,6 +40,24 @@ void GameState::changeToWorldView() {
 	callOnChangeStateCallbacks();
 }
 
+void GameState::switchLocalViews(Star* star) {
+	if (m_state != GameState::State::LOCAL_VIEW) {
+		assert(false);
+		return;
+	}
+
+	m_camera.setPos(star->getLocalViewCenter());
+	m_camera.setAbsoluteZoom(10.0f);
+
+	m_localViewStar->m_localViewActive = false;
+	m_localViewStar->clearAnimations();
+
+	star->m_localViewActive = true;
+	m_localViewStar = star;
+	m_localViewStarID = star->getID();
+	m_state = GameState::State::LOCAL_VIEW;
+}
+
 void GameState::onEvent(sf::Event ev) {
 	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Tab &&
 		m_state == GameState::State::LOCAL_VIEW) {
