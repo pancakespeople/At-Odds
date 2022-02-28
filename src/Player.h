@@ -13,7 +13,6 @@ public:
 	void disableFogOfWar() { m_hasFogOfWar = false; }
 	void setControlledShip(Spaceship* ship);
 	void update(GameState& state);
-	void onEvent(const sf::Event& ev);
 
 	bool hasFogOfWar() const { return m_hasFogOfWar; }
 

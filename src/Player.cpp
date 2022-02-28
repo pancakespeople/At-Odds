@@ -9,20 +9,6 @@ void Player::setFaction(int allegiance, sf::Color color) {
 	m_color = color;
 }
 
-void Player::onEvent(const sf::Event& ev) {
-	if (m_controlledShip != nullptr) {
-		if (ev.type == sf::Event::KeyPressed) {
-			if (ev.key.code == sf::Keyboard::F) {
-				// Fire controlled ships weapons
-
-				for (Weapon& weapon : m_controlledShip->getWeapons()) {
-					weapon.fireAtAngle(m_controlledShip->getPos(), m_controlledShip->getAllegiance(), m_controlledShip->getFacingAngle(), m_controlledShip->getCurrentStar());
-				}
-			}
-		}
-	}
-}
-
 void Player::update(GameState& state) {
 	// Controlling a ship
 	if (m_controlledShip != nullptr) {
@@ -46,6 +32,13 @@ void Player::update(GameState& state) {
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 				m_controlledShip->rotateTo(m_controlledShip->getFacingAngle() - 90.0f);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+				// Fire controlled ships weapons
+
+				for (Weapon& weapon : m_controlledShip->getWeapons()) {
+					weapon.fireAtAngle(m_controlledShip->getPos(), m_controlledShip->getAllegiance(), m_controlledShip->getFacingAngle(), m_controlledShip->getCurrentStar());
+				}
 			}
 		}
 	}

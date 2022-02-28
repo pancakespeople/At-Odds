@@ -123,7 +123,6 @@ int main(int argc, const char* argv[])
             playerGui.planetGUI.onEvent(event, gui, state, constellation.getFaction(state.getPlayer().getFaction()), window, renderer, state.getLocalViewStar(), playerGui.mainPanel, constellation);
             playerGui.onEvent(event, gui);
             renderer.onEvent(event, window);
-            player.onEvent(event);
         }
 
         optionsMenu.updateGameSettings(window, renderer, gui, musicPlayer, state.getCamera());
@@ -143,6 +142,7 @@ int main(int argc, const char* argv[])
             constellation.update(state.getPlayer(), renderer.effects);
             playerGui.updateSync(window, state, constellation, gui);
             mainMenu.updateArena(updates, constellation, state);
+            player.update(state);
             
             updates++;
             updatesPerFrame++;
@@ -157,7 +157,6 @@ int main(int argc, const char* argv[])
 
         background.draw(renderer, state.getCamera());
 
-        player.update(state);
         state.getCamera().update(renderer, gui.getFocusedLeaf());
 
         Sounds::updateSounds(state.getPlayer(), state.getCamera(), constellation.getAlliances());

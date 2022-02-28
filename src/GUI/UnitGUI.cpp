@@ -59,6 +59,16 @@ void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* c
 		m_panel->setVisible(true);
 		updatePanel();
 
+		if (player.getControlledShip() != m_selectedShips[0] || m_selectedShips.size() > 1) {
+			if (m_possessButton->getText() != "Possess") {
+				m_possessButton->setText("Possess");
+			}
+
+			if (player.getControlledShip() != nullptr) {
+				player.setControlledShip(nullptr);
+			}
+		}
+
 		sf::FloatRect minimapViewport = minimap.getViewport();
 		sf::Vector2f pos = sf::Vector2f(minimapViewport.left, minimapViewport.top - 0.05f);
 		sf::Vector2f size = sf::Vector2f(minimapViewport.width, 0.05f);
@@ -93,7 +103,13 @@ void UnitGUI::updatePanel() {
 	}
 	else if (m_selectedShips.size() == 1) {
 		text = "Selected: " + m_selectedShips.front()->getName();
-		m_possessButton->setVisible(true);
+
+		if (m_selectedShips[0]->canPlayerGiveOrders() && m_selectedShips[0]->canReceiveOrders()) {
+			m_possessButton->setVisible(true);
+		}
+		else {
+			m_possessButton->setVisible(false);
+		}
 	}
 
 	m_label->setText(text);
