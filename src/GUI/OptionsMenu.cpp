@@ -63,7 +63,7 @@ void OptionsMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	group->setSize("100%", "100% - optionsTabs.height");
 	guiWindow->add(group, "optionsGroup");
 
-	auto mainMenuButton = tgui::Button::create("<- Main Menu");
+	auto mainMenuButton = GUI::Button::create("<- Main Menu");
 	mainMenuButton->setPosition("5%", "90%");
 	mainMenuButton->onPress([this, &gui, &constellation, &state, mainMenu]() {
 		close(gui);

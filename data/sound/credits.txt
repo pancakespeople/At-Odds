@@ -13,3 +13,5 @@ cargo - https://freesound.org/people/joedeshon/sounds/368737/
 money - https://freesound.org/people/Zott820/sounds/209578/
 machinegun - https://freesound.org/people/ShawnyBoy/sounds/165394/
 electric - https://freesound.org/people/pluralz/sounds/475806/
+boop - https://freesound.org/people/plasterbrain/sounds/423166/
+click - https://freesound.org/people/Bertsz/sounds/577062/

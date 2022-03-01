@@ -23,7 +23,7 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 	m_title->getRenderer()->setTextStyle(tgui::TextStyle::Italic);
 	gui.add(m_title);
 
-	auto newGameButton = tgui::Button::create("New Game");
+	auto newGameButton = GUI::Button::create("New Game");
 	newGameButton->setPosition("20%", "50%");
 	newGameButton->setOrigin(0.5f, 0.5f);
 	newGameButton->onPress([this, &gui, &constellation, &state]() {
@@ -32,7 +32,7 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 		});
 	m_panel->add(newGameButton);
 
-	auto loadGameButton = tgui::Button::create("Load Game");
+	auto loadGameButton = GUI::Button::create("Load Game");
 	loadGameButton->setPosition("40%", "50%");
 	loadGameButton->setOrigin(0.5f, 0.5f);
 	loadGameButton->onPress([&state] {
@@ -40,7 +40,7 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 		});
 	m_panel->add(loadGameButton);
 
-	auto optionsButton = tgui::Button::create("Options");
+	auto optionsButton = GUI::Button::create("Options");
 	optionsButton->setPosition("60%", "50%");
 	optionsButton->setOrigin(0.5f, 0.5f);
 	optionsButton->onPress([this, &gui, &constellation, &state]() {
@@ -49,7 +49,7 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 		});
 	m_panel->add(optionsButton);
 
-	auto exitButton = tgui::Button::create("Exit");
+	auto exitButton = GUI::Button::create("Exit");
 	exitButton->setPosition("80%", "50%");
 	exitButton->setOrigin(0.5f, 0.5f);
 	exitButton->onPress(&MainMenu::exitGame, this, std::ref(state));

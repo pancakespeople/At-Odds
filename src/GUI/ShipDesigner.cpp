@@ -120,7 +120,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			designNameTextBox->setSize("22.5%", "5%");
 			m_window->add(designNameTextBox, "designNameTextBox");
 
-			auto designNameSaveButton = tgui::Button::create("Save Design");
+			auto designNameSaveButton = GUI::Button::create("Save Design");
 			designNameSaveButton->setOrigin(0.0f, 0.5f);
 			designNameSaveButton->setPosition("designNameTextBox.right + 1%", "designNameTextBox.top + designNameTextBox.height / 2.0");
 			designNameSaveButton->onClick([this, designNameTextBox, shipChassisListBox, shipWeaponsListBox, playerFaction]() {
@@ -147,7 +147,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				});
 			m_window->add(designNameSaveButton);
 
-			auto chassisAdderButton = tgui::Button::create("Add Chassis");
+			auto chassisAdderButton = GUI::Button::create("Add Chassis");
 			chassisAdderButton->setOrigin(0.5f, 0.5f);
 			chassisAdderButton->setSize("10%", "5%");
 			chassisAdderButton->setPosition("chassisComboBox.left + chassisComboBox.width * 0.25", "42.5%");
@@ -162,7 +162,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				});
 			m_window->add(chassisAdderButton, "chassisAdderButton");
 
-			auto chassisRemoverButton = tgui::Button::create("Remove Chassis");
+			auto chassisRemoverButton = GUI::Button::create("Remove Chassis");
 			chassisRemoverButton->setOrigin(0.5f, 0.5f);
 			chassisRemoverButton->setPosition("chassisComboBox.left + chassisComboBox.width * 0.75", "42.5%");
 			chassisRemoverButton->setSize("chassisAdderButton.size");
@@ -175,7 +175,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				});
 			m_window->add(chassisRemoverButton);
 
-			auto weaponsAdderButton = tgui::Button::create("Add Weapon");
+			auto weaponsAdderButton = GUI::Button::create("Add Weapon");
 			weaponsAdderButton->setOrigin(0.5f, 0.5f);
 			weaponsAdderButton->setSize("chassisAdderButton.size");
 			weaponsAdderButton->setPosition("weaponsComboBox.left + weaponsComboBox.width * 0.25", "42.5%");
@@ -193,7 +193,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				});
 			m_window->add(weaponsAdderButton);
 
-			auto weaponsRemoverButton = tgui::Button::create("Remove Weapon");
+			auto weaponsRemoverButton = GUI::Button::create("Remove Weapon");
 			weaponsRemoverButton->setOrigin(0.5f, 0.5f);
 			weaponsRemoverButton->setPosition("weaponsComboBox.left + weaponsComboBox.width * 0.75", "42.5%");
 			weaponsRemoverButton->setSize("chassisAdderButton.size");

@@ -245,12 +245,12 @@ void FactoryMod::openGUI(tgui::ChildWindow::Ptr window, Faction* faction) {
 			amountLabel->setPosition("amountEditBox.right + 1%", "amountEditBox.top");
 			shipWidgets->add(amountLabel);
 
-			auto moveDownButton = tgui::Button::create("Queue Down");
+			auto moveDownButton = GUI::Button::create("Queue Down");
 			moveDownButton->setPosition("33% + 2.5%", "50%");
 			moveDownButton->setSize("15%", "5%");
 			shipWidgets->add(moveDownButton, "moveUpButton");
 
-			auto moveUpButton = tgui::Button::create("Queue Up");
+			auto moveUpButton = GUI::Button::create("Queue Up");
 			moveUpButton->setPosition("33% + 2.5%", "moveUpButton.top - moveUpButton.height");
 			moveUpButton->setSize("15%", "5%");
 			shipWidgets->add(moveUpButton);

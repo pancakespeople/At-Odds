@@ -7,32 +7,21 @@
 #include "../Renderer.h"
 
 void BuildGUI::open(tgui::Gui& gui, Faction* playerFaction) {
-	auto panel = tgui::Panel::create();
-	panel->setPosition("0%", "90%");
-	panel->setSize("2.5%", "5%");
-	panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
-	panel->getRenderer()->setOpacity(0.75f);
-	panel->onClick(&BuildGUI::onBuildIconClick, this, std::ref(gui), playerFaction);
-	panel->onMouseEnter(&BuildGUI::onBuildIconMouseEnter, this);
-	panel->onMouseLeave(&BuildGUI::onBuildIconMouseExit, this);
-	m_buildIconPanel = panel;
-	gui.add(panel);
-
-	auto picture = tgui::Picture::create("data/art/buildicon.png");
-	picture->setSize("100%", "100%");
-	m_buildIcon = picture;
-	panel->add(picture);
+	m_buildIcon.open(gui, { "0%", "90%" }, { "2.5%", "5%" }, "data/art/buildicon.png");
+	m_buildIcon.panel->onClick(&BuildGUI::onBuildIconClick, this, std::ref(gui), playerFaction);
+	m_buildIcon.panel->onMouseEnter(&BuildGUI::onBuildIconMouseEnter, this);
+	m_buildIcon.panel->onMouseLeave(&BuildGUI::onBuildIconMouseExit, this);
 }
 
 void BuildGUI::onBuildIconMouseEnter() {
-	m_buildIconPanel->getRenderer()->setBackgroundColor(tgui::Color::White);
-	m_buildIconPanel->setRenderer(tgui::Theme().getRenderer("Panel"));
+	m_buildIcon.panel->getRenderer()->setBackgroundColor(tgui::Color::White);
+	m_buildIcon.panel->setRenderer(tgui::Theme().getRenderer("Panel"));
 }
 
 void BuildGUI::onBuildIconMouseExit() {
-	m_buildIconPanel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
-	m_buildIconPanel->getRenderer()->setOpacity(0.75f);
-	m_buildIconPanel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
+	m_buildIcon.panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+	m_buildIcon.panel->getRenderer()->setOpacity(0.75f);
+	m_buildIcon.panel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
 }
 
 void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {

@@ -124,28 +124,52 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
 	}
 }
 
-void GameWidget::Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath) {
-	panel = tgui::Panel::create();
-	panel->setPosition(pos);
-	panel->setSize(size);
-	panel->getRenderer()->setOpacity(0.75f);
+namespace GUI {
 
-	panel->onMouseEnter([this]() {
-		panel->getRenderer()->setBackgroundColor(tgui::Color::White);
-		panel->setRenderer(tgui::Theme().getRenderer("Panel"));
-	});
-
-	panel->onMouseLeave([this]() {
-		panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+	void Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath) {
+		panel = tgui::Panel::create();
+		panel->setPosition(pos);
+		panel->setSize(size);
 		panel->getRenderer()->setOpacity(0.75f);
-		panel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
-	});
 
-	gui.add(panel);
+		panel->onMouseEnter([this]() {
+			panel->getRenderer()->setBackgroundColor(tgui::Color::White);
+			panel->setRenderer(tgui::Theme().getRenderer("Panel"));
 
-	auto picture = tgui::Picture::create(picPath.c_str());
-	picture->setSize("100%", "100%");
-	panel->add(picture);
+			Sounds::playUISound("data/sound/click.wav");
+			});
+
+		panel->onMouseLeave([this]() {
+			panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
+			panel->getRenderer()->setOpacity(0.75f);
+			panel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
+			});
+
+		panel->onClick([]() {
+			Sounds::playUISound("data/sound/boop.wav");
+			});
+
+		gui.add(panel);
+
+		auto picture = tgui::Picture::create(picPath.c_str());
+		picture->setSize("100%", "100%");
+		panel->add(picture);
+	}
+
+	Button::Ptr Button::create(const std::string& text) {
+		auto button = std::make_shared<GUI::Button>();
+		button->setText(text);
+
+		button->onMouseEnter([]() {
+			Sounds::playUISound("data/sound/click.wav");
+			});
+
+		button->onClick([]() {
+			Sounds::playUISound("data/sound/boop.wav");
+		});
+
+		return button;
+	}
 }
 
 void AnnouncerGUI::open(tgui::Gui& gui) {

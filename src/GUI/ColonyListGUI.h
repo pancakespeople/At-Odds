@@ -10,7 +10,7 @@ public:
 	void refreshListViewContents(GameState & state, Constellation & constellation, tgui::ListView::Ptr listView);
 
 private:
-	GameWidget::Icon m_icon;
+	GUI::Icon m_icon;
 	tgui::ChildWindow::Ptr m_window = nullptr;
 	bool m_systemOnly = false;
 };

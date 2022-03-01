@@ -30,7 +30,7 @@ void UnitGUI::open(tgui::Gui& gui, Player& player) {
 	m_label->setAutoSize(true);
 	m_panel->add(m_label, "label");
 		
-	m_possessButton = tgui::Button::create("Possess");
+	m_possessButton = GUI::Button::create("Possess");
 	m_possessButton->setOrigin(0.0f, 0.5f);
 	m_possessButton->setPosition("0%", "50%");
 	m_panel->add(m_possessButton);

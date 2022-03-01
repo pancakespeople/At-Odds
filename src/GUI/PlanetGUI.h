@@ -24,7 +24,7 @@ private:
 	void closePanel(tgui::Gui& gui);
 	static void updateTrendWidget(tgui::Label::Ptr& label, float trend);
 
-	tgui::Panel::Ptr m_planetIconPanel;
+	GUI::Icon m_planetIcon;
 	tgui::Panel::Ptr m_planetInfoPanel;
 	tgui::Panel::Ptr m_buttonPanel;
 	tgui::ChildWindow::Ptr m_planetPanel;

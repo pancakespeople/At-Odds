@@ -47,7 +47,7 @@ private:
 	sf::Clock m_updateClock;*/
 };
 
-namespace GameWidget {
+namespace GUI {
 
 	struct Icon {
 		void open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath);
@@ -57,6 +57,11 @@ namespace GameWidget {
 		tgui::Theme m_hoverTheme;
 	};
 
+	struct Button : public tgui::Button {
+		typedef std::shared_ptr<Button> Ptr;
+
+		static Button::Ptr create(const std::string& text = "");
+	};
 }
 
 class AnnouncerGUI {

@@ -52,7 +52,7 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 		queueLabel->setPosition("techQueue.left + techQueue.width / 2", "0%");
 		m_window->add(queueLabel);
 
-		auto researchButton = tgui::Button::create("Research");
+		auto researchButton = GUI::Button::create("Research");
 		researchButton->setPosition("2.5%", "52.5%");
 		researchButton->setVisible(false);
 		m_window->add(researchButton);

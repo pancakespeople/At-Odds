@@ -32,7 +32,7 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 			listView->addColumn("Habitability");
 			m_window->add(listView);
 
-			auto refreshButton = tgui::Button::create("Refresh");
+			auto refreshButton = GUI::Button::create("Refresh");
 			refreshButton->setSize("10%", "5%");
 			m_window->add(refreshButton);
 

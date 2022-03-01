@@ -14,7 +14,7 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 	gui.add(guiWindow);
 	m_window = guiWindow;
 
-	auto mainMenuButton = tgui::Button::create("<- Main Menu");
+	auto mainMenuButton = GUI::Button::create("<- Main Menu");
 	mainMenuButton->setPosition("5%", "90%");
 	mainMenuButton->onPress([this, &gui, &constellation, &state, mainMenu]() {
 		close();
@@ -22,7 +22,7 @@ void NewGameMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& 
 		});
 	guiWindow->add(mainMenuButton);
 
-	auto startGameButton = tgui::Button::create("Start Game ->");
+	auto startGameButton = GUI::Button::create("Start Game ->");
 	startGameButton->setPosition("95% - width", "90%");
 	startGameButton->onPress(&NewGameMenu::startNewGame, this, std::ref(gui), std::ref(constellation), std::ref(state), mainMenu);
 	guiWindow->add(startGameButton);

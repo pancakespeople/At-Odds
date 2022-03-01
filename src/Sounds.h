@@ -20,6 +20,7 @@ public:
 	};
 	
 	static void playSound(const std::string& filePath, const sf::Vector2f& pos, float volume = 100.0f, float pitch = 1.0f, Star* star = nullptr, bool noSpatial = false);
+	static void playUISound(const std::string& filePath) { playSound(filePath, { 0.0f, 0.0f }, 100.0f, 1.0f, nullptr, true); }
 	static void playSoundLocal(const std::string& filePath, Star* star, const sf::Vector2f& pos, float volume = 100.0f, float pitch = 1.0f, bool noSpatial = false);
 	static void loadSound(const std::string& filepath) { getSound(filepath); }
 	static void updateSounds(const Player& player, const Camera& camera, const AllianceList& alliances);

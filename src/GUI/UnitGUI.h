@@ -33,7 +33,7 @@ private:
 
 	tgui::Panel::Ptr m_panel = nullptr;
 	tgui::Label::Ptr m_label = nullptr;
-	tgui::Button::Ptr m_possessButton = nullptr;
+	GUI::Button::Ptr m_possessButton = nullptr;
 
 	bool m_selecting = false;
 	bool m_mouseDown = false;
