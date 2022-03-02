@@ -13,6 +13,7 @@
 #include "Constellation.h"
 #include "Designs.h"
 #include "Renderer.h"
+#include "Random.h"
 
 BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
 BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
@@ -371,6 +372,15 @@ EstablishPirateBaseOrder::EstablishPirateBaseOrder(sf::Vector2f pos, int theftAl
 }
 
 bool EstablishPirateBaseOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+	if (currentStar.getBuildingsOfType("PIRATE_BASE").size() > 1) {
+		// Pick a different star if this one already has 2 bases
+
+		Star* rndNeighbor = currentStar.getConnectedStars()[Random::randInt(0, currentStar.getConnectedStars().size() - 1)];
+		ship.addOrderFront<TravelOrder>(TravelOrder(rndNeighbor));
+		
+		return false;
+	}
+
 	if (ship.flyTo(m_pos)) {
 		Building* building = currentStar.createBuilding("PIRATE_BASE", m_pos, nullptr, true);
 		PirateBaseMod* pirateBase = building->getMod<PirateBaseMod>();

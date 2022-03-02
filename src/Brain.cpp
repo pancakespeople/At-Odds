@@ -108,13 +108,13 @@ void MilitaryAI::update(Faction& faction, Brain& brain, const AllianceList& alli
 
 	// Change states
 	if (m_stateChangeTimer == 0) {
-		if (Random::randBool()) {
-			m_state = MilitaryState::RALLYING;
-			AI_DEBUG_PRINT("Changed state to rallying");
-		}
-		else {
+		if (Random::randBool() && faction.getAllCombatShips().size() > 6) {
 			m_state = MilitaryState::ATTACKING;
 			AI_DEBUG_PRINT("Changed state to attacking");
+		}
+		else {
+			m_state = MilitaryState::RALLYING;
+			AI_DEBUG_PRINT("Changed state to rallying");
 		}
 		m_stateChangeTimer = Random::randInt(5000, 15000);
 	}
@@ -503,10 +503,27 @@ void EconomyAI::handleShips(Faction & faction) {
 		buildShips = true;
 	}
 
+	int numConstructors = faction.getConstructionShips().size();
+	int numStars = faction.getOwnedStars().size();
+
 	for (Building* factory : faction.getAllOwnedBuildingsOfType("SHIP_FACTORY")) {
 		FactoryMod* mod = factory->getMod<FactoryMod>();
 		mod->updateDesigns(&faction);
-		mod->setBuildAll(buildShips);
+
+		if (buildShips) {
+			for (const DesignerShip& design : faction.getShipDesigns()) {
+				if (design.name != "Constructor") {
+					mod->setBuild(design.name, true);
+				}
+				else if (numConstructors < numStars * 2){
+					// Limit the amount of construction ships to 2 per star
+					mod->setBuild(design.name, true);
+				}
+			}
+		}
+		else {
+			mod->setBuildAll(false);
+		}
 	}
 }
 
