@@ -160,12 +160,12 @@ namespace GUI {
 		auto button = std::make_shared<GUI::Button>();
 		button->setText(text);
 
-		button->onMouseEnter([]() {
+		button->onMouseEnter([button]() {
 			Sounds::playUISound("data/sound/click.wav");
-			});
+		});
 
-		button->onClick([]() {
-			Sounds::playUISound("data/sound/boop.wav");
+		button->onClick([button]() {
+			Sounds::playUISound(button->m_clickSoundPath);
 		});
 
 		return button;

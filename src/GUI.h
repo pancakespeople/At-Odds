@@ -61,6 +61,10 @@ namespace GUI {
 		typedef std::shared_ptr<Button> Ptr;
 
 		static Button::Ptr create(const std::string& text = "");
+		void setClickSound(const std::string& filePath) { m_clickSoundPath = filePath; }
+
+	private:
+		std::string m_clickSoundPath = "data/sound/boop.wav";
 	};
 }
 

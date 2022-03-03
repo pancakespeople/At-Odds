@@ -547,7 +547,7 @@ void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* play
 
 			// Add buildable buildings to listbox
 			for (const ColonyBuilding& building : buildings) {
-				if (building.isBuildable(planet.getColony())) {
+				if (building.isBuildable(planet.getColony()) && planet.getColony().getBuildingOfType(building.getType()) == nullptr) {
 					listBox->addItem(building.getName());
 				}
 			}
@@ -566,6 +566,7 @@ void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* play
 
 							if (!planet.getColony().hasBuildingOfType(building.getType())) {
 								auto buildButton = GUI::Button::create("Build");
+								buildButton->setClickSound("data/sound/build.wav");
 								buildButton->setPosition("2.5%", "85%");
 								m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
 
