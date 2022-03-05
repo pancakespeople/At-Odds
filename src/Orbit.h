@@ -4,7 +4,7 @@ class Orbit {
 public:
 	Orbit() {}
 	
-	Orbit(sf::Vector2f orbiterPos, sf::Vector2f parentPos, float orbitSpeed);
+	Orbit(sf::Vector2f orbiterPos, sf::Vector2f parentPos);
 
 	sf::Vector2f update();
 

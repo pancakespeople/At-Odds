@@ -18,11 +18,9 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, fl
 	m_shape.setPosition(pos);
 
 	float radiusFromStar = Math::distance(pos, starPos);
-	float orbitRadius = Math::distance(pos, orbitPos);
-	float orbitSpeed = 500.0f / orbitRadius;
 	float baseTemperature = std::min(starTemperature, (starTemperature * 1000.0f) / radiusFromStar);
 
-	m_orbit = Orbit(pos, orbitPos, orbitSpeed);
+	m_orbit = Orbit(pos, orbitPos);
 
 	if (baseTemperature < 273.15f) {
 		if (Random::randFloat(0.0f, 1.0f) < 0.5f && !moon) {

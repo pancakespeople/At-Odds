@@ -217,6 +217,7 @@
       <Filter>pch</Filter>
     </ClInclude>
     <ClInclude Include="src\AllianceList.h" />
+    <ClInclude Include="src\Asteroid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -409,6 +410,7 @@
     <ClCompile Include="src\gamepch.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\AllianceList.cpp" />
+    <ClCompile Include="src\Asteroid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\scripts\laserAnimation.lua" />

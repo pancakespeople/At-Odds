@@ -2,12 +2,12 @@
 #include "Orbit.h"
 #include "Math.h"
 
-Orbit::Orbit(sf::Vector2f orbiterPos, sf::Vector2f parentPos, float orbitSpeed) {
+Orbit::Orbit(sf::Vector2f orbiterPos, sf::Vector2f parentPos) {
 	m_radius = Math::distance(orbiterPos, parentPos);
 	m_parentPos = parentPos;
 	
 	m_orbiterAngle = Math::angleBetween(orbiterPos, parentPos);
-	m_orbitSpeed = orbitSpeed;
+	m_orbitSpeed = 500.0f / m_radius;
 
 	m_orbitIndicator.setFillColor(sf::Color::Transparent);
 	m_orbitIndicator.setOutlineColor(sf::Color(175, 175, 175, 150));

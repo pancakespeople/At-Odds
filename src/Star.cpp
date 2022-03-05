@@ -72,6 +72,7 @@ void Star::init(const sf::Vector2f& pos) {
 	generatePlanets();
 	generateDerelicts();
 	generateAsteroidBelts();
+	generateAsteroids();
 }
 
 void Star::draw(sf::RenderWindow& window) {
@@ -206,6 +207,9 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 
 		for (AsteroidBelt& ab : m_asteroidBelts) {
 			renderer.effects.drawAsteroidBelt(getLocalViewCenter(), ab.radius, ab.seed);
+		}
+		for (Asteroid& asteroid : m_asteroids) {
+			asteroid.draw(renderer);
 		}
 	}
 }
@@ -506,6 +510,9 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 			m_derelicts.erase(m_derelicts.begin() + i);
 			i--;
 		}
+	}
+	for (Asteroid& asteroid : m_asteroids) {
+		asteroid.update();
 	}
 
 	m_particleSystem.updateParticles();
@@ -913,4 +920,20 @@ int Star::getPlanetIndex(Planet* planet) const {
 		}
 	}
 	return -1;
+}
+
+float Star::getOuterBoundary() {
+	if (m_planets.size() == 0) {
+		return 10000.0f;
+	}
+	else {
+		return Math::distance(getLocalViewCenter(), m_planets.back().getPos());
+	}
+}
+
+void Star::generateAsteroids() {
+	for (int i = 0; i < Random::randInt(0, 6); i++) {
+		sf::Vector2f pos = Math::normalize(Random::randVec(-1.0f, 1.0f)) * Random::randFloat(0.0f, getOuterBoundary());
+		m_asteroids.push_back(Asteroid(pos, getLocalViewCenter()));
+	}
 }

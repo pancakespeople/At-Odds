@@ -13,6 +13,7 @@
 #include "Identifiable.h"
 #include "Quadtree.h"
 #include "AsteroidBelt.h"
+#include "Asteroid.h"
 
 class Hyperlane;
 class Faction;
@@ -52,6 +53,7 @@ public:
 	void setName(const std::string& name) { m_name = name; }
 	void generateAsteroidBelts();
 	void onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos);
+	void generateAsteroids();
 	
 	Spaceship* createSpaceship(const std::string& type, sf::Vector2f pos, int allegiance, sf::Color color);
 	Spaceship* generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color, std::vector<std::string> allowedChassis);
@@ -59,6 +61,7 @@ public:
 
 	float getRadius() const { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);
+	float getOuterBoundary();
 
 	bool isStarInRadius(Star& s, float radius) const;
 	bool isInShapeRadius(float x, float y) const;
@@ -139,6 +142,7 @@ private:
 		archive & m_asteroidBelts;
 		archive & m_peaceful;
 		archive & m_effectAnimations;
+		archive & m_asteroids;
 	}
 	
 	void handleCollisions(const AllianceList& alliances);
@@ -165,6 +169,7 @@ private:
 	std::vector<Planet> m_planets;
 	std::vector<Derelict> m_derelicts;
 	std::vector<AsteroidBelt> m_asteroidBelts;
+	std::vector<Asteroid> m_asteroids;
 	std::unordered_set<int> m_factionsDiscovered = {-1};
 
 	bool m_localViewActive = false;
