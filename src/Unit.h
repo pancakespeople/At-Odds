@@ -36,6 +36,7 @@ public:
 
 	bool isDead() const { return m_dead; }
 	bool isSelected() const { return m_selected; }
+	bool hasWeapon(const std::string& type) const;
 	
 	void kill() { m_health = 0.0f; }
 	void takeDamage(float damage) { m_health -= damage; }

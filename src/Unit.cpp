@@ -53,7 +53,14 @@ std::vector<Unit*> Unit::findEnemyUnits(const AllianceList& alliances) {
 
 void Unit::fireAllWeaponsAt(Unit* target) {
 	for (Weapon& weapon : m_weapons) {
-		weapon.fireAt(getPos(), getAllegiance(), target->getPos(), m_currentStar);
+		if (!weapon.isOnCooldown()) {
+			if (weapon.isInstaHit()) {
+				weapon.instaHitFireAt(getPos(), target->getPos(), target, m_currentStar);
+			}
+			else {
+				weapon.fireAt(getPos(), getAllegiance(), target->getPos(), m_currentStar);
+			}
+		}
 	}
 }
 
@@ -126,4 +133,13 @@ void Unit::drawHealthBar(Renderer& renderer) {
 	rect.setFillColor(sf::Color(colorR, colorG, 0));
 
 	renderer.draw(rect);
+}
+
+bool Unit::hasWeapon(const std::string& type) const {
+	for (const Weapon& weapon : m_weapons) {
+		if (weapon.getType() == type) {
+			return true;
+		}
+	}
+	return false;
 }

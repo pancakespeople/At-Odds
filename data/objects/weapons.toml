@@ -24,9 +24,10 @@ baseSoundCooldown = 60
 
 [CONSTRUCTION_GUN]
 projectile = "CONSTRUCTION"
-cooldownRecovery = 5.0
 findable = false
 hasDesign = false
+fireAnimation = "CONSTRUCTION_BEAM"
+instaHit = true
 
 [ROCKET_LAUNCHER]
 name = "Rocket Launcher"
@@ -91,7 +92,7 @@ cost = [["COMMON_ORE", 50.0]]
 projectile = "BEAM_LASER"
 sound = "data/sound/pew1.wav"
 cooldownRecovery = 0.25
-fireAnimation = "beamlaser"
+fireAnimation = "BEAM_LASER"
 instaHit = true
 
 [BLACK_HOLE_GUN]
@@ -107,7 +108,7 @@ weaponPoints = 2.0
 cost = [["COMMON_ORE", 17.0]]
 projectile = "GATLING"
 cooldownRecovery = 0.5
-fireAnimation = "gatlinggun"
+fireAnimation = "GATLING_GUN"
 instaHit = true
 sound = "data/sound/machinegun.wav"
 
@@ -117,6 +118,6 @@ weaponPoints = 2.0
 cost = [["UNCOMMON_ORE", 35.0]]
 projectile = "GATLING_LASER"
 cooldownRecovery = 0.3
-fireAnimation = "gatlinglaser"
+fireAnimation = "GATLING_LASER"
 instaHit = true
 sound = "data/sound/pew1.wav"

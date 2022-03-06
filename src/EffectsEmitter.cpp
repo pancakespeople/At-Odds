@@ -63,6 +63,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_jumpPointShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumppointshader.shader");
 	m_jumpTrailShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumptrailshader.shader");
 	m_particleShader.loadFromFile(m_vertexShaderPath, "data/shaders/particleshader.shader");
+	m_beamShader.loadFromFile(m_vertexShaderPath, "data/shaders/beamshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -377,6 +378,22 @@ void EffectsEmitter::drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vecto
 
 		m_renderer.draw(sprite);
 	}
+}
+
+void EffectsEmitter::drawConstructionBeamAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
+	float angle = Math::angleBetween(sourcePos, endPos);
+	sf::RectangleShape shape;
+
+	shape.setRotation(-angle);
+	shape.setPosition(sourcePos);
+	shape.setSize(sf::Vector2f(Math::distance(sourcePos, endPos), 250.0f));
+	shape.setOrigin({ 0.0f, shape.getSize().y / 2.0f });
+	shape.setFillColor(sf::Color(0, 255, 255, 255 * (1.0 / step)));
+	shape.setTextureRect(sf::IntRect({ 0, 0 }, { 1, 1 }));
+
+	m_beamShader.setUniform("time", step);
+
+	m_renderer.draw(shape, &m_beamShader);
 }
 
 void EffectsEmitter::addExplosionEffect(sf::Vector2f pos, Star* star) {

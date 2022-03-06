@@ -7,6 +7,7 @@ public:
 	static int randInt(int min, int max);
 	static float randFloat(float min, float max);
 	static sf::Vector2f randVec(float min, float max);
+	static sf::Vector2f randPointInCircle(float radius);
 	static bool randBool();
 	static std::string randString(int numChars);
 	static std::string getGeneratorState();

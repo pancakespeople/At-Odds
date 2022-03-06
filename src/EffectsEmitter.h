@@ -34,6 +34,7 @@ public:
 	void drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state);
 	void drawLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawGatlingAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
+	void drawConstructionBeamAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void addExplosionEffect(sf::Vector2f pos, Star* star);
 	void drawParallaxBackground(Camera& camera);
 	void drawLightningEffect(sf::Vector2f pos, float time, float seed);
@@ -83,6 +84,7 @@ private:
 	sf::Shader m_jumpPointShader;
 	sf::Shader m_jumpTrailShader;
 	sf::Shader m_particleShader;
+	sf::Shader m_beamShader;
 
 	sf::Vector2i m_resolution;
 

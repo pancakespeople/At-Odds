@@ -100,7 +100,7 @@ bool AttackOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList
 				ship.smartFireAt(m_target, i);
 			}
 			else {
-				weapons[i].instaHitFireAt(ship.getPos(), m_target, &currentStar);
+				weapons[i].instaHitFireAt(ship.getPos(), m_target->getPos(), m_target, &currentStar);
 			}
 
 			if (ship.getHealth() < m_lastEnemyHealth) {
@@ -199,13 +199,19 @@ bool InteractWithBuildingOrder::execute(Spaceship& ship, Star& currentStar, cons
 	if (m_building->getCurrentStar() != ship.getCurrentStar() || m_building->isDead()) {
 		return true;
 	}
-	if (ship.getConstructionSpeed() > 0.0) {
+	if (ship.hasWeapon("CONSTRUCTION_GUN")) {
 		// Construction ship
 		float insideRadius = m_building->getCollider().getRadius() * 4.0f;
 		if (Math::distance(ship.getPos(), m_building->getPos()) < insideRadius) {
 			if (!m_building->isBuilt()) {
 				m_building->construct(&ship);
-				ship.fireAllWeaponsAt(m_building);
+				
+				for (Weapon& weapon : ship.getWeapons()) {
+					if (weapon.getType() == "CONSTRUCTION_GUN") {
+						weapon.instaHitFireAt(ship.getPos(), m_building->getPos() + Random::randPointInCircle(m_building->getCollider().getRadius()), m_building, &currentStar);
+					}
+				}
+
 				return false;
 			}
 			else {

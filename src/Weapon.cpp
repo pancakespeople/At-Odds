@@ -93,12 +93,12 @@ void Weapon::fireAtNearestEnemyCombatShip(sf::Vector2f sourcePos, int allegiance
 	}
 }
 
-void Weapon::instaHitFireAt(sf::Vector2f sourcePos, Unit* target, Star* star) {
+void Weapon::instaHitFireAt(sf::Vector2f sourcePos, sf::Vector2f endPos, Unit* target, Star* star) {
 	if (!isOnCooldown()) {
 		target->takeDamage(getDamage());
 		playFireSound(sourcePos, star);
 
-		m_lastFireLocation = target->getPos();
+		m_lastFireLocation = endPos;
 		m_cooldownPercent = 100.0f;
 	}
 }
@@ -111,14 +111,17 @@ std::string Weapon::getSoundPath() const {
 void Weapon::drawFireAnimation(Renderer& renderer, Unit* unit) {
 	if (isOnCooldown()) {
 		float step = (100.0f - m_cooldownPercent) / 100.0f;
-		if (m_fireAnimation == "beamlaser") {
+		if (m_fireAnimation == "BEAM_LASER") {
 			renderer.effects.drawLaserAnimation(unit->getPos(), m_lastFireLocation, step);
 		}
-		else if (m_fireAnimation == "gatlinggun") {
+		else if (m_fireAnimation == "GATLING_GUN") {
 			renderer.effects.drawGatlingAnimation(unit->getPos(), m_lastFireLocation, step);
 		}
-		else if (m_fireAnimation == "gatlinglaser") {
+		else if (m_fireAnimation == "GATLING_LASER") {
 			renderer.effects.drawGatlingLaserAnimation(unit->getPos(), m_lastFireLocation, step);
+		}
+		else if (m_fireAnimation == "CONSTRUCTION_BEAM") {
+			renderer.effects.drawConstructionBeamAnimation(unit->getPos(), m_lastFireLocation, step);
 		}
 	}
 }

@@ -426,5 +426,6 @@
     <None Include="data\shaders\jumppointshader.shader" />
     <None Include="data\shaders\jumptrailshader.shader" />
     <None Include="data\shaders\particleshader.shader" />
+    <None Include="data\shaders\beamshader.shader" />
   </ItemGroup>
 </Project>

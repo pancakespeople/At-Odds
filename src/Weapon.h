@@ -25,8 +25,8 @@ public:
 	void setUpgradeLevel(int level);
 	
 	// Insta hit makes the projectile hit the target always, instantly
-	void instaHitFireAt(sf::Vector2f sourcePos, Unit* target, Star* star);
-
+	void instaHitFireAt(sf::Vector2f sourcePos, sf::Vector2f endPos, Unit* target, Star* star);
+	
 	bool isOnCooldown();
 	bool isInstaHit() { return m_instaHit; }
 
@@ -37,6 +37,7 @@ public:
 	const Projectile& getProjectile() const { return m_projectile; }
 
 	std::string getSoundPath() const;
+	std::string getType() const { return m_type; }
 
 private:
 	friend class boost::serialization::access;

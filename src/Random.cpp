@@ -1,6 +1,7 @@
 #include "gamepch.h"
 
 #include "Random.h"
+#include "Math.h"
 
 std::mt19937_64& Random::getGen() {
 	static bool isInit = false;
@@ -55,4 +56,8 @@ std::string Random::randString(int numChars) {
 
 void Random::setGeneratorSeed(uint64_t seed) {
 	getGen().seed(seed);
+}
+
+sf::Vector2f Random::randPointInCircle(float radius) {
+	return Math::normalize(Random::randVec(-1.0f, 1.0f)) * Random::randFloat(0.0f, radius);
 }
