@@ -132,6 +132,21 @@ thrusterPoints = [
 	[428, 502]
 ]
 
+[MINER]
+name = "Miner"
+texturePath = "data/art/minership.png"
+mass = 100000.0
+health = 33.0
+colliderRadius = 275.0
+maxWeaponCapacity = 0.0
+cost = [["COMMON_ORE", 10.0]]
+hasDesign = false
+scale =  3.0
+thrusterPoints = [
+	[24, 119],
+	[107, 119]
+]
+
 [FIGHTER]
 name = "Fighter"
 texturePath = "data/art/SpaceShipNormal.png"

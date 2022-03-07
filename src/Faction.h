@@ -129,7 +129,7 @@ public:
 	template<typename T>
 	void giveAllCombatShipsOrder(const T order, bool clearOrders = false) {
 		for (Spaceship* s : m_ships) {
-			if (s->getConstructionSpeed() == 0.0f) {
+			if (s->isCombatShip()) {
 				if (clearOrders) s->clearOrders();
 				s->addOrder(order);
 			}

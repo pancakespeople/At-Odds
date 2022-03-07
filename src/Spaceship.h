@@ -61,6 +61,7 @@ public:
 	bool hasFighterAI() const { return m_fighterAI; }
 	bool isPirate() const { return m_pirate; }
 	bool diesSilently() const { return m_diesSilently; }
+	bool isCombatShip() const { return !isCivilian() && maxWeaponDamage() > 0.0f; }
 	
 	// Returns false if there is nothing to attack
 	bool attack(Star* star, const AllianceList& alliances, bool urgent = false);
