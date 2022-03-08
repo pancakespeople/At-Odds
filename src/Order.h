@@ -13,6 +13,7 @@ class Planet;
 class Constellation;
 class Renderer;
 class AllianceList;
+class Asteroid;
 
 class Order {
 public:
@@ -26,10 +27,14 @@ public:
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) { return std::pair<bool, sf::Vector2f>(false, sf::Vector2f()); }
 
 	Order() {}
+
+	bool executing = false;
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {}
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & executing;
+	}
 
 };
 
@@ -240,4 +245,26 @@ private:
 	sf::Vector2f m_pos;
 	int m_theftAllegiance = -1;
 	std::deque<DesignerShip> m_designs;
+};
+
+class MineAsteroidOrder : public Order {
+public:
+	bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
+	std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override;
+
+	MineAsteroidOrder(Asteroid* asteroid);
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Order>(*this);
+		archive & m_asteroidID;
+	}
+
+	MineAsteroidOrder() = default;
+
+	uint32_t m_asteroidID = 0;
+	Asteroid* m_asteroid = nullptr;
 };

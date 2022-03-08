@@ -58,6 +58,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	m_ships.back()->addWeapon(Weapon("GAUSS_CANNON"));
 
 	addSpaceship(m_capital->createSpaceship("MINER", Random::randVec(-10000, 10000), m_id, m_color));
+	m_ships.back()->addWeapon(Weapon("MINING_LASER"));
 
 	m_capital->createBuilding("OUTPOST", m_capital->getRandomLocalPos(-10000, 10000), this);
 	m_capital->createBuilding("SHIP_FACTORY", m_capital->getRandomLocalPos(-10000.0f, 10000.0f), this);

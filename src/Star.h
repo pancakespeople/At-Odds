@@ -98,6 +98,7 @@ public:
 	std::vector<Planet*> getEnemyPlanets(int allegiance, const AllianceList& alliances);
 	std::vector<Spaceship*> getEnemyCombatShips(int allegiance, const AllianceList& alliances);
 	std::vector<Building*> getBuildingsOfType(const std::string& type);
+	std::vector<Asteroid>& getAsteroids() { return m_asteroids; }
 	
 	// First = allegiance, second = num ships
 	std::unordered_map<int, int> countNumFactionShips();
@@ -110,6 +111,7 @@ public:
 	JumpPoint* getJumpPointByID(unsigned int id);
 	Planet* getPlanetByID(unsigned int id);
 	Hyperlane* getHyperlaneByID(uint32_t id);
+	Asteroid* getAsteroidByID(uint32_t id);
 
 	Planet& getMostHabitablePlanet();
 	Planet* getMostHabitablePlanet(int allegiance);

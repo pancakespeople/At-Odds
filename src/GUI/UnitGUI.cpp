@@ -167,112 +167,131 @@ void UnitGUI::onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& r
 	if (state.getState() == GameState::State::LOCAL_VIEW && mainPanelFocused) {
 		if (ev.type == sf::Event::MouseButtonPressed) {
 			if (ev.mouseButton.button == sf::Mouse::Right) {
-				// Give orders to selected ships
-
-				if (m_selectedShips.size() > 0) {
-					sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-					sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
-					JumpPoint* jumpPoint = nullptr;
-					Spaceship* attackTarget = nullptr;
-					Building* buildingClick = nullptr;
-					Planet* planetClick = nullptr;
-					const AllianceList& alliances = constellation.getAlliances();
-
-					// Check if click was on a jump point
-					for (JumpPoint& j : state.getLocalViewStar()->getJumpPoints()) {
-						if (j.isPointInRadius(worldClick)) {
-							jumpPoint = &j;
-							break;
-						}
-					}
-
-					// Check if click was on an enemy ship
-					for (auto& s : state.getLocalViewStar()->getSpaceships()) {
-						if (!alliances.isAllied(s->getAllegiance(), m_selectedShips[0]->getAllegiance())) {
-							if (s->getCollider().contains(worldClick)) {
-								attackTarget = s.get();
-								break;
-							}
-						}
-					}
-
-					// Check if click was on a building
-					for (auto& building : state.getLocalViewStar()->getBuildings()) {
-						if (building->getCollider().contains(worldClick)) {
-							buildingClick = building.get();
-						}
-					}
-
-					// Planets
-					for (auto& planet : state.getLocalViewStar()->getPlanets()) {
-						if (Math::distance(worldClick, planet.getPos()) < planet.getRadius()) {
-							planetClick = &planet;
-						}
-					}
-
-					int index = 0;
-					sf::Vector2f avgPos = getAveragePosOfSelectedShips();
-					// Add orders
-					for (Spaceship* s : m_selectedShips) {
-						if (!s->canPlayerGiveOrders()) continue;
-						if (state.getLocalViewStar() == s->getCurrentStar()) {
-							if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) s->clearOrders();
-							if (attackTarget != nullptr) {
-								s->addOrder(AttackOrder(attackTarget));
-							}
-							else if (buildingClick != nullptr) {
-								if (!alliances.isAllied(buildingClick->getAllegiance(), s->getAllegiance())) {
-									s->addOrder(AttackOrder(buildingClick)); // Attack enemy building
-								}
-								else {
-									s->addOrder(InteractWithBuildingOrder(buildingClick)); // Interact with friendly building
-								}
-							}
-							else if (jumpPoint != nullptr) {
-								s->addOrder(JumpOrder(jumpPoint));
-							}
-							else if (planetClick != nullptr) {
-								s->addOrder(InteractWithPlanetOrder(planetClick, state.getLocalViewStar()));
-							}
-							else {
-								float angle = Math::angleBetween(avgPos, worldClick);
-								float perpendicularAngle = angle - 90.0f;
-								sf::Vector2f formationMove(std::cos(perpendicularAngle) * index * 100.0f, std::sin(perpendicularAngle) * index * 100.0f);
-
-								s->addOrder(FlyToOrder(worldClick + formationMove));
-							}
-						}
-						index++;
-					}
-				}
+				onRightClickLocalView(window, renderer, constellation, state);
 			}
 		}
 	}
 	else if (state.getState() == GameState::State::WORLD_VIEW) {
 		if (ev.type == sf::Event::MouseButtonPressed && ev.mouseButton.button == sf::Mouse::Right) {
-			sf::Vector2i screenPos = sf::Mouse::getPosition(window);
-			sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
-			Star* star = nullptr;
+			onRightClickWorldView(window, renderer, constellation);
+		}
+	}
+}
 
-			// Check if click on star
-			for (std::unique_ptr<Star>& s : constellation.getStars()) {
-				if (s->isInShapeRadius(worldClick.x, worldClick.y)) {
-					star = s.get();
+void UnitGUI::onRightClickWorldView(sf::RenderWindow & window, Renderer & renderer, Constellation & constellation) {
+	sf::Vector2i screenPos = sf::Mouse::getPosition(window);
+	sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
+	Star* star = nullptr;
+
+	// Check if click on star
+	for (std::unique_ptr<Star>& s : constellation.getStars()) {
+		if (s->isInShapeRadius(worldClick.x, worldClick.y)) {
+			star = s.get();
+			break;
+		}
+	}
+
+	// Add travel order to star
+	if (star != nullptr) {
+		for (Spaceship* s : m_selectedShips) {
+			if (!s->canPlayerGiveOrders()) continue;
+			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) s->clearOrders();
+			s->addOrder(TravelOrder(star));
+		}
+		if (m_selectedShips.size() > 0) {
+			drawStarPath(m_selectedShips[0]->getCurrentStar(), star);
+		}
+	}
+}
+
+void UnitGUI::onRightClickLocalView(sf::RenderWindow & window, Renderer & renderer, Constellation & constellation, GameState & state) {
+	// Give orders to selected ships
+
+	if (m_selectedShips.size() > 0) {
+		sf::Vector2i screenPos = sf::Mouse::getPosition(window);
+		sf::Vector2f worldClick = renderer.mapPixelToCoords(screenPos);
+		JumpPoint* jumpPoint = nullptr;
+		Spaceship* attackTarget = nullptr;
+		Building* buildingClick = nullptr;
+		Planet* planetClick = nullptr;
+		Asteroid* asteroidClick = nullptr;
+		const AllianceList& alliances = constellation.getAlliances();
+
+		// Check if click was on a jump point
+		for (JumpPoint& j : state.getLocalViewStar()->getJumpPoints()) {
+			if (j.isPointInRadius(worldClick)) {
+				jumpPoint = &j;
+				break;
+			}
+		}
+
+		// Check if click was on an enemy ship
+		for (auto& s : state.getLocalViewStar()->getSpaceships()) {
+			if (!alliances.isAllied(s->getAllegiance(), m_selectedShips[0]->getAllegiance())) {
+				if (s->getCollider().contains(worldClick)) {
+					attackTarget = s.get();
 					break;
 				}
 			}
+		}
 
-			// Add travel order to star
-			if (star != nullptr) {
-				for (Spaceship* s : m_selectedShips) {
-					if (!s->canPlayerGiveOrders()) continue;
-					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) s->clearOrders();
-					s->addOrder(TravelOrder(star));
+		// Check if click was on a building
+		for (auto& building : state.getLocalViewStar()->getBuildings()) {
+			if (building->getCollider().contains(worldClick)) {
+				buildingClick = building.get();
+			}
+		}
+
+		// Planets
+		for (auto& planet : state.getLocalViewStar()->getPlanets()) {
+			if (Math::distance(worldClick, planet.getPos()) < planet.getRadius()) {
+				planetClick = &planet;
+			}
+		}
+
+		// Asteroids
+		for (auto& asteroid : state.getLocalViewStar()->getAsteroids()) {
+			if (Math::distance(worldClick, asteroid.getPos()) < asteroid.getRadius()) {
+				asteroidClick = &asteroid;
+			}
+		}
+
+		int index = 0;
+		sf::Vector2f avgPos = getAveragePosOfSelectedShips();
+		// Add orders
+		for (Spaceship* s : m_selectedShips) {
+			if (!s->canPlayerGiveOrders()) continue;
+			if (state.getLocalViewStar() == s->getCurrentStar()) {
+				if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) s->clearOrders();
+				if (attackTarget != nullptr) {
+					s->addOrder(AttackOrder(attackTarget));
 				}
-				if (m_selectedShips.size() > 0) {
-					drawStarPath(m_selectedShips[0]->getCurrentStar(), star);
+				else if (buildingClick != nullptr) {
+					if (!alliances.isAllied(buildingClick->getAllegiance(), s->getAllegiance())) {
+						s->addOrder(AttackOrder(buildingClick)); // Attack enemy building
+					}
+					else {
+						s->addOrder(InteractWithBuildingOrder(buildingClick)); // Interact with friendly building
+					}
+				}
+				else if (jumpPoint != nullptr) {
+					s->addOrder(JumpOrder(jumpPoint));
+				}
+				else if (planetClick != nullptr) {
+					s->addOrder(InteractWithPlanetOrder(planetClick, state.getLocalViewStar()));
+				}
+				else if (asteroidClick != nullptr) {
+					s->addOrder(MineAsteroidOrder(asteroidClick));
+				}
+				else {
+					float angle = Math::angleBetween(avgPos, worldClick);
+					float perpendicularAngle = angle - 90.0f;
+					sf::Vector2f formationMove(std::cos(perpendicularAngle) * index * 100.0f, std::sin(perpendicularAngle) * index * 100.0f);
+
+					s->addOrder(FlyToOrder(worldClick + formationMove));
 				}
 			}
+			index++;
 		}
 	}
 }

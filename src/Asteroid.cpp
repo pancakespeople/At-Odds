@@ -27,7 +27,7 @@ Asteroid::Asteroid(sf::Vector2f pos, sf::Vector2f starPos) {
 }
 
 void Asteroid::draw(Renderer& renderer) {
-	float radius = m_sprite.getLocalBounds().width * 1.25f;
+	float radius = getRadius();
 
 	SmoothCircle circle;
 	circle.setOrigin({ radius, radius });

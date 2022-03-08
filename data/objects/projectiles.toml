@@ -36,6 +36,11 @@ damage = 0.0
 life = 100.0
 speed = 15.0
 
+[MINING_LASER]
+damage = 0.0
+life = 100.0
+speed = 15.0
+
 [ROCKET]
 texturePath = "data/art/rocket.png"
 onDeathScript = "smallExplosion.lua"

@@ -71,6 +71,8 @@ public:
 		return nullptr;
 	}
 
+	Weapon* getWeapon(const std::string& type);
+
 protected:
 	friend class boost::serialization::access;
 	template<class Archive>

@@ -184,6 +184,9 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		for (Planet& planet : m_planets) {
 			planet.draw(renderer, window, this, time);
 		}
+		for (Asteroid& asteroid : m_asteroids) {
+			asteroid.draw(renderer);
+		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {
 			s->draw(renderer, time);
@@ -208,9 +211,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		for (AsteroidBelt& ab : m_asteroidBelts) {
 			renderer.effects.drawAsteroidBelt(getLocalViewCenter(), ab.radius, ab.seed);
 		}
-		for (Asteroid& asteroid : m_asteroids) {
-			asteroid.draw(renderer);
-		}
+		
 	}
 }
 
@@ -936,4 +937,13 @@ void Star::generateAsteroids() {
 		sf::Vector2f pos = Math::normalize(Random::randVec(-1.0f, 1.0f)) * Random::randFloat(0.0f, getOuterBoundary());
 		m_asteroids.push_back(Asteroid(pos, getLocalViewCenter()));
 	}
+}
+
+Asteroid* Star::getAsteroidByID(uint32_t id) {
+	for (Asteroid& asteroid : m_asteroids) {
+		if (asteroid.getID() == id) {
+			return &asteroid;
+		}
+	}
+	return nullptr;
 }

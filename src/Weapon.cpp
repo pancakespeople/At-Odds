@@ -95,7 +95,10 @@ void Weapon::fireAtNearestEnemyCombatShip(sf::Vector2f sourcePos, int allegiance
 
 void Weapon::instaHitFireAt(sf::Vector2f sourcePos, sf::Vector2f endPos, Unit* target, Star* star) {
 	if (!isOnCooldown()) {
-		target->takeDamage(getDamage());
+		if (target != nullptr) {
+			target->takeDamage(getDamage());
+		}
+
 		playFireSound(sourcePos, star);
 
 		m_lastFireLocation = endPos;

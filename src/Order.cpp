@@ -14,6 +14,7 @@
 #include "Designs.h"
 #include "Renderer.h"
 #include "Random.h"
+#include "Asteroid.h"
 
 BOOST_CLASS_EXPORT_GUID(FlyToOrder, "FlyToOrder")
 BOOST_CLASS_EXPORT_GUID(JumpOrder, "JumpOrder")
@@ -59,7 +60,7 @@ bool JumpOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& 
 }
 
 void JumpOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
-	m_jumpPoint = currentStar->getJumpPointByID(m_jumpPointID);
+	if (!executing) m_jumpPoint = currentStar->getJumpPointByID(m_jumpPointID);
 	if (m_jumpPoint != nullptr)
 		renderer.effects.drawLine(shipPos, m_jumpPoint->getPos(), sf::Color::Yellow);
 }
@@ -126,14 +127,14 @@ bool AttackOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList
 }
 
 void AttackOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
-	m_target = currentStar->getUnitByID(m_targetID);
+	if (!executing) m_target = currentStar->getUnitByID(m_targetID); // This is here so queued orders can still track their targets
 	if (m_target != nullptr) {
 		renderer.effects.drawLine(shipPos, m_target->getPos(), sf::Color::Red);
 	}
 }
 
 std::pair<bool, sf::Vector2f> AttackOrder::getDestinationPos(Star* currentStar) {
-	m_target = currentStar->getUnitByID(m_targetID);
+	if (!executing) m_target = currentStar->getUnitByID(m_targetID);
 	if (m_target != nullptr) {
 		return std::pair<bool, sf::Vector2f>(true, m_target->getPos());
 	}
@@ -208,7 +209,7 @@ bool InteractWithBuildingOrder::execute(Spaceship& ship, Star& currentStar, cons
 				
 				for (Weapon& weapon : ship.getWeapons()) {
 					if (weapon.getType() == "CONSTRUCTION_GUN") {
-						weapon.instaHitFireAt(ship.getPos(), m_building->getPos() + Random::randPointInCircle(m_building->getCollider().getRadius()), m_building, &currentStar);
+						weapon.instaHitFireAt(ship.getPos(), m_building->getPos() + Random::randPointInCircle(m_building->getCollider().getRadius()), nullptr, &currentStar);
 					}
 				}
 
@@ -235,13 +236,13 @@ bool InteractWithBuildingOrder::execute(Spaceship& ship, Star& currentStar, cons
 }
 
 void InteractWithBuildingOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
-	m_building = currentStar->getBuildingByID(m_buildingID);
+	if (!executing) m_building = currentStar->getBuildingByID(m_buildingID);
 	if (m_building != nullptr)
 		renderer.effects.drawLine(shipPos, m_building->getPos(), sf::Color(100, 100, 255));
 }
 
 std::pair<bool, sf::Vector2f> InteractWithBuildingOrder::getDestinationPos(Star* currentStar) {
-	m_building = currentStar->getBuildingByID(m_buildingID);
+	if (!executing) m_building = currentStar->getBuildingByID(m_buildingID);
 	if (m_building != nullptr) {
 		return std::pair<bool, sf::Vector2f>(true, m_building->getPos());
 	}
@@ -304,7 +305,7 @@ bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const 
 }
 
 void InteractWithPlanetOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
-	m_planet = currentStar->getPlanetByID(m_planetID);
+	if (!executing) m_planet = currentStar->getPlanetByID(m_planetID);
 	if (m_planet != nullptr)
 		renderer.effects.drawLine(shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
 }
@@ -356,13 +357,13 @@ bool InteractWithUnitOrder::execute(Spaceship& ship, Star& currentStar, const Al
 }
 
 void InteractWithUnitOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
-	m_unit = currentStar->getBuildingByID(m_unitID);
+	if (!executing) m_unit = currentStar->getBuildingByID(m_unitID);
 	if (m_unit != nullptr)
 		renderer.effects.drawLine(shipPos, m_unit->getPos(), sf::Color(100, 100, 255));
 }
 
 std::pair<bool, sf::Vector2f> InteractWithUnitOrder::getDestinationPos(Star* currentStar) {
-	m_unit = currentStar->getUnitByID(m_unitID);
+	if (!executing) m_unit = currentStar->getUnitByID(m_unitID);
 	if (m_unit != nullptr) {
 		return std::pair<bool, sf::Vector2f>(true, m_unit->getPos());
 	}
@@ -399,4 +400,50 @@ bool EstablishPirateBaseOrder::execute(Spaceship& ship, Star& currentStar, const
 		return true;
 	}
 	return false;
+}
+
+bool MineAsteroidOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+	if (m_asteroid == nullptr) {
+		m_asteroid = currentStar.getAsteroidByID(m_asteroidID);
+		if (m_asteroid == nullptr) {
+			return true;
+		}
+	}
+
+	if (ship.hasWeapon("MINING_LASER")) {
+		Weapon* miningLaser = ship.getWeapon("MINING_LASER");
+
+		if (Math::distance(ship.getPos(), m_asteroid->getPos()) - m_asteroid->getRadius() < miningLaser->getRange()) {
+			miningLaser->instaHitFireAt(ship.getPos(), m_asteroid->getPos() + Random::randPointInCircle(m_asteroid->getRadius()), nullptr, &currentStar);
+		}
+
+		ship.orbit(m_asteroid->getPos());
+	}
+	else {
+		return true;
+	}
+
+	return false;
+}
+
+MineAsteroidOrder::MineAsteroidOrder(Asteroid* asteroid) {
+	m_asteroid = asteroid;
+	m_asteroidID = asteroid->getID();
+}
+
+void MineAsteroidOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
+	if (!executing) m_asteroid = currentStar->getAsteroidByID(m_asteroidID);
+	if (m_asteroid != nullptr) {
+		renderer.effects.drawLine(shipPos, m_asteroid->getPos(), sf::Color(255, 215, 0));
+	}
+}
+
+std::pair<bool, sf::Vector2f> MineAsteroidOrder::getDestinationPos(Star* currentStar) {
+	if (!executing) m_asteroid = currentStar->getAsteroidByID(m_asteroidID);
+	if (m_asteroid != nullptr) {
+		return std::pair<bool, sf::Vector2f>(true, m_asteroid->getPos());
+	}
+	else {
+		return std::pair<bool, sf::Vector2f>(false, sf::Vector2f());
+	}
 }

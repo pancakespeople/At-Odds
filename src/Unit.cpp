@@ -143,3 +143,12 @@ bool Unit::hasWeapon(const std::string& type) const {
 	}
 	return false;
 }
+
+Weapon* Unit::getWeapon(const std::string& type) {
+	for (Weapon& weapon : m_weapons) {
+		if (weapon.getType() == type) {
+			return &weapon;
+		}
+	}
+	return nullptr;
+}

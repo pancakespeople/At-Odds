@@ -13,6 +13,8 @@ public:
 	void updatePanel();
 	void draw(sf::RenderWindow& window);
 	void onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap);
+	void onRightClickWorldView(sf::RenderWindow & window, Renderer & renderer, Constellation & constellation);
+	void onRightClickLocalView(sf::RenderWindow & window, Renderer & renderer, Constellation & constellation, GameState & state);
 	void setDisabled(bool disabled) { m_disabled = disabled; }
 
 	bool isSelecting() const { return m_selecting; }

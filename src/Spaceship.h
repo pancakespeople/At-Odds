@@ -84,7 +84,12 @@ public:
 	void addOrder(const T order) { if (m_canReceiveOrders) m_orders.push_back(std::make_unique<T>(order)); }
 
 	template <typename T>
-	void addOrderFront(const T order) { if (m_canReceiveOrders) m_orders.push_front(std::make_unique<T>(order)); }
+	void addOrderFront(const T order) { 
+		if (m_canReceiveOrders) {
+			m_orders.front()->executing = false;
+			m_orders.push_front(std::make_unique<T>(order));
+		}
+	}
 
 	JumpState jump(JumpPoint* point);
 

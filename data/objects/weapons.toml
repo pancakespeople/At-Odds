@@ -29,6 +29,13 @@ hasDesign = false
 fireAnimation = "CONSTRUCTION_BEAM"
 instaHit = true
 
+[MINING_LASER]
+projectile = "MINING_LASER"
+findable = false
+hasDesign = false
+fireAnimation = "CONSTRUCTION_BEAM"
+instaHit = true
+
 [ROCKET_LAUNCHER]
 name = "Rocket Launcher"
 weaponPoints = 1.0

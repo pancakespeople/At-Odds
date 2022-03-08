@@ -209,6 +209,7 @@ void Spaceship::update(Star* currentStar, const AllianceList& alliances) {
 
 	if (m_AIEnabled) {
 		if (!m_orders.empty()) {
+			m_orders.front()->executing = true;
 			if (m_orders.front()->execute(*this, *currentStar, alliances)) {
 				m_orders.pop_front();
 			}
