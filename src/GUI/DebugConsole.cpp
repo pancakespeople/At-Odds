@@ -18,7 +18,7 @@ void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies
 		Faction* faction = goodies.constellation.getFaction(allegiance);
 		
 		sf::Vector2f pos = goodies.renderer.mapPixelToCoords(sf::Mouse::getPosition(goodies.window));
-		sf::Color color = faction->getColor();
+		sf::Color color = allegiance != -1 ? faction->getColor() : Faction::neutralColor;
 
 		Spaceship* ship = nullptr;
 
@@ -30,7 +30,9 @@ void spawnShip(const DebugConsole::Command& command, const DebugConsole::Goodies
 			ship->addWeapon(Weapon(weapon));
 		}
 		
-		faction->addSpaceship(ship);
+		if (faction != nullptr) {
+			faction->addSpaceship(ship);
+		}
 
 		goodies.console->addLine("Created spaceship at mouse cursor");
 	}

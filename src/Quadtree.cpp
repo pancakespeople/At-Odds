@@ -1,6 +1,8 @@
 #include "gamepch.h"
 #include "Quadtree.h"
 #include "Unit.h"
+#include "Renderer.h"
+#include "Fonts.h"
 
 Quadtree::Quadtree(sf::Vector2f middle, float size) {
 	m_middle = middle;
@@ -16,6 +18,16 @@ void Quadtree::split() {
 	m_subNodes.push_back(Quadtree(sf::Vector2f(m_middle.x - middleStep, m_middle.y - middleStep), subSize)); // Bottom left
 	m_subNodes.push_back(Quadtree(sf::Vector2f(m_middle.x + middleStep, m_middle.y - middleStep), subSize)); // Bottom right
 
+	m_subNodes[0].m_level = m_level + 1;
+	m_subNodes[1].m_level = m_level + 1;
+	m_subNodes[2].m_level = m_level + 1;
+	m_subNodes[3].m_level = m_level + 1;
+
+	m_subNodes[0].m_quadrant = 0;
+	m_subNodes[1].m_quadrant = 1;
+	m_subNodes[2].m_quadrant = 2;
+	m_subNodes[3].m_quadrant = 3;
+
 	// Put objects into subnodes
 	for (int i = 0; i < m_objects.size(); i++) {
 		int quadrant = getQuadrant(m_objects[i]->getCollider());
@@ -29,30 +41,38 @@ void Quadtree::split() {
 
 int Quadtree::getQuadrant(const Collider& collider) {
 	sf::Vector2f colliderPos = collider.getPosition();
-
-	// Check bounds
+	
+	// Check outer bounds
 	if (colliderPos.x - collider.getRadius() >= m_middle.x - m_size / 2.0f && colliderPos.x + collider.getRadius() <= m_middle.x + m_size / 2.0f &&
 		colliderPos.y - collider.getRadius() >= m_middle.y - m_size / 2.0f && colliderPos.y + collider.getRadius() <= m_middle.y + m_size / 2.0f) {
-		if (colliderPos.y >= m_middle.y) {
+		// Check inner bounds
+
+		if (colliderPos.y + collider.getRadius() <= m_middle.y) {
 			// Top quadrants
 
-			if (colliderPos.x >= m_middle.x) {
+			if (colliderPos.x - collider.getRadius() >= m_middle.x) {
 				return 0; // Top right
 			}
-			else {
+			if (colliderPos.x + collider.getRadius() <= m_middle.x) {
 				return 1; // Top left
 			}
+
+			return -1;
 		}
-		else {
+		if (colliderPos.y - collider.getRadius() >= m_middle.y) {
 			// Bottom quadrants
 
-			if (colliderPos.x >= m_middle.x) {
+			if (colliderPos.x - collider.getRadius() >= m_middle.x) {
 				return 3; // Bottom right
 			}
-			else {
+			if (colliderPos.x + collider.getRadius() <= m_middle.x) {
 				return 2; // Bottom left
 			}
+
+			return -1;
 		}
+
+		return -1;
 	}
 	else {
 		// Doesn't fit
@@ -77,7 +97,7 @@ void Quadtree::insert(Unit* object) {
 	}
 }
 
-void Quadtree::draw(sf::RenderWindow& window) {
+void Quadtree::draw(Renderer& renderer) {
 	sf::RectangleShape rect;
 	rect.setPosition(m_middle);
 	rect.setSize(sf::Vector2f(m_size, m_size));
@@ -86,10 +106,21 @@ void Quadtree::draw(sf::RenderWindow& window) {
 	rect.setOutlineThickness(25.0f);
 	rect.setOutlineColor(sf::Color::Red);
 
-	window.draw(rect);
+	renderer.draw(rect);
+
+	sf::Text text;
+	text.setFont(Fonts::getFont("data/fonts/OpenSans-Regular.ttf"));
+	text.setOrigin({ text.getLocalBounds().width / 2.0f, text.getLocalBounds().height / 2.0f });
+
+	for (Unit* unit : m_objects) {
+		text.setString(std::to_string(m_level) + " : " + std::to_string(m_quadrant));
+		text.setScale({ 5.0, 5.0 });
+		text.setPosition(unit->getPos());
+		renderer.draw(text);
+	}
 
 	for (Quadtree& subNode : m_subNodes) {
-		subNode.draw(window);
+		subNode.draw(renderer);
 	}
 }
 
