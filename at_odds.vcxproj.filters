@@ -411,6 +411,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\AllianceList.cpp" />
     <ClCompile Include="src\Asteroid.cpp" />
+    <ClCompile Include="src\AsteroidBelt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\scripts\laserAnimation.lua" />
@@ -427,5 +428,7 @@
     <None Include="data\shaders\jumptrailshader.shader" />
     <None Include="data\shaders\particleshader.shader" />
     <None Include="data\shaders\beamshader.shader" />
+    <None Include="data\shaders\newasteroidbeltshader.shader" />
+    <None Include="data\shaders\asteroidbeltvertex.shader" />
   </ItemGroup>
 </Project>

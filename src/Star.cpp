@@ -209,7 +209,8 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		m_particleSystem.drawParticles(renderer);
 
 		for (AsteroidBelt& ab : m_asteroidBelts) {
-			renderer.effects.drawAsteroidBelt(getLocalViewCenter(), ab.radius, ab.seed);
+			//renderer.effects.drawAsteroidBelt(getLocalViewCenter(), ab.radius, ab.seed);
+			ab.draw(renderer, *this);
 		}
 		
 	}
@@ -827,12 +828,11 @@ std::unordered_map<int, int> Star::countNumFactionShips() {
 }
 
 void Star::generateAsteroidBelts() {
-	int numBelts = Random::randInt(0, 3);
+	int numBelts = Random::randInt(1, 3);
 	float radius = Random::randFloat(5000.0f, 100000.0f);
 	for (int i = 0; i < numBelts; i++) {
-		AsteroidBelt ab;
-		ab.radius = radius;
-		ab.seed = Random::randFloat(0.0f, 0.75f);
+		AsteroidBelt ab(Random::randInt(0, INT32_MAX), radius);
+		//ab.generate(*this);
 		m_asteroidBelts.push_back(ab);
 		
 		radius += Random::randFloat(5000.0f, 100000.0f);
@@ -946,4 +946,18 @@ Asteroid* Star::getAsteroidByID(uint32_t id) {
 		}
 	}
 	return nullptr;
+}
+
+void Star::onEnterLocalView() {
+	for (AsteroidBelt& ab : m_asteroidBelts) {
+		if (!ab.isGenerated()) {
+			ab.generate(*this);
+		}
+	}
+}
+
+void Star::onLeaveLocalView() {
+	for (AsteroidBelt& ab : m_asteroidBelts) {
+		ab.clearVertices();
+	}
 }

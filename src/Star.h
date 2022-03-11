@@ -54,6 +54,8 @@ public:
 	void generateAsteroidBelts();
 	void onClick(GameState& state, sf::Vector2f releaseMouseWorldPos, sf::Vector2f pressMouseWorldPos);
 	void generateAsteroids();
+	void onEnterLocalView();
+	void onLeaveLocalView();
 	
 	Spaceship* createSpaceship(const std::string& type, sf::Vector2f pos, int allegiance, sf::Color color);
 	Spaceship* generateRandomShip(sf::Vector2f pos, int allegiance, sf::Color color, std::vector<std::string> allowedChassis);

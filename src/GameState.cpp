@@ -13,6 +13,7 @@ void GameState::changeToLocalView(Star* star) {
 	m_camera.setAbsoluteZoom(10.0f);
 
 	star->m_localViewActive = true;
+	star->onEnterLocalView();
 	m_localViewStar = star;
 	m_localViewStarID = star->getID();
 	m_state = GameState::State::LOCAL_VIEW;
@@ -32,6 +33,7 @@ void GameState::changeToWorldView() {
 	m_camera.resetZoom();
 	
 	m_localViewStar->m_localViewActive = false;
+	m_localViewStar->onLeaveLocalView();
 	m_localViewStar->clearAnimations();
 	m_localViewStar = nullptr;
 	m_localViewStarID = 0;

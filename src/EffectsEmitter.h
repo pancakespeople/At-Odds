@@ -30,7 +30,7 @@ public:
 	void drawBorders(const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color);
 	void drawBlackHole(const sf::RectangleShape& starRect, float time, float seed);
 	void drawRings(sf::Vector2f pos, float radius, float seed);
-	void drawAsteroidBelt(sf::Vector2f pos, float radius, float seed);
+	void drawAsteroidBelt(const std::vector<sf::Vertex>& vertices, float rotationSpeed, sf::Vector2f sunPos);
 	void drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state);
 	void drawLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawGatlingAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);

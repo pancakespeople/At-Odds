@@ -55,7 +55,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_mapStarShader.setUniform("resolution", sf::Glsl::Vec2(resolution.x, resolution.y));
 
 	m_ringsShader.loadFromFile(m_vertexShaderPath, "data/shaders/ringsshader.shader");
-	m_asteroidBeltShader.loadFromFile(m_vertexShaderPath, "data/shaders/asteroidbeltshader.shader");
+	m_asteroidBeltShader.loadFromFile("data/shaders/asteroidbeltvertex.shader", "data/shaders/newasteroidbeltshader.shader");
 	m_postEffectsShader.loadFromFile(m_vertexShaderPath, "data/shaders/posteffectsshader.shader");
 	m_parallaxShader.loadFromFile(m_vertexShaderPath, "data/shaders/parallaxshader.shader");
 	m_lightningShader.loadFromFile(m_vertexShaderPath, "data/shaders/lightning.shader");
@@ -258,16 +258,12 @@ void EffectsEmitter::drawRings(sf::Vector2f pos, float radius, float seed) {
 	m_renderer.draw(shape, &m_ringsShader);
 }
 
-void EffectsEmitter::drawAsteroidBelt(sf::Vector2f pos, float radius, float seed) {
-	m_asteroidBeltShader.setUniform("seed", seed);
-	m_asteroidBeltShader.setUniform("size", sf::Glsl::Vec2(radius, radius));
+void EffectsEmitter::drawAsteroidBelt(const std::vector<sf::Vertex>& vertices, float rotationSpeed, sf::Vector2f sunPos) {
+	m_asteroidBeltShader.setUniform("tex", TextureCache::getTexture("data/art/asteroid1.png"));
+	m_asteroidBeltShader.setUniform("rotationSpeed", rotationSpeed);
+	m_asteroidBeltShader.setUniform("sunPos", sunPos);
 
-	sf::RectangleShape shape;
-	shape.setSize(sf::Vector2f(radius, radius));
-	shape.setOrigin(sf::Vector2f(radius / 2.0f, radius / 2.0f));
-	shape.setPosition(pos);
-
-	m_renderer.draw(shape, &m_asteroidBeltShader);
+	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, &m_asteroidBeltShader);
 }
 
 void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state) {
