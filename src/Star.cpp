@@ -828,11 +828,10 @@ std::unordered_map<int, int> Star::countNumFactionShips() {
 }
 
 void Star::generateAsteroidBelts() {
-	int numBelts = Random::randInt(1, 3);
-	float radius = Random::randFloat(5000.0f, 100000.0f);
+	int numBelts = Random::randInt(0, 3);
+	float radius = Random::randFloat(2500.0f, 50000.0f);
 	for (int i = 0; i < numBelts; i++) {
 		AsteroidBelt ab(Random::randInt(0, INT32_MAX), radius);
-		//ab.generate(*this);
 		m_asteroidBelts.push_back(ab);
 		
 		radius += Random::randFloat(5000.0f, 100000.0f);

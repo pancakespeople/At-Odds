@@ -6,35 +6,48 @@
 #include "TextureCache.h"
 #include "Star.h"
 
+const std::vector<std::vector<sf::Vector2f>> sheetTexCoords = {
+	{{0.0f, 0.0f}, {0.0f, 0.5f}, {0.33f, 0.5f}, {0.33f, 0.0f}},
+	{{0.33f, 0.0f}, {0.33f, 0.5f}, {0.66f, 0.5f}, {0.66f, 0.0f}},
+	{{0.66f, 0.0f}, {0.66f, 0.5f}, {1.0f, 0.5f}, {1.0f, 0.0f}},
+	{{0.0f, 0.5f}, {0.0f, 1.0f}, {0.33f, 1.0f}, {0.33f, 0.5f}},
+	{{0.33f, 0.5f}, {0.33f, 1.0f}, {0.66f, 1.0f}, {0.66f, 0.5f}},
+	{{0.66f, 0.5f}, {0.66f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.5f}},
+};
+
 void AsteroidBelt::generate(const Star& star) {
 	std::string genState = Random::getGeneratorState();
 	Random::setGeneratorSeed(m_seed);
 
-	m_vertices.reserve(10000);
-	for (int i = 0; i < 10000; i++) {
-		sf::Vector2f pos = Math::normalize(Random::randPointInCircle(1.0f)) * (m_radius + Random::randFloat(-1000.0f, 1000.0f));
+	int numAsteroids = Random::randInt(5000, 12500);
+	float radius = Random::randFloat(500.0f, 2000.0f);
+
+	m_vertices.reserve(numAsteroids);
+	for (int i = 0; i < numAsteroids; i++) {
+		sf::Vector2f pos = Math::normalize(Random::randPointInCircle(1.0f)) * (m_radius + Random::randFloat(-radius, radius));
 		float aspect = 640.0f / 360.0f;
 		float size = Random::randFloat(25.0f, 100.0f);
+		std::vector<sf::Vector2f> texCoords = sheetTexCoords[Random::randInt(0, sheetTexCoords.size() - 1)];
 
 		// Bottom left
 		sf::Vertex v1;
 		v1.position = pos + sf::Vector2f{ -size*aspect, -size };
-		v1.texCoords = { 0.0f, 0.0f };
+		v1.texCoords = texCoords[0];
 
 		// Top left
 		sf::Vertex v2;
 		v2.position = pos + sf::Vector2f{ -size*aspect, size };
-		v2.texCoords = { 0.0f, 1.0f };
+		v2.texCoords = texCoords[1];
 
 		// Top right
 		sf::Vertex v3;
 		v3.position = pos + sf::Vector2f{ size*aspect, size };
-		v3.texCoords = { 1.0f, 1.0f };
+		v3.texCoords = texCoords[2];
 
 		// Bottom right
 		sf::Vertex v4;
 		v4.position = pos + sf::Vector2f{ size*aspect, -size };
-		v4.texCoords = { 1.0f, 0.0f };
+		v4.texCoords = texCoords[3];
 
 		m_vertices.push_back(v1);
 		m_vertices.push_back(v2);

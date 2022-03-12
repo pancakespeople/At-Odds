@@ -259,7 +259,7 @@ void EffectsEmitter::drawRings(sf::Vector2f pos, float radius, float seed) {
 }
 
 void EffectsEmitter::drawAsteroidBelt(const std::vector<sf::Vertex>& vertices, float rotationSpeed, sf::Vector2f sunPos) {
-	m_asteroidBeltShader.setUniform("tex", TextureCache::getTexture("data/art/asteroid1.png"));
+	m_asteroidBeltShader.setUniform("tex", TextureCache::getTexture("data/art/asteroidssheet.png"));
 	m_asteroidBeltShader.setUniform("rotationSpeed", rotationSpeed);
 	m_asteroidBeltShader.setUniform("sunPos", sunPos);
 
