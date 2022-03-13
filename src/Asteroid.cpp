@@ -24,6 +24,26 @@ Asteroid::Asteroid(sf::Vector2f pos, sf::Vector2f starPos) {
 	m_sprite.setScale({ 4.0f, 4.0f });
 
 	m_orbit = Orbit(pos, starPos);
+	float rnd = Random::randFloat(0.0f, 1.0f);
+
+	if (rnd > 0.5f) {
+		// 50% chance
+		m_resource = "COMMON_ORE";
+		m_sprite.setColor(sf::Color::Red);
+	}
+	else if (rnd > 0.15f) {
+		// 35% chance
+		m_resource = "UNCOMMON_ORE";
+		m_sprite.setColor(sf::Color(0, 255, 255));
+	}
+	else {
+		// 15% chance
+		m_resource = "RARE_ORE";
+		m_sprite.setColor(sf::Color::Yellow);
+	}
+
+	//m_resourceCount = Random::randFloat(500.0f, 5000.0f);
+	m_resourceCount = 100.0f;
 }
 
 void Asteroid::draw(Renderer& renderer) {
@@ -41,4 +61,19 @@ void Asteroid::draw(Renderer& renderer) {
 
 void Asteroid::update() {
 	m_sprite.setPosition(m_orbit.update());
+
+	if (m_resourceCount <= 0.0f) {
+		m_destructionTimer++;
+	}
+}
+
+void Asteroid::mineAsteroid(Faction& faction, float amount) {
+	if (m_resourceCount - amount > 0.0f) {
+		faction.addResource(m_resource, amount);
+		m_resourceCount -= amount;
+	}
+	else if (m_resourceCount > 0.0f) {
+		faction.addResource(m_resource, m_resourceCount);
+		m_resourceCount = 0.0f;
+	}
 }

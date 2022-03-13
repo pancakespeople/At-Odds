@@ -412,8 +412,9 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 	
 	// Update spaceships
 	for (int i = 0; i < m_localShips.size(); i++) {
-		m_localShips[i]->updateMods(*this, constellation->getFaction(m_localShips[i]->getAllegiance()), constellation->getAlliances());
-		m_localShips[i]->update(this, constellation->getAlliances());
+		Faction* faction = constellation->getFaction(m_localShips[i]->getAllegiance());
+		m_localShips[i]->updateMods(*this, faction, constellation->getAlliances());
+		m_localShips[i]->update(this, constellation->getAlliances(), faction);
 
 		if (m_localShips[i] == nullptr) {
 			// It left
@@ -513,8 +514,13 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 			i--;
 		}
 	}
-	for (Asteroid& asteroid : m_asteroids) {
-		asteroid.update();
+	for (int i = 0; i < m_asteroids.size(); i++) {
+		m_asteroids[i].update();
+
+		if (m_asteroids[i].isDead()) {
+			m_asteroids.erase(m_asteroids.begin() + i);
+			i--;
+		}
 	}
 
 	m_particleSystem.updateParticles();

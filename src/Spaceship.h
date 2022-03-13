@@ -28,7 +28,7 @@ public:
 	
 	void draw(Renderer& renderer, float time);
 	void accelerate(float amount);
-	void update(Star* currentStar, const AllianceList& alliances);
+	void update(Star* currentStar, const AllianceList& alliances, Faction* faction);
 	void keepSpeed(float speed);
 	void smartFireAt(Unit* target, int weaponIdx);
 	void orbit(const sf::Vector2f& pos);

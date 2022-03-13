@@ -14,11 +14,12 @@ class Constellation;
 class Renderer;
 class AllianceList;
 class Asteroid;
+class Faction;
 
 class Order {
 public:
 	// Should return true if order is finished
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) { return true; }
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) { return true; }
 
 	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {}
 	virtual void reinitAfterLoad(Constellation* constellation) {}
@@ -42,7 +43,7 @@ class FlyToOrder : public Order {
 public:
 	FlyToOrder(sf::Vector2f pos) { m_pos = pos; }
 
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override { return std::pair<bool, sf::Vector2f>(true, m_pos); }
 
@@ -63,7 +64,7 @@ class JumpOrder : public Order {
 public:
 	JumpOrder(JumpPoint* point, bool attackEnemies = false);
 
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 
 	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 
@@ -87,7 +88,7 @@ class AttackOrder : public Order {
 public:
 	AttackOrder(Unit* target, bool aggressive = false);
 
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 
 	unsigned int getTargetShipID() { return m_targetID; }
@@ -117,7 +118,7 @@ class TravelOrder : public Order {
 public:
 	TravelOrder(Star* star);
 
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 	virtual void reinitAfterLoad(Constellation* constellation) override;
 
 private:
@@ -145,7 +146,7 @@ class InteractWithBuildingOrder : public Order {
 public:
 	InteractWithBuildingOrder(Building* building);
 
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override;
 
@@ -167,7 +168,7 @@ class InteractWithPlanetOrder : public Order {
 public:
 	InteractWithPlanetOrder(Planet* planet, Star* star);
 
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override;
@@ -190,7 +191,7 @@ class DieOrder : public Order {
 public:
 	DieOrder(bool silently = false);
 
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 
 private:
 	friend class boost::serialization::access;
@@ -205,7 +206,7 @@ private:
 
 class InteractWithUnitOrder : public Order {
 public:
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 	virtual void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 	virtual std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar);
 
@@ -227,7 +228,7 @@ private:
 
 class EstablishPirateBaseOrder : public Order {
 public:
-	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	virtual bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 
 	EstablishPirateBaseOrder(sf::Vector2f pos, int theftAllegiance, const std::deque<DesignerShip>& designs);
 private:
@@ -249,7 +250,7 @@ private:
 
 class MineAsteroidOrder : public Order {
 public:
-	bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) override;
+	bool execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) override;
 	void draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) override;
 	std::pair<bool, sf::Vector2f> getDestinationPos(Star* currentStar) override;
 

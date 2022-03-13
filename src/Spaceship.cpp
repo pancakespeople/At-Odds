@@ -194,7 +194,7 @@ void Spaceship::accelerate(float amount) {
 	}
 }
 
-void Spaceship::update(Star* currentStar, const AllianceList& alliances) {
+void Spaceship::update(Star* currentStar, const AllianceList& alliances, Faction* faction) {
 	if (m_disabled) return;
 	
 	m_currentStar = currentStar;
@@ -210,7 +210,7 @@ void Spaceship::update(Star* currentStar, const AllianceList& alliances) {
 	if (m_AIEnabled) {
 		if (!m_orders.empty()) {
 			m_orders.front()->executing = true;
-			if (m_orders.front()->execute(*this, *currentStar, alliances)) {
+			if (m_orders.front()->execute(*this, *currentStar, alliances, faction)) {
 				m_orders.pop_front();
 			}
 		}

@@ -25,8 +25,9 @@ BOOST_CLASS_EXPORT_GUID(InteractWithPlanetOrder, "InteractWithPlanetOrder")
 BOOST_CLASS_EXPORT_GUID(DieOrder, "DieOrder")
 BOOST_CLASS_EXPORT_GUID(InteractWithUnitOrder, "InteractWithUnitOrder")
 BOOST_CLASS_EXPORT_GUID(EstablishPirateBaseOrder, "EstablishPirateBaseOrder")
+BOOST_CLASS_EXPORT_GUID(MineAsteroidOrder, "MineAsteroidOrder")
 
-bool FlyToOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool FlyToOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	return ship.flyTo(m_pos);
 }
 
@@ -39,7 +40,7 @@ JumpOrder::JumpOrder(JumpPoint* point, bool attackEnemies) {
 	m_attackEnemies = attackEnemies;
 }
 
-bool JumpOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool JumpOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (m_jumpPoint == nullptr) {
 		m_jumpPoint = currentStar.getJumpPointByID(m_jumpPointID);
 		if (m_jumpPoint == nullptr) {
@@ -72,7 +73,7 @@ AttackOrder::AttackOrder(Unit* target, bool aggressive) {
 	m_aggressive = aggressive;
 }
 
-bool AttackOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool AttackOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (m_target == nullptr) {
 		m_target = currentStar.getUnitByID(m_targetID);
 		if (m_target == nullptr)
@@ -148,7 +149,7 @@ TravelOrder::TravelOrder(Star* star) {
 	m_endStarID = star->getID();
 }
 
-bool TravelOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool TravelOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (!m_pathFound) {
 		m_path = Pathfinder::findPath(ship.getCurrentStar(), m_endStar);
 
@@ -189,7 +190,7 @@ InteractWithBuildingOrder::InteractWithBuildingOrder(Building* building) {
 	m_buildingID = building->getID();
 }
 
-bool InteractWithBuildingOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool InteractWithBuildingOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (m_building == nullptr) {
 		m_building = currentStar.getBuildingByID(m_buildingID);
 		if (m_building == nullptr) {
@@ -255,7 +256,7 @@ InteractWithPlanetOrder::InteractWithPlanetOrder(Planet* planet, Star* star) {
 	m_planetID = planet->getID();
 }
 
-bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (m_planet == nullptr) {
 		m_planet = currentStar.getPlanetByID(m_planetID);
 		if (m_planet == nullptr) {
@@ -324,7 +325,7 @@ DieOrder::DieOrder(bool silently) {
 	m_dieSilently = silently;
 }
 
-bool DieOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool DieOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	ship.kill();
 	if (m_dieSilently) ship.setSilentDeath(true);
 	return true;
@@ -334,7 +335,7 @@ InteractWithUnitOrder::InteractWithUnitOrder(Unit* unit) {
 	m_unitID = unit->getID();
 }
 
-bool InteractWithUnitOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool InteractWithUnitOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (m_unit == nullptr) {
 		m_unit = currentStar.getUnitByID(m_unitID);
 		if (m_unit == nullptr) {
@@ -378,7 +379,7 @@ EstablishPirateBaseOrder::EstablishPirateBaseOrder(sf::Vector2f pos, int theftAl
 	m_designs = designs;
 }
 
-bool EstablishPirateBaseOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool EstablishPirateBaseOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (currentStar.getBuildingsOfType("PIRATE_BASE").size() > 1) {
 		// Pick a different star if this one already has 2 bases
 
@@ -402,7 +403,7 @@ bool EstablishPirateBaseOrder::execute(Spaceship& ship, Star& currentStar, const
 	return false;
 }
 
-bool MineAsteroidOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances) {
+bool MineAsteroidOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
 	if (m_asteroid == nullptr) {
 		m_asteroid = currentStar.getAsteroidByID(m_asteroidID);
 		if (m_asteroid == nullptr) {
@@ -410,11 +411,26 @@ bool MineAsteroidOrder::execute(Spaceship& ship, Star& currentStar, const Allian
 		}
 	}
 
+	if (m_asteroid->isDestructing()) {
+		// Continue mining the remaining asteroids in the system
+		for (Asteroid& asteroid : currentStar.getAsteroids()) {
+			if (!asteroid.isDestructing()) {
+				ship.addOrder<MineAsteroidOrder>(MineAsteroidOrder(&asteroid));
+				break;
+			}
+		}
+
+		return true;
+	}
+
 	if (ship.hasWeapon("MINING_LASER")) {
 		Weapon* miningLaser = ship.getWeapon("MINING_LASER");
 
 		if (Math::distance(ship.getPos(), m_asteroid->getPos()) - m_asteroid->getRadius() < miningLaser->getRange()) {
 			miningLaser->instaHitFireAt(ship.getPos(), m_asteroid->getPos() + Random::randPointInCircle(m_asteroid->getRadius()), nullptr, &currentStar);
+			if (faction != nullptr) {
+				m_asteroid->mineAsteroid(*faction, 0.01f);
+			}
 		}
 
 		ship.orbit(m_asteroid->getPos());
@@ -427,7 +443,6 @@ bool MineAsteroidOrder::execute(Spaceship& ship, Star& currentStar, const Allian
 }
 
 MineAsteroidOrder::MineAsteroidOrder(Asteroid* asteroid) {
-	m_asteroid = asteroid;
 	m_asteroidID = asteroid->getID();
 }
 
