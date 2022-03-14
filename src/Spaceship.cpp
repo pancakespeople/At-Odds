@@ -382,19 +382,40 @@ void Spaceship::smartFireAt(Unit* target, int weaponIdx) {
 	m_weapons[weaponIdx].fireAt(getPos(), getAllegiance(), predictPos, m_currentStar);
 }
 
-void Spaceship::orbit(const sf::Vector2f& pos) {
+void Spaceship::orbit(sf::Vector2f pos) {
 	float angle = angleTo(pos);
 	float dist = Math::distance(m_sprite.getPosition(), pos);
 	float closeArea = 25000000 / m_mass;
 	float farArea = 250000000 / m_mass;
-
-	rotateTo(angle);
 	
+	rotateTo(angle);
+
 	if (dist > farArea) {
 		accelerate(m_maxAcceleration);
 	}
 	else {
 		accelerate(m_maxAcceleration / 2.0);
+	}
+}
+
+void Spaceship::orbitStable(const Orbit& orbit, float orbitOffset) {
+	sf::Vector2f pos = orbit.getPos(orbitOffset);
+
+	float angle = angleTo(pos);
+	float dist = Math::distance(m_sprite.getPosition(), pos);
+	float closeArea = 25000000 / m_mass;
+	float farArea = 250000000 / m_mass;
+
+
+	if (dist > farArea) {
+		accelerate(m_maxAcceleration);
+		rotateTo(angle);
+	}
+	else {
+		if (dist > closeArea / 2.0f) {
+			accelerate(m_maxAcceleration / 2.0);
+			rotateTo(angle);
+		}
 	}
 }
 

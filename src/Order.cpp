@@ -433,7 +433,7 @@ bool MineAsteroidOrder::execute(Spaceship& ship, Star& currentStar, const Allian
 			}
 		}
 
-		ship.orbit(m_asteroid->getPos());
+		ship.orbitStable(m_asteroid->getOrbit(), m_asteroid->getRadius() / (2.0f * Math::pi * m_asteroid->getOrbit().getRadius()) * 360.0f);
 	}
 	else {
 		return true;

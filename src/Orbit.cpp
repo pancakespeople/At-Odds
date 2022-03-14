@@ -19,8 +19,8 @@ Orbit::Orbit(sf::Vector2f orbiterPos, sf::Vector2f parentPos) {
 }
 
 sf::Vector2f Orbit::update() {
-	sf::Vector2f newPos(m_radius * std::cos(m_orbiterAngle * Math::toRadians) + m_parentPos.x, 
-						m_radius * std::sin(m_orbiterAngle * Math::toRadians) + m_parentPos.y);
+	sf::Vector2f newPos = getPos();
+
 	m_orbiterAngle += m_orbitSpeed;
 
 	return newPos;
@@ -29,4 +29,9 @@ sf::Vector2f Orbit::update() {
 void Orbit::draw(sf::RenderWindow& window) {
 	m_orbitIndicator.setPosition(m_parentPos);
 	window.draw(m_orbitIndicator);
+}
+
+sf::Vector2f Orbit::getPos(float angleOffset) const {
+	return sf::Vector2f(m_radius * std::cos((m_orbiterAngle + angleOffset) * Math::toRadians) + m_parentPos.x,
+		m_radius * std::sin((m_orbiterAngle + angleOffset) * Math::toRadians) + m_parentPos.y);
 }

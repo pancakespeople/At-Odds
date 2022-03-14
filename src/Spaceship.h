@@ -31,7 +31,8 @@ public:
 	void update(Star* currentStar, const AllianceList& alliances, Faction* faction);
 	void keepSpeed(float speed);
 	void smartFireAt(Unit* target, int weaponIdx);
-	void orbit(const sf::Vector2f& pos);
+	void orbit(sf::Vector2f pos);
+	void orbitStable(const Orbit& orbit, float orbitOffset);
 	void captureCurrentStar(Faction* faction, const AllianceList& alliances);
 	void attackRandomEnemy(std::vector<Spaceship*>& enemies, bool urgent = false);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }

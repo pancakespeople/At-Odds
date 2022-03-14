@@ -762,6 +762,12 @@ void Star::reinitAfterLoad(Constellation* constellation) {
 	for (auto& building : m_buildings) {
 		building->reinitAfterLoad(this);
 	}
+
+	if (m_localViewActive) {
+		for (AsteroidBelt& asteroidBelt : m_asteroidBelts) {
+			asteroidBelt.generate(*this);
+		}
+	}
 }
 
 Planet* Star::getMostHabitablePlanet(int allegiance) {

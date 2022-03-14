@@ -7,9 +7,12 @@ public:
 	Orbit(sf::Vector2f orbiterPos, sf::Vector2f parentPos);
 
 	sf::Vector2f update();
+	sf::Vector2f getPos(float angleOffset = 0.0f) const;
 
 	void draw(sf::RenderWindow& window);
 	void setParentPos(sf::Vector2f pos) { m_parentPos = pos; }
+
+	float getRadius() const { return m_radius; }
 
 private:
 	friend class boost::serialization::access;

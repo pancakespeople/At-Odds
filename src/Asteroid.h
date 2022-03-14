@@ -12,12 +12,14 @@ public:
 	void draw(Renderer& renderer);
 	void update();
 
-	sf::Vector2f getPos() { return m_sprite.getPosition(); }
+	sf::Vector2f getPos() const { return m_sprite.getPosition(); }
+	const Orbit& getOrbit() const { return m_orbit; }
+
 	std::string getResource() { return m_resource; }
-	float getRadius() {return m_sprite.getLocalBounds().width * 1.25f; }
+	float getRadius() const {return m_sprite.getLocalBounds().width * 1.25f; }
 	void mineAsteroid(Faction& faction, float amount);
-	bool isDestructing() { return m_destructionTimer > 0; }
-	bool isDead() { return m_destructionTimer >= 10; }
+	bool isDestructing() const { return m_destructionTimer > 0; }
+	bool isDead() const { return m_destructionTimer >= 10; }
 
 private:
 	friend class boost::serialization::access;

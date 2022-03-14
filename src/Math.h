@@ -54,8 +54,12 @@ namespace Math {
 		return sf::Color(lerp(color1.r, color2.r, t), lerp(color1.g, color2.g, t), lerp(color1.b, color2.b, t), lerp(color1.a, color2.a, t));
 	}
 
-	inline sf::Vector2f normalize(const sf::Vector2f vec) {
+	inline sf::Vector2f normalize(sf::Vector2f vec) {
 		float mag = magnitude(vec);
 		return vec / mag;
+	}
+
+	inline float dot(sf::Vector2f a, sf::Vector2f b) {
+		return a.x * b.x + a.y * b.y;
 	}
 }
