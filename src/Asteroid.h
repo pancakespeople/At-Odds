@@ -11,20 +11,24 @@ public:
 
 	void draw(Renderer& renderer);
 	void update();
+	void mineAsteroid(Faction& faction, float amount);
+	void setSelected(bool selected) { m_selected = selected; }
 
 	sf::Vector2f getPos() const { return m_sprite.getPosition(); }
 	const Orbit& getOrbit() const { return m_orbit; }
 
 	std::string getResource() { return m_resource; }
 	float getRadius() const {return m_sprite.getLocalBounds().width * 1.25f; }
-	void mineAsteroid(Faction& faction, float amount);
 	bool isDestructing() const { return m_destructionTimer > 0; }
 	bool isDead() const { return m_destructionTimer >= 10; }
+	bool isSelected() const { return m_selected; }
+	bool contains(sf::Vector2f point) const;
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Identifiable>(*this);
 		archive & m_sprite;
 		archive & m_orbit;
 		archive & m_resource;
@@ -39,4 +43,5 @@ private:
 	std::string m_resource;
 	float m_resourceCount = 0.0f;
 	int m_destructionTimer = 0;
+	bool m_selected = false;
 };

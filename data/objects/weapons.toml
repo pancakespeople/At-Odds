@@ -33,7 +33,7 @@ instaHit = true
 projectile = "MINING_LASER"
 findable = false
 hasDesign = false
-fireAnimation = "CONSTRUCTION_BEAM"
+fireAnimation = "MINING_BEAM"
 instaHit = true
 
 [ROCKET_LAUNCHER]

@@ -5,6 +5,7 @@
 #include "SmoothCircle.h"
 #include "Faction.h"
 #include "Random.h"
+#include "Math.h"
 
 const std::vector<std::string> textures = {
 	"data/art/asteroid1.png",
@@ -57,6 +58,10 @@ void Asteroid::draw(Renderer& renderer) {
 
 	renderer.draw(circle);
 	renderer.draw(m_sprite);
+
+	if (m_selected) {
+		renderer.effects.drawSelection(m_sprite.getPosition(), getRadius());
+	}
 }
 
 void Asteroid::update() {
@@ -76,4 +81,11 @@ void Asteroid::mineAsteroid(Faction& faction, float amount) {
 		faction.addResource(m_resource, m_resourceCount);
 		m_resourceCount = 0.0f;
 	}
+}
+
+bool Asteroid::contains(sf::Vector2f point) const {
+	if (Math::distance(point, m_sprite.getPosition()) <= getRadius()) {
+		return true;
+	}
+	return false;
 }

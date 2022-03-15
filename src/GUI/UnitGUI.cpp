@@ -52,8 +52,7 @@ void UnitGUI::open(tgui::Gui& gui, Player& player) {
 
 void UnitGUI::update(const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, Player& player, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
 	// Remove dead or unselected stuff
-	m_selectedShips.erase(std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* s) {return s->isDead() || !s->isSelected(); }), m_selectedShips.end());
-	m_selectedBuildings.erase(std::remove_if(m_selectedBuildings.begin(), m_selectedBuildings.end(), [](Building* b) {return b->isDead() || !b->isSelected(); }), m_selectedBuildings.end());
+	cleanUpDeadStuff();
 
 	if (m_selectedShips.size() > 0) {
 		m_panel->setVisible(true);
@@ -357,6 +356,12 @@ void UnitGUI::onSelect(const Renderer& renderer, Star* star, int playerAllegianc
 			if (building->isSelected()) building->onDeselected();
 		}
 
+		// Deselect asteroid
+		if (m_selectedAsteroid != nullptr) {
+			m_selectedAsteroid->setSelected(false);
+			m_selectedAsteroid = nullptr;
+		}
+
 		// Don't mix combat and construction ships - delete from container
 		if (!allowConstructionShips) {
 			auto it = std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* ship) {
@@ -387,7 +392,7 @@ void UnitGUI::onMouseClick(const sf::Event& ev, const Renderer& renderer, Star* 
 				if (s->getAllegiance() == playerFaction) {
 					m_selectedShips.push_back(s.get());
 					s->onSelected();
-					break;
+					return;
 				}
 			}
 		}
@@ -396,9 +401,29 @@ void UnitGUI::onMouseClick(const sf::Event& ev, const Renderer& renderer, Star* 
 			if (building->getCollider().contains(worldClick) && building->getAllegiance() == playerFaction) {
 				m_selectedBuildings.push_back(building.get());
 				building->onSelected();
-				break;
+				return;
 			}
 		}
 
+		for (auto& asteroid : currentStar->getAsteroids()) {
+			if (asteroid.contains(worldClick)) {
+				m_selectedAsteroid = &asteroid;
+				asteroid.setSelected(true);
+				return;
+			}
+		}
+
+	}
+}
+
+void UnitGUI::cleanUpDeadStuff() {
+	m_selectedShips.erase(std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* s) {return s->isDead() || !s->isSelected(); }), m_selectedShips.end());
+	m_selectedBuildings.erase(std::remove_if(m_selectedBuildings.begin(), m_selectedBuildings.end(), [](Building* b) {return b->isDead() || !b->isSelected(); }), m_selectedBuildings.end());
+
+	if (m_selectedAsteroid != nullptr) {
+		if (m_selectedAsteroid->isDestructing()) {
+			m_selectedAsteroid->setSelected(false);
+			m_selectedAsteroid = nullptr;
+		}
 	}
 }

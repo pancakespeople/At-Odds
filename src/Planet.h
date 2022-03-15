@@ -66,6 +66,7 @@ public:
 	float getResourceAbundance(const std::string& type) const;
 
 	Colony& getColony() { return m_colony; }
+	const Orbit& getOrbit() const { return m_orbit; }
 
 	bool isGasGiant() const { return m_gasGiant; }
 	bool hasResource(const std::string& resource) const;

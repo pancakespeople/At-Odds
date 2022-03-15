@@ -99,7 +99,7 @@ protected:
 	std::vector<std::unique_ptr<Mod>> m_mods;
 	std::string m_type;
 
-	int m_allegiance = 0;
+	int m_allegiance = -1;
 	
 	float m_health = 100.0f;
 	float m_maxHealth = 100.0f;

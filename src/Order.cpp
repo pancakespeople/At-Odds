@@ -264,7 +264,7 @@ bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const 
 		}
 	}
 
-	ship.orbit(m_planet->getPos());
+	ship.orbitStable(m_planet->getOrbit(), m_planet->getRadius() / (2.0f * Math::pi * m_planet->getOrbit().getRadius()) * 360.0f);
 
 	if (Math::distance(ship.getPos(), m_planet->getPos()) < (m_planet->getRadius() + ship.getCollider().getRadius())) {
 		
@@ -283,6 +283,7 @@ bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const 
 		// Orbital bombardment
 
 		if (m_planet->getColony().getPopulation() == 0) return true;
+		m_hostileAction = true;
 
 		auto& weapons = ship.getWeapons();
 		for (Weapon& weapon : weapons) {
@@ -307,8 +308,14 @@ bool InteractWithPlanetOrder::execute(Spaceship& ship, Star& currentStar, const 
 
 void InteractWithPlanetOrder::draw(Renderer& renderer, const sf::Vector2f& shipPos, Star* currentStar) {
 	if (!executing) m_planet = currentStar->getPlanetByID(m_planetID);
-	if (m_planet != nullptr)
-		renderer.effects.drawLine(shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
+	if (m_planet != nullptr) {
+		if (m_hostileAction) {
+			renderer.effects.drawLine(shipPos, m_planet->getPos(), sf::Color(255, 0, 0));
+		}
+		else {
+			renderer.effects.drawLine(shipPos, m_planet->getPos(), sf::Color(100, 100, 255));
+		}
+	}
 }
 
 std::pair<bool, sf::Vector2f> InteractWithPlanetOrder::getDestinationPos(Star* currentStar) {

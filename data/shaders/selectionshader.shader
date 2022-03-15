@@ -1,11 +1,9 @@
 #version 130
 
-uniform vec2 size;
 uniform float time;
-in vec4 vertPos;
 
 void main() {
-	vec2 uv = (vertPos.xy - size / 2.0) / size;
+	vec2 uv = gl_TexCoord[0].xy - 0.5;
 	float angle = atan(uv.y, uv.x) - time;
 	float dist = length(uv);
 

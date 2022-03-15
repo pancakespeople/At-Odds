@@ -179,12 +179,14 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & boost::serialization::base_object<Order>(*this);
 		archive & m_planetID;
+		archive & m_hostileAction;
 	}
 	
 	InteractWithPlanetOrder() {}
 
 	unsigned int m_planetID = 0;
 	Planet* m_planet = nullptr;
+	bool m_hostileAction = false;
 };
 
 class DieOrder : public Order {

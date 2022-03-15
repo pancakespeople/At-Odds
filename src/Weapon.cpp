@@ -124,7 +124,10 @@ void Weapon::drawFireAnimation(Renderer& renderer, Unit* unit) {
 			renderer.effects.drawGatlingLaserAnimation(unit->getPos(), m_lastFireLocation, step);
 		}
 		else if (m_fireAnimation == "CONSTRUCTION_BEAM") {
-			renderer.effects.drawConstructionBeamAnimation(unit->getPos(), m_lastFireLocation, step);
+			renderer.effects.drawBeamAnimation(unit->getPos(), m_lastFireLocation, step, sf::Color(0, 255, 255));
+		}
+		else if (m_fireAnimation == "MINING_BEAM") {
+			renderer.effects.drawBeamAnimation(unit->getPos(), m_lastFireLocation, step, sf::Color(255, 215, 0));
 		}
 	}
 }

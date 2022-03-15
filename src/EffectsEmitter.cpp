@@ -210,9 +210,16 @@ void EffectsEmitter::drawNebula(sf::Sprite& sprite, float seed) {
 	m_renderer.draw(sprite, &m_nebulaShader);
 }
 
-void EffectsEmitter::drawSelection(const sf::RectangleShape& shape) {
-	m_selectionShader.setUniform("size", sf::Glsl::Vec2(shape.getSize()));
-	m_renderer.draw(shape, &m_selectionShader);
+void EffectsEmitter::drawSelection(sf::Vector2f pos, float radius) {
+	sf::RectangleShape selectionIndicator;
+
+	selectionIndicator.setOrigin(sf::Vector2f(radius * 2.0f, radius * 2.0f));
+	selectionIndicator.setPosition(pos);
+	selectionIndicator.setFillColor(sf::Color::Yellow);
+	selectionIndicator.setSize(sf::Vector2f(radius * 4.0f, radius * 4.0f));
+	selectionIndicator.setTextureRect(sf::IntRect({ 0, 0 }, { 1, 1 }));
+	
+	m_renderer.draw(selectionIndicator, &m_selectionShader);
 }
 
 void EffectsEmitter::updateTime(float time, float gameTime) {
@@ -376,7 +383,7 @@ void EffectsEmitter::drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vecto
 	}
 }
 
-void EffectsEmitter::drawConstructionBeamAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step) {
+void EffectsEmitter::drawBeamAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step, sf::Color color) {
 	float angle = Math::angleBetween(sourcePos, endPos);
 	sf::RectangleShape shape;
 
@@ -384,7 +391,7 @@ void EffectsEmitter::drawConstructionBeamAnimation(sf::Vector2f sourcePos, sf::V
 	shape.setPosition(sourcePos);
 	shape.setSize(sf::Vector2f(Math::distance(sourcePos, endPos), 250.0f));
 	shape.setOrigin({ 0.0f, shape.getSize().y / 2.0f });
-	shape.setFillColor(sf::Color(0, 255, 255, 255 * (1.0 / step)));
+	shape.setFillColor(sf::Color(color.r, color.g, color.b, color.a * (1.0 / step)));
 	shape.setTextureRect(sf::IntRect({ 0, 0 }, { 1, 1 }));
 
 	m_beamShader.setUniform("time", step);

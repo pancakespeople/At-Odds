@@ -106,14 +106,7 @@ float Unit::maxWeaponDamage() const {
 }
 
 void Unit::drawSelectionCircle(Renderer& renderer) {
-	sf::RectangleShape selectionIndicator;
-
-	selectionIndicator.setOrigin(sf::Vector2f(m_collider.getRadius() * 2.0f, m_collider.getRadius() * 2.0f));
-	selectionIndicator.setPosition(getPos());
-	selectionIndicator.setFillColor(sf::Color::Yellow);
-	selectionIndicator.setSize(sf::Vector2f(m_collider.getRadius() * 4.0f, m_collider.getRadius() * 4.0f));
-
-	renderer.effects.drawSelection(selectionIndicator);
+	renderer.effects.drawSelection(getPos(), m_collider.getRadius());
 }
 
 void Unit::drawHealthBar(Renderer& renderer) {

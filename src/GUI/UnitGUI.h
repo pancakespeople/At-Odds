@@ -2,6 +2,7 @@
 #include "../GUI.h"
 
 class MinimapGUI;
+class Asteroid;
 
 // This class handles GUI for selecting and moving units
 class UnitGUI {
@@ -16,6 +17,7 @@ public:
 	void onRightClickWorldView(sf::RenderWindow & window, Renderer & renderer, Constellation & constellation);
 	void onRightClickLocalView(sf::RenderWindow & window, Renderer & renderer, Constellation & constellation, GameState & state);
 	void setDisabled(bool disabled) { m_disabled = disabled; }
+	void cleanUpDeadStuff();
 
 	bool isSelecting() const { return m_selecting; }
 
@@ -32,6 +34,7 @@ private:
 
 	std::vector<Spaceship*> m_selectedShips;
 	std::vector<Building*> m_selectedBuildings;
+	Asteroid* m_selectedAsteroid = nullptr;
 
 	tgui::Panel::Ptr m_panel = nullptr;
 	tgui::Label::Ptr m_label = nullptr;

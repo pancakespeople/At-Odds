@@ -26,7 +26,7 @@ public:
 	void drawGlow(const sf::Vector2f& pos, float size, const sf::Color& color);
 	void drawHabitableZone(sf::RenderWindow& window, const sf::Vector2f& starPos, float temperature);
 	void drawNebula(sf::Sprite& sprite, float seed);
-	void drawSelection(const sf::RectangleShape& shape);
+	void drawSelection(sf::Vector2f pos, float radius);
 	void drawBorders(const sf::RectangleShape& shape, const std::vector<sf::Glsl::Vec3>& points, sf::Color color);
 	void drawBlackHole(const sf::RectangleShape& starRect, float time, float seed);
 	void drawRings(sf::Vector2f pos, float radius, float seed);
@@ -34,7 +34,7 @@ public:
 	void drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state);
 	void drawLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawGatlingAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
-	void drawConstructionBeamAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
+	void drawBeamAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step, sf::Color color);
 	void addExplosionEffect(sf::Vector2f pos, Star* star);
 	void drawParallaxBackground(Camera& camera);
 	void drawLightningEffect(sf::Vector2f pos, float time, float seed);
