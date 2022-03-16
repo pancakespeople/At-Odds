@@ -80,11 +80,6 @@ void FactoryMod::update(Unit& unit, Star& currentStar, Faction* faction, const A
 				shipPtr->getWeapons().back().setUpgradeLevel(weapon.upgradeLevel);
 			}
 
-			// Add construction gun
-			if (shipPtr->getConstructionSpeed() > 0.0f) {
-				shipPtr->addWeapon(Weapon("CONSTRUCTION_GUN"));
-			}
-
 			sf::Vector2f randVel = Random::randVec(-50.0f, 50.0f);
 			shipPtr->addVelocity(randVel);
 

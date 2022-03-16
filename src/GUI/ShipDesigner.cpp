@@ -120,12 +120,20 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			designNameTextBox->setSize("22.5%", "5%");
 			m_window->add(designNameTextBox, "designNameTextBox");
 
+			auto designErrorMessage = tgui::Label::create();
+			designErrorMessage->setPosition("designNameLabel.left", "designNameLabel.bottom");
+			designErrorMessage->getRenderer()->setTextColor(tgui::Color::Red);
+			m_window->add(designErrorMessage);
+
 			auto designNameSaveButton = GUI::Button::create("Save Design");
 			designNameSaveButton->setOrigin(0.0f, 0.5f);
 			designNameSaveButton->setPosition("designNameTextBox.right + 1%", "designNameTextBox.top + designNameTextBox.height / 2.0");
-			designNameSaveButton->onClick([this, designNameTextBox, shipChassisListBox, shipWeaponsListBox, playerFaction]() {
+			designNameSaveButton->onClick([this, designNameTextBox, shipChassisListBox, shipWeaponsListBox, designErrorMessage, playerFaction]() {
 				if (shipChassisListBox->getItemCount() > 0) {
-					if (canChassisFitWeapons(playerFaction)) {
+					
+					std::string errMsg;
+
+					if (canChassisFitWeapons(playerFaction, errMsg)) {
 						DesignerShip ship;
 						ship.chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
 						
@@ -142,7 +150,15 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 						
 						playerFaction->addShipDesign(ship);
 						displayShipDesigns(playerFaction);
+
+						designErrorMessage->setText("");
 					}
+					else {
+						designErrorMessage->setText("Failed to save design: " + errMsg);
+					}
+				}
+				else {
+					designErrorMessage->setText("Failed to save design: Missing chassis");
 				}
 				});
 			m_window->add(designNameSaveButton);
@@ -266,20 +282,32 @@ void ShipDesignerGUI::displayShipInfo(Faction* playerFaction) {
 	}
 }
 
-bool ShipDesignerGUI::canChassisFitWeapons(Faction* playerFaction) {
+bool ShipDesignerGUI::canChassisFitWeapons(Faction* playerFaction, std::string& errMsg) {
 	auto shipChassisListBox = m_window->get<tgui::ListBox>("shipChassisListBox");
 	auto shipWeaponsListBox = m_window->get<tgui::ListBox>("shipWeaponsListBox");
 
 	DesignerChassis chassis = playerFaction->getChassisByName(shipChassisListBox->getItemByIndex(0).toStdString());
-
+	
 	float total = 0.0f;
 	for (tgui::String& weaponString : shipWeaponsListBox->getItemIds()) {
 		DesignerWeapon weapon = playerFaction->getWeapon(weaponString.toStdString());
+
+		if ((weapon.miningWeapon && !chassis.miningChassis) || (!weapon.miningWeapon && chassis.miningChassis)) {
+			errMsg = "The " + chassis.name + " chassis cannot fit a " + weapon.name;
+			return false;
+		}
+		if (weapon.constructionWeapon && !chassis.constructionChassis || (!weapon.constructionWeapon && chassis.constructionChassis)) {
+			errMsg = "The " + chassis.name + " chassis cannot fit a " + weapon.name;
+			return false;
+		}
 		total += weapon.weaponPoints;
 	}
 
 	if (total <= chassis.maxWeaponCapacity) return true;
-	else return false;
+	else {
+		errMsg = "The design exceeds the maximum weapon capacity of the chassis";
+		return false;
+	}
 }
 
 void ShipDesignerGUI::displayShipDesigns(Faction* playerFaction) {

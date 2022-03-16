@@ -9,9 +9,11 @@ struct DesignerChassis {
 
 	std::string type;
 	std::string name;
-	float maxWeaponCapacity = 1.0f;
 	std::unordered_map<std::string, float> resourceCost;
+	float maxWeaponCapacity = 1.0f;
 	float buildTimeMultiplier = 1.0f;
+	bool miningChassis = false;
+	bool constructionChassis = false;
 
 private:
 	friend class boost::serialization::access;
@@ -33,9 +35,11 @@ struct DesignerWeapon {
 
 	std::string name;
 	std::string type;
+	std::unordered_map<std::string, float> resourceCost;
 	float weaponPoints = 1.0f;
 	int upgradeLevel = 1;
-	std::unordered_map<std::string, float> resourceCost;
+	bool miningWeapon = false;
+	bool constructionWeapon = false;
 
 private:
 	friend class boost::serialization::access;

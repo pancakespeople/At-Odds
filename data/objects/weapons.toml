@@ -23,18 +23,24 @@ accuracy = 0.9
 baseSoundCooldown = 60
 
 [CONSTRUCTION_GUN]
+name = "Construction Gun"
 projectile = "CONSTRUCTION"
 findable = false
-hasDesign = false
 fireAnimation = "CONSTRUCTION_BEAM"
 instaHit = true
+constructionWeapon = true
+cost = [["COMMON_ORE", 5.0]]
+weaponPoints = 1.0
 
 [MINING_LASER]
+name = "Mining Laser"
 projectile = "MINING_LASER"
 findable = false
-hasDesign = false
 fireAnimation = "MINING_BEAM"
 instaHit = true
+miningWeapon = true
+cost = [["COMMON_ORE", 5.0]]
+weaponPoints = 1.0
 
 [ROCKET_LAUNCHER]
 name = "Rocket Launcher"

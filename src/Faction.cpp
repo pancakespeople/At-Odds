@@ -30,6 +30,9 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	makeCapital(randStar);
 	randStar->factionTakeOwnership(this, true);
 
+	addWeapon(DesignerWeapon("CONSTRUCTION_GUN"));
+	addWeapon(DesignerWeapon("MINING_LASER"));
+
 	// Add a random starter weapon
 	int rnd = Random::randInt(1, 3);
 	if (rnd == 1) {
@@ -69,6 +72,7 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	addChassis(DesignerChassis("FRIGATE"));
 	addChassis(DesignerChassis("DESTROYER"));
 	addChassis(DesignerChassis("CONSTRUCTOR"));
+	addChassis(DesignerChassis("MINER"));
 
 	DesignerShip starterFrig;
 	starterFrig.chassis = DesignerChassis("FRIGATE");
@@ -79,7 +83,14 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 	DesignerShip constructor;
 	constructor.name = "Constructor";
 	constructor.chassis = DesignerChassis("CONSTRUCTOR");
+	constructor.weapons.push_back(DesignerWeapon("CONSTRUCTION_GUN"));
 	addShipDesign(constructor);
+
+	DesignerShip miner;
+	miner.name = "Miner";
+	miner.chassis = DesignerChassis("MINER");
+	miner.weapons.push_back(DesignerWeapon("MINING_LASER"));
+	addShipDesign(miner);
 
 	addColonyBuilding("INFRASTRUCTURE");
 	addColonyBuilding("SPACEPORT");

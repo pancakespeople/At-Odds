@@ -42,6 +42,9 @@ DesignerChassis::DesignerChassis(const std::string& typeStr) {
 		std::string resourceType = table[typeStr]["cost"][i][0].value_or("");
 		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
 	}
+
+	miningChassis = table[typeStr]["miningChassis"].value_or(false);
+	constructionChassis = table[typeStr]["constructionChassis"].value_or(false);
 }
 
 DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
@@ -53,10 +56,15 @@ DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 	name = table[typeStr]["name"].value_or("");
 	weaponPoints = table[typeStr]["weaponPoints"].value_or(1.0f);
 
-	for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
-		std::string resourceType = table[typeStr]["cost"][i][0].value_or("");
-		resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
+	if (table[typeStr]["cost"].is_array()) {
+		for (int i = 0; i < table[typeStr]["cost"].as_array()->size(); i++) {
+			std::string resourceType = table[typeStr]["cost"][i][0].value_or("");
+			resourceCost[resourceType] = table[typeStr]["cost"][i][1].value_or(0.0f);
+		}
 	}
+
+	miningWeapon = table[typeStr]["miningWeapon"].value_or(false);
+	constructionWeapon = table[typeStr]["constructionWeapon"].value_or(false);
 }
 
 std::string DesignerWeapon::getFullName() {

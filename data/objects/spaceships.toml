@@ -124,13 +124,13 @@ mass = 150000.0
 health = 50.0
 colliderRadius = 350.0
 constructionSpeed = 10.0
-maxWeaponCapacity = 0.0
+maxWeaponCapacity = 1.0
 cost = [["COMMON_ORE", 10.0]]
-hasDesign = false
 thrusterPoints = [
 	[88, 502],
 	[428, 502]
 ]
+constructionChassis = true
 
 [MINER]
 name = "Miner"
@@ -138,14 +138,14 @@ texturePath = "data/art/minership.png"
 mass = 100000.0
 health = 33.0
 colliderRadius = 275.0
-maxWeaponCapacity = 0.0
+maxWeaponCapacity = 1.0
 cost = [["COMMON_ORE", 10.0]]
-hasDesign = false
 scale =  3.0
 thrusterPoints = [
 	[24, 119],
 	[107, 119]
 ]
+miningChassis = true
 
 [FIGHTER]
 name = "Fighter"

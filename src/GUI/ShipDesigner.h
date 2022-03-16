@@ -7,7 +7,7 @@ public:
 
 	void open(tgui::Gui& gui, Faction* playerFaction);
 	void displayShipInfo(Faction* playerFaction);
-	bool canChassisFitWeapons(Faction* playerFaction);
+	bool canChassisFitWeapons(Faction* playerFaction, std::string& errMsg);
 	void displayShipDesigns(Faction* playerFaction);
 
 private:
