@@ -2,6 +2,9 @@ uniform float time;
 uniform float rotationSpeed;
 uniform vec2 sunPos;
 
+varying out vec2 pos;
+varying out float rotationAngle;
+
 mat2 rotate(float angle) {
     float c = cos(angle);
     float s = sin(angle);
@@ -10,8 +13,12 @@ mat2 rotate(float angle) {
 
 void main() {
     // transform the vertex position
-    gl_Vertex.xy *= rotate(time*rotationSpeed);
+    rotationAngle = time * rotationSpeed;
+    
+    gl_Vertex.xy *= rotate(rotationAngle);
     gl_Vertex.xy += sunPos;
+    
+    pos = gl_Vertex.xy;
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
     // transform the texture coordinates

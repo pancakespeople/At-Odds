@@ -91,6 +91,7 @@ private:
 	std::vector<ExplosionEffect> m_explosionEffects;
 
 	float m_lastGameTime = 0.0f;
+	float m_lastTime = 0.0f;
 
 	inline static const std::string m_vertexShaderPath = "data/shaders/vertexshader.shader";
 };

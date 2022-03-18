@@ -223,6 +223,7 @@ void EffectsEmitter::drawSelection(sf::Vector2f pos, float radius) {
 }
 
 void EffectsEmitter::updateTime(float time, float gameTime) {
+	m_lastTime = time;
 	m_lastGameTime = gameTime;
 	m_selectionShader.setUniform("time", time);
 	m_mapStarShader.setUniform("time", time);
@@ -266,11 +267,15 @@ void EffectsEmitter::drawRings(sf::Vector2f pos, float radius, float seed) {
 }
 
 void EffectsEmitter::drawAsteroidBelt(const std::vector<sf::Vertex>& vertices, float rotationSpeed, sf::Vector2f sunPos) {
-	m_asteroidBeltShader.setUniform("tex", TextureCache::getTexture("data/art/asteroidssheet.png"));
+	m_asteroidBeltShader.setUniform("tex", TextureCache::getTexture("data/art/asteroidnormals1.png"));
 	m_asteroidBeltShader.setUniform("rotationSpeed", rotationSpeed);
 	m_asteroidBeltShader.setUniform("sunPos", sunPos);
 
-	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, &m_asteroidBeltShader);
+	sf::RenderStates states;
+	//states.transform.translate(sunPos).rotate(m_lastTime * rotationSpeed * 100.0f);
+	states.shader = &m_asteroidBeltShader;
+
+	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, states);
 }
 
 void EffectsEmitter::drawPostEffects(sf::Sprite& sprite, sf::RenderWindow& window, GameState& state) {

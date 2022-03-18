@@ -32,22 +32,26 @@ void AsteroidBelt::generate(const Star& star) {
 		// Bottom left
 		sf::Vertex v1;
 		v1.position = pos + sf::Vector2f{ -size*aspect, -size };
-		v1.texCoords = texCoords[0];
+		//v1.texCoords = texCoords[0];
+		v1.texCoords = { 0.0f, 0.0f };
 
 		// Top left
 		sf::Vertex v2;
 		v2.position = pos + sf::Vector2f{ -size*aspect, size };
-		v2.texCoords = texCoords[1];
+		//v2.texCoords = texCoords[1];
+		v2.texCoords = { 0.0f, 1.0f };
 
 		// Top right
 		sf::Vertex v3;
 		v3.position = pos + sf::Vector2f{ size*aspect, size };
-		v3.texCoords = texCoords[2];
+		//v3.texCoords = texCoords[2];
+		v3.texCoords = { 1.0f, 1.0f };
 
 		// Bottom right
 		sf::Vertex v4;
 		v4.position = pos + sf::Vector2f{ size*aspect, -size };
 		v4.texCoords = texCoords[3];
+		v4.texCoords = { 1.0f, 0.0f };
 
 		m_vertices.push_back(v1);
 		m_vertices.push_back(v2);
