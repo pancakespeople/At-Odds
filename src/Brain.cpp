@@ -422,7 +422,7 @@ void EconomyAI::handleShipDesigns(Faction & faction) {
 		}
 
 		// If there doesn't exist a design that uses this weapon, create a new design
-		if (notUsed) {
+		if (notUsed && !weapon.constructionWeapon && !weapon.miningWeapon) {
 			DesignerShip newDesign;
 			std::vector<DesignerChassis> usableChassis;
 

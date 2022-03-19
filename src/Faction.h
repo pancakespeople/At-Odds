@@ -85,7 +85,7 @@ public:
 	std::vector<DesignerShip>& getShipDesigns() { return m_designerShips; }
 	std::deque<std::string>& getAnnouncementEvents() { return m_announcementEvents; }
 	std::string getName() { return m_name; }
-	std::vector<DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp);
+	std::vector<DesignerWeapon> getWeaponsBelowOrEqualWeaponPoints(float wp, bool noCivilianWeapons = true);
 	std::vector<ColonyBuilding> getColonyBuildings();
 	std::vector<Planet*> getOwnedPlanets() const;
 	std::vector<Star*> getUnderAttackStars(const AllianceList& alliances);

@@ -339,11 +339,18 @@ void Faction::addAnnouncementEvent(const std::string& text) {
 	}
 }
 
-std::vector<DesignerWeapon> Faction::getWeaponsBelowOrEqualWeaponPoints(float wp) {
+std::vector<DesignerWeapon> Faction::getWeaponsBelowOrEqualWeaponPoints(float wp, bool noCivilianWeapons) {
 	std::vector<DesignerWeapon> weapons;
 	for (auto& weapon : m_weapons) {
 		if (weapon.weaponPoints <= wp) {
-			weapons.push_back(weapon);
+			if (noCivilianWeapons) {
+				if (!weapon.constructionWeapon && !weapon.miningWeapon) {
+					weapons.push_back(weapon);
+				}
+			}
+			else {
+				weapons.push_back(weapon);
+			}
 		}
 	}
 	return weapons;
@@ -457,7 +464,7 @@ std::vector<DesignerWeapon> Faction::getBuildingWeapons() {
 	const toml::table& table = TOMLCache::getTable("data/objects/weapons.toml");
 
 	for (DesignerWeapon& weapon : m_weapons) {
-		if (table[weapon.type]["allowedOnBuildings"].value_or(true)) {
+		if (table[weapon.type]["allowedOnBuildings"].value_or(true) && !weapon.miningWeapon && !weapon.constructionWeapon) {
 			weapons.push_back(weapon);
 		}
 	}
