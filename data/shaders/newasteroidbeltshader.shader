@@ -5,6 +5,7 @@ uniform float time;
 
 in vec2 pos;
 in float rotationAngle;
+in vec4 color;
 
 mat2 rotate(float angle) {
 	float c = cos(angle);
@@ -27,5 +28,5 @@ void main() {
 
 	float light = dot(normal, toSun);
 
-	gl_FragColor = vec4(vec3(light), alpha);
+	gl_FragColor = vec4(vec3(light) * color.rgb, alpha);
 }

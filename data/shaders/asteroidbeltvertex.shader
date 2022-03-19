@@ -4,6 +4,7 @@ uniform vec2 sunPos;
 
 varying out vec2 pos;
 varying out float rotationAngle;
+varying out vec4 color;
 
 mat2 rotate(float angle) {
     float c = cos(angle);
@@ -26,4 +27,5 @@ void main() {
 
     // forward the vertex color
     gl_FrontColor = gl_Color;
+    color = gl_Color;
 }
