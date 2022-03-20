@@ -381,6 +381,7 @@ void EconomyAI::update(Faction& faction, Brain& brain, const AllianceList& allia
 	handleShips(faction);
 	handleShipDesigns(faction);
 	handleColonies(faction);
+	handleAsteroidMining(faction);
 
 	sleep(1000);
 }
@@ -662,5 +663,50 @@ bool EconomyAI::researchStarterTechs(Faction& faction) {
 		faction.setResearchingTech(tech, true);
 		AI_DEBUG_PRINT("Started researching " << tech);
 		return false;
+	}
+}
+
+void EconomyAI::handleAsteroidMining(Faction& faction) {
+	for (auto& ship : faction.getShips()) {
+		if (ship->hasWeapon("MINING_LASER") && ship->numOrders() == 0) {
+			Star* targetStar = ship->getCurrentStar();
+			auto& ownedStars = faction.getOwnedStars();
+			int ownedStarsIndex = -1;
+			bool doneSearching = false;
+
+			// Search current stars first for asteroids, then search other stars
+			do {
+				std::deque<Asteroid*> miningQueue;
+
+				for (Asteroid& asteroid : targetStar->getAsteroids()) {
+					if (!asteroid.isDestructing()) {
+						if (asteroid.getResource() == "COMMON_ORE") {
+							miningQueue.push_front(&asteroid);
+						}
+						else {
+							miningQueue.push_back(&asteroid);
+						}
+					}
+				}
+
+				if (miningQueue.size() != 0) {
+					if (ship->getCurrentStar() != targetStar) {
+						ship->addOrder<TravelOrder>(targetStar);
+					}
+					ship->addOrder<MineAsteroidOrder>(MineAsteroidOrder(miningQueue.front()));
+					doneSearching = true;
+					AI_DEBUG_PRINT("Sent a ship to go mining");
+				}
+				else {
+					ownedStarsIndex++;
+					if (ownedStarsIndex == ownedStars.size()) {
+						doneSearching = true;
+					}
+					else {
+						targetStar = ownedStars[ownedStarsIndex];
+					}
+				}
+			} while (!doneSearching);
+		}
 	}
 }

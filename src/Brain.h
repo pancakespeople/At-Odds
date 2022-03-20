@@ -81,6 +81,7 @@ public:
 	void handleShipDesigns(Faction & faction);
 	void handleShips(Faction & faction);
 	void handleStars(Faction & faction);
+	void handleAsteroidMining(Faction& faction);
 	void researchRandomTech(Faction& faction);
 	bool researchStarterTechs(Faction& faction);
 

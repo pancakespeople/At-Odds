@@ -43,8 +43,7 @@ Asteroid::Asteroid(sf::Vector2f pos, sf::Vector2f starPos) {
 		m_sprite.setColor(sf::Color::Yellow);
 	}
 
-	//m_resourceCount = Random::randFloat(500.0f, 5000.0f);
-	m_resourceCount = 100.0f;
+	m_resourceCount = Random::randFloat(500.0f, 5000.0f);
 }
 
 void Asteroid::draw(Renderer& renderer) {
