@@ -96,6 +96,7 @@ int main(int argc, const char* argv[])
     int ticks = 0;
     int updates = 0;
     int updatesPerFrame = 0;
+    const int maxUpdateIterations = 100;
     
     optionsMenu.updateGameSettings(window, renderer, gui, musicPlayer, state.getCamera(), true);
 
@@ -136,7 +137,8 @@ int main(int argc, const char* argv[])
             updateStep += frameTime;
         }
 
-        while (updateStep >= 1.0f / state.getUpdatesPerSecondTarget()) {
+        int iterations = 0;
+        while (updateStep >= 1.0f / state.getUpdatesPerSecondTarget() && iterations < maxUpdateIterations) {
             state.restartUpdateClock();
             
             constellation.update(state.getPlayer(), renderer.effects);
@@ -146,6 +148,7 @@ int main(int argc, const char* argv[])
             
             updates++;
             updatesPerFrame++;
+            iterations++;
             updateStep -= 1.0f / state.getUpdatesPerSecondTarget();
             gameTime += 1.0f / state.getUpdatesPerSecondTarget();
         }

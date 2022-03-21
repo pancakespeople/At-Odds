@@ -14,16 +14,6 @@ class AllianceList;
 
 class Building : public Unit {
 public:
-	enum class BUILDING_TYPE {
-		NONE,
-		OUTPOST,
-		LASER_TURRET,
-		MACHINE_GUN_TURRET,
-		GAUSS_TURRET,
-		SHIP_FACTORY,
-		SPACE_HABITAT
-	};
-
 	Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built = true);
 	Building() {}
 
@@ -55,6 +45,7 @@ private:
 		archive & m_constructionPercent;
 		archive & m_constructionSpeedMultiplier;
 		archive & m_type;
+		archive & m_rotates;
 	}
 
 	void attackEnemies(const AllianceList& alliances);
@@ -66,6 +57,8 @@ private:
 
 	float m_constructionPercent = 0.0f;
 	float m_constructionSpeedMultiplier = 1.0f;
+
+	bool m_rotates = true;
 };
 
 class BuildingPrototype {

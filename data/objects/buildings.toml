@@ -54,13 +54,14 @@ category = "Defense"
 
 [SHIP_FACTORY]
 name = "Ship Factory"
-texturePath = "data/art/factory.png"
-scale = 2.0
+scale = 3.0
+texturePath = "data/art/factory3d.png"
 health = 2500.0
 constructionSpeedMultiplier = 1.5
 mods = ["Factory"]
 numPerStar = 5
 category = "Economy"
+rotates = false
 
 [SPACE_HABITAT]
 name = "Space Habitat"

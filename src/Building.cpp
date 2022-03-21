@@ -33,7 +33,8 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	m_maxHealth = table[type]["health"].value_or(100.0f);
 	m_constructionSpeedMultiplier = table[type]["constructionSpeedMultiplier"].value_or(1.0f);
 	m_type = type;
-	m_collider = Collider(pos, factionColor, m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f);
+	m_collider = Collider(pos, factionColor, m_sprite.getLocalBounds().width * m_sprite.getScale().x / 1.5f * table[type]["colliderScale"].value_or(1.0f));
+	m_rotates = table[type]["rotates"].value_or(true);
 
 	if (table[type].as_table()->contains("weapons")) {
 		for (auto& weapon : *table[type]["weapons"].as_array()) {
@@ -77,7 +78,10 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 
 	m_sprite.setPosition(pos);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
-	m_sprite.setRotation(Random::randFloat(0.0f, 360.0f));
+	
+	if (m_rotates) {
+		m_sprite.setRotation(Random::randFloat(0.0f, 360.0f));
+	}
 	
 	m_allegiance = allegiance;
 	m_currentStar = star;
@@ -136,7 +140,7 @@ void Building::update(Star* currentStar, const AllianceList& alliances) {
 	updateWeapons();
 	attackEnemies(alliances);
 
-	m_sprite.rotate(0.1f);
+	if (m_rotates) m_sprite.rotate(0.1f);
 	m_collider.update(getPos());
 }
 

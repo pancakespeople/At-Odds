@@ -647,7 +647,7 @@ void EconomyAI::researchRandomTech(Faction& faction) {
 
 bool EconomyAI::researchStarterTechs(Faction& faction) {
 	std::vector<std::string> starterTechs = {
-		"MINING"
+		"MANUFACTURING"
 	};
 	
 	for (int i = 0; i < starterTechs.size(); i++) {
