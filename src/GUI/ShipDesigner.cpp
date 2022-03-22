@@ -17,6 +17,8 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 				m_window = nullptr;
 				});
 
+			m_shipTexturePath = "";
+
 			auto designLabel = tgui::Label::create("Design");
 			designLabel->setOrigin(0.5f, 0.5f);
 			designLabel->setPosition("12.5%", "2.5%");
@@ -97,6 +99,16 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 			auto shipChassisListBox = tgui::ListBox::create();
 			shipChassisListBox->setPosition("27.5%", "50%");
 			shipChassisListBox->setSize("22.5%", "30%");
+			shipChassisListBox->onItemSelect([this, shipChassisListBox]() {
+				if (shipChassisListBox->getSelectedItemIndex() != -1) {
+					auto& table = TOMLCache::getTable("data/objects/spaceships.toml");
+					std::string shipType = shipChassisListBox->getSelectedItemId().toStdString();
+					m_shipTexturePath = table[shipType]["texturePath"].value_or("");
+				}
+				else {
+					m_shipTexturePath = "";
+				}
+			});
 			m_window->add(shipChassisListBox, "shipChassisListBox");
 
 			auto chassisInfoLabel = tgui::Label::create();
@@ -232,8 +244,15 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 			auto shipInfoLabel = tgui::Label::create();
 			shipInfoLabel->setPosition("weaponsComboBox.right + 2.5%", "weaponsComboBox.top");
-			shipInfoLabel->setSize("22.5%", "30%");
+			shipInfoLabel->setSize("20.0%", "30%");
+			shipInfoLabel->getRenderer()->setBackgroundColor(tgui::Color(50, 50, 50));
+			shipInfoLabel->getRenderer()->setOpacity(1.0f);
 			m_window->add(shipInfoLabel, "shipInfoLabel");
+
+			m_shipCanvas = tgui::Canvas::create();
+			m_shipCanvas->setPosition("shipWeaponsListBox.right + 2.5%", "shipWeaponsListBox.top");
+			m_shipCanvas->setSize("20%", "30%");
+			m_window->add(m_shipCanvas);
 
 			displayShipDesigns(playerFaction);
 
@@ -362,5 +381,24 @@ void ShipDesignerGUI::displayWeaponInfo(const std::string& weaponType) {
 	}
 	else {
 		weaponInfoGroup->setText("");
+	}
+}
+
+void ShipDesignerGUI::draw() {
+	if (m_shipCanvas) {
+		m_shipCanvas->clear(tgui::Color::Transparent);
+
+		if (m_shipTexturePath != "") {
+			sf::Sprite sprite;
+			sprite.setTexture(TextureCache::getTexture(m_shipTexturePath));
+			sprite.setScale({ 100.0f / sprite.getTextureRect().width, 100.0f / sprite.getTextureRect().height });
+			sprite.setPosition({ m_shipCanvas->getSize() / 2.0f });
+			sprite.setOrigin({ sprite.getTextureRect().width / 2.0f, sprite.getTextureRect().height / 2.0f });
+			sprite.setRotation(m_shipRotation);
+			m_shipCanvas->draw(sprite);
+		}
+
+		m_shipRotation += 0.1;
+		m_shipCanvas->display();
 	}
 }
