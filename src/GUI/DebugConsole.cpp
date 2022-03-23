@@ -282,14 +282,14 @@ void unlockTech(const DebugConsole::Command& command, const DebugConsole::Goodie
 	if (goodies.console->validateArgs(command, 1)) {
 		Faction* playerFaction = goodies.constellation.getFaction(goodies.state.getPlayer().getFaction());
 		if (playerFaction != nullptr) {
-			
-			playerFaction->removeTech(command.args[0]);
-
-			Tech t(command.args[0]);
-			t.addResearchPoints(t.getRequiredResearchPoints());
-			playerFaction->addTech(t);
-			playerFaction->onResearchFinish(t);
-			goodies.console->addLine("Unlocked tech " + t.getName());
+			Tech* tech = playerFaction->getTech(command.args[0]);
+			if (tech != nullptr) {
+				tech->setResearching(true);
+				tech->addResearchPoints(tech->getRequiredResearchPoints());
+			}
+			else {
+				goodies.console->addLine("Could not find tech " + command.args[0]);
+			}
 		}
 	}
 }

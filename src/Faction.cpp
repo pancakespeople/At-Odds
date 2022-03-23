@@ -161,24 +161,18 @@ void Faction::update(const AllianceList& alliances) {
 	}
 
 	// Research techs
-	for (Tech& tech : m_techs) {
-		if (tech.isResearching()) {
-			if (tech.isResearched()) {
-				tech.setResearching(false);
-				onResearchFinish(tech);
+	for (int i = 0; i < m_techs.size(); i++) {
+		if (m_techs[i].isResearching()) {
+			if (m_techs[i].isResearched()) {
+				m_techs[i].setResearching(false);
+				onResearchFinish(m_techs[i]);
 			}
 			else {
-				tech.addResearchPoints(0.1f * m_currentResearchPoints);
+				m_techs[i].addResearchPoints(0.1f * m_currentResearchPoints);
 			}
 			break; // Only work on the first in the queue
 		}
 	}
-
-	// Add queued techs
-	for (Tech& tech : m_toAddTechs) {
-		m_techs.push_back(tech);
-	}
-	m_toAddTechs.clear();
 
 	m_researchPointProduction = 0.1f * m_currentResearchPoints;
 	m_currentResearchPoints = 0.0f;
@@ -376,11 +370,6 @@ void Faction::reinitAfterLoad(Constellation* constellation) {
 		m_ships.push_back(constellation->getShipByID(id));
 	}
 
-	// Regenerate weapon upgrades
-	for (auto& weapon : m_weapons) {
-		Tech::generateWeaponUpgradeTech(weapon);
-	}
-
 	m_ai.reinitAfterLoad(constellation);
 }
 
@@ -553,6 +542,15 @@ void Faction::setResearchingTech(const std::string& type, bool research) {
 	}
 }
 
+Tech* Faction::getTech(const std::string& type) {
+	for (Tech& tech : m_techs) {
+		if (tech.getType() == type) {
+			return &tech;
+		}
+	}
+	return nullptr;
+}
+
 const Tech* Faction::getTech(const std::string& type) const {
 	for (const Tech& tech : m_techs) {
 		if (tech.getType() == type) {
@@ -562,7 +560,7 @@ const Tech* Faction::getTech(const std::string& type) const {
 	return nullptr;
 }
 
-void Faction::onResearchFinish(Tech& tech) {
+void Faction::onResearchFinish(Tech tech) {
 	const toml::table& table = TOMLCache::getTable("data/objects/tech.toml");
 
 	// Process flags
@@ -609,12 +607,11 @@ void Faction::onResearchFinish(Tech& tech) {
 	// Add unlocked techs
 	auto techs = tech.getUnlocked("unlocksTech");
 	for (const std::string& unlockedTech : techs) {
-		// Add to techs later to avoid invalidating iterators
-		m_toAddTechs.push_back(Tech(unlockedTech));
+		addTech(Tech(unlockedTech));
 	}
 
 	// Upgrade weapon
-	std::string weaponType = table[tech.getType()]["upgradesWeapon"].value_or("");
+	std::string weaponType = tech.getWeaponUpgrade();
 	if (weaponType != "") {
 		upgradeWeapon(weaponType);
 	}
@@ -683,7 +680,7 @@ void Faction::onStart() {
 
 std::vector<Tech> Faction::getAllTechsOfCategory(const std::string& category, bool unresearchedOnly) {
 	std::vector<Tech> techs;
-	for (Tech& tech : m_techs) {
+	for (auto& tech : m_techs) {
 		if (tech.getCategory() == category) {
 			if (unresearchedOnly) {
 				if (!tech.isResearched()) {
@@ -756,7 +753,10 @@ bool Faction::hasChassis(const std::string& type) {
 void Faction::addWeapon(const DesignerWeapon& weapon) {
 	if (!hasWeapon(weapon.type)) {
 		m_weapons.push_back(weapon);
-		m_toAddTechs.push_back(Tech::generateWeaponUpgradeTech(weapon));
+
+		if (weapon.upgradeable) {
+			addTech(Tech::generateWeaponUpgradeTech(weapon));
+		}
 	}
 }
 
@@ -764,7 +764,7 @@ void Faction::upgradeWeapon(const std::string& type) {
 	for (auto& weapon : m_weapons) {
 		if (weapon.type == type) {
 			weapon.upgradeLevel++;
-			m_toAddTechs.push_back(Tech::generateWeaponUpgradeTech(weapon));
+			addTech(Tech::generateWeaponUpgradeTech(weapon));
 
 			// Automatically update designs to use the new upgrade
 			for (auto& design : m_designerShips) {
@@ -801,7 +801,7 @@ void Faction::unlockAllTech() {
 	for (auto& elem : tech) {
 		Tech t(elem.first);
 		t.addResearchPoints(t.getRequiredResearchPoints());
-		m_techs.push_back(t);
+		addTech(t);
 	}
 
 	for (auto& t : m_techs) {

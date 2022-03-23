@@ -40,6 +40,7 @@ struct DesignerWeapon {
 	int upgradeLevel = 1;
 	bool miningWeapon = false;
 	bool constructionWeapon = false;
+	bool upgradeable = true;
 
 private:
 	friend class boost::serialization::access;

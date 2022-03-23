@@ -13,6 +13,7 @@ public:
 	std::string getExtendedDescription(Faction* faction) const;
 	std::string getType() const { return m_type; }
 	std::string getCategory() const;
+	std::string getWeaponUpgrade() const { return m_upgradesWeapon; }
 	std::vector<std::string> getUnlocked(const std::string& key) const;
 	
 	float getResearchPercent() const { return m_researchPoints / m_researchPointsRequired * 100.0f; }
@@ -40,6 +41,10 @@ private:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & m_type;
+		archive & m_name;
+		archive & m_description;
+		archive & m_category;
+		archive & m_upgradesWeapon;
 		archive & m_researchPointsRequired;
 		archive & m_researchPoints;
 		archive & m_researching;
@@ -48,6 +53,11 @@ private:
 	Tech() {}
 
 	std::string m_type;
+	std::string m_name;
+	std::string m_description;
+	std::string m_category;
+	std::string m_upgradesWeapon;
+
 	float m_researchPointsRequired = 0.0f;
 	float m_researchPoints = 0.0f;
 	bool m_researching = false;

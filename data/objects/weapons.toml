@@ -31,6 +31,7 @@ instaHit = true
 constructionWeapon = true
 cost = [["COMMON_ORE", 5.0]]
 weaponPoints = 1.0
+upgradeable = false
 
 [MINING_LASER]
 name = "Mining Laser"
@@ -41,6 +42,7 @@ instaHit = true
 miningWeapon = true
 cost = [["COMMON_ORE", 5.0]]
 weaponPoints = 1.0
+upgradeable = false
 
 [ROCKET_LAUNCHER]
 name = "Rocket Launcher"

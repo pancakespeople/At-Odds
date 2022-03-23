@@ -65,6 +65,7 @@ DesignerWeapon::DesignerWeapon(const std::string& typeStr) {
 
 	miningWeapon = table[typeStr]["miningWeapon"].value_or(false);
 	constructionWeapon = table[typeStr]["constructionWeapon"].value_or(false);
+	upgradeable = table[typeStr]["upgradeable"].value_or(true);
 }
 
 std::string DesignerWeapon::getFullName() {

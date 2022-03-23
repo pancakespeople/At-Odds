@@ -37,7 +37,7 @@ public:
 	void reinitAfterLoad(Constellation* constellation);
 	void addColonyBuilding(const std::string& type);
 	void setResearchingTech(const std::string& type, bool research);
-	void onResearchFinish(Tech& tech);
+	void onResearchFinish(Tech tech);
 	void addResearchPoints(float points) { m_currentResearchPoints += points; }
 	void onStart();
 	void setAIEnabled(bool enabled) { m_aiEnabled = enabled; }
@@ -69,6 +69,7 @@ public:
 	bool hasColonyBuilding(const std::string& type) const;
 	
 	const Tech* getTech(const std::string& type) const;
+	Tech* getTech(const std::string& type);
 
 	sf::Color getColor() { return m_color; }
 
@@ -161,7 +162,6 @@ private:
 		archive & m_newsEvents;
 		archive & m_neverColonized;
 		archive & m_numTicksAlive;
-		archive & m_toAddTechs;
 	}
 	
 	Faction() {}
@@ -186,7 +186,6 @@ private:
 	std::vector<std::string> m_availableColonyBuildings;
 	std::deque<std::pair<std::string, sf::Color>> m_newsEvents;
 	std::vector<Tech> m_techs;
-	std::vector<Tech> m_toAddTechs;
 	
 	Brain m_ai;
 	
