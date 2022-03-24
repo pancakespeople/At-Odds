@@ -20,6 +20,7 @@ private:
 	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
 	void createEventsButton(tgui::Gui& gui, const Planet& planet);
 	void createTradeButton(tgui::Gui& gui, Planet& planet);
+	void createMapButton(tgui::Gui& gui);
 	void openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
 	void closePanel(tgui::Gui& gui);
 	static void updateTrendWidget(tgui::Label::Ptr& label, float trend);
@@ -27,6 +28,7 @@ private:
 	GUI::Icon m_planetIcon;
 	tgui::Panel::Ptr m_planetInfoPanel;
 	tgui::Panel::Ptr m_buttonPanel;
+	tgui::VerticalLayout::Ptr m_buttonPanelLayout;
 	tgui::ChildWindow::Ptr m_planetPanel;
 	tgui::ChildWindow::Ptr m_sideWindow;
 	std::function<void(Planet&)> m_updateFunction = nullptr;

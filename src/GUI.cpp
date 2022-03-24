@@ -135,8 +135,6 @@ namespace GUI {
 		panel->onMouseEnter([this]() {
 			panel->getRenderer()->setBackgroundColor(tgui::Color::White);
 			panel->setRenderer(tgui::Theme().getRenderer("Panel"));
-
-			Sounds::playUISound("data/sound/click.wav");
 			});
 
 		panel->onMouseLeave([this]() {
@@ -146,7 +144,7 @@ namespace GUI {
 			});
 
 		panel->onClick([]() {
-			Sounds::playUISound("data/sound/boop.wav");
+			Sounds::playUISound("data/sound/click.wav");
 			});
 
 		gui.add(panel);
@@ -159,10 +157,6 @@ namespace GUI {
 	Button::Ptr Button::create(const std::string& text) {
 		auto button = std::make_shared<GUI::Button>();
 		button->setText(text);
-
-		button->onMouseEnter([button]() {
-			Sounds::playUISound("data/sound/click.wav");
-		});
 
 		button->onClick([button]() {
 			Sounds::playUISound(button->m_clickSoundPath);

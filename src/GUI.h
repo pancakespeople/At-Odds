@@ -64,7 +64,7 @@ namespace GUI {
 		void setClickSound(const std::string& filePath) { m_clickSoundPath = filePath; }
 
 	private:
-		std::string m_clickSoundPath = "data/sound/boop.wav";
+		std::string m_clickSoundPath = "data/sound/click.wav";
 	};
 }
 
