@@ -133,6 +133,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	m_buttonPanelLayout->removeAllWidgets();
 
 	Planet& planet = state.getLocalViewStar()->getPlanets()[index];
+	m_currentPlanet = &planet;
 
 	// Labels
 
@@ -222,6 +223,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 		m_sideWindow->onClose([this]() {
 			m_sideWindow = nullptr;
 			m_updateFunction = nullptr;
+			m_planetMapCanvas = nullptr;
 			});
 		gui.add(m_sideWindow);
 	}
@@ -861,6 +863,9 @@ void PlanetGUI::closePanel(tgui::Gui& gui) {
 		gui.remove(m_sideWindow);
 		m_sideWindow = nullptr;
 	}
+
+	m_planetMapCanvas = nullptr;
+	m_currentPlanet = nullptr;
 }
 
 void PlanetGUI::createMapButton(tgui::Gui& gui) {
@@ -871,7 +876,20 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		switchSideWindow("Map", gui);
 		if (m_sideWindow == nullptr) return;
 
-		auto label = tgui::Label::create("This is unfinished!");
-		m_sideWindow->add(label);
+		//auto label = tgui::Label::create("This is unfinished!");
+		//m_sideWindow->add(label);
+
+		m_planetMapCanvas = tgui::Canvas::create();
+		m_sideWindow->add(m_planetMapCanvas);
 	});
+}
+
+void PlanetGUI::draw(Renderer& renderer) {
+	if (m_planetMapCanvas != nullptr) {
+		m_planetMapCanvas->clear();
+
+		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet);
+
+		m_planetMapCanvas->display();
+	}
 }

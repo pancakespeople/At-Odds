@@ -56,7 +56,7 @@ void main() {
     float reflectivity = 1.0;
     float alpha = 1.0;
 
-    float noiseVal = fbm((uv * f * 5.0 / 300.0f) + 500.0) + 0.5;
+    float noiseVal = fbm((uv * f * 2.5 / size) + 500.0) + 0.5;
     float cloudNoise = fbm((uv * f * 2.0 * rotate(time / 16.0) / 300.0f) + 1000.0) + 0.5;
     //cloudNoise *= rotate(iTime);
     vec3 col = vec3(0.0);

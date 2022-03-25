@@ -8,6 +8,7 @@ public:
 
 	void open(tgui::Gui& gui, GameState& state, Faction* playerFaction, const Constellation& constellation);
 	void update(GameState& state);
+	void draw(Renderer& renderer);
 	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel, const Constellation& constellation);
 
 private:
@@ -31,5 +32,8 @@ private:
 	tgui::VerticalLayout::Ptr m_buttonPanelLayout;
 	tgui::ChildWindow::Ptr m_planetPanel;
 	tgui::ChildWindow::Ptr m_sideWindow;
+	tgui::Canvas::Ptr m_planetMapCanvas;
 	std::function<void(Planet&)> m_updateFunction = nullptr;
+
+	Planet* m_currentPlanet = nullptr;
 };

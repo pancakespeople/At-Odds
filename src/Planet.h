@@ -64,6 +64,7 @@ public:
 	float getHabitability() const;
 	float getTimeSinceCreation() const { return m_timeSinceCreaton; }
 	float getResourceAbundance(const std::string& type) const;
+	float getShaderSeed() const { return m_shaderRandomSeed; }
 
 	Colony& getColony() { return m_colony; }
 	const Orbit& getOrbit() const { return m_orbit; }
@@ -74,6 +75,7 @@ public:
 	bool isMouseInRadius(const sf::RenderWindow & window, const Renderer & renderer) const;
 
 	sf::Vector2f getPos() const { return m_shape.getPosition(); }
+	sf::Color getColor() const { return m_shape.getFillColor(); }
 
 	PLANET_TYPE getType() const { return m_type; }
 	std::string getTypeString() const;

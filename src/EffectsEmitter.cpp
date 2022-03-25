@@ -64,6 +64,9 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_jumpTrailShader.loadFromFile(m_vertexShaderPath, "data/shaders/jumptrailshader.shader");
 	m_particleShader.loadFromFile(m_vertexShaderPath, "data/shaders/particleshader.shader");
 	m_beamShader.loadFromFile(m_vertexShaderPath, "data/shaders/beamshader.shader");
+	m_planetMapShader.loadFromFile(m_vertexShaderPath, "data/shaders/planetmapshader.shader");
+	m_terraPlanetMapShader.loadFromFile(m_vertexShaderPath, "data/shaders/terraplanetmapshader.shader");
+	m_lavaPlanetMapShader.loadFromFile(m_vertexShaderPath, "data/shaders/lavaplanetmapshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -467,4 +470,31 @@ void EffectsEmitter::drawParticles(const std::vector<sf::Vertex>& vertices) {
 	states.blendMode = sf::BlendAdd;
 	states.shader = &m_particleShader;
 	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, states);
+}
+
+void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet) {
+	sf::RectangleShape shape;
+	shape.setSize(canvas->getSize());
+	shape.setFillColor(planet.getColor());
+	shape.setTextureRect({ 0, 0, 1, 1 });
+
+	if (planet.getType() == Planet::PLANET_TYPE::TERRA) {
+		m_terraPlanetMapShader.setUniform("seed", planet.getShaderSeed());
+
+		canvas->draw(shape, &m_terraPlanetMapShader);
+	}
+	else if (planet.getType() == Planet::PLANET_TYPE::LAVA || planet.getType() == Planet::PLANET_TYPE::VOLCANIC) {
+		m_lavaPlanetMapShader.setUniform("seed", planet.getShaderSeed());
+
+		canvas->draw(shape, &m_lavaPlanetMapShader);
+	}
+	else {
+		m_planetMapShader.setUniform("size", sf::Glsl::Vec2(canvas->getSize().x, canvas->getSize().y));
+		m_planetMapShader.setUniform("randSeed", planet.getShaderSeed());
+		m_planetMapShader.setUniform("gasGiant", planet.isGasGiant());
+		m_planetMapShader.setUniform("frozen", planet.getTemperature() < 273.15f);
+		m_planetMapShader.setUniform("water", planet.getWater());
+
+		canvas->draw(shape, &m_planetMapShader);
+	}
 }

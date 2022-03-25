@@ -430,5 +430,7 @@
     <None Include="data\shaders\beamshader.shader" />
     <None Include="data\shaders\newasteroidbeltshader.shader" />
     <None Include="data\shaders\asteroidbeltvertex.shader" />
+    <None Include="data\shaders\planetmapshader.shader" />
+    <None Include="data\shaders\lavaplanetmapshader.shader" />
   </ItemGroup>
 </Project>

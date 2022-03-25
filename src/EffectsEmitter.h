@@ -43,6 +43,7 @@ public:
 	void drawJumpTrail(const sf::RectangleShape& shape);
 	void drawParticles(const std::vector<sf::Vertex>& vertices);
 	void drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
+	void drawPlanetMap(tgui::Canvas* canvas, Planet& planet);
 	void updateTime(float time, float gameTime);
 
 private:
@@ -85,6 +86,9 @@ private:
 	sf::Shader m_jumpTrailShader;
 	sf::Shader m_particleShader;
 	sf::Shader m_beamShader;
+	sf::Shader m_planetMapShader;
+	sf::Shader m_terraPlanetMapShader;
+	sf::Shader m_lavaPlanetMapShader;
 
 	sf::Vector2i m_resolution;
 

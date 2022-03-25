@@ -83,5 +83,6 @@ void PlayerGUI::draw(sf::RenderWindow& window, Renderer& renderer, GameState& st
 		unitGUI.draw(window);
 		minimapGUI.draw(window, state.getLocalViewStar(), player.getFaction(), state.getCamera(), constellation.getAlliances());
 		shipDesignerGUI.draw();
+		planetGUI.draw(renderer);
 	}
 }
