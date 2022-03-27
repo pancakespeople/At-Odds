@@ -16,6 +16,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, fl
 	m_shape.setFillColor(sf::Color(155, 155, 155));
 	m_shape.setSize(sf::Vector2f(500.0f, 500.0f));
 	m_shape.setPosition(pos);
+	m_shape.setTextureRect({ 0, 0, 1, 1 });
 
 	float radiusFromStar = Math::distance(pos, starPos);
 	float baseTemperature = std::min(starTemperature, (starTemperature * 1000.0f) / radiusFromStar);

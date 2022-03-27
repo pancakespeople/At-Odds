@@ -55,41 +55,69 @@ mat2 rotate(float angle) {
 	return mat2(c, -s, s, c);
 }
 
+vec3 getBumpNormal(vec2 uv, float f, float noiseScale, vec2 offset, float diff) {
+	vec2 nuv = uv - offset;
+
+	vec2 uv1 = vec2(nuv.x + diff, nuv.y);
+	float r1 = length(uv1);
+	float f1 = (1.0 - sqrt(1.0 - r1)) / r1;
+
+	vec2 uv2 = vec2(nuv.x, nuv.y + diff);
+	float r2 = length(uv2);
+	float f2 = (1.0 - sqrt(1.0 - r2)) / r2;
+
+	vec2 uv3 = vec2(nuv.x - diff, nuv.y);
+	float r3 = length(uv3);
+	float f3 = (1.0 - sqrt(1.0 - r3)) / r3;
+
+	vec2 uv4 = vec2(nuv.x, nuv.y - diff);
+	float r4 = length(uv4);
+	float f4 = (1.0 - sqrt(1.0 - r4)) / r4;
+
+	float heightX = fbm(uv1 * f1 * noiseScale);
+	float heightY = fbm(uv2 * f2 * noiseScale);
+	float heightX2 = fbm(uv3 * f3 * noiseScale);
+	float heightY2 = fbm(uv4 * f4 * noiseScale);
+
+	vec2 heightDiff = vec2(heightX - heightX2, heightY - heightY2);
+	float z = sqrt(1.0 - pow(length(heightDiff), 2.0));
+
+	return vec3(heightDiff + uv, z);
+}
+
 void main() {
-	vec2 pixel = gl_FragCoord.xy / size;
-	vec2 worldPos = vertPos.xy - size;
-	float radius = distance(worldPos, pixel) * 2.0;
+	vec2 uv = (gl_TexCoord[0].xy - 0.5) * 2.0;
 	vec2 noisePos;
-	float r = sqrt(dot(worldPos, worldPos)) / size.x;
-	float f = (1.0 - sqrt(1.0 - r)) / (r);
-	float light = dot(worldPos / 250.0, normalize(sunVec));
+	float r = length(uv);
+	float f = (1.0 - sqrt(1.0 - r)) / r;
+	vec3 normal = vec3(uv, 0.0);
 	float alpha = 1.0;
+	float bumpRand = random2(vec2(randSeed, randSeed)).x * 0.005 + 0.005;
 	vec3 cloudColor = vec3(1.0);
 
 	if (atmosSameColor) cloudColor = color.rgb;
 	
 	if (!gasGiant) {
-		noisePos = worldPos * f / 75.0;
+		noisePos = uv * f;
 	}
 	else {
-		noisePos = worldPos * f  / 300.0 * rotate(time / 3.0);
-		
-		/*vec2 angleVector = random2(vec2(randSeed));
-
-		noisePos.x += angleVector.x * time;
-		noisePos.y += angleVector.y * time;*/
+		noisePos = uv * f * rotate(time / 3.0);
 	}
 
-	float noiseVal = fbm(noisePos * 200.0 / size + 0.5) * 4.0;
+	float noiseVal = fbm(noisePos * 2.0 + 0.5) * 4.0;
 	vec3 noiseVec = vec3(vec3(noiseVal) + 0.5 * 2.0);
-	float cloudNoise = fbm((worldPos * f * 2.0 * rotate(time / 16.0) / 300.0f) + 1000.0) + 0.5;
+	float cloudNoise = fbm((uv * f * 2.0 * rotate(time / 16.0)) + 1000.0) + 0.5;
+	vec3 clouds = vec3(0.0);
 
 	vec3 col = vec3(0.0);
 
 	if (r < 0.9) {
 		if (max(0.0f, noiseVal + 0.75f) < water && !gasGiant) {
-				if (frozen) col = vec3(1.0, 1.0, 1.0);
-				else col = vec3(0.0, 0.0, 1.0);
+			if (frozen) {
+				col = vec3(1.0, 1.0, 1.0);
+				normal = getBumpNormal(uv, f, 5.0, vec2(0.0), bumpRand);
+			}
+			else col = vec3(0.0, 0.0, 1.0);
 		}
 		else {
 			col = vec3(color.r, color.g, color.b) * noiseVec;
@@ -98,8 +126,11 @@ void main() {
 				col *= smoothstep(0.9, 0.8, r);
 				alpha = smoothstep(0.9, 0.8, r);
 			}
+			else {
+				normal = getBumpNormal(uv, f, 20.0, vec2(0.0), bumpRand);
+			}
 		}
-		if (atmosphere) col += smoothstep(0.55, 0.6, cloudNoise) * cloudColor;
+		if (atmosphere) clouds += smoothstep(0.55, 0.6, cloudNoise) * cloudColor;
 	}
 	else {
 		if (atmosphere) {
@@ -116,8 +147,13 @@ void main() {
 			alpha = 0.0;
 		}
 	}
+	float light = dot(normal, vec3(sunVec, 0.0));
 
-	light /= size.x / 250.0;
+	if (length(clouds) > 0.0) {
+		light = dot(vec3(uv, 0.0), vec3(sunVec, 0.0));
+	}
+
+	col += clouds;
 	col *= light;
 	col += light / 2.0;
 
