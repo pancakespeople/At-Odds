@@ -8,7 +8,7 @@ public:
 
 	void open(tgui::Gui& gui, GameState& state, Faction* playerFaction, const Constellation& constellation);
 	void update(GameState& state);
-	void draw(Renderer& renderer);
+	void draw(Renderer& renderer, const sf::RenderWindow& window);
 	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel, const Constellation& constellation);
 
 private:

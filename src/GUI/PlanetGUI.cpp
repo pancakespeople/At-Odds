@@ -879,16 +879,18 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		//auto label = tgui::Label::create("This is unfinished!");
 		//m_sideWindow->add(label);
 
+		m_sideWindow->setSize("40%", "70.8%");
+
 		m_planetMapCanvas = tgui::Canvas::create();
 		m_sideWindow->add(m_planetMapCanvas);
 	});
 }
 
-void PlanetGUI::draw(Renderer& renderer) {
+void PlanetGUI::draw(Renderer& renderer, const sf::RenderWindow& window) {
 	if (m_planetMapCanvas != nullptr) {
 		m_planetMapCanvas->clear();
 
-		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet);
+		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet, window);
 
 		m_planetMapCanvas->display();
 	}

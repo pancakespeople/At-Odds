@@ -64,10 +64,11 @@ namespace boost {
 		// sf::Shape
 		template<class Archive>
 		void save(Archive& archive, const sf::Shape& shape, const unsigned int version) {
-			archive& boost::serialization::base_object<sf::Transformable>(shape);
-			archive& shape.getFillColor();
-			archive& shape.getOutlineColor();
-			archive& shape.getOutlineThickness();
+			archive & boost::serialization::base_object<sf::Transformable>(shape);
+			archive & shape.getFillColor();
+			archive & shape.getOutlineColor();
+			archive & shape.getOutlineThickness();
+			archive & shape.getTextureRect();
 		}
 
 		template<class Archive>
@@ -75,15 +76,18 @@ namespace boost {
 			sf::Color fillColor;
 			sf::Color outlineColor;
 			float outlineThickness;
+			sf::IntRect textureRect;
 
-			archive& boost::serialization::base_object<sf::Transformable>(shape);
-			archive& fillColor;
-			archive& outlineColor;
-			archive& outlineThickness;
+			archive & boost::serialization::base_object<sf::Transformable>(shape);
+			archive & fillColor;
+			archive & outlineColor;
+			archive & outlineThickness;
+			archive & textureRect;
 
 			shape.setFillColor(fillColor);
 			shape.setOutlineColor(outlineColor);
 			shape.setOutlineThickness(outlineThickness);
+			shape.setTextureRect(textureRect);
 		}
 
 		// sf::CircleShape
@@ -151,10 +155,19 @@ namespace boost {
 		// sf::Rect<float>
 		template<class Archive>
 		void serialize(Archive& archive, sf::Rect<float>& rect, const unsigned int version) {
-			archive& rect.top;
-			archive& rect.left;
-			archive& rect.width;
-			archive& rect.height;
+			archive & rect.top;
+			archive & rect.left;
+			archive & rect.width;
+			archive & rect.height;
+		}
+
+		// sf::Rect<int>
+		template<class Archive>
+		void serialize(Archive& archive, sf::Rect<int>& rect, const unsigned int version) {
+			archive & rect.top;
+			archive & rect.left;
+			archive & rect.width;
+			archive & rect.height;
 		}
 
 		// sf::Color

@@ -472,7 +472,7 @@ void EffectsEmitter::drawParticles(const std::vector<sf::Vertex>& vertices) {
 	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, states);
 }
 
-void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet) {
+void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window) {
 	sf::RectangleShape shape;
 	shape.setSize(canvas->getSize());
 	shape.setFillColor(planet.getColor());
@@ -496,5 +496,35 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet) {
 		m_planetMapShader.setUniform("water", planet.getWater());
 
 		canvas->draw(shape, &m_planetMapShader);
+	}
+
+	const int gridSize = 8;
+	const sf::Vector2f gridRectSize = canvas->getSize() / gridSize;
+
+	// Draw grid
+	sf::RectangleShape gridRect;
+	gridRect.setSize(gridRectSize);
+	gridRect.setFillColor(sf::Color::Transparent);
+	gridRect.setOutlineThickness(1.0f);
+	gridRect.setOutlineColor(sf::Color(55, 55, 55));
+
+	for (int y = 0; y < gridSize; y++) {
+		for (int x = 0; x < gridSize; x++) {
+			sf::Vector2f pos(x * gridRectSize.x, y * gridRectSize.y);
+			gridRect.setPosition(pos);
+
+			sf::FloatRect relBounds = gridRect.getGlobalBounds();
+			relBounds.left += canvas->getAbsolutePosition().x;
+			relBounds.top += canvas->getAbsolutePosition().y;
+
+			if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
+				gridRect.setFillColor(sf::Color(255, 255, 255, 137));
+			}
+			else {
+				gridRect.setFillColor(sf::Color::Transparent);
+			}
+			
+			canvas->draw(gridRect);
+		}
 	}
 }

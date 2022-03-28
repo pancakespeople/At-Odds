@@ -110,7 +110,7 @@ private:
 		archive & m_parentPlanetIndex;
 	}
 	
-	Planet() {}
+	Planet() { m_shape.setTextureRect({ 0, 0, 1, 1 }); }
 
 	sf::RectangleShape m_shape;
 	
