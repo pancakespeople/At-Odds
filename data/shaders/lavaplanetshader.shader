@@ -1,6 +1,5 @@
 #define NUM_OCTAVES 5
 
-in vec2 uv2;
 uniform float seed;
 uniform vec2 sun;
 
@@ -44,15 +43,32 @@ mat2 rotate(float angle) {
     return mat2(c, -s, s, c);
 }
 
+vec3 getBumpNormal(vec2 uv, float f, float noiseScale, vec2 offset, float diff) {
+    vec2 uv2 = uv - offset;
+
+    float heightX = fbm(vec2(uv2.x + diff, uv2.y) * f * noiseScale);
+    float heightY = fbm(vec2(uv2.x, uv2.y + diff) * f * noiseScale);
+    float heightX2 = fbm(vec2(uv2.x - diff, uv2.y) * f * noiseScale);
+    float heightY2 = fbm(vec2(uv2.x, uv2.y - diff) * f * noiseScale);
+
+    vec2 heightDiff = vec2(heightX - heightX2, heightY - heightY2);
+    float z = sqrt(1.0 - pow(length(heightDiff), 2.0));
+
+    return vec3(heightDiff + uv, z);
+}
+
 void main()
 {
-    vec2 uv = (uv2 - 0.5) * 1.1;
+    vec2 uv = (gl_TexCoord[0].xy - 0.5) * 2.25;
 
     float r = length(uv);
     float f = (1.0 - sqrt(1.0 - r)) / r;
-    float light = dot(uv, sun);
+    vec3 normal = vec3(uv, 0.0);
+    float bumpRand = random2(vec2(seed, seed)).x * 0.005 + 0.005;
+
     float reflectivity = 1.0;
     float alpha = 1.0;
+    float emissive = 0.0;
 
     float noiseVal = fbm((uv * f * 5.0) + 500.0) + 0.5;
     vec3 col = vec3(0.0);
@@ -60,13 +76,15 @@ void main()
     if (r < 1.0) {
         if (noiseVal < 0.35) {
             col = vec3(1.0, 0.0, 0.0);
-            light = 0.5;
+            emissive = 0.5;
         }
         else if (noiseVal > 0.65) {
             col = vec3(1.0, 1.0, 1.0) * noiseVal;
+            normal = getBumpNormal(uv, f, 20.0, vec2(0.0), bumpRand);
         }
         else {
             col = vec3(noiseVal / 4.0, noiseVal / 4.0, noiseVal / 4.0);
+            normal = getBumpNormal(uv, f, 20.0, vec2(0.0), bumpRand);
         }
         reflectivity = noiseVal * 2.0;
     }
@@ -76,6 +94,7 @@ void main()
         reflectivity = 0.5;
     }
 
+    float light = dot(normal, vec3(sun, 0.0)) + emissive;
     col *= light;
     col += smoothstep(1.1, 1.0, r) * light * reflectivity * vec3(1.0, 0.5, 0.5);
 
