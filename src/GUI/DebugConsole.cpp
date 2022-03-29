@@ -202,7 +202,7 @@ void ownPlanet(const DebugConsole::Command& command, const DebugConsole::Goodies
 
 		if (planet.getColony().getPopulation() == 0) {
 			planet.onColonization();
-			planet.getColony().addPopulation(1000);
+			planet.getColony().addPopulation(1000, planet.getColony().getRandomGridPoint());
 		}
 
 		planet.getColony().setFactionColor(faction->getColor());

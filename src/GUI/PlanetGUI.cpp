@@ -876,13 +876,28 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		switchSideWindow("Map", gui);
 		if (m_sideWindow == nullptr) return;
 
-		//auto label = tgui::Label::create("This is unfinished!");
-		//m_sideWindow->add(label);
-
 		m_sideWindow->setSize("40%", "70.8%");
 
 		m_planetMapCanvas = tgui::Canvas::create();
 		m_sideWindow->add(m_planetMapCanvas);
+
+		m_planetMapCanvas->onClick([this](tgui::Vector2f pos) {
+			sf::Vector2i gridRectSize = sf::Vector2i(sf::Vector2f(m_planetMapCanvas->getSize())) / Colony::GRID_LENGTH;
+
+			int x = (int)pos.x / gridRectSize.x;
+			int y = (int)pos.y / gridRectSize.y;
+			DEBUG_PRINT("Grid point: " << x << " " << y);
+
+			if (m_currentPlanet != nullptr) {
+				int population = 0;
+
+				if (m_currentPlanet->getColony().isGridGenerated()) {
+					population = m_currentPlanet->getColony().getGridPointPopulation({ x, y });
+				}
+
+				DEBUG_PRINT("Population: " << population << "\n");
+			}
+		});
 	});
 }
 

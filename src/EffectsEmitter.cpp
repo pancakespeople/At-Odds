@@ -521,7 +521,17 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 				gridRect.setFillColor(sf::Color(255, 255, 255, 137));
 			}
 			else {
-				gridRect.setFillColor(sf::Color::Transparent);
+				if (planet.getColony().isGridGenerated()) {
+					if (planet.getColony().getGridPointPopulation({ x, y }) > 0) {
+						gridRect.setFillColor(sf::Color(0, 255, 0, 125));
+					}
+					else {
+						gridRect.setFillColor(sf::Color::Transparent);
+					}
+				}
+				else {
+					gridRect.setFillColor(sf::Color::Transparent);
+				}
 			}
 			
 			canvas->draw(gridRect);

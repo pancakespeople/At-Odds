@@ -19,10 +19,14 @@ void Colony::setFactionColonyLegality(int allegiance, bool legality) {
 void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	// Grow population
 	if (m_ticksUntilNextGrowth == 0) {
-		float growthRate = getGrowthRate(planet->getHabitability());
-		float growth = m_population * growthRate;
-		addPopulation(growth);
-		m_ticksUntilNextGrowth = Colony::growthTicks;
+		int population = getPopulation();
+
+		if (population > 0) {
+			float growthRate = getGrowthRate(planet->getHabitability());
+			float growth = population * growthRate;
+			addWorldPopulation(growth);
+			m_ticksUntilNextGrowth = GROWTH_TICKS;
+		}
 	}
 	else {
 		m_ticksUntilNextGrowth--;
@@ -31,39 +35,42 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	if (faction != nullptr) setFactionColor(faction->getColor());
 
 	// Spawn space bus
-	if (m_population >= 1000 && faction != nullptr) {
-		if (m_ticksToNextBus == 0) {
+	if (m_ticksToNextBus == 0) {
+		int population = getPopulation();
+
+		if (population >= 1000 && faction != nullptr) {
 			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
 
 			if (targetStar->getPlanets().size() > 0) {
 				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_allegiance, targetStar, planet);
 
 				if (targetPlanet != nullptr) {
-					if (m_population < 50000) {
+					if (population < 50000) {
 						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_BUS", 1000, 1000);
 
-						m_population -= 1000;
+						subtractWorldPopulation(1000);
 					}
 					else {
 						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_TRAIN", 10000, 10000);
 
-						m_population -= 10000;
+						subtractWorldPopulation(10000);
 					}
 				}
 			}
-			
-			float busSpawnTimeMultiplier = getBuildingEffects("busSpawnTimeMultiplier");
-			if (m_population < 50000) {
-				m_ticksToNextBus = HabitatMod::calcBusTickTimer(m_population) * busSpawnTimeMultiplier;
-			}
-			else {
-				m_ticksToNextBus = std::max(HabitatMod::calcBusTickTimer(m_population / 32.0f) * busSpawnTimeMultiplier, 1000.0f);
-			}
+		}
+		
+		float busSpawnTimeMultiplier = getBuildingEffects("busSpawnTimeMultiplier");
+		if (population < 50000) {
+			m_ticksToNextBus = HabitatMod::calcBusTickTimer(population) * busSpawnTimeMultiplier;
 		}
 		else {
-			m_ticksToNextBus--;
+			m_ticksToNextBus = std::max(HabitatMod::calcBusTickTimer(population / 32.0f) * busSpawnTimeMultiplier, 1000.0f);
 		}
 	}
+	else {
+		m_ticksToNextBus--;
+	}
+
 
 	// Resource exploitation
 	if (faction != nullptr) {
@@ -141,13 +148,18 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	}
 }
 
-void Colony::addPopulation(int pop) {
+void Colony::addWorldPopulation(int pop) {
 	// Make sure it doesn't go past the population limit
-	if (m_population - maxPopulation + pop > 0) {
+	int population = getPopulation();
+	if (population - MAX_POPULATION + pop > 0) {
 		return;
 	}
 	else {
-		m_population += pop;
+		auto populatedGridPoints = getPopulatedGridPoints();
+		int addEach = pop / populatedGridPoints.size();
+		for (auto& point : populatedGridPoints) {
+			getGridPoint(point).population += addEach;
+		}
 	}
 }
 
@@ -249,14 +261,19 @@ ColonyBuilding* Colony::getBuildingOfType(const std::string& type) {
 	return nullptr;
 }
 
-void Colony::subtractPopulation(int pop) {
-	if (m_population - pop <= 0) {
-		m_population = 0;
+void Colony::subtractWorldPopulation(int pop) {
+	int population = getPopulation();
+	if (population - pop <= 0) {
+		m_gridPoints.clear();
 		m_allegiance = -1;
 		m_factionColor = Faction::neutralColor;
 	}
 	else {
-		m_population -= pop;
+		auto populatedGridPoints = getPopulatedGridPoints();
+		int removeEach = pop / populatedGridPoints.size();
+		for (auto& point : populatedGridPoints) {
+			getGridPoint(point).population -= removeEach;
+		}
 	}
 }
 
@@ -452,7 +469,7 @@ float Colony::getResourceExploitation(const Resource& resource, const Planet& pl
 		}
 	}
 
-	return (m_population * planet.getResourceAbundance(resource.type) / 250.0f) * multiplier;
+	return (getPopulation() * planet.getResourceAbundance(resource.type) / 250.0f) * multiplier;
 }
 
 void Colony::onColonization(Planet& planet) {
@@ -461,6 +478,13 @@ void Colony::onColonization(Planet& planet) {
 	}
 	else {
 		m_revealResourceTimer = 0;
+	}
+
+	if (m_gridPoints.size() == 0) {
+		// Generate gridpoints
+		for (int i = 0; i < GRID_SIZE; i++) {
+			m_gridPoints.push_back(GridPoint{});
+		}
 	}
 }
 
@@ -485,4 +509,77 @@ bool ColonyBuilding::isBuildable(const Colony& colony) const {
 	}
 
 	return hasRequiredBuildings;
+}
+
+int Colony::getPopulation() const {
+	int population = 0;
+	for (const GridPoint& point : m_gridPoints) {
+		population += point.population;
+	}
+	return population;
+}
+
+Colony::GridPoint& Colony::getGridPoint(sf::Vector2i point) {
+	return m_gridPoints[point.x + point.y * GRID_LENGTH];
+}
+
+std::vector<sf::Vector2i> Colony::getPopulatedGridPoints() const {
+	std::vector<sf::Vector2i> points;
+	for (int i = 0; i < m_gridPoints.size(); i++) {
+		if (m_gridPoints[i].population > 0) {
+			int x = i % GRID_LENGTH;
+			int y = i / GRID_LENGTH;
+			points.push_back({ x, y });
+		}
+	}
+	return points;
+}
+
+void Colony::addPopulation(int pop, sf::Vector2i gridPoint) {
+	if (getPopulation() - MAX_POPULATION + pop > 0) {
+		return;
+	}
+	else {
+		getGridPoint(gridPoint).population += pop;
+	}
+}
+
+void Colony::subtractPopulation(int pop, sf::Vector2i gridPoint) {
+	if (getGridPoint(gridPoint).population - pop < 0) {
+		getGridPoint(gridPoint).population = 0;
+	}
+	else {
+		getGridPoint(gridPoint).population -= pop;
+	}
+
+	if (getPopulation() == 0) {
+		m_gridPoints.clear();
+		m_allegiance = -1;
+		m_factionColor = Faction::neutralColor;
+	}
+}
+
+sf::Vector2i Colony::getMostPopulatedGridPoint() const {
+	const GridPoint* mostPopulated = &m_gridPoints[0];
+	sf::Vector2i mostPopulatedCoords = { 0, 0 };
+	for (int i = 0; i < m_gridPoints.size(); i++) {
+		if (m_gridPoints[i].population > mostPopulated->population) {
+			mostPopulated = &m_gridPoints[i];
+
+			int x = i % GRID_LENGTH;
+			int y = i / GRID_LENGTH;
+			mostPopulatedCoords = { x, y };
+		}
+	}
+	return mostPopulatedCoords;
+}
+
+sf::Vector2i Colony::getRandomGridPoint() const {
+	int x = Random::randInt(0, GRID_LENGTH - 1);
+	int y = Random::randInt(0, GRID_LENGTH - 1);
+	return { x, y };
+}
+
+int Colony::getGridPointPopulation(sf::Vector2i point) const {
+	return m_gridPoints[point.x + point.y * GRID_LENGTH].population;
 }

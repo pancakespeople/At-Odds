@@ -612,7 +612,6 @@ void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	// Transfer passengers to planet
 	
 	bool firstTime = planet->getColony().getPopulation() == 0;
-	planet->getColony().addPopulation(m_population);
 	if (firstTime && m_population > 0) {
 		planet->getColony().setAllegiance(unit->getAllegiance());
 		planet->getColony().setFactionColor(unit->getFactionColor());
@@ -621,6 +620,14 @@ void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 			m_faction->onColonization(planet, star);
 		}
 	}
+
+	if (firstTime) {
+		planet->getColony().addPopulation(m_population, planet->getColony().getRandomGridPoint());
+	}
+	else {
+		planet->getColony().addPopulation(m_population, planet->getColony().getMostPopulatedGridPoint());
+	}
+	
 	m_population = 0;
 }
 

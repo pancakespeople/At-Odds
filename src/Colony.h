@@ -13,13 +13,27 @@ struct Resource;
 
 class Colony {
 public:
-	const static int growthTicks = 1000;
-	const static int maxPopulation = 1000000000; // 1 billion
+	struct GridPoint {
+		int population;
+
+	private:
+		friend class boost::serialization::access;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version) {
+			archive & population;
+		}
+	};
+	
+	const static int GRID_LENGTH = 8;
+	static const int GRID_SIZE = GRID_LENGTH * GRID_LENGTH;
+	const static int GROWTH_TICKS = 1000;
+	const static int MAX_POPULATION = 1000000000; // 1 billion
 
 	void update(Star* currentStar, Faction* faction, Planet* planet);
 
-	int getPopulation() const { return m_population; }
+	int getPopulation() const;
 	int getAllegiance() const { return m_allegiance; }
+	int getGridPointPopulation(sf::Vector2i point) const;
 
 	float getGrowthRate(float planetHabitability, std::string* outInfoString = nullptr) const;
 	float getBuildingEffects(const std::string& effect) const;
@@ -32,14 +46,23 @@ public:
 	bool hasBuildingOfType(const std::string& string, bool builtOnly = false) const;
 	bool hasBuildingFlag(const std::string& flag) const;
 	bool hasUndiscoveredResources(const Planet& planet) const;
+	bool isGridGenerated() const { return m_gridPoints.size() > 0; }
 
 	// Buys a building for a faction, returns false if failed
 	bool buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet);
 	
 	void setFactionColonyLegality(int allegiance, bool legality);
 	void setTicksToNextBus(int ticks) { m_ticksToNextBus = ticks; }
-	void addPopulation(int pop);
-	void subtractPopulation(int pop);
+	
+	void addPopulation(int pop, sf::Vector2i gridPoint);
+	void subtractPopulation(int pop, sf::Vector2i gridPoint);
+
+	// Adds population evenly across all populated grid points
+	void addWorldPopulation(int pop);
+	
+	// Subtracts population evenly across all populated grid points
+	void subtractWorldPopulation(int pop);
+	
 	void setAllegiance(int id) { m_allegiance = id; }
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
 	void addBuilding(const ColonyBuilding& building) { m_buildings.push_back(building); }
@@ -54,16 +77,18 @@ public:
 	sf::Color getFactionColor() { return m_factionColor; }
 
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
+	std::vector<sf::Vector2i> getPopulatedGridPoints() const;
 	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);
 
 	TradeGoods& getTradeGoods() { return m_tradeGoods; }
+	sf::Vector2i getMostPopulatedGridPoint() const;
+	sf::Vector2i getRandomGridPoint() const;
 
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_population;
 		archive & m_ticksUntilNextGrowth;
 		archive & m_ticksToNextBus;
 		archive & m_allegiance;
@@ -79,11 +104,13 @@ private:
 		archive & m_wealth;
 		archive & m_newBuildingNames;
 		archive & m_revealResourceTimer;
+		archive & m_gridPoints;
 	}
 
-	int m_population = 0;
+	GridPoint& getGridPoint(sf::Vector2i point);
+
 	int m_allegiance = -1;
-	int m_ticksUntilNextGrowth = growthTicks;
+	int m_ticksUntilNextGrowth = GROWTH_TICKS;
 	int m_ticksToNextBus = 500;
 	int m_ticksToNextResourceExploit = 1000;
 	int m_explorationEventTimer = 0;
@@ -100,6 +127,7 @@ private:
 	std::unordered_map<int, bool> m_factionColonyLegality;
 	std::vector<ColonyBuilding> m_buildings;
 	std::deque<std::string> m_newBuildingNames;
+	std::vector<GridPoint> m_gridPoints;
 
 	Weapon m_defenseCannon = Weapon("FLAK_CANNON");
 	TradeGoods m_tradeGoods;
