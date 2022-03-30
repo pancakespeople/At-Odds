@@ -121,7 +121,7 @@ void Planet::update(Star* currentStar, Faction* faction) {
 				float deathPercent = Random::randFloat(0.0f, 0.05f);
 				float deathConstant = m_bombardProjectiles[i].getDamage();
 
-				m_colony.subtractWorldPopulation((m_colony.getPopulation() * deathPercent + deathConstant) * m_colony.getBuildingEffects("bombardDamageMultiplier"));
+				m_colony.changeWorldPopulation(-(m_colony.getPopulation() * deathPercent + deathConstant) * m_colony.getBuildingEffects("bombardDamageMultiplier"));
 
 			}
 
@@ -129,13 +129,13 @@ void Planet::update(Star* currentStar, Faction* faction) {
 				float deathConstant = Random::randInt(100, 1000);
 				float invasionEffectiveness = m_colony.getBuildingEffects("invasionEffectiveness");
 
-				m_colony.subtractWorldPopulation(deathConstant * invasionEffectiveness);
+				m_colony.changeWorldPopulation(-deathConstant * invasionEffectiveness);
 
 				if (m_colony.getPopulation() == 0) {
 					DEBUG_PRINT("Set allegiance to " << m_bombardProjectiles[i].getAllegiance());
 					m_colony.setAllegiance(m_bombardProjectiles[i].getAllegiance());
 					m_colony.onColonization(*this);
-					m_colony.addPopulation(Random::randInt(100, 1000), m_colony.getRandomGridPoint());
+					m_colony.changePopulation(Random::randInt(100, 1000), m_colony.getRandomGridPoint());
 				}
 			}
 

@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "Random.h"
 #include "Camera.h"
+#include "Fonts.h"
 
 EffectsEmitter::EffectsEmitter(sf::Vector2i resolution, Renderer& renderer) :
 m_renderer(renderer) {
@@ -508,6 +509,10 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 	gridRect.setOutlineThickness(1.0f);
 	gridRect.setOutlineColor(sf::Color(55, 55, 55));
 
+	sf::Text text;
+	text.setFont(Fonts::getMainFont());
+	text.setColor(sf::Color(55, 55, 55));
+
 	for (int y = 0; y < gridSize; y++) {
 		for (int x = 0; x < gridSize; x++) {
 			sf::Vector2f pos(x * gridRectSize.x, y * gridRectSize.y);
@@ -524,6 +529,8 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 				if (planet.getColony().isGridGenerated()) {
 					if (planet.getColony().getGridPointPopulation({ x, y }) > 0) {
 						gridRect.setFillColor(sf::Color(0, 255, 0, 125));
+						text.setString(std::to_string(planet.getColony().getGridPointPopulation({ x, y })));
+						text.setPosition(pos);
 					}
 					else {
 						gridRect.setFillColor(sf::Color::Transparent);
@@ -535,6 +542,11 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 			}
 			
 			canvas->draw(gridRect);
+
+			if (text.getString() != "") {
+				canvas->draw(text);
+				text.setString("");
+			}
 		}
 	}
 }

@@ -5,6 +5,7 @@ public:
 	Fonts() = delete;
 
 	static sf::Font& getFont(const std::string& filePath);
+	static sf::Font& getMainFont() { return getFont(MAIN_FONT_PATH); }
 
 	inline static const auto MAIN_FONT_PATH = "data/fonts/NotoSans-Regular.ttf";
 

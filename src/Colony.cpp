@@ -18,18 +18,13 @@ void Colony::setFactionColonyLegality(int allegiance, bool legality) {
 
 void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 	// Grow population
-	if (m_ticksUntilNextGrowth == 0) {
-		int population = getPopulation();
-
-		if (population > 0) {
-			float growthRate = getGrowthRate(planet->getHabitability());
-			float growth = population * growthRate;
-			addWorldPopulation(growth);
-			m_ticksUntilNextGrowth = GROWTH_TICKS;
-		}
+	if (m_ticksToNextGridUpdate == 0) {
+		updateGrid(*planet);
+		
+		m_ticksToNextGridUpdate = GRID_UPDATE_TICKS;
 	}
 	else {
-		m_ticksUntilNextGrowth--;
+		m_ticksToNextGridUpdate--;
 	}
 
 	if (faction != nullptr) setFactionColor(faction->getColor());
@@ -48,12 +43,12 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 					if (population < 50000) {
 						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_BUS", 1000, 1000);
 
-						subtractWorldPopulation(1000);
+						changeWorldPopulation(-1000);
 					}
 					else {
 						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_TRAIN", 10000, 10000);
 
-						subtractWorldPopulation(10000);
+						changeWorldPopulation(-10000);
 					}
 				}
 			}
@@ -144,21 +139,6 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 			else {
 				m_revealResourceTimer--;
 			}
-		}
-	}
-}
-
-void Colony::addWorldPopulation(int pop) {
-	// Make sure it doesn't go past the population limit
-	int population = getPopulation();
-	if (population - MAX_POPULATION + pop > 0) {
-		return;
-	}
-	else {
-		auto populatedGridPoints = getPopulatedGridPoints();
-		int addEach = pop / populatedGridPoints.size();
-		for (auto& point : populatedGridPoints) {
-			getGridPoint(point).population += addEach;
 		}
 	}
 }
@@ -259,22 +239,6 @@ ColonyBuilding* Colony::getBuildingOfType(const std::string& type) {
 		}
 	}
 	return nullptr;
-}
-
-void Colony::subtractWorldPopulation(int pop) {
-	int population = getPopulation();
-	if (population - pop <= 0) {
-		m_gridPoints.clear();
-		m_allegiance = -1;
-		m_factionColor = Faction::neutralColor;
-	}
-	else {
-		auto populatedGridPoints = getPopulatedGridPoints();
-		int removeEach = pop / populatedGridPoints.size();
-		for (auto& point : populatedGridPoints) {
-			getGridPoint(point).population -= removeEach;
-		}
-	}
 }
 
 float Colony::getBuildingEffects(const std::string& effect) const {
@@ -520,6 +484,8 @@ int Colony::getPopulation() const {
 }
 
 Colony::GridPoint& Colony::getGridPoint(sf::Vector2i point) {
+	assert(point.x >= 0 && point.x < GRID_LENGTH &&
+		point.y >= 0 && point.y < GRID_LENGTH);
 	return m_gridPoints[point.x + point.y * GRID_LENGTH];
 }
 
@@ -535,27 +501,55 @@ std::vector<sf::Vector2i> Colony::getPopulatedGridPoints() const {
 	return points;
 }
 
-void Colony::addPopulation(int pop, sf::Vector2i gridPoint) {
-	if (getPopulation() - MAX_POPULATION + pop > 0) {
-		return;
+void Colony::changePopulation(int pop, sf::Vector2i gridPoint) {
+	changePopulation(pop, getGridPoint(gridPoint));
+}
+
+void Colony::changePopulation(int pop, GridPoint& gridPoint) {
+	if (pop > 0) {
+		if (getPopulation() - MAX_POPULATION + pop > 0) {
+			return;
+		}
+		else {
+			gridPoint.population += pop;
+		}
 	}
 	else {
-		getGridPoint(gridPoint).population += pop;
+		if (gridPoint.population + pop < 0) {
+			gridPoint.population = 0;
+		}
+		else {
+			gridPoint.population += pop;
+		}
 	}
 }
 
-void Colony::subtractPopulation(int pop, sf::Vector2i gridPoint) {
-	if (getGridPoint(gridPoint).population - pop < 0) {
-		getGridPoint(gridPoint).population = 0;
+void Colony::changeWorldPopulation(int pop) {
+	auto populatedGridPoints = getPopulatedGridPoints();
+	int changeEach = pop / (int)populatedGridPoints.size();
+	int population = getPopulation();
+
+	if (pop > 0) {
+		if (population - MAX_POPULATION + pop > 0) {
+			return;
+		}
+		else {
+			for (auto gridPoint : populatedGridPoints) {
+				getGridPoint(gridPoint).population += changeEach;
+			}
+		}
 	}
 	else {
-		getGridPoint(gridPoint).population -= pop;
-	}
-
-	if (getPopulation() == 0) {
-		m_gridPoints.clear();
-		m_allegiance = -1;
-		m_factionColor = Faction::neutralColor;
+		if (population + pop < 0) {
+			for (auto gridPoint : populatedGridPoints) {
+				getGridPoint(gridPoint).population = 0;
+			}
+		}
+		else {
+			for (auto gridPoint : populatedGridPoints) {
+				getGridPoint(gridPoint).population += changeEach;
+			}
+		}
 	}
 }
 
@@ -582,4 +576,51 @@ sf::Vector2i Colony::getRandomGridPoint() const {
 
 int Colony::getGridPointPopulation(sf::Vector2i point) const {
 	return m_gridPoints[point.x + point.y * GRID_LENGTH].population;
+}
+
+void Colony::updateGrid(Planet& planet) {
+	int population = getPopulation();
+
+	if (population > 0) {
+		// Grow population
+		
+		float growthRate = getGrowthRate(planet.getHabitability());
+		for (GridPoint& gridPoint : m_gridPoints) {
+			changePopulation(gridPoint.population * growthRate, gridPoint);
+		}
+
+		// Spread population out
+		auto populatedGridPoints = getPopulatedGridPoints();
+		for (sf::Vector2i gridPoint : populatedGridPoints) {
+			int gridPop = getGridPointPopulation(gridPoint);
+			auto adjacentGridPoints = getAdjacentGridPoints(gridPoint);
+
+			// 10% of population goes to adjacent tiles
+			int disperseEach = gridPop * 0.1f / adjacentGridPoints.size();
+			int toSubtract = 0;
+
+			for (sf::Vector2i adjGridPoint : adjacentGridPoints) {
+				changePopulation(disperseEach, adjGridPoint);
+				toSubtract -= disperseEach;
+			}
+
+			changePopulation(toSubtract, gridPoint);
+		}
+	}
+}
+
+std::vector<sf::Vector2i> Colony::getAdjacentGridPoints(sf::Vector2i point) const {
+	std::vector<sf::Vector2i> gridPoints;
+	
+	for (int y = point.y - 1; y <= point.y + 1; y++) {
+		for (int x = point.x - 1; x <= point.x + 1; x++) {
+			if (x >= 0 && x < GRID_LENGTH &&
+				y >= 0 && y < GRID_LENGTH &&
+				!(x == point.x && y == point.y)) {
+				gridPoints.push_back({ x, y });
+			}
+		}
+	}
+
+	return gridPoints;
 }

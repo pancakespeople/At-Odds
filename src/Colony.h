@@ -26,7 +26,7 @@ public:
 	
 	const static int GRID_LENGTH = 8;
 	static const int GRID_SIZE = GRID_LENGTH * GRID_LENGTH;
-	const static int GROWTH_TICKS = 1000;
+	const static int GRID_UPDATE_TICKS = 1000;
 	const static int MAX_POPULATION = 1000000000; // 1 billion
 
 	void update(Star* currentStar, Faction* faction, Planet* planet);
@@ -54,14 +54,9 @@ public:
 	void setFactionColonyLegality(int allegiance, bool legality);
 	void setTicksToNextBus(int ticks) { m_ticksToNextBus = ticks; }
 	
-	void addPopulation(int pop, sf::Vector2i gridPoint);
-	void subtractPopulation(int pop, sf::Vector2i gridPoint);
-
-	// Adds population evenly across all populated grid points
-	void addWorldPopulation(int pop);
-	
-	// Subtracts population evenly across all populated grid points
-	void subtractWorldPopulation(int pop);
+	void changePopulation(int pop, sf::Vector2i gridPoint);
+	void changePopulation(int pop, GridPoint& gridPoint);
+	void changeWorldPopulation(int pop);
 	
 	void setAllegiance(int id) { m_allegiance = id; }
 	void setFactionColor(sf::Color color) { m_factionColor = color; }
@@ -78,6 +73,8 @@ public:
 
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
 	std::vector<sf::Vector2i> getPopulatedGridPoints() const;
+	std::vector<sf::Vector2i> getAdjacentGridPoints(sf::Vector2i point) const;
+
 	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);
 
@@ -89,7 +86,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version) {
-		archive & m_ticksUntilNextGrowth;
+		archive & m_ticksToNextGridUpdate;
 		archive & m_ticksToNextBus;
 		archive & m_allegiance;
 		archive & m_factionColor;
@@ -109,8 +106,10 @@ private:
 
 	GridPoint& getGridPoint(sf::Vector2i point);
 
+	void updateGrid(Planet& planet);
+
 	int m_allegiance = -1;
-	int m_ticksUntilNextGrowth = GROWTH_TICKS;
+	int m_ticksToNextGridUpdate = GRID_UPDATE_TICKS;
 	int m_ticksToNextBus = 500;
 	int m_ticksToNextResourceExploit = 1000;
 	int m_explorationEventTimer = 0;
