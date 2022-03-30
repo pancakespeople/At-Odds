@@ -120,7 +120,7 @@ void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellati
 
 	// Floaty name text
 	sf::Text text;
-	text.setFont(Fonts::getFont("data/fonts/OpenSans-Regular.ttf"));
+	text.setFont(Fonts::getFont(Fonts::MAIN_FONT_PATH));
 	text.setString(m_name);
 	text.setOrigin(text.getLocalBounds().width / 2.0f, 0.0f);
 

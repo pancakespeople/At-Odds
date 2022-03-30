@@ -109,7 +109,7 @@ void Quadtree::draw(Renderer& renderer) {
 	renderer.draw(rect);
 
 	sf::Text text;
-	text.setFont(Fonts::getFont("data/fonts/OpenSans-Regular.ttf"));
+	text.setFont(Fonts::getFont(Fonts::MAIN_FONT_PATH));
 	text.setOrigin({ text.getLocalBounds().width / 2.0f, text.getLocalBounds().height / 2.0f });
 
 	for (Unit* unit : m_objects) {
