@@ -135,7 +135,7 @@ void Planet::update(Star* currentStar, Faction* faction) {
 					DEBUG_PRINT("Set allegiance to " << m_bombardProjectiles[i].getAllegiance());
 					m_colony.setAllegiance(m_bombardProjectiles[i].getAllegiance());
 					m_colony.onColonization(*this);
-					m_colony.changePopulation(Random::randInt(100, 1000), m_colony.getRandomGridPoint());
+					m_colony.changePopulation(Random::randInt(100, 1000), m_colony.getRandomTile());
 				}
 			}
 

@@ -13,14 +13,18 @@ struct Resource;
 
 class Colony {
 public:
-	struct GridPoint {
-		int population;
+	struct Tile {
+		int population = 0;
+		int8_t cityVariant = 1;
+
+		Tile();
 
 	private:
 		friend class boost::serialization::access;
 		template<class Archive>
 		void serialize(Archive& archive, const unsigned int version) {
 			archive & population;
+			archive & cityVariant;
 		}
 	};
 	
@@ -33,7 +37,8 @@ public:
 
 	int getPopulation() const;
 	int getAllegiance() const { return m_allegiance; }
-	int getGridPointPopulation(sf::Vector2i point) const;
+	int getTilePopulation(sf::Vector2i point) const;
+	int8_t getTileCityVariant(sf::Vector2i point) const { return m_tiles[point.x + point.y * GRID_LENGTH].cityVariant; }
 
 	float getGrowthRate(float planetHabitability, std::string* outInfoString = nullptr) const;
 	float getBuildingEffects(const std::string& effect) const;
@@ -46,7 +51,7 @@ public:
 	bool hasBuildingOfType(const std::string& string, bool builtOnly = false) const;
 	bool hasBuildingFlag(const std::string& flag) const;
 	bool hasUndiscoveredResources(const Planet& planet) const;
-	bool isGridGenerated() const { return m_gridPoints.size() > 0; }
+	bool isGridGenerated() const { return m_tiles.size() > 0; }
 
 	// Buys a building for a faction, returns false if failed
 	bool buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet);
@@ -54,8 +59,8 @@ public:
 	void setFactionColonyLegality(int allegiance, bool legality);
 	void setTicksToNextBus(int ticks) { m_ticksToNextBus = ticks; }
 	
-	void changePopulation(int pop, sf::Vector2i gridPoint);
-	void changePopulation(int pop, GridPoint& gridPoint);
+	void changePopulation(int pop, sf::Vector2i tile);
+	void changePopulation(int pop, Tile& tile);
 	void changeWorldPopulation(int pop);
 	
 	void setAllegiance(int id) { m_allegiance = id; }
@@ -72,15 +77,17 @@ public:
 	sf::Color getFactionColor() { return m_factionColor; }
 
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
-	std::vector<sf::Vector2i> getPopulatedGridPoints() const;
-	std::vector<sf::Vector2i> getAdjacentGridPoints(sf::Vector2i point) const;
+	std::vector<sf::Vector2i> getPopulatedTiles(int minPopulation = 0) const;
+	std::vector<sf::Vector2i> getAdjacentTiles(sf::Vector2i point) const;
 
 	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);
 
 	TradeGoods& getTradeGoods() { return m_tradeGoods; }
-	sf::Vector2i getMostPopulatedGridPoint() const;
-	sf::Vector2i getRandomGridPoint() const;
+	sf::Vector2i getMostPopulatedTile() const;
+	sf::Vector2i getRandomTile() const;
+
+	static std::string getCityTexturePath(int population, int cityVariant);
 
 private:
 	friend class boost::serialization::access;
@@ -101,10 +108,10 @@ private:
 		archive & m_wealth;
 		archive & m_newBuildingNames;
 		archive & m_revealResourceTimer;
-		archive & m_gridPoints;
+		archive & m_tiles;
 	}
 
-	GridPoint& getGridPoint(sf::Vector2i point);
+	Tile& getTile(sf::Vector2i point);
 
 	void updateGrid(Planet& planet);
 
@@ -126,7 +133,7 @@ private:
 	std::unordered_map<int, bool> m_factionColonyLegality;
 	std::vector<ColonyBuilding> m_buildings;
 	std::deque<std::string> m_newBuildingNames;
-	std::vector<GridPoint> m_gridPoints;
+	std::vector<Tile> m_tiles;
 
 	Weapon m_defenseCannon = Weapon("FLAK_CANNON");
 	TradeGoods m_tradeGoods;

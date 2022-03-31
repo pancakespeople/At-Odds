@@ -138,7 +138,7 @@ int main(int argc, const char* argv[])
         }
 
         int iterations = 0;
-        while (updateStep >= 1.0f / state.getUpdatesPerSecondTarget() && iterations < maxUpdateIterations) {
+        while (updateStep >= 1.0f / state.getUpdatesPerSecondTarget()) {
             state.restartUpdateClock();
             
             constellation.update(state.getPlayer(), renderer.effects);
@@ -151,6 +151,11 @@ int main(int argc, const char* argv[])
             iterations++;
             updateStep -= 1.0f / state.getUpdatesPerSecondTarget();
             gameTime += 1.0f / state.getUpdatesPerSecondTarget();
+
+            if (iterations >= maxUpdateIterations) {
+                updateStep = 0.0f;
+                break;
+            }
         }
 
         renderer.effects.updateTime(time, gameTime);

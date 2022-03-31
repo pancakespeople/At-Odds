@@ -31,35 +31,42 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 
 	// Spawn space bus
 	if (m_ticksToNextBus == 0) {
-		int population = getPopulation();
+		sf::Vector2i mostPopulatedTile;
+		int mostPop = 0;
 
-		if (population >= 1000 && faction != nullptr) {
+		if (isGridGenerated()) {
+			mostPopulatedTile = planet->getColony().getMostPopulatedTile();
+			mostPop = planet->getColony().getTilePopulation(mostPopulatedTile);
+		}
+
+		if (mostPop >= 5000 && faction != nullptr) {
 			Star* targetStar = HabitatMod::findBusStarDestination(currentStar, faction);;
 
 			if (targetStar->getPlanets().size() > 0) {
 				Planet* targetPlanet = HabitatMod::findBusPlanetDestination(m_allegiance, targetStar, planet);
 
 				if (targetPlanet != nullptr) {
-					if (population < 50000) {
+
+					if (mostPop < 100000) {
 						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_BUS", 1000, 1000);
 
-						changeWorldPopulation(-1000);
+						changePopulation(-1000, mostPopulatedTile);
 					}
 					else {
 						planet->createSpaceBus(faction->getColor(), currentStar, targetStar, targetPlanet, "SPACE_TRAIN", 10000, 10000);
 
-						changeWorldPopulation(-10000);
+						changePopulation(-10000, mostPopulatedTile);
 					}
 				}
 			}
 		}
 		
 		float busSpawnTimeMultiplier = getBuildingEffects("busSpawnTimeMultiplier");
-		if (population < 50000) {
-			m_ticksToNextBus = HabitatMod::calcBusTickTimer(population) * busSpawnTimeMultiplier;
+		if (mostPop < 50000) {
+			m_ticksToNextBus = HabitatMod::calcBusTickTimer(mostPop) * busSpawnTimeMultiplier;
 		}
 		else {
-			m_ticksToNextBus = std::max(HabitatMod::calcBusTickTimer(population / 32.0f) * busSpawnTimeMultiplier, 1000.0f);
+			m_ticksToNextBus = std::max(HabitatMod::calcBusTickTimer(mostPop / 32.0f) * busSpawnTimeMultiplier, 1000.0f);
 		}
 	}
 	else {
@@ -444,12 +451,14 @@ void Colony::onColonization(Planet& planet) {
 		m_revealResourceTimer = 0;
 	}
 
-	if (m_gridPoints.size() == 0) {
+	if (m_tiles.size() == 0) {
 		// Generate gridpoints
 		for (int i = 0; i < GRID_SIZE; i++) {
-			m_gridPoints.push_back(GridPoint{});
+			m_tiles.push_back(Tile{});
 		}
 	}
+
+	m_ticksToNextGridUpdate = GRID_UPDATE_TICKS;
 }
 
 bool Colony::hasUndiscoveredResources(const Planet& planet) const {
@@ -477,22 +486,22 @@ bool ColonyBuilding::isBuildable(const Colony& colony) const {
 
 int Colony::getPopulation() const {
 	int population = 0;
-	for (const GridPoint& point : m_gridPoints) {
+	for (const Tile& point : m_tiles) {
 		population += point.population;
 	}
 	return population;
 }
 
-Colony::GridPoint& Colony::getGridPoint(sf::Vector2i point) {
+Colony::Tile& Colony::getTile(sf::Vector2i point) {
 	assert(point.x >= 0 && point.x < GRID_LENGTH &&
 		point.y >= 0 && point.y < GRID_LENGTH);
-	return m_gridPoints[point.x + point.y * GRID_LENGTH];
+	return m_tiles[point.x + point.y * GRID_LENGTH];
 }
 
-std::vector<sf::Vector2i> Colony::getPopulatedGridPoints() const {
+std::vector<sf::Vector2i> Colony::getPopulatedTiles(int minPopulation) const {
 	std::vector<sf::Vector2i> points;
-	for (int i = 0; i < m_gridPoints.size(); i++) {
-		if (m_gridPoints[i].population > 0) {
+	for (int i = 0; i < m_tiles.size(); i++) {
+		if (m_tiles[i].population > minPopulation) {
 			int x = i % GRID_LENGTH;
 			int y = i / GRID_LENGTH;
 			points.push_back({ x, y });
@@ -501,64 +510,47 @@ std::vector<sf::Vector2i> Colony::getPopulatedGridPoints() const {
 	return points;
 }
 
-void Colony::changePopulation(int pop, sf::Vector2i gridPoint) {
-	changePopulation(pop, getGridPoint(gridPoint));
+void Colony::changePopulation(int pop, sf::Vector2i tile) {
+	changePopulation(pop, getTile(tile));
 }
 
-void Colony::changePopulation(int pop, GridPoint& gridPoint) {
+void Colony::changePopulation(int pop, Tile& tile) {
 	if (pop > 0) {
 		if (getPopulation() - MAX_POPULATION + pop > 0) {
 			return;
 		}
 		else {
-			gridPoint.population += pop;
+			tile.population += pop;
 		}
 	}
 	else {
-		if (gridPoint.population + pop < 0) {
-			gridPoint.population = 0;
+		if (tile.population + pop < 0) {
+			tile.population = 0;
 		}
 		else {
-			gridPoint.population += pop;
+			tile.population += pop;
 		}
 	}
 }
 
 void Colony::changeWorldPopulation(int pop) {
-	auto populatedGridPoints = getPopulatedGridPoints();
-	int changeEach = pop / (int)populatedGridPoints.size();
-	int population = getPopulation();
+	auto populatedTiles = getPopulatedTiles();
 
-	if (pop > 0) {
-		if (population - MAX_POPULATION + pop > 0) {
-			return;
-		}
-		else {
-			for (auto gridPoint : populatedGridPoints) {
-				getGridPoint(gridPoint).population += changeEach;
-			}
-		}
-	}
-	else {
-		if (population + pop < 0) {
-			for (auto gridPoint : populatedGridPoints) {
-				getGridPoint(gridPoint).population = 0;
-			}
-		}
-		else {
-			for (auto gridPoint : populatedGridPoints) {
-				getGridPoint(gridPoint).population += changeEach;
-			}
+	int maxTilePop = MAX_POPULATION / GRID_SIZE;
+	for (auto tile : populatedTiles) {
+		int population = getTilePopulation(tile);
+		if (population + pop < maxTilePop && population + pop > 0) {
+			getTile(tile).population += pop;
 		}
 	}
 }
 
-sf::Vector2i Colony::getMostPopulatedGridPoint() const {
-	const GridPoint* mostPopulated = &m_gridPoints[0];
+sf::Vector2i Colony::getMostPopulatedTile() const {
+	const Tile* mostPopulated = &m_tiles[0];
 	sf::Vector2i mostPopulatedCoords = { 0, 0 };
-	for (int i = 0; i < m_gridPoints.size(); i++) {
-		if (m_gridPoints[i].population > mostPopulated->population) {
-			mostPopulated = &m_gridPoints[i];
+	for (int i = 0; i < m_tiles.size(); i++) {
+		if (m_tiles[i].population > mostPopulated->population) {
+			mostPopulated = &m_tiles[i];
 
 			int x = i % GRID_LENGTH;
 			int y = i / GRID_LENGTH;
@@ -568,14 +560,14 @@ sf::Vector2i Colony::getMostPopulatedGridPoint() const {
 	return mostPopulatedCoords;
 }
 
-sf::Vector2i Colony::getRandomGridPoint() const {
+sf::Vector2i Colony::getRandomTile() const {
 	int x = Random::randInt(0, GRID_LENGTH - 1);
 	int y = Random::randInt(0, GRID_LENGTH - 1);
 	return { x, y };
 }
 
-int Colony::getGridPointPopulation(sf::Vector2i point) const {
-	return m_gridPoints[point.x + point.y * GRID_LENGTH].population;
+int Colony::getTilePopulation(sf::Vector2i point) const {
+	return m_tiles[point.x + point.y * GRID_LENGTH].population;
 }
 
 void Colony::updateGrid(Planet& planet) {
@@ -585,42 +577,78 @@ void Colony::updateGrid(Planet& planet) {
 		// Grow population
 		
 		float growthRate = getGrowthRate(planet.getHabitability());
-		for (GridPoint& gridPoint : m_gridPoints) {
-			changePopulation(gridPoint.population * growthRate, gridPoint);
+		for (Tile& tile : m_tiles) {
+			changePopulation(tile.population * growthRate, tile);
 		}
 
 		// Spread population out
-		auto populatedGridPoints = getPopulatedGridPoints();
-		for (sf::Vector2i gridPoint : populatedGridPoints) {
-			int gridPop = getGridPointPopulation(gridPoint);
-			auto adjacentGridPoints = getAdjacentGridPoints(gridPoint);
+		auto populatedTiles = getPopulatedTiles();
+		for (sf::Vector2i tile : populatedTiles) {
+			int gridPop = getTilePopulation(tile);
+			auto adjacentTiles = getAdjacentTiles(tile);
 
 			// 10% of population goes to adjacent tiles
-			int disperseEach = gridPop * 0.1f / adjacentGridPoints.size();
+			int disperseEach = gridPop * 0.1f / adjacentTiles.size();
 			int toSubtract = 0;
 
-			for (sf::Vector2i adjGridPoint : adjacentGridPoints) {
-				changePopulation(disperseEach, adjGridPoint);
+			for (sf::Vector2i adjTile : adjacentTiles) {
+				changePopulation(disperseEach, adjTile);
 				toSubtract -= disperseEach;
 			}
 
-			changePopulation(toSubtract, gridPoint);
+			changePopulation(toSubtract, tile);
 		}
 	}
 }
 
-std::vector<sf::Vector2i> Colony::getAdjacentGridPoints(sf::Vector2i point) const {
-	std::vector<sf::Vector2i> gridPoints;
+std::vector<sf::Vector2i> Colony::getAdjacentTiles(sf::Vector2i point) const {
+	std::vector<sf::Vector2i> tiles;
 	
 	for (int y = point.y - 1; y <= point.y + 1; y++) {
 		for (int x = point.x - 1; x <= point.x + 1; x++) {
 			if (x >= 0 && x < GRID_LENGTH &&
 				y >= 0 && y < GRID_LENGTH &&
 				!(x == point.x && y == point.y)) {
-				gridPoints.push_back({ x, y });
+				tiles.push_back({ x, y });
 			}
 		}
 	}
 
-	return gridPoints;
+	return tiles;
+}
+
+std::string Colony::getCityTexturePath(int population, int cityVariant) {
+	using namespace std::literals::string_literals;
+
+	int cityLevel = 0;
+	if (population >= 1000000) {
+		// 1 million+
+		cityLevel = 6;
+	}
+	else if (population >= 100000) {
+		// 100,000-1,000,000
+		cityLevel = 5;
+	}
+	else if (population >= 10000) {
+		// 10,000-100,000
+		cityLevel = 4;
+	}
+	else if (population >= 1000) {
+		// 1000-10,000
+		cityLevel = 3;
+	}
+	else if (population >= 100) {
+		// 100-1000
+		cityLevel = 2;
+	}
+	else {
+		// 1-100
+		cityLevel = 1;
+	}
+
+	return "data/art/cities/"s + "city"s + std::to_string(cityLevel) + "-"s + std::to_string(cityVariant) + ".png"s;
+}
+
+Colony::Tile::Tile() {
+	cityVariant = Random::randInt(1, 3);
 }

@@ -622,10 +622,10 @@ void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	}
 
 	if (firstTime) {
-		planet->getColony().changePopulation(m_population, planet->getColony().getRandomGridPoint());
+		planet->getColony().changePopulation(m_population, planet->getColony().getRandomTile());
 	}
 	else {
-		planet->getColony().changePopulation(m_population, planet->getColony().getMostPopulatedGridPoint());
+		planet->getColony().changePopulation(m_population, planet->getColony().getMostPopulatedTile());
 	}
 	
 	m_population = 0;

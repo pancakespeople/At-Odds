@@ -51,7 +51,7 @@ void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
 	}
 
 	// Smooth zooming
-	m_camZoomFactor = Math::lerp(m_camZoomFactor, m_wantedZoomFactor, m_zoomTimer.getElapsedTime().asSeconds());
+	m_camZoomFactor = Math::lerp(m_camZoomFactor, m_wantedZoomFactor, Math::clamp(m_zoomTimer.getElapsedTime().asSeconds(), 0.0f, 1.0f));
 	m_view.setSize(sf::Vector2f(m_initialRect.width, m_initialRect.height) * m_camZoomFactor);
 
 	renderer.setView(m_view);

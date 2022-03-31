@@ -524,16 +524,24 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 
 			if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
 				gridRect.setFillColor(sf::Color(255, 255, 255, 137));
+				gridRect.setTexture(nullptr);
 			}
 			else {
 				if (planet.getColony().isGridGenerated()) {
-					if (planet.getColony().getGridPointPopulation({ x, y }) > 0) {
+					int population = planet.getColony().getTilePopulation({ x, y });
+
+					if (population > 0) {
 						gridRect.setFillColor(sf::Color(0, 255, 0, 125));
-						text.setString(std::to_string(planet.getColony().getGridPointPopulation({ x, y })));
+						text.setString(std::to_string(planet.getColony().getTilePopulation({ x, y })));
 						text.setPosition(pos);
+
+						int cityVariant = planet.getColony().getTileCityVariant({ x, y });
+						gridRect.setFillColor(sf::Color::White);
+						gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(population, cityVariant)), true);
 					}
 					else {
 						gridRect.setFillColor(sf::Color::Transparent);
+						gridRect.setTexture(nullptr);
 					}
 				}
 				else {

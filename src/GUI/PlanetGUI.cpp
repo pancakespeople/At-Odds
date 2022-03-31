@@ -892,7 +892,7 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 				int population = 0;
 
 				if (m_currentPlanet->getColony().isGridGenerated()) {
-					population = m_currentPlanet->getColony().getGridPointPopulation({ x, y });
+					population = m_currentPlanet->getColony().getTilePopulation({ x, y });
 				}
 
 				DEBUG_PRINT("Population: " << population << "\n");
