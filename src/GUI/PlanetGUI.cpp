@@ -179,7 +179,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	state.getCamera().setPos(planet.getPos());
 }
 
-void PlanetGUI::update(GameState& state) {
+void PlanetGUI::updateSync(GameState& state) {
 	if (m_planetPanel != nullptr) {
 		auto planetList = m_planetPanel->get<tgui::ComboBox>("planetList");
 		if (planetList->getItemCount() > 0) {
@@ -220,11 +220,16 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 		m_sideWindow->setSize("20%", "29%");
 		m_sideWindow->getRenderer()->setOpacity(0.75f);
 		m_sideWindow->setPositionLocked(true);
-		m_sideWindow->onClose([this]() {
+		m_sideWindow->onClose([this, &gui]() {
 			m_sideWindow = nullptr;
 			m_updateFunction = nullptr;
 			m_planetMapCanvas = nullptr;
-			});
+
+			if (m_mapInfoPanel != nullptr) {
+				gui.remove(m_mapInfoPanel);
+				m_mapInfoPanel = nullptr;
+			}
+		});
 		gui.add(m_sideWindow);
 	}
 	else {
@@ -232,6 +237,11 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 			m_sideWindow->setTitle(name);
 			m_sideWindow->setSize("20%", "29%");
 			m_sideWindow->removeAllWidgets();
+
+			if (m_mapInfoPanel != nullptr) {
+				gui.remove(m_mapInfoPanel);
+				m_mapInfoPanel = nullptr;
+			}
 		}
 		else {
 			m_sideWindow->close();
@@ -863,6 +873,10 @@ void PlanetGUI::closePanel(tgui::Gui& gui) {
 		gui.remove(m_sideWindow);
 		m_sideWindow = nullptr;
 	}
+	if (m_mapInfoPanel != nullptr) {
+		gui.remove(m_mapInfoPanel);
+		m_mapInfoPanel = nullptr;
+	}
 
 	m_planetMapCanvas = nullptr;
 	m_currentPlanet = nullptr;
@@ -881,22 +895,32 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		m_planetMapCanvas = tgui::Canvas::create();
 		m_sideWindow->add(m_planetMapCanvas);
 
+		m_mapInfoPanel = tgui::Panel::create();
+		m_mapInfoPanel->setOrigin({ 0.0f, 1.0f });
+		m_mapInfoPanel->setPosition("planetPanel.left", "planetPanel.top");
+		m_mapInfoPanel->setSize("planetPanel.width + buttonPanel.width", m_sideWindow->getSize().y - m_planetPanel->getSize().y);
+		m_mapInfoPanel->getRenderer()->setOpacity(0.75f);
+		gui.add(m_mapInfoPanel);
+
+		auto populationCheckBox = tgui::CheckBox::create("Show population");
+		populationCheckBox->setChecked(m_showPopulation);
+		m_mapInfoPanel->add(populationCheckBox, "populationCheckBox");
+
+		auto tileInfoLabel = tgui::Label::create();
+		tileInfoLabel->setPosition("0%", "10%");
+		m_mapInfoPanel->add(tileInfoLabel, "tileInfoLabel");
+
 		m_planetMapCanvas->onClick([this](tgui::Vector2f pos) {
 			sf::Vector2i gridRectSize = sf::Vector2i(sf::Vector2f(m_planetMapCanvas->getSize())) / Colony::GRID_LENGTH;
 
 			int x = (int)pos.x / gridRectSize.x;
 			int y = (int)pos.y / gridRectSize.y;
-			DEBUG_PRINT("Grid point: " << x << " " << y);
+			
+			m_selectedTile = { x, y };
+		});
 
-			if (m_currentPlanet != nullptr) {
-				int population = 0;
-
-				if (m_currentPlanet->getColony().isGridGenerated()) {
-					population = m_currentPlanet->getColony().getTilePopulation({ x, y });
-				}
-
-				DEBUG_PRINT("Population: " << population << "\n");
-			}
+		populationCheckBox->onChange([this](bool checked) {
+			m_showPopulation = checked;
 		});
 	});
 }
@@ -905,8 +929,36 @@ void PlanetGUI::draw(Renderer& renderer, const sf::RenderWindow& window) {
 	if (m_planetMapCanvas != nullptr) {
 		m_planetMapCanvas->clear();
 
-		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet, window);
+		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet, window, m_showPopulation);
 
 		m_planetMapCanvas->display();
+	}
+}
+
+void PlanetGUI::updateTileInfo(sf::Vector2i tile) {
+	int tilePop = 0;
+	Colony& colony = m_currentPlanet->getColony();
+
+	if (colony.isGridGenerated()) {
+		tilePop = colony.getTilePopulation(tile);
+	}
+
+	std::stringstream text;
+	text << "Tile Info: \n";
+	text << "Coordinates: " << "(" << tile.x << ", " << tile.y << ")\n";
+	text << "Population: " << tilePop << "\n";
+
+	auto tileInfoLabel = m_mapInfoPanel->get<tgui::Label>("tileInfoLabel");
+
+	if (tileInfoLabel->getText() != text.str()) {
+		tileInfoLabel->setText(text.str());
+	}
+}
+
+void PlanetGUI::update() {
+	if (m_mapInfoPanel != nullptr) {
+		if (m_selectedTile != sf::Vector2i{ -1, -1 }) {
+			updateTileInfo(m_selectedTile);
+		}
 	}
 }

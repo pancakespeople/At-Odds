@@ -45,12 +45,13 @@ void PlayerGUI::update(sf::RenderWindow& window, Renderer& renderer, GameState& 
 		techGUI.update(playerFaction);
 		minimapGUI.update(window, state, unitGUI);
 		newsGUI.update(playerFaction);
+		planetGUI.update();
 	}
 }
 
 void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constellation& constellation, tgui::Gui& gui) {
 	if (m_state != PlayerGUIState::CLOSED) {
-		planetGUI.update(state);
+		planetGUI.updateSync(state);
 	}
 }
 

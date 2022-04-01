@@ -7,7 +7,8 @@ public:
 	PlanetGUI() {}
 
 	void open(tgui::Gui& gui, GameState& state, Faction* playerFaction, const Constellation& constellation);
-	void update(GameState& state);
+	void updateSync(GameState& state);
+	void update();
 	void draw(Renderer& renderer, const sf::RenderWindow& window);
 	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel, const Constellation& constellation);
 
@@ -24,6 +25,7 @@ private:
 	void createMapButton(tgui::Gui& gui);
 	void openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
 	void closePanel(tgui::Gui& gui);
+	void updateTileInfo(sf::Vector2i tile);
 	static void updateTrendWidget(tgui::Label::Ptr& label, float trend);
 
 	GUI::Icon m_planetIcon;
@@ -34,6 +36,10 @@ private:
 	tgui::ChildWindow::Ptr m_sideWindow;
 	tgui::Canvas::Ptr m_planetMapCanvas;
 	std::function<void(Planet&)> m_updateFunction = nullptr;
+	tgui::Panel::Ptr m_mapInfoPanel;
+
+	bool m_showPopulation = false;
+	sf::Vector2i m_selectedTile = { -1, -1 };
 
 	Planet* m_currentPlanet = nullptr;
 };
