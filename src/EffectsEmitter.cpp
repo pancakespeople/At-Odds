@@ -473,7 +473,7 @@ void EffectsEmitter::drawParticles(const std::vector<sf::Vertex>& vertices) {
 	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, states);
 }
 
-void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window, bool showPopulation) {
+void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window, bool showPopulation, sf::Vector2i selectedTile) {
 	sf::RectangleShape shape;
 	shape.setSize(canvas->getSize());
 	shape.setFillColor(planet.getColor());
@@ -550,6 +550,13 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 				else {
 					gridRect.setFillColor(sf::Color::Transparent);
 				}
+			}
+
+			if (sf::Vector2i{ x, y } == selectedTile) {
+				gridRect.setOutlineColor(sf::Color::Yellow);
+			}
+			else {
+				gridRect.setOutlineColor(sf::Color(55, 55, 55));
 			}
 			
 			canvas->draw(gridRect);

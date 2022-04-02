@@ -25,7 +25,7 @@ CheckBox {
 }
 
 ChildWindow {
-    TextureTitleBar        = "titlebar.png" Smooth;
+    TextureTitleBar        = "titlebar3.png" Smooth;
     TextureBackground      = "panel2.png" Smooth;
     TitleColor             = rgb(190, 190, 190);
     BorderColor            = Black;

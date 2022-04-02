@@ -45,9 +45,21 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 				m_planetInfoPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
 				m_planetInfoPanel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 				m_planetInfoPanel->getRenderer()->setBorders(1.0f);
-				m_planetInfoPanel->setPosition("0%", "20%");
-				m_planetInfoPanel->setSize("100%", "80%");
+				m_planetInfoPanel->setPosition("0%", "40%");
+				m_planetInfoPanel->setSize("100%", "60%");
 				m_planetPanel->add(m_planetInfoPanel);
+
+				auto colonizeButton = GUI::Button::create("Colonize");
+				colonizeButton->setOrigin({ 0.5f, 0.5f });
+				colonizeButton->setPosition("50%", "25%");
+				colonizeButton->setClickSound("data/sound/build.wav");
+				m_planetPanel->add(colonizeButton, "colonizeButton");
+
+				auto flagPicture = tgui::Picture::create("data/art/redflag.png");
+				flagPicture->setSize("20%", "20%");
+				flagPicture->setPosition("25%", "25%");
+				flagPicture->setOrigin({ 0.5f, 0.5f });
+				m_planetPanel->add(flagPicture, "flagPicture");
 
 				m_buttonPanel = tgui::Panel::create();
 				m_buttonPanel->setPosition("planetPanel.right", "planetPanel.y");
@@ -79,9 +91,13 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 					}
 				}
 
-				// Set first planet as selected
 				if (planetList->getItemCount() > 0) {
+					// Set first planet as selected
 					setSelectedPlanet(planetList, state, playerFaction, gui, 0, constellation);
+				}
+				else {
+					colonizeButton->setVisible(false);
+					flagPicture->setVisible(false);
 				}
 
 				auto backButton = GUI::Button::create("<-");
@@ -111,6 +127,13 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 					}
 					});
 				m_planetPanel->add(forwardButton);
+
+				colonizeButton->onClick([this, playerFaction, colonizeButton, flagPicture]() {
+					m_currentPlanet->getColony().setFactionColonyLegality(playerFaction->getID(), true);
+					colonizeButton->setVisible(false);
+
+					flagPicture->getRenderer()->setTexture("data/art/greenflag.png");
+				});
 			}
 		}
 		else {
@@ -137,38 +160,24 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	// Labels
 
-	auto planetTypeLabel = tgui::Label::create();
-	planetTypeLabel->setText("Type: " + planet.getTypeString());
-	planetTypeLabel->setPosition("0%", "5%");
-	m_planetInfoPanel->add(planetTypeLabel);
+	std::stringstream text;
+	text << "Type: " << planet.getTypeString() << "\n";
+	text << "Temperature: " << Util::cutOffDecimal(planet.getTemperature(), 2) << " (" << planet.getTemperatureText() << ")\n";
+	text << "Atmosphere: " << Util::cutOffDecimal(planet.getAtmosphericPressure(), 2) << " (" << planet.getAtmosphereText() << ")\n";
+	text << "Water: " << Util::cutOffDecimal(planet.getWater(), 2) << " (" << planet.getWaterText() << ")\n";
+	text << "Habitability: " << Util::cutOffDecimal(planet.getHabitability(), 2) << " (" << planet.getHabitabilityText() << ")\n";
 
-	auto planetTemperatureLabel = tgui::Label::create();
-	planetTemperatureLabel->setText("Temperature: " + Util::cutOffDecimal(planet.getTemperature(), 2) + " (" + planet.getTemperatureText() + ")");
-	planetTemperatureLabel->setPosition("0%", "15%");
-	m_planetInfoPanel->add(planetTemperatureLabel);
-
-	auto planetAtmosLabel = tgui::Label::create();
-	planetAtmosLabel->setText("Atmosphere: " + Util::cutOffDecimal(planet.getAtmosphericPressure(), 2) + " (" + planet.getAtmosphereText() + ")");
-	planetAtmosLabel->setPosition("0%", "25%");
-	m_planetInfoPanel->add(planetAtmosLabel);
-
-	auto planetWaterLabel = tgui::Label::create();
-	planetWaterLabel->setText("Water: " + Util::cutOffDecimal(planet.getWater(), 2) + +" (" + planet.getWaterText() + ")");
-	planetWaterLabel->setPosition("0%", "35%");
-	m_planetInfoPanel->add(planetWaterLabel);
-
-	auto planetHabitabilityLabel = tgui::Label::create();
-	planetHabitabilityLabel->setText("Habitability: " + Util::cutOffDecimal(planet.getHabitability(), 2) + " (" + planet.getHabitabilityText() + ")");
-	planetHabitabilityLabel->setPosition("0%", "45%");
-	m_planetInfoPanel->add(planetHabitabilityLabel);
+	auto planetInfoLabel = tgui::Label::create(text.str());
+	planetInfoLabel->setSize("100%", "100%");
+	m_planetInfoPanel->add(planetInfoLabel);
 
 	// Buttons
 
 	createColonyAndResourcesButtons(gui, state, planet, playerFaction, constellation);
 
-	if (state.getPlayer().getFaction() != -1) {
+	/*if (state.getPlayer().getFaction() != -1) {
 		createLawsButton(gui, state, planet);
-	}
+	}*/
 
 	createBuildingsButton(gui, planet, playerFaction);
 	createEventsButton(gui, planet);
@@ -177,6 +186,17 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
+
+	auto colonizeButton = m_planetPanel->get<tgui::Button>("colonizeButton");
+	auto flagPicture = m_planetPanel->get<tgui::Picture>("flagPicture");
+	if (m_currentPlanet->getColony().isColonizationLegal(playerFaction->getID())) {
+		colonizeButton->setVisible(false);
+		flagPicture->getRenderer()->setTexture("data/art/greenflag.png");
+	}
+	else {
+		colonizeButton->setVisible(true);
+		flagPicture->getRenderer()->setTexture("data/art/redflag.png");
+	}
 }
 
 void PlanetGUI::updateSync(GameState& state) {
@@ -900,14 +920,16 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		m_mapInfoPanel->setPosition("planetPanel.left", "planetPanel.top");
 		m_mapInfoPanel->setSize("planetPanel.width + buttonPanel.width", m_sideWindow->getSize().y - m_planetPanel->getSize().y);
 		m_mapInfoPanel->getRenderer()->setOpacity(0.75f);
+		m_mapInfoPanel->getRenderer()->setTextureBackground(tgui::Texture("data/tgui/spacepanelbw.png"));
 		gui.add(m_mapInfoPanel);
 
 		auto populationCheckBox = tgui::CheckBox::create("Show population");
+		populationCheckBox->setPosition("10%", "10%");
 		populationCheckBox->setChecked(m_showPopulation);
 		m_mapInfoPanel->add(populationCheckBox, "populationCheckBox");
 
 		auto tileInfoLabel = tgui::Label::create();
-		tileInfoLabel->setPosition("0%", "10%");
+		tileInfoLabel->setPosition("10%", "20%");
 		m_mapInfoPanel->add(tileInfoLabel, "tileInfoLabel");
 
 		m_planetMapCanvas->onClick([this](tgui::Vector2f pos) {
@@ -929,7 +951,7 @@ void PlanetGUI::draw(Renderer& renderer, const sf::RenderWindow& window) {
 	if (m_planetMapCanvas != nullptr) {
 		m_planetMapCanvas->clear();
 
-		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet, window, m_showPopulation);
+		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet, window, m_showPopulation, m_selectedTile);
 
 		m_planetMapCanvas->display();
 	}

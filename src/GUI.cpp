@@ -37,7 +37,7 @@ void HelpWindow::open(tgui::Gui& gui) {
 		"Right click - order units\n"
 		"\n"
 		"How to play:\n"
-		"Colonize other planets by going to its laws tab and setting colonization to be legal, your people will colonize the planet automatically.\n"
+		"Colonize other planets by selecting them and clicking on colonize, your people will colonize the planet automatically.\n"
 		"Build more ships by clicking on your ship factory and changing its settings.\n"
 		"Your goal is to eliminate all your enemies. Good luck!"
 		;
