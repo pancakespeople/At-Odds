@@ -18,6 +18,7 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 		m_window->setPosition("50%", "50%");
 		m_window->setSize("75%", "75%");
 		m_window->getRenderer()->setOpacity(0.75f);
+		m_window->getRenderer()->setTextureBackground("data/tgui/technopanel.png");
 		gui.add(m_window);
 
 		m_window->onClose([this]() {
@@ -59,6 +60,10 @@ void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 		m_description = tgui::Label::create();
 		m_description->setPosition("2.5%", "62.5%");
+		m_description->setSize("95%", "35%");
+		m_description->getRenderer()->setBackgroundColor(tgui::Color(55, 55, 55));
+		m_description->getRenderer()->setBorderColor(tgui::Color(125, 125, 125));
+		m_description->getRenderer()->setBorders(1);
 		m_window->add(m_description);
 
 		m_progressBar = tgui::ProgressBar::create();
