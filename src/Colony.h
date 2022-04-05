@@ -14,8 +14,17 @@ struct Resource;
 class Colony {
 public:
 	struct Tile {
+		enum class TileFlag {
+			NONE,
+			COMMON_ORE,
+			UNCOMMON_ORE,
+			RARE_ORE
+		};
+		
 		int population = 0;
 		int8_t cityVariant = 1;
+		TileFlag tileFlag = TileFlag::NONE;
+		bool hidden = false;
 
 		Tile();
 
@@ -25,6 +34,8 @@ public:
 		void serialize(Archive& archive, const unsigned int version) {
 			archive & population;
 			archive & cityVariant;
+			archive & tileFlag;
+			archive & hidden;
 		}
 	};
 	
@@ -73,6 +84,7 @@ public:
 	void addStability(float stab);
 	void removeStability(float stab);
 	void onColonization(Planet& planet);
+	void generateAnomalies();
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
@@ -88,6 +100,7 @@ public:
 	sf::Vector2i getRandomTile() const;
 
 	static std::string getCityTexturePath(int population, int cityVariant);
+	const Tile& getTile(sf::Vector2i point) const { return m_tiles[point.x + point.y * GRID_LENGTH]; }
 
 private:
 	friend class boost::serialization::access;

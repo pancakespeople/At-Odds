@@ -456,6 +456,8 @@ void Colony::onColonization(Planet& planet) {
 		for (int i = 0; i < GRID_SIZE; i++) {
 			m_tiles.push_back(Tile{});
 		}
+
+		generateAnomalies();
 	}
 
 	m_ticksToNextGridUpdate = GRID_UPDATE_TICKS;
@@ -651,4 +653,26 @@ std::string Colony::getCityTexturePath(int population, int cityVariant) {
 
 Colony::Tile::Tile() {
 	cityVariant = Random::randInt(1, 3);
+}
+
+void Colony::generateAnomalies() {
+	for (int i = 0; i < Random::randInt(1, 3); i++) {
+		Tile& tile = getTile(getRandomTile());
+		float rnd = Random::randFloat(0.0f, 1.0f);
+
+		if (rnd > 0.5f) {
+			// 50% chance
+			tile.tileFlag = Tile::TileFlag::COMMON_ORE;
+		}
+		else if (rnd > 0.15f) {
+			// 35% chance
+			tile.tileFlag = Tile::TileFlag::UNCOMMON_ORE;
+		}
+		else {
+			// 15% chance
+			tile.tileFlag = Tile::TileFlag::RARE_ORE;
+		}
+
+		tile.hidden = true;
+	}
 }

@@ -513,9 +513,12 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 	text.setFont(Fonts::getMainFont());
 	text.setColor(sf::Color(55, 55, 55));
 
+	const Colony& colony = planet.getColony();
+
 	for (int y = 0; y < gridSize; y++) {
 		for (int x = 0; x < gridSize; x++) {
 			sf::Vector2f pos(x * gridRectSize.x, y * gridRectSize.y);
+
 			gridRect.setPosition(pos);
 
 			sf::FloatRect relBounds = gridRect.getGlobalBounds();
@@ -527,20 +530,24 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 				gridRect.setTexture(nullptr);
 			}
 			else {
-				if (planet.getColony().isGridGenerated()) {
-					int population = planet.getColony().getTilePopulation({ x, y });
-
-					if (population > 0) {
+				if (colony.isGridGenerated()) {
+					const Colony::Tile& tile = colony.getTile({ x, y });
+					
+					if (tile.hidden) {
+						text.setString("?");
+						text.setPosition(pos);
+						gridRect.setTexture(nullptr);
+					}
+					else if (tile.population > 0) {
 						gridRect.setFillColor(sf::Color(0, 255, 0, 125));
 
 						if (showPopulation) {
-							text.setString(std::to_string(planet.getColony().getTilePopulation({ x, y })));
+							text.setString(std::to_string(tile.population));
 							text.setPosition(pos);
 						}
 
-						int cityVariant = planet.getColony().getTileCityVariant({ x, y });
 						gridRect.setFillColor(sf::Color::White);
-						gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(population, cityVariant)), true);
+						gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(tile.population, tile.cityVariant)), true);
 					}
 					else {
 						gridRect.setFillColor(sf::Color::Transparent);

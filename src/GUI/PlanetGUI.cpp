@@ -932,11 +932,15 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		tileInfoLabel->setPosition("10%", "20%");
 		m_mapInfoPanel->add(tileInfoLabel, "tileInfoLabel");
 
+		auto anomalyLabel = tgui::Label::create();
+		anomalyLabel->setPosition("10%", "50%");
+		m_mapInfoPanel->add(anomalyLabel, "anomalyLabel");
+
 		m_planetMapCanvas->onClick([this](tgui::Vector2f pos) {
 			sf::Vector2i gridRectSize = sf::Vector2i(sf::Vector2f(m_planetMapCanvas->getSize())) / Colony::GRID_LENGTH;
 
-			int x = (int)pos.x / gridRectSize.x;
-			int y = (int)pos.y / gridRectSize.y;
+			int x = std::min((int)pos.x / gridRectSize.x, Colony::GRID_LENGTH - 1);
+			int y = std::min((int)pos.y / gridRectSize.y, Colony::GRID_LENGTH - 1);
 			
 			m_selectedTile = { x, y };
 		});
@@ -957,23 +961,39 @@ void PlanetGUI::draw(Renderer& renderer, const sf::RenderWindow& window) {
 	}
 }
 
-void PlanetGUI::updateTileInfo(sf::Vector2i tile) {
+void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	int tilePop = 0;
-	Colony& colony = m_currentPlanet->getColony();
+	bool anomaly = false;
+
+	const Colony& colony = m_currentPlanet->getColony();
 
 	if (colony.isGridGenerated()) {
-		tilePop = colony.getTilePopulation(tile);
+		const Colony::Tile& tile = colony.getTile(tilePos);
+		tilePop = tile.population;
+		anomaly = tile.hidden;
 	}
 
 	std::stringstream text;
 	text << "Tile Info: \n";
-	text << "Coordinates: " << "(" << tile.x << ", " << tile.y << ")\n";
+	text << "Coordinates: " << "(" << tilePos.x << ", " << tilePos.y << ")\n";
 	text << "Population: " << tilePop << "\n";
 
 	auto tileInfoLabel = m_mapInfoPanel->get<tgui::Label>("tileInfoLabel");
+	auto anomalyLabel = m_mapInfoPanel->get<tgui::Label>("anomalyLabel");
 
 	if (tileInfoLabel->getText() != text.str()) {
 		tileInfoLabel->setText(text.str());
+	}
+
+	if (anomaly) {
+		if (anomalyLabel->getText() != "Anomaly detected") {
+			anomalyLabel->setText("Anomaly detected");
+		}
+	}
+	else {
+		if (anomalyLabel->getText() != "") {
+			anomalyLabel->setText("");
+		}
 	}
 }
 
