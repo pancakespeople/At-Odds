@@ -256,6 +256,7 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 		if (m_sideWindow->getTitle() != name) {
 			m_sideWindow->setTitle(name);
 			m_sideWindow->setSize("20%", "29%");
+			m_sideWindow->getRenderer()->setOpacity(0.75f);
 			m_sideWindow->removeAllWidgets();
 
 			if (m_mapInfoPanel != nullptr) {
@@ -911,8 +912,10 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		if (m_sideWindow == nullptr) return;
 
 		m_sideWindow->setSize("40%", "70.8%");
+		m_sideWindow->getRenderer()->setOpacity(1.0f);
 
 		m_planetMapCanvas = tgui::Canvas::create();
+		m_planetMapCanvas->getRenderer()->setOpacity(1.0f);
 		m_sideWindow->add(m_planetMapCanvas);
 
 		m_mapInfoPanel = tgui::Panel::create();
@@ -935,6 +938,11 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		auto anomalyLabel = tgui::Label::create();
 		anomalyLabel->setPosition("10%", "50%");
 		m_mapInfoPanel->add(anomalyLabel, "anomalyLabel");
+
+		auto expeditionButton = tgui::Button::create("Send expedition");
+		expeditionButton->setPosition("10%", "60%");
+		expeditionButton->setVisible(false);
+		m_mapInfoPanel->add(expeditionButton, "expeditionButton");
 
 		m_planetMapCanvas->onClick([this](tgui::Vector2f pos) {
 			sf::Vector2i gridRectSize = sf::Vector2i(sf::Vector2f(m_planetMapCanvas->getSize())) / Colony::GRID_LENGTH;
@@ -980,6 +988,7 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 
 	auto tileInfoLabel = m_mapInfoPanel->get<tgui::Label>("tileInfoLabel");
 	auto anomalyLabel = m_mapInfoPanel->get<tgui::Label>("anomalyLabel");
+	auto expeditionButton = m_mapInfoPanel->get<tgui::Button>("expeditionButton");
 
 	if (tileInfoLabel->getText() != text.str()) {
 		tileInfoLabel->setText(text.str());
@@ -989,11 +998,15 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 		if (anomalyLabel->getText() != "Anomaly detected") {
 			anomalyLabel->setText("Anomaly detected");
 		}
+
+		expeditionButton->setVisible(true);
 	}
 	else {
 		if (anomalyLabel->getText() != "") {
 			anomalyLabel->setText("");
 		}
+
+		expeditionButton->setVisible(false);
 	}
 }
 

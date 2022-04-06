@@ -187,6 +187,8 @@ void AnnouncerGUI::update(tgui::Gui& gui, Faction* playerFaction) {
 			
 			m_label->setVisible(true);
 			m_label->hideWithEffect(tgui::ShowAnimationType::Fade, tgui::Duration(4000));
+
+			m_label->moveToFront();
 		}
 	}
 }

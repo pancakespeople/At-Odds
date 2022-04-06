@@ -48,8 +48,6 @@ public:
 
 	int getPopulation() const;
 	int getAllegiance() const { return m_allegiance; }
-	int getTilePopulation(sf::Vector2i point) const;
-	int8_t getTileCityVariant(sf::Vector2i point) const { return m_tiles[point.x + point.y * GRID_LENGTH].cityVariant; }
 
 	float getGrowthRate(float planetHabitability, std::string* outInfoString = nullptr) const;
 	float getBuildingEffects(const std::string& effect) const;
@@ -101,6 +99,7 @@ public:
 
 	static std::string getCityTexturePath(int population, int cityVariant);
 	const Tile& getTile(sf::Vector2i point) const { return m_tiles[point.x + point.y * GRID_LENGTH]; }
+	Tile& getTile(sf::Vector2i point);
 
 private:
 	friend class boost::serialization::access;
@@ -123,8 +122,6 @@ private:
 		archive & m_revealResourceTimer;
 		archive & m_tiles;
 	}
-
-	Tile& getTile(sf::Vector2i point);
 
 	void updateGrid(Planet& planet);
 

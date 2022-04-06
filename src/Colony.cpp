@@ -36,7 +36,7 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 
 		if (isGridGenerated()) {
 			mostPopulatedTile = planet->getColony().getMostPopulatedTile();
-			mostPop = planet->getColony().getTilePopulation(mostPopulatedTile);
+			mostPop = getTile(mostPopulatedTile).population;
 		}
 
 		if (mostPop >= 5000 && faction != nullptr) {
@@ -540,7 +540,7 @@ void Colony::changeWorldPopulation(int pop) {
 
 	int maxTilePop = MAX_POPULATION / GRID_SIZE;
 	for (auto tile : populatedTiles) {
-		int population = getTilePopulation(tile);
+		int population = getTile(tile).population;
 		if (population + pop < maxTilePop && population + pop > 0) {
 			getTile(tile).population += pop;
 		}
@@ -568,10 +568,6 @@ sf::Vector2i Colony::getRandomTile() const {
 	return { x, y };
 }
 
-int Colony::getTilePopulation(sf::Vector2i point) const {
-	return m_tiles[point.x + point.y * GRID_LENGTH].population;
-}
-
 void Colony::updateGrid(Planet& planet) {
 	int population = getPopulation();
 
@@ -585,17 +581,21 @@ void Colony::updateGrid(Planet& planet) {
 
 		// Spread population out
 		auto populatedTiles = getPopulatedTiles();
-		for (sf::Vector2i tile : populatedTiles) {
-			int gridPop = getTilePopulation(tile);
-			auto adjacentTiles = getAdjacentTiles(tile);
+		for (sf::Vector2i tilePos : populatedTiles) {
+			Tile& tile = getTile(tilePos);
+			auto adjacentTiles = getAdjacentTiles(tilePos);
 
 			// 10% of population goes to adjacent tiles
-			int disperseEach = gridPop * 0.1f / adjacentTiles.size();
+			int disperseEach = tile.population * 0.1f / adjacentTiles.size();
 			int toSubtract = 0;
 
-			for (sf::Vector2i adjTile : adjacentTiles) {
-				changePopulation(disperseEach, adjTile);
-				toSubtract -= disperseEach;
+			for (sf::Vector2i adjTilePos : adjacentTiles) {
+				Tile& adjTile = getTile(adjTilePos);
+
+				if (!adjTile.hidden) {
+					changePopulation(disperseEach, adjTile);
+					toSubtract -= disperseEach;
+				}
 			}
 
 			changePopulation(toSubtract, tile);

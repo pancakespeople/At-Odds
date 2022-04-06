@@ -609,12 +609,14 @@ std::string HabitatMod::getInfoString() {
 }
 
 void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
+	Colony& colony = planet->getColony();
+
 	// Transfer passengers to planet
 	
-	bool firstTime = planet->getColony().getPopulation() == 0;
+	bool firstTime = colony.getPopulation() == 0;
 	if (firstTime && m_population > 0) {
-		planet->getColony().setAllegiance(unit->getAllegiance());
-		planet->getColony().setFactionColor(unit->getFactionColor());
+		colony.setAllegiance(unit->getAllegiance());
+		colony.setFactionColor(unit->getFactionColor());
 		planet->onColonization();
 		if (m_faction != nullptr) {
 			m_faction->onColonization(planet, star);
@@ -622,10 +624,17 @@ void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	}
 
 	if (firstTime) {
-		planet->getColony().changePopulation(m_population, planet->getColony().getRandomTile());
+		sf::Vector2i tilePos = colony.getRandomTile();
+		
+		// Don't colonize a hidden tile
+		while (colony.getTile(tilePos).hidden) {
+			tilePos = colony.getRandomTile();
+		}
+
+		colony.changePopulation(m_population, tilePos);
 	}
 	else {
-		planet->getColony().changePopulation(m_population, planet->getColony().getMostPopulatedTile());
+		colony.changePopulation(m_population, colony.getMostPopulatedTile());
 	}
 	
 	m_population = 0;

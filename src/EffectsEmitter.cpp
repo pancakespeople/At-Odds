@@ -536,14 +536,16 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 					if (tile.hidden) {
 						text.setString("?");
 						text.setPosition(pos);
+						text.setColor(sf::Color::Red);
+
 						gridRect.setTexture(nullptr);
+						gridRect.setFillColor(sf::Color::Transparent);
 					}
 					else if (tile.population > 0) {
-						gridRect.setFillColor(sf::Color(0, 255, 0, 125));
-
 						if (showPopulation) {
 							text.setString(std::to_string(tile.population));
 							text.setPosition(pos);
+							text.setColor(sf::Color(55, 55, 55));
 						}
 
 						gridRect.setFillColor(sf::Color::White);
