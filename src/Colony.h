@@ -29,13 +29,24 @@ public:
 		Tile();
 
 	private:
-		friend class boost::serialization::access;
-		template<class Archive>
-		void serialize(Archive& archive, const unsigned int version) {
+		SERIALIZE {
 			archive & population;
 			archive & cityVariant;
 			archive & tileFlag;
 			archive & hidden;
+		}
+	};
+
+	struct Expedition {
+		int finishTimer = 0;
+		sf::Vector2i tileDestination;
+		int population = 0;
+
+	private:
+		SERIALIZE {
+			archive & finishTimer;
+			archive & tileDestination;
+			archive & population;
 		}
 	};
 	
@@ -61,6 +72,7 @@ public:
 	bool hasBuildingFlag(const std::string& flag) const;
 	bool hasUndiscoveredResources(const Planet& planet) const;
 	bool isGridGenerated() const { return m_tiles.size() > 0; }
+	bool hasExpeditionToTile(sf::Vector2i tilePos) const;
 
 	// Buys a building for a faction, returns false if failed
 	bool buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet);
@@ -83,12 +95,14 @@ public:
 	void removeStability(float stab);
 	void onColonization(Planet& planet);
 	void generateAnomalies();
+	void sendExpedition(sf::Vector2i tilePos);
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
 	std::vector<ColonyBuilding>& getBuildings() { return m_buildings; }
 	std::vector<sf::Vector2i> getPopulatedTiles(int minPopulation = 0) const;
 	std::vector<sf::Vector2i> getAdjacentTiles(sf::Vector2i point) const;
+	const std::vector<Expedition>& getExpeditions() const { return m_expeditions; }
 
 	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);
@@ -102,9 +116,7 @@ public:
 	Tile& getTile(sf::Vector2i point);
 
 private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {
+	SERIALIZE {
 		archive & m_ticksToNextGridUpdate;
 		archive & m_ticksToNextBus;
 		archive & m_allegiance;
@@ -121,6 +133,7 @@ private:
 		archive & m_newBuildingNames;
 		archive & m_revealResourceTimer;
 		archive & m_tiles;
+		archive & m_expeditions;
 	}
 
 	void updateGrid(Planet& planet);
@@ -144,6 +157,7 @@ private:
 	std::vector<ColonyBuilding> m_buildings;
 	std::deque<std::string> m_newBuildingNames;
 	std::vector<Tile> m_tiles;
+	std::vector<Expedition> m_expeditions;
 
 	Weapon m_defenseCannon = Weapon("FLAK_CANNON");
 	TradeGoods m_tradeGoods;

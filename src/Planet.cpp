@@ -48,7 +48,7 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, fl
 		}
 	}
 
-	generateResources();
+	//generateResources();
 	m_shaderRandomSeed = Random::randFloat(0.0f, 1.0f);
 
 	m_shape.setOrigin(sf::Vector2f(getRadius(), getRadius()));
@@ -526,5 +526,17 @@ std::string Planet::getWaterText() {
 	}
 	else {
 		return "Water World";
+	}
+}
+
+void Planet::discoverResource(const std::string& resourceType, Faction* faction, Star& star) {
+	Resource resource(resourceType);
+	resource.abundance = 0.5f;
+	resource.hidden = false;
+
+	m_resources.push_back(resource);
+
+	if (faction != nullptr) {
+		faction->addNewsEvent("We have discovered " + resource.getName() + " on " + getName(&star) + ".", sf::Color::Green);
 	}
 }

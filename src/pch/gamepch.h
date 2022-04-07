@@ -45,6 +45,8 @@
 #include <boost/serialization/map.hpp>
 
 #include "../Debug.h"
+#include "../Serialize.h"
+
 #include "../ext/toml.hpp"
 #define SOL_ALL_SAFETIES_ON 1
 #include "../ext/sol.hpp"

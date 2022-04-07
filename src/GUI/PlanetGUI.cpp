@@ -956,6 +956,10 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		populationCheckBox->onChange([this](bool checked) {
 			m_showPopulation = checked;
 		});
+
+		expeditionButton->onClick([this]() {
+			m_currentPlanet->getColony().sendExpedition(m_selectedTile);
+		});
 	});
 }
 
@@ -995,11 +999,27 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	}
 
 	if (anomaly) {
-		if (anomalyLabel->getText() != "Anomaly detected") {
-			anomalyLabel->setText("Anomaly detected");
+		int expeditionArrivalTime = -1;
+
+		for (const Colony::Expedition& ex : colony.getExpeditions()) {
+			if (ex.tileDestination == tilePos) {
+				expeditionArrivalTime = ex.finishTimer;
+			}
+		}
+		
+		std::string text = "Anomaly detected";
+
+		if (expeditionArrivalTime != -1) {
+			text += "\nExpedition arrival time: " + Util::ticksToTime(expeditionArrivalTime);
+			expeditionButton->setVisible(false);
+		}
+		else {
+			expeditionButton->setVisible(true);
 		}
 
-		expeditionButton->setVisible(true);
+		if (anomalyLabel->getText() != text) {
+			anomalyLabel->setText(text);
+		}
 	}
 	else {
 		if (anomalyLabel->getText() != "") {

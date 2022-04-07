@@ -6,6 +6,7 @@
 #include "TOMLCache.h"
 #include "Util.h"
 #include "Random.h"
+#include "Math.h"
 
 bool Colony::isColonizationLegal(int allegiance) const {
 	if (m_factionColonyLegality.count(allegiance) == 0) return false;
@@ -146,6 +147,34 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 			else {
 				m_revealResourceTimer--;
 			}
+		}
+	}
+
+	// Expeditions
+	for (int i = 0; i < m_expeditions.size(); i++) {
+		if (m_expeditions[i].finishTimer == 0) {
+			Tile& tile = getTile(m_expeditions[i].tileDestination);
+			changePopulation(m_expeditions[i].population, m_expeditions[i].tileDestination);
+
+			tile.hidden = false;
+
+			switch (tile.tileFlag) {
+				case Tile::TileFlag::COMMON_ORE:
+					planet->discoverResource("COMMON_ORE", faction, *currentStar);
+					break;
+				case Tile::TileFlag::UNCOMMON_ORE:
+					planet->discoverResource("UNCOMMON_ORE", faction, *currentStar);
+					break;
+				case Tile::TileFlag::RARE_ORE:
+					planet->discoverResource("RARE_ORE", faction, *currentStar);
+					break;
+			}
+
+			m_expeditions.erase(m_expeditions.begin() + i);
+			i--;
+		}
+		else {
+			m_expeditions[i].finishTimer--;
 		}
 	}
 }
@@ -675,4 +704,23 @@ void Colony::generateAnomalies() {
 
 		tile.hidden = true;
 	}
+}
+
+void Colony::sendExpedition(sf::Vector2i tilePos) {
+	sf::Vector2i mostPopulatedTilePos = getMostPopulatedTile();
+	Tile& mostPopulatedTile = getTile(mostPopulatedTilePos);
+
+	if (mostPopulatedTile.population > 500) {
+		mostPopulatedTile.population -= 500;
+
+		float dist = Math::distance(sf::Vector2f(mostPopulatedTilePos), sf::Vector2f(tilePos));
+		m_expeditions.push_back(Expedition{ (int)dist * 2500, tilePos, 500 });
+	}
+}
+
+bool Colony::hasExpeditionToTile(sf::Vector2i tilePos) const {
+	for (const Expedition& ex : m_expeditions) {
+		if (ex.tileDestination == tilePos) return true;
+	}
+	return false;
 }

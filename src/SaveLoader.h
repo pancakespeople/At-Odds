@@ -173,17 +173,24 @@ namespace boost {
 		// sf::Color
 		template<class Archive>
 		void serialize(Archive& archive, sf::Color& rect, const unsigned int version) {
-			archive& rect.r;
-			archive& rect.g;
-			archive& rect.b;
-			archive& rect.a;
+			archive & rect.r;
+			archive & rect.g;
+			archive & rect.b;
+			archive & rect.a;
 		}
 
 		// sf::Vector2<float> 
 		template<class Archive>
 		void serialize(Archive& archive, sf::Vector2f& vec, const unsigned int version) {
-			archive& vec.x;
-			archive& vec.y;
+			archive & vec.x;
+			archive & vec.y;
+		}
+
+		// sf::Vector2<int>
+		template<class Archive>
+		void serialize(Archive& archive, sf::Vector2i& vec, const unsigned int version) {
+			archive & vec.x;
+			archive & vec.y;
 		}
 
 		// sf::Vertex

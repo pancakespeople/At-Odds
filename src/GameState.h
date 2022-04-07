@@ -23,6 +23,8 @@ public:
 		SAVE_GAME
 	};
 
+	const static int DEFAULT_UPDATE_TARGET = 80;
+
 	GameState(Camera camera);
 	
 	State getState() const { return m_state; }
@@ -75,7 +77,7 @@ private:
 	std::vector<std::function<void()>> m_changeStateCallbacks;
 
 	int m_localViewStarID = 0;
-	int m_updatesPerSecondTarget = 80;
+	int m_updatesPerSecondTarget = DEFAULT_UPDATE_TARGET;
 	float m_timescale = 1.0f;
 	bool m_arenaGame = true;
 	sf::Clock m_updateClock;
