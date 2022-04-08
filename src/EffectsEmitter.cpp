@@ -533,7 +533,7 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 				if (colony.isGridGenerated()) {
 					const Colony::Tile& tile = colony.getTile({ x, y });
 					
-					if (tile.hidden) {
+					if (tile.anomaly) {
 						text.setString("?");
 						text.setPosition(pos);
 						text.setColor(sf::Color::Red);

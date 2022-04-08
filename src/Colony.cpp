@@ -156,7 +156,7 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 			Tile& tile = getTile(m_expeditions[i].tileDestination);
 			changePopulation(m_expeditions[i].population, m_expeditions[i].tileDestination);
 
-			tile.hidden = false;
+			tile.anomaly = false;
 
 			switch (tile.tileFlag) {
 				case Tile::TileFlag::COMMON_ORE:
@@ -621,7 +621,7 @@ void Colony::updateGrid(Planet& planet) {
 			for (sf::Vector2i adjTilePos : adjacentTiles) {
 				Tile& adjTile = getTile(adjTilePos);
 
-				if (!adjTile.hidden) {
+				if (!adjTile.anomaly) {
 					changePopulation(disperseEach, adjTile);
 					toSubtract -= disperseEach;
 				}
@@ -702,7 +702,7 @@ void Colony::generateAnomalies() {
 			tile.tileFlag = Tile::TileFlag::RARE_ORE;
 		}
 
-		tile.hidden = true;
+		tile.anomaly = true;
 	}
 }
 
@@ -723,4 +723,15 @@ bool Colony::hasExpeditionToTile(sf::Vector2i tilePos) const {
 		if (ex.tileDestination == tilePos) return true;
 	}
 	return false;
+}
+
+std::vector<sf::Vector2i> Colony::getAnomalyTiles() const {
+	std::vector<sf::Vector2i> tiles;
+	for (int y = 0; y < GRID_LENGTH; y++) {
+		for (int x = 0; x < GRID_LENGTH; x++) {
+			const Tile& tile = getTile({ x, y });
+			if (tile.anomaly) tiles.push_back({ x, y });
+		}
+	}
+	return tiles;
 }

@@ -388,22 +388,36 @@ void EconomyAI::update(Faction& faction, Brain& brain, const AllianceList& allia
 
 void EconomyAI::handleColonies(Faction & faction) {
 	// Colonies
+	auto planets = faction.getOwnedPlanets();
 	if (m_state == EconomyState::DEVELOPING_PLANETS) {
-		Planet* bestColony = faction.getMostHabitablePlanet();
-		bool bestColonyDone = false;
+		
+		// Sort so that planets with the most habitability are operated on first.
+		std::sort(planets.begin(), planets.end(), [](const Planet* p1, const Planet* p2) {
+			return p1->getHabitability() > p2->getHabitability();
+		});
 
-		if (bestColony != nullptr) {
-			bestColonyDone = buildColonyBuilding(*bestColony, faction);
+		for (int i = 0; i < planets.size(); i++) {
+			if (!buildColonyBuilding(*planets[i], faction)) break;
+		}
+	}
+
+	// Explore anomalies on planets
+	for (Planet* planet : planets) {
+		auto anomalyTiles = planet->getColony().getAnomalyTiles();
+		const Colony::Tile& mostPopulatedTile = planet->getColony().getTile(planet->getColony().getMostPopulatedTile());
+
+		// Remove tiles which already have an expedition incoming
+		for (int i = 0; i < anomalyTiles.size(); i++) {
+			if (planet->getColony().hasExpeditionToTile(anomalyTiles[i])) {
+				anomalyTiles.erase(anomalyTiles.begin() + i);
+				i--;
+			}
 		}
 
-		if (bestColonyDone) {
-			Star* rndStar = faction.getRandomOwnedStar();
-			if (rndStar != nullptr) {
-				Planet* best = rndStar->getMostHabitablePlanet(faction.getID());
-				if (best != nullptr) {
-					buildColonyBuilding(*best, faction);
-				}
-			}
+		if (anomalyTiles.size() > 0 && mostPopulatedTile.population > 500) {
+			int rndIndex = Random::randInt(0, anomalyTiles.size() - 1);
+			planet->getColony().sendExpedition(anomalyTiles[rndIndex]);
+			AI_DEBUG_PRINT("Sending out an expedition");
 		}
 	}
 }
@@ -428,7 +442,7 @@ void EconomyAI::handleShipDesigns(Faction & faction) {
 			std::vector<DesignerChassis> usableChassis;
 
 			for (auto& chassis : faction.getChassis()) {
-				if (chassis.maxWeaponCapacity > 0.0f) {
+				if (chassis.maxWeaponCapacity > 0.0f && !chassis.constructionChassis && !chassis.miningChassis) {
 					usableChassis.push_back(chassis);
 				}
 			}
@@ -460,6 +474,10 @@ void EconomyAI::handleShipDesigns(Faction & faction) {
 
 	// Chassis
 	for (auto& chassis : faction.getChassis()) {
+		if (chassis.constructionChassis || chassis.miningChassis || chassis.maxWeaponCapacity == 0.0f) {
+			continue;
+		}
+
 		bool notUsed = true;
 		for (auto& design : faction.getShipDesigns()) {
 			if (design.chassis.name == chassis.name) {

@@ -24,7 +24,7 @@ public:
 		int population = 0;
 		int8_t cityVariant = 1;
 		TileFlag tileFlag = TileFlag::NONE;
-		bool hidden = false;
+		bool anomaly = false;
 
 		Tile();
 
@@ -33,7 +33,7 @@ public:
 			archive & population;
 			archive & cityVariant;
 			archive & tileFlag;
-			archive & hidden;
+			archive & anomaly;
 		}
 	};
 
@@ -103,6 +103,7 @@ public:
 	std::vector<sf::Vector2i> getPopulatedTiles(int minPopulation = 0) const;
 	std::vector<sf::Vector2i> getAdjacentTiles(sf::Vector2i point) const;
 	const std::vector<Expedition>& getExpeditions() const { return m_expeditions; }
+	std::vector<sf::Vector2i> getAnomalyTiles() const;
 
 	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
 	ColonyBuilding* getBuildingOfType(const std::string& type);

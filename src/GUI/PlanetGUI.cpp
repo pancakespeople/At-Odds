@@ -189,12 +189,19 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	auto colonizeButton = m_planetPanel->get<tgui::Button>("colonizeButton");
 	auto flagPicture = m_planetPanel->get<tgui::Picture>("flagPicture");
-	if (m_currentPlanet->getColony().isColonizationLegal(playerFaction->getID())) {
-		colonizeButton->setVisible(false);
-		flagPicture->getRenderer()->setTexture("data/art/greenflag.png");
+
+	if (playerFaction != nullptr) {
+		if (m_currentPlanet->getColony().isColonizationLegal(playerFaction->getID())) {
+			colonizeButton->setVisible(false);
+			flagPicture->getRenderer()->setTexture("data/art/greenflag.png");
+		}
+		else {
+			colonizeButton->setVisible(true);
+			flagPicture->getRenderer()->setTexture("data/art/redflag.png");
+		}
 	}
 	else {
-		colonizeButton->setVisible(true);
+		colonizeButton->setVisible(false);
 		flagPicture->getRenderer()->setTexture("data/art/redflag.png");
 	}
 }
@@ -340,8 +347,9 @@ void PlanetGUI::createColonyAndResourcesButtons(tgui::Gui& gui, GameState& state
 			growthRateLabel->setPosition("0%", "20%");
 			if (growthRateInfo.size() > 0) {
 				auto tooltip = tgui::Label::create(growthRateInfo);
-				tooltip->getRenderer()->setBackgroundColor(tgui::Color::White);
-				tooltip->getRenderer()->setTextColor(tgui::Color::Black);
+				tooltip->getRenderer()->setBorders(1);
+				tooltip->getRenderer()->setBackgroundColor(tgui::Color(55, 55, 55));
+				tooltip->getRenderer()->setBorderColor(tgui::Color(125, 125, 125));
 
 				growthRateLabel->setToolTip(tooltip);
 			}
@@ -944,6 +952,13 @@ void PlanetGUI::createMapButton(tgui::Gui& gui) {
 		expeditionButton->setVisible(false);
 		m_mapInfoPanel->add(expeditionButton, "expeditionButton");
 
+		auto expeditionTooltip = tgui::Label::create(
+			"Launches an expedition of 500 people from the colony's most populated tile to explore the anomaly. \nRequires there to be a tile of at least 500 population on this planet. \nThe explored tile will gain 500 population when the expedition arrives.");
+		expeditionTooltip->getRenderer()->setBorders(1);
+		expeditionTooltip->getRenderer()->setBackgroundColor(tgui::Color(55, 55, 55));
+		expeditionTooltip->getRenderer()->setBorderColor(tgui::Color(125, 125, 125));
+		expeditionButton->setToolTip(expeditionTooltip);
+
 		m_planetMapCanvas->onClick([this](tgui::Vector2f pos) {
 			sf::Vector2i gridRectSize = sf::Vector2i(sf::Vector2f(m_planetMapCanvas->getSize())) / Colony::GRID_LENGTH;
 
@@ -982,7 +997,7 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	if (colony.isGridGenerated()) {
 		const Colony::Tile& tile = colony.getTile(tilePos);
 		tilePop = tile.population;
-		anomaly = tile.hidden;
+		anomaly = tile.anomaly;
 	}
 
 	std::stringstream text;

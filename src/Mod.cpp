@@ -626,8 +626,8 @@ void HabitatMod::interactWithPlanet(Unit* unit, Planet* planet, Star* star) {
 	if (firstTime) {
 		sf::Vector2i tilePos = colony.getRandomTile();
 		
-		// Don't colonize a hidden tile
-		while (colony.getTile(tilePos).hidden) {
+		// Don't colonize an anomalous tile
+		while (colony.getTile(tilePos).anomaly) {
 			tilePos = colony.getRandomTile();
 		}
 
