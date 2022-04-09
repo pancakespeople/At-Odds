@@ -44,6 +44,7 @@ public:
 	void drawParticles(const std::vector<sf::Vertex>& vertices);
 	void drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window, bool showPopulation, sf::Vector2i selectedTile);
+	void drawAsteroid(sf::Sprite& sprite, sf::Vector2f sunPos);
 	void updateTime(float time, float gameTime);
 
 private:
@@ -89,6 +90,7 @@ private:
 	sf::Shader m_planetMapShader;
 	sf::Shader m_terraPlanetMapShader;
 	sf::Shader m_lavaPlanetMapShader;
+	sf::Shader m_asteroidShader;
 
 	sf::Vector2i m_resolution;
 

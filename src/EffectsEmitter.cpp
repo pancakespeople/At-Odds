@@ -68,6 +68,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 	m_planetMapShader.loadFromFile(m_vertexShaderPath, "data/shaders/planetmapshader.shader");
 	m_terraPlanetMapShader.loadFromFile(m_vertexShaderPath, "data/shaders/terraplanetmapshader.shader");
 	m_lavaPlanetMapShader.loadFromFile(m_vertexShaderPath, "data/shaders/lavaplanetmapshader.shader");
+	m_asteroidShader.loadFromFile(m_vertexShaderPath, "data/shaders/asteroidshader.shader");
 }
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
@@ -576,4 +577,16 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 			}
 		}
 	}
+}
+
+void EffectsEmitter::drawAsteroid(sf::Sprite& sprite, sf::Vector2f sunPos) {
+	m_asteroidShader.setUniform("tex", sf::Shader::CurrentTexture);
+	sf::Vector2f pos = sprite.getPosition();
+
+	sunPos.y = -sunPos.y;
+	pos.y = -pos.y;
+
+	m_asteroidShader.setUniform("toSun", Math::normalize(sunPos - pos));
+
+	m_renderer.draw(sprite, &m_asteroidShader);
 }

@@ -6,20 +6,14 @@
 #include "Faction.h"
 #include "Random.h"
 #include "Math.h"
-
-const std::vector<std::string> textures = {
-	"data/art/asteroid1.png",
-	"data/art/asteroid2.png",
-	"data/art/asteroid3.png",
-	"data/art/asteroid4.png",
-	"data/art/asteroid5.png",
-	"data/art/asteroid6.png",
-	"data/art/asteroid7.png",
-	"data/art/asteroid8.png"
-};
+#include "Util.h"
+#include "Star.h"
 
 Asteroid::Asteroid(sf::Vector2f pos, sf::Vector2f starPos) {
-	m_sprite.setTexture(TextureCache::getTexture(textures[Random::randInt(0, textures.size() - 1)]));
+	const std::vector<sf::IntRect> sheetRects = Util::generateSpritesheetRects(TextureCache::getTexture("data/art/asteroidnormalssheet.png").getSize(), { 3, 2 });
+	
+	m_sprite.setTexture(TextureCache::getTexture("data/art/asteroidnormalssheet.png"));
+	m_sprite.setTextureRect(sheetRects[Random::randInt(0, sheetRects.size() - 1)]);
 	m_sprite.setOrigin({ m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f });
 	m_sprite.setPosition(pos);
 	m_sprite.setScale({ 4.0f, 4.0f });
@@ -46,7 +40,7 @@ Asteroid::Asteroid(sf::Vector2f pos, sf::Vector2f starPos) {
 	m_resourceCount = Random::randFloat(500.0f, 5000.0f);
 }
 
-void Asteroid::draw(Renderer& renderer) {
+void Asteroid::draw(Renderer& renderer, const Star& star) {
 	float radius = getRadius();
 
 	SmoothCircle circle;
@@ -56,7 +50,7 @@ void Asteroid::draw(Renderer& renderer) {
 	circle.setRadius(radius);
 
 	renderer.draw(circle);
-	renderer.draw(m_sprite);
+	renderer.effects.drawAsteroid(m_sprite, star.getLocalViewCenter());
 
 	if (m_selected) {
 		renderer.effects.drawSelection(m_sprite.getPosition(), getRadius());

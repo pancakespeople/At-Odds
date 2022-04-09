@@ -4,12 +4,13 @@
 
 class Renderer;
 class Faction;
+class Star;
 
 class Asteroid : public Identifiable {
 public:
 	Asteroid(sf::Vector2f pos, sf::Vector2f starPos);
 
-	void draw(Renderer& renderer);
+	void draw(Renderer& renderer, const Star& star);
 	void update();
 	void mineAsteroid(Faction& faction, float amount);
 	void setSelected(bool selected) { m_selected = selected; }

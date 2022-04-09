@@ -78,4 +78,21 @@ namespace Util {
 		ss << num;
 		return ss.str();
 	}
+
+	static std::vector<sf::IntRect> generateSpritesheetRects(sf::Vector2u texSize, sf::Vector2u spriteGridSize) {
+		std::vector<sf::IntRect> rects;
+
+		for (unsigned int y = 0; y < spriteGridSize.y; y++) {
+			for (unsigned int x = 0; x < spriteGridSize.x; x++) {
+				sf::IntRect rect;
+				rect.left = texSize.x / spriteGridSize.x * x;
+				rect.top = texSize.y / spriteGridSize.y * y;
+				rect.width = texSize.x / spriteGridSize.x;
+				rect.height = texSize.y / spriteGridSize.y;
+				rects.push_back(rect);
+			}
+		}
+		
+		return rects;
+	}
 }

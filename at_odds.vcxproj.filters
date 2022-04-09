@@ -433,5 +433,6 @@
     <None Include="data\shaders\asteroidbeltvertex.shader" />
     <None Include="data\shaders\planetmapshader.shader" />
     <None Include="data\shaders\lavaplanetmapshader.shader" />
+    <None Include="data\shaders\asteroidshader.shader" />
   </ItemGroup>
 </Project>

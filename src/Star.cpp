@@ -185,7 +185,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 			planet.draw(renderer, window, this, time);
 		}
 		for (Asteroid& asteroid : m_asteroids) {
-			asteroid.draw(renderer);
+			asteroid.draw(renderer, *this);
 		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {
