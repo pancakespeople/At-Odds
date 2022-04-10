@@ -9,6 +9,7 @@
 #include "../Renderer.h"
 #include "../AllianceList.h"
 #include "../Constellation.h"
+#include "../Util.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -108,7 +109,8 @@ void UnitGUI::updatePanel() {
 	else if (m_selectedAsteroid != nullptr) {
 		m_panel->setVisible(true);
 		m_possessButton->setVisible(false);
-		text = "Resource: " + Resource(m_selectedAsteroid->getResource()).getName();
+		text += "Resource: " + Resource(m_selectedAsteroid->getResource()).getName() + "\n";
+		text += "Remaining: " + Util::cutOffDecimal(m_selectedAsteroid->getResourceCount(), 2);
 	}
 	else {
 		m_panel->setVisible(false);

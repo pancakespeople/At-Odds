@@ -20,6 +20,7 @@ public:
 
 	std::string getResource() { return m_resource; }
 	float getRadius() const {return m_sprite.getLocalBounds().width * 1.25f; }
+	float getResourceCount() const { return m_resourceCount; }
 	bool isDestructing() const { return m_destructionTimer > 0; }
 	bool isDead() const { return m_destructionTimer >= 10; }
 	bool isSelected() const { return m_selected; }
