@@ -330,7 +330,7 @@ sf::Vector2f UnitGUI::getAveragePosOfSelectedShips() {
 }
 
 void UnitGUI::onSelect(const Renderer& renderer, Star* star, int playerAllegiance) {
-	bool allowConstructionShips = true;
+	bool allowCivilianShips = true;
 
 	m_selecting = false;
 	m_selectedShips.clear();
@@ -346,8 +346,8 @@ void UnitGUI::onSelect(const Renderer& renderer, Star* star, int playerAllegianc
 
 				if (screenPos.x >= selection.left && screenPos.x <= selection.left + selection.width &&
 					screenPos.y >= selection.top && screenPos.y <= selection.top + selection.height) {
-					if (s->getConstructionSpeed() == 0.0f) {
-						allowConstructionShips = false;
+					if (s->isCombatShip()) {
+						allowCivilianShips = false;
 					}
 
 					s->onSelected();
@@ -370,10 +370,10 @@ void UnitGUI::onSelect(const Renderer& renderer, Star* star, int playerAllegianc
 			m_selectedAsteroid = nullptr;
 		}
 
-		// Don't mix combat and construction ships - delete from container
-		if (!allowConstructionShips) {
+		// Don't mix combat and civilian ships - delete from container
+		if (!allowCivilianShips) {
 			auto it = std::remove_if(m_selectedShips.begin(), m_selectedShips.end(), [](Spaceship* ship) {
-				if (ship->getConstructionSpeed() > 0.0f) {
+				if (!ship->isCombatShip()) {
 					ship->onDeselected();
 					return true;
 				}
