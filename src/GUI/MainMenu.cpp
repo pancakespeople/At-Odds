@@ -4,6 +4,7 @@
 #include "../Constellation.h"
 #include "../Sounds.h"
 #include "../Renderer.h"
+#include "../Keybindings.h"
 
 void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state) {
 	auto panel = tgui::Panel::create();
@@ -98,12 +99,12 @@ void MainMenu::exitGame(GameState& state) {
 void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellation, GameState& state) {
 	if (ev.type == sf::Event::KeyPressed) {
 		if (!m_forceOpen) {
-			if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && !m_opened) {
+			if (Keybindings::isKeyPress("MainMenu", ev) && state.getState() != GameState::State::MAIN_MENU && !m_opened) {
 				m_newGameMenu.close();
 				m_optionsMenu.close(gui);
 				open(gui, constellation, state);
 			}
-			else if (ev.key.code == sf::Keyboard::Escape && state.getState() != GameState::State::MAIN_MENU && m_opened) {
+			else if (Keybindings::isKeyPress("MainMenu", ev) && state.getState() != GameState::State::MAIN_MENU && m_opened) {
 				close(gui);
 			}
 		}

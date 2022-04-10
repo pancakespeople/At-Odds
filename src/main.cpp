@@ -29,6 +29,7 @@
 #include "GUI/DebugInfo.h"
 #include "Renderer.h"
 #include "Script.h"
+#include "Keybindings.h"
 
 int main(int argc, const char* argv[])
 {
@@ -90,6 +91,8 @@ int main(int argc, const char* argv[])
         background.setNebulaSeed(Random::randFloat(0.0f, 1.0f));
         DEBUG_PRINT("Randomized nebula seed");
     });
+
+    Keybindings::addDefaultKeybindings();
 
     float time = 0.0f;
     float gameTime = 0.0f;

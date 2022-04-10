@@ -18,6 +18,7 @@ public:
 	void onRightClickLocalView(sf::RenderWindow & window, Renderer & renderer, Constellation & constellation, GameState & state);
 	void setDisabled(bool disabled) { m_disabled = disabled; }
 	void cleanUpDeadStuff();
+	void deselectAll();
 
 	bool isSelecting() const { return m_selecting; }
 

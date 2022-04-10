@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Math.h"
 #include "Renderer.h"
+#include "Keybindings.h"
 
 #include <iostream>
 
@@ -35,16 +36,16 @@ void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
 
 		// Use WASD or arrow keys to move camera
 		if (widgetType != "EditBox") {
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraLeft")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraLeft"))) {
 				m_view.move(sf::Vector2f(-10.0f * m_camZoomFactor, 0.0f));
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraUp")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraUp"))) {
 				m_view.move(sf::Vector2f(0.0f, -10.0f * m_camZoomFactor));
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraDown")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraDown"))) {
 				m_view.move(sf::Vector2f(0.0f, 10.0f * m_camZoomFactor));
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraRight")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraRight"))) {
 				m_view.move(sf::Vector2f(10.0f * m_camZoomFactor, 0.0f));
 			}
 		}

@@ -5,6 +5,7 @@
 #include "Debug.h"
 #include "Camera.h"
 #include "Constellation.h"
+#include "Keybindings.h"
 
 void GameState::changeToLocalView(Star* star) {
 	if (m_state == GameState::State::LOCAL_VIEW) return;
@@ -61,7 +62,7 @@ void GameState::switchLocalViews(Star* star) {
 }
 
 void GameState::onEvent(sf::Event ev) {
-	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Tab &&
+	if (Keybindings::isKeyPress("SwitchView", ev) &&
 		m_state == GameState::State::LOCAL_VIEW) {
 		changeToWorldView();
 	}

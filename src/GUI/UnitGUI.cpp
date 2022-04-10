@@ -10,6 +10,7 @@
 #include "../AllianceList.h"
 #include "../Constellation.h"
 #include "../Util.h"
+#include "../Keybindings.h"
 
 UnitGUI::UnitGUI() {
 	m_mouseSelectionBox.setFillColor(sf::Color(150.0f, 150.0f, 150.0f, 100.0f));
@@ -136,6 +137,21 @@ void UnitGUI::draw(sf::RenderWindow& window) {
 }
 
 void UnitGUI::onEvent(const sf::Event& ev, sf::RenderWindow& window, Renderer& renderer, GameState& state, Constellation& constellation, tgui::Panel::Ptr mainPanel, MinimapGUI& minimap) {
+	if (state.getLocalViewStar() != nullptr) {
+		if (Keybindings::isKeyPress("SelectAllCombatUnitsInSystem", ev)) {
+			deselectAll();
+
+			for (auto& ship : state.getLocalViewStar()->getSpaceships()) {
+				if (ship->getAllegiance() == state.getPlayer().getFaction()) {
+					if (ship->isCombatShip()) {
+						ship->onSelected();
+						m_selectedShips.push_back(ship.get());
+					}
+				}
+			}
+		}
+	}
+
 	bool mainPanelFocused = true;
 	if (mainPanel != nullptr) {
 		mainPanelFocused = mainPanel->isFocused();
@@ -335,7 +351,7 @@ void UnitGUI::onSelect(const Renderer& renderer, Star* star, int playerAllegianc
 	bool allowCivilianShips = true;
 
 	m_selecting = false;
-	m_selectedShips.clear();
+	deselectAll();
 
 	if (star != nullptr) {
 
@@ -435,5 +451,22 @@ void UnitGUI::cleanUpDeadStuff() {
 			m_selectedAsteroid->setSelected(false);
 			m_selectedAsteroid = nullptr;
 		}
+	}
+}
+
+void UnitGUI::deselectAll() {
+	for (Spaceship* ship : m_selectedShips) {
+		ship->onDeselected();
+	}
+	m_selectedShips.clear();
+
+	for (Building* building : m_selectedBuildings) {
+		building->onDeselected();
+	}
+	m_selectedBuildings.clear();
+
+	if (m_selectedAsteroid != nullptr) {
+		m_selectedAsteroid->setSelected(false);
+		m_selectedAsteroid = nullptr;
 	}
 }

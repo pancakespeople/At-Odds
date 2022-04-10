@@ -219,6 +219,7 @@
     <ClInclude Include="src\AllianceList.h" />
     <ClInclude Include="src\Asteroid.h" />
     <ClInclude Include="src\Serialize.h" />
+    <ClInclude Include="src\Keybindings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -413,6 +414,7 @@
     <ClCompile Include="src\AllianceList.cpp" />
     <ClCompile Include="src\Asteroid.cpp" />
     <ClCompile Include="src\AsteroidBelt.cpp" />
+    <ClCompile Include="src\Keybindings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\scripts\laserAnimation.lua" />
