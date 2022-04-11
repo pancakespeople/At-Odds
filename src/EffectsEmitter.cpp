@@ -9,6 +9,7 @@
 #include "Random.h"
 #include "Camera.h"
 #include "Fonts.h"
+#include "Keybindings.h"
 
 EffectsEmitter::EffectsEmitter(sf::Vector2i resolution, Renderer& renderer) :
 m_renderer(renderer) {
@@ -73,7 +74,7 @@ void EffectsEmitter::initShaders(sf::Vector2i resolution) {
 
 void EffectsEmitter::onEvent(const sf::Event& event) {
 	if (event.type == sf::Event::KeyPressed) {
-		if (event.key.code == sf::Keyboard::F1) {
+		if (Keybindings::isKeyPress("ReloadShaders", event)) {
 			initShaders(m_resolution);
 			DEBUG_PRINT("Reloaded shaders");
 		}

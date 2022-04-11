@@ -22,6 +22,7 @@ public:
 	};
 
 	static bool isKeyPress(const std::string& keybind, const sf::Event& ev);
+	static bool isKeyRelease(const std::string& keybind, const sf::Event& ev);
 	static void addDefaultKeybindings();
 	static sf::Keyboard::Key getKey(const std::string& keybind);
 

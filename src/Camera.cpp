@@ -34,21 +34,7 @@ void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
 
 		lastpos = sf::Mouse::getPosition();
 
-		// Use WASD or arrow keys to move camera
-		if (widgetType != "EditBox") {
-			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraLeft")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraLeft"))) {
-				m_view.move(sf::Vector2f(-10.0f * m_camZoomFactor, 0.0f));
-			}
-			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraUp")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraUp"))) {
-				m_view.move(sf::Vector2f(0.0f, -10.0f * m_camZoomFactor));
-			}
-			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraDown")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraDown"))) {
-				m_view.move(sf::Vector2f(0.0f, 10.0f * m_camZoomFactor));
-			}
-			if (sf::Keyboard::isKeyPressed(Keybindings::getKey("CameraRight")) || sf::Keyboard::isKeyPressed(Keybindings::getKey("AltCameraRight"))) {
-				m_view.move(sf::Vector2f(10.0f * m_camZoomFactor, 0.0f));
-			}
-		}
+		m_view.move(m_velocity * m_camZoomFactor);
 	}
 
 	// Smooth zooming
@@ -58,7 +44,7 @@ void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
 	renderer.setView(m_view);
 }
 
-void Camera::zoomEvent(sf::Event& ev) {
+void Camera::onEvent(sf::Event& ev) {
 	// Zoom with the mouse wheel
 	if (ev.type == sf::Event::MouseWheelScrolled) {
 		if (ev.mouseWheelScroll.delta >= 1) {
@@ -70,6 +56,34 @@ void Camera::zoomEvent(sf::Event& ev) {
 			//m_view.zoom(1 + ZOOM_FACTOR);
 			m_wantedZoomFactor *= 1 + zoomChange;
 			m_zoomTimer.restart();
+		}
+	}
+	else if (ev.type == sf::Event::KeyPressed) {
+		if (Keybindings::isKeyPress("CameraLeft", ev) || Keybindings::isKeyPress("AltCameraLeft", ev)) {
+			m_velocity.x = -10.0f;
+		}
+		if (Keybindings::isKeyPress("CameraUp", ev) || Keybindings::isKeyPress("AltCameraUp", ev)) {
+			m_velocity.y = -10.0f;
+		}
+		if (Keybindings::isKeyPress("CameraDown", ev) || Keybindings::isKeyPress("AltCameraDown", ev)) {
+			m_velocity.y = 10.0f;
+		}
+		if (Keybindings::isKeyPress("CameraRight", ev) || Keybindings::isKeyPress("AltCameraRight", ev)) {
+			m_velocity.x = 10.0f;
+		}
+	}
+	else if (ev.type == sf::Event::KeyReleased) {
+		if (Keybindings::isKeyRelease("CameraLeft", ev) || Keybindings::isKeyRelease("AltCameraLeft", ev)) {
+			m_velocity.x = 0.0f;
+		}
+		if (Keybindings::isKeyRelease("CameraUp", ev) || Keybindings::isKeyRelease("AltCameraUp", ev)) {
+			m_velocity.y = 0.0f;
+		}
+		if (Keybindings::isKeyRelease("CameraDown", ev) || Keybindings::isKeyRelease("AltCameraDown", ev)) {
+			m_velocity.y = 0.0f;
+		}
+		if (Keybindings::isKeyRelease("CameraRight", ev) || Keybindings::isKeyRelease("AltCameraRight", ev)) {
+			m_velocity.x = 0.0f;
 		}
 	}
 }

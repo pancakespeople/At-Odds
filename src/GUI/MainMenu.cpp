@@ -109,7 +109,7 @@ void MainMenu::onEvent(sf::Event& ev, tgui::Gui& gui, Constellation& constellati
 			}
 		}
 		else {
-			if (ev.key.code == sf::Keyboard::F2) {
+			if (Keybindings::isKeyPress("HideUI", ev)) {
 				m_panel->setVisible(!m_panel->isVisible());
 				m_title->setVisible(!m_title->isVisible());
 			}

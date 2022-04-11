@@ -115,7 +115,7 @@ int main(int argc, const char* argv[])
             if (event.type == sf::Event::Closed)
                 window.close();
             gui.handleEvent(event);
-            state.getCamera().zoomEvent(event);
+            state.getCamera().onEvent(event);
             constellation.onEvent(event, window, renderer, state);
             state.onEvent(event);
             buildGui.onEvent(event, window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);

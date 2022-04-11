@@ -4,6 +4,7 @@
 #include "../Math.h"
 #include "UnitGUI.h"
 #include "../AllianceList.h"
+#include "../Keybindings.h"
 
 void MinimapGUI::draw(sf::RenderWindow& window, Star* currentStar, int playerAllegiance, Camera& camera, const AllianceList& alliances) {
 	if (currentStar != nullptr && !m_hidden) {
@@ -191,7 +192,7 @@ bool MinimapGUI::isMouseInMinimap(const sf::RenderWindow& window) {
 
 void MinimapGUI::onEvent(const sf::Event& ev) {
 	if (ev.type == sf::Event::KeyPressed) {
-		if (ev.key.code == sf::Keyboard::F2) {
+		if (Keybindings::isKeyPress("HideUI", ev)) {
 			m_hidden = !m_hidden;
 		}
 	}

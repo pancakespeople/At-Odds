@@ -9,7 +9,7 @@ public:
 	Camera();
 	
 	void update(Renderer& renderer, tgui::Widget::Ptr focusedWidget);
-	void zoomEvent(sf::Event& ev);
+	void onEvent(sf::Event& ev);
 	void setPos(sf::Vector2f pos) { m_view.setCenter(pos); }
 	void zoom(float factor);
 	void setAbsoluteZoom(float factor);
@@ -47,6 +47,7 @@ private:
 	sf::View m_view;
 	sf::FloatRect m_initialRect;
 	sf::Clock m_zoomTimer;
+	sf::Vector2f m_velocity;
 
 	float m_camZoomFactor = 1.0f;
 	float m_wantedZoomFactor = 1.0f;

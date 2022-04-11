@@ -1,6 +1,7 @@
 #include "gamepch.h"
 #include "PlayerGUI.h"
 #include "../Constellation.h"
+#include "../Keybindings.h"
 
 void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation, PlayerGUIState guiState) {
 	// An invisible bottom level panel to help with gui focusing
@@ -58,7 +59,7 @@ void PlayerGUI::updateSync(sf::RenderWindow& window, GameState& state, Constella
 void PlayerGUI::onEvent(const sf::Event& ev, tgui::Gui& gui) {
 	if (m_state != PlayerGUIState::CLOSED) {
 		if (ev.type == sf::Event::KeyReleased) {
-			if (ev.key.code == sf::Keyboard::F2) {
+			if (Keybindings::isKeyPress("HideUI", ev)) {
 				setVisible(gui, !m_visible);
 			}
 		}

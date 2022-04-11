@@ -15,6 +15,20 @@ bool Keybindings::isKeyPress(const std::string& keybind, const sf::Event& ev) {
 	return false;
 }
 
+bool Keybindings::isKeyRelease(const std::string& keybind, const sf::Event& ev) {
+	if (m_keybinds.find(keybind) != m_keybinds.end() && ev.type == sf::Event::KeyReleased) {
+		Key& key = m_keybinds.at(keybind);
+		if (key.key == ev.key.code &&
+			key.control == ev.key.control &&
+			key.shift == ev.key.shift &&
+			key.alt == ev.key.alt &&
+			key.system == ev.key.system) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Keybindings::addDefaultKeybindings() {
 	m_keybinds["CameraLeft"] = Key(sf::Keyboard::A);
 	m_keybinds["CameraUp"] = Key(sf::Keyboard::W);
@@ -30,6 +44,10 @@ void Keybindings::addDefaultKeybindings() {
 	m_keybinds["MainMenu"] = Key(sf::Keyboard::Escape);
 	
 	m_keybinds["SelectAllCombatUnitsInSystem"] = Key(sf::Keyboard::A, true);
+
+	m_keybinds["ReloadShaders"] = Key(sf::Keyboard::F1);
+	m_keybinds["HideUI"] = Key(sf::Keyboard::F2);
+	m_keybinds["Screenshot"] = Key(sf::Keyboard::F3);
 }
 
 sf::Keyboard::Key Keybindings::getKey(const std::string& keybind) {
