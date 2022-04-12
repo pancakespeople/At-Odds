@@ -114,25 +114,29 @@ namespace boost {
 		// sf::Sprite
 		template<class Archive>
 		void save(Archive& archive, const sf::Sprite& sprite, const unsigned int version) {
-			archive& boost::serialization::base_object<sf::Transformable>(sprite);
-			archive& TextureCache::getTexturePath(sprite.getTexture());
-			archive& sprite.getColor();
+			archive & boost::serialization::base_object<sf::Transformable>(sprite);
+			archive & TextureCache::getTexturePath(sprite.getTexture());
+			archive & sprite.getColor();
+			archive & sprite.getTextureRect();
 		}
 
 		template<class Archive>
 		void load(Archive& archive, sf::Sprite& sprite, const unsigned int version) {
 			std::string filePath;
 			sf::Color color;
-			
-			archive& boost::serialization::base_object<sf::Transformable>(sprite);
-			archive& filePath;
-			archive& color;
+			sf::IntRect rect;
+
+			archive & boost::serialization::base_object<sf::Transformable>(sprite);
+			archive & filePath;
+			archive & color;
+			archive & rect;
 
 			if (filePath != "") {
 				sprite.setTexture(TextureCache::getTexture(filePath));
 			}
 
 			sprite.setColor(color);
+			sprite.setTextureRect(rect);
 		}
 
 		// sf::RectangleShape

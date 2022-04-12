@@ -108,6 +108,12 @@ int main(int argc, const char* argv[])
     float frameTime = 0.0f;
     float updateStep = 0.0f;
 
+    newGameMenu.addGameStartCallbacK([&background, &time, &musicPlayer]() {
+        background.setNebulaSeed(Random::randFloat(0.0f, 1.0f));
+        DEBUG_PRINT("Randomized nebula seed");
+        musicPlayer.startMusic(time);
+    });
+
     while (window.isOpen() && state.getMetaState() != GameState::MetaState::EXITING &&
         state.getMetaState() != GameState::MetaState::EXIT_AND_SAVE) {
         sf::Event event;
@@ -171,7 +177,7 @@ int main(int argc, const char* argv[])
         state.getCamera().update(renderer, gui.getFocusedLeaf());
 
         Sounds::updateSounds(state.getPlayer(), state.getCamera(), constellation.getAlliances());
-        musicPlayer.playMusic();
+        musicPlayer.update(time);
 
         if (state.getState() == GameState::State::WORLD_VIEW) {
             constellation.draw(window, renderer, state.getPlayer());
@@ -210,6 +216,8 @@ int main(int argc, const char* argv[])
                 state.clearCallbacks();
                 Sounds::clearSounds();
                 gui.removeAllWidgets();
+
+                musicPlayer.startMusic(time);
 
                 if (player.getFaction() != -1) {
                     playerGui.open(gui, state, constellation, PlayerGUIState::PLAYER);
