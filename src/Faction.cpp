@@ -100,7 +100,6 @@ void Faction::spawnAtRandomStar(Constellation* constellation) {
 
 	addTech(Tech("WEAPONS_RESEARCH"));
 	addTech(Tech("DEFENSE"));
-	addTech(Tech("EXPLORATION"));
 	addTech(Tech("MANUFACTURING"));
 	addTech(Tech("MINING"));
 	addTech(Tech("MILITARY"));

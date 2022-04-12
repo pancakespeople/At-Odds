@@ -30,7 +30,7 @@ addsColonyBuildings = ["EXPLORING"]
 category = "Colony"
 
 [MANUFACTURING]
-name = "Manufacturing"
+name = "Colony Manufactories"
 description = "No empire can thrive without a solid manufacturing base."
 researchRequired = 1600.0
 addsColonyBuildings = ["FACTORY", "CONSUMER_GOODS_FACTORIES", "WEAPONS_FACTORIES"]
@@ -45,14 +45,14 @@ addsColonyBuildings = ["LUXURY_GOODS_FACTORY"]
 category = "Colony"
 
 [MINING]
-name = "Mining Methods"
+name = "Advanced Mining Methods"
 description = "Specialized technology can allow us to more efficiently extract ores from our planets."
 researchRequired = 500.0
 addsColonyBuildings = ["MINING"]
 category = "Colony"
 
 [MILITARY]
-name = "Army Training"
+name = "Ground Forces Training"
 description = "Might makes right."
 researchRequired = 1100.0
 addsColonyBuildings = ["MILITARY_BASE"]
