@@ -17,12 +17,7 @@ Camera::Camera() {
 	m_camZoomFactor = 1;
 }
 
-void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
-	tgui::String widgetType;
-	if (focusedWidget != nullptr) {
-		widgetType = focusedWidget->getWidgetType();
-	}
-	
+void Camera::update(Renderer& renderer) {
 	if (m_allowMovement) {
 		// Move the camera by clicking and dragging
 		static sf::Vector2i lastpos = sf::Mouse::getPosition();
@@ -44,7 +39,12 @@ void Camera::update(Renderer& renderer, tgui::Widget::Ptr focusedWidget) {
 	renderer.setView(m_view);
 }
 
-void Camera::onEvent(sf::Event& ev) {
+void Camera::onEvent(sf::Event& ev, tgui::Widget::Ptr focusedWidget) {
+	tgui::String widgetType;
+	if (focusedWidget != nullptr) {
+		widgetType = focusedWidget->getWidgetType();
+	}
+
 	// Zoom with the mouse wheel
 	if (ev.type == sf::Event::MouseWheelScrolled) {
 		if (ev.mouseWheelScroll.delta >= 1) {
@@ -59,17 +59,19 @@ void Camera::onEvent(sf::Event& ev) {
 		}
 	}
 	else if (ev.type == sf::Event::KeyPressed) {
-		if (Keybindings::isKeyPress("CameraLeft", ev) || Keybindings::isKeyPress("AltCameraLeft", ev)) {
-			m_velocity.x = -10.0f;
-		}
-		if (Keybindings::isKeyPress("CameraUp", ev) || Keybindings::isKeyPress("AltCameraUp", ev)) {
-			m_velocity.y = -10.0f;
-		}
-		if (Keybindings::isKeyPress("CameraDown", ev) || Keybindings::isKeyPress("AltCameraDown", ev)) {
-			m_velocity.y = 10.0f;
-		}
-		if (Keybindings::isKeyPress("CameraRight", ev) || Keybindings::isKeyPress("AltCameraRight", ev)) {
-			m_velocity.x = 10.0f;
+		if (widgetType != "EditBox") {
+			if (Keybindings::isKeyPress("CameraLeft", ev) || Keybindings::isKeyPress("AltCameraLeft", ev)) {
+				m_velocity.x = -10.0f;
+			}
+			if (Keybindings::isKeyPress("CameraUp", ev) || Keybindings::isKeyPress("AltCameraUp", ev)) {
+				m_velocity.y = -10.0f;
+			}
+			if (Keybindings::isKeyPress("CameraDown", ev) || Keybindings::isKeyPress("AltCameraDown", ev)) {
+				m_velocity.y = 10.0f;
+			}
+			if (Keybindings::isKeyPress("CameraRight", ev) || Keybindings::isKeyPress("AltCameraRight", ev)) {
+				m_velocity.x = 10.0f;
+			}
 		}
 	}
 	else if (ev.type == sf::Event::KeyReleased) {

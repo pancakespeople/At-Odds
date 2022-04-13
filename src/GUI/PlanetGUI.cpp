@@ -1045,10 +1045,22 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	}
 }
 
-void PlanetGUI::update() {
+void PlanetGUI::update(GameState& state) {
 	if (m_mapInfoPanel != nullptr) {
 		if (m_selectedTile != sf::Vector2i{ -1, -1 }) {
 			updateTileInfo(m_selectedTile);
+		}
+	}
+
+	if (m_planetPanel != nullptr) {
+		if (m_currentPlanet != nullptr) {
+			auto colonizeButton = m_planetPanel->get<tgui::Button>("colonizeButton");
+			auto flagPicture = m_planetPanel->get<tgui::Picture>("flagPicture");
+
+			if (colonizeButton->isVisible() && m_currentPlanet->getColony().getAllegiance() == state.getPlayer().getFaction()) {
+				colonizeButton->setVisible(false);
+				flagPicture->getRenderer()->setTexture("data/art/greenflag.png");
+			}
 		}
 	}
 }

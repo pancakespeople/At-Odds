@@ -46,7 +46,7 @@ void PlayerGUI::update(sf::RenderWindow& window, Renderer& renderer, GameState& 
 		techGUI.update(playerFaction);
 		minimapGUI.update(window, state, unitGUI);
 		newsGUI.update(playerFaction);
-		planetGUI.update();
+		planetGUI.update(state);
 	}
 }
 

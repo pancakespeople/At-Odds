@@ -121,7 +121,7 @@ int main(int argc, const char* argv[])
             if (event.type == sf::Event::Closed)
                 window.close();
             gui.handleEvent(event);
-            state.getCamera().onEvent(event);
+            state.getCamera().onEvent(event, gui.getFocusedLeaf());
             constellation.onEvent(event, window, renderer, state);
             state.onEvent(event);
             buildGui.onEvent(event, window, renderer, state.getLocalViewStar(), constellation.getFaction(state.getPlayer().getFaction()), unitGui, playerGui.mainPanel);
@@ -174,7 +174,7 @@ int main(int argc, const char* argv[])
 
         background.draw(renderer, state.getCamera());
 
-        state.getCamera().update(renderer, gui.getFocusedLeaf());
+        state.getCamera().update(renderer);
 
         Sounds::updateSounds(state.getPlayer(), state.getCamera(), constellation.getAlliances());
         musicPlayer.update(time);

@@ -573,6 +573,14 @@ void Colony::changeWorldPopulation(int pop) {
 		if (population + pop < maxTilePop && population + pop > 0) {
 			getTile(tile).population += pop;
 		}
+		else if (population + pop <= 0) {
+			getTile(tile).population = 0;
+		}
+	}
+
+	if (getPopulation() == 0) {
+		setAllegiance(-1);
+		setFactionColor(Faction::neutralColor);
 	}
 }
 

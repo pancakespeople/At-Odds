@@ -8,8 +8,8 @@ public:
 	Camera(float x, float y, float w, float h);
 	Camera();
 	
-	void update(Renderer& renderer, tgui::Widget::Ptr focusedWidget);
-	void onEvent(sf::Event& ev);
+	void update(Renderer& renderer);
+	void onEvent(sf::Event& ev, tgui::Widget::Ptr focusedWidget);
 	void setPos(sf::Vector2f pos) { m_view.setCenter(pos); }
 	void zoom(float factor);
 	void setAbsoluteZoom(float factor);
