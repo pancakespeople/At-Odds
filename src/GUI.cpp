@@ -35,10 +35,12 @@ void HelpWindow::open(tgui::Gui& gui) {
 		"Esc - Main menu\n"
 		"Click drag - select units\n"
 		"Right click - order units\n"
+		"Ctrl-A - Select all combat ships in system\n"
 		"\n"
 		"How to play:\n"
 		"Colonize other planets by selecting them and clicking on colonize, your people will colonize the planet automatically.\n"
 		"Build more ships by clicking on your ship factory and changing its settings.\n"
+		"Harvest resources by either building mining ships and mining asteroids or building mines on planets with resources.\n"
 		"Your goal is to eliminate all your enemies. Good luck!"
 		;
 

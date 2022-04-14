@@ -12,7 +12,7 @@ background("data/art/spacebackground1.png", resolution.x, resolution.y) {
 }
 
 void Renderer::setResolution(sf::Vector2i resolution) {
-	assert(m_texture.create(resolution.x, resolution.y));
+	m_texture.create(resolution.x, resolution.y);
 	m_sprite = sf::Sprite(m_texture.getTexture());
 
 	float nebulaSeed = background.getNebulaSeed();
