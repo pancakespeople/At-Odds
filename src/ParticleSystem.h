@@ -26,6 +26,8 @@ public:
 	void createProjectileHitParticle(const sf::Vector2f& pos);
 	void createParticleExplosion(const sf::Vector2f& pos, float velocity, int numParticles, float size);
 
+	int particleCount() { return m_particles.size(); }
+
 private:
 	std::vector<Particle> m_particles;
 	std::vector<sf::Vertex> m_particleVertices;
