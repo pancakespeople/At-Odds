@@ -100,7 +100,7 @@ public:
 	std::vector<Planet*> getEnemyPlanets(int allegiance, const AllianceList& alliances);
 	std::vector<Spaceship*> getEnemyCombatShips(int allegiance, const AllianceList& alliances);
 	std::vector<Building*> getBuildingsOfType(const std::string& type);
-	std::vector<Asteroid>& getAsteroids() { return m_asteroids; }
+	std::vector<std::unique_ptr<Asteroid>>& getAsteroids() { return m_asteroids; }
 	
 	// First = allegiance, second = num ships
 	std::unordered_map<int, int> countNumFactionShips();
@@ -173,7 +173,7 @@ private:
 	std::vector<Planet> m_planets;
 	std::vector<Derelict> m_derelicts;
 	std::vector<AsteroidBelt> m_asteroidBelts;
-	std::vector<Asteroid> m_asteroids;
+	std::vector<std::unique_ptr<Asteroid>> m_asteroids;
 	std::unordered_set<int> m_factionsDiscovered = {-1};
 
 	bool m_localViewActive = false;

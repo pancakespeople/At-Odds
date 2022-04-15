@@ -696,13 +696,13 @@ void EconomyAI::handleAsteroidMining(Faction& faction) {
 			do {
 				std::deque<Asteroid*> miningQueue;
 
-				for (Asteroid& asteroid : targetStar->getAsteroids()) {
-					if (!asteroid.isDestructing()) {
-						if (asteroid.getResource() == "COMMON_ORE") {
-							miningQueue.push_front(&asteroid);
+				for (auto& asteroid : targetStar->getAsteroids()) {
+					if (!asteroid->isDestructing()) {
+						if (asteroid->getResource() == "COMMON_ORE") {
+							miningQueue.push_front(asteroid.get());
 						}
 						else {
-							miningQueue.push_back(&asteroid);
+							miningQueue.push_back(asteroid.get());
 						}
 					}
 				}

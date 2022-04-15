@@ -184,8 +184,8 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		for (Planet& planet : m_planets) {
 			planet.draw(renderer, window, this, time);
 		}
-		for (Asteroid& asteroid : m_asteroids) {
-			asteroid.draw(renderer, *this);
+		for (auto& asteroid : m_asteroids) {
+			asteroid->draw(renderer, *this);
 		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {
@@ -515,9 +515,9 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 		}
 	}
 	for (int i = 0; i < m_asteroids.size(); i++) {
-		m_asteroids[i].update();
+		m_asteroids[i]->update();
 
-		if (m_asteroids[i].isDead()) {
+		if (m_asteroids[i]->isDead()) {
 			m_asteroids.erase(m_asteroids.begin() + i);
 			i--;
 		}
@@ -946,14 +946,14 @@ float Star::getOuterBoundary() {
 void Star::generateAsteroids() {
 	for (int i = 0; i < Random::randInt(0, 6); i++) {
 		sf::Vector2f pos = Math::normalize(Random::randVec(-1.0f, 1.0f)) * Random::randFloat(0.0f, getOuterBoundary());
-		m_asteroids.push_back(Asteroid(pos, getLocalViewCenter()));
+		m_asteroids.push_back(std::make_unique<Asteroid>(pos, getLocalViewCenter()));
 	}
 }
 
 Asteroid* Star::getAsteroidByID(uint32_t id) {
-	for (Asteroid& asteroid : m_asteroids) {
-		if (asteroid.getID() == id) {
-			return &asteroid;
+	for (auto& asteroid : m_asteroids) {
+		if (asteroid->getID() == id) {
+			return asteroid.get();
 		}
 	}
 	return nullptr;

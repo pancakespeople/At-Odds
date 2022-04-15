@@ -30,7 +30,7 @@ foodProductionMultiplier = 2.5
 
 [MILITARY_BASE]
 name = "Military Base"
-description = "When there are protests against your government in the streets, what do you do? That's right, you send in the army to, uh, \"pacify\" them. You may also want to send in the army when other armies invade your planet."
+description = "For defense of the nation."
 baseCost = [["UNCOMMON_ORE", 20], ["RARE_ORE", 5]]
 invasionEffectiveness = 0.5
 

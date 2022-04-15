@@ -276,8 +276,8 @@ void UnitGUI::onRightClickLocalView(sf::RenderWindow & window, Renderer & render
 
 		// Asteroids
 		for (auto& asteroid : state.getLocalViewStar()->getAsteroids()) {
-			if (Math::distance(worldClick, asteroid.getPos()) < asteroid.getRadius()) {
-				asteroidClick = &asteroid;
+			if (Math::distance(worldClick, asteroid->getPos()) < asteroid->getRadius()) {
+				asteroidClick = asteroid.get();
 			}
 		}
 
@@ -432,9 +432,9 @@ void UnitGUI::onMouseClick(const sf::Event& ev, const Renderer& renderer, Star* 
 		}
 
 		for (auto& asteroid : currentStar->getAsteroids()) {
-			if (asteroid.contains(worldClick)) {
-				m_selectedAsteroid = &asteroid;
-				asteroid.setSelected(true);
+			if (asteroid->contains(worldClick)) {
+				m_selectedAsteroid = asteroid.get();
+				asteroid->setSelected(true);
 				return;
 			}
 		}

@@ -420,9 +420,9 @@ bool MineAsteroidOrder::execute(Spaceship& ship, Star& currentStar, const Allian
 
 	if (m_asteroid->isDestructing()) {
 		// Continue mining the remaining asteroids in the system
-		for (Asteroid& asteroid : currentStar.getAsteroids()) {
-			if (!asteroid.isDestructing()) {
-				ship.addOrder<MineAsteroidOrder>(MineAsteroidOrder(&asteroid));
+		for (auto& asteroid : currentStar.getAsteroids()) {
+			if (!asteroid->isDestructing()) {
+				ship.addOrder<MineAsteroidOrder>(MineAsteroidOrder(asteroid.get()));
 				break;
 			}
 		}
