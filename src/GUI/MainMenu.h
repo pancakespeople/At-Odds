@@ -25,7 +25,7 @@ private:
 	void exitGame(GameState& state);
 
 	tgui::Panel::Ptr m_panel;
-	tgui::Label::Ptr m_title;
+	tgui::Picture::Ptr m_title;
 	NewGameMenu m_newGameMenu;
 	OptionsMenu m_optionsMenu;
 	bool m_opened = false;

@@ -13,15 +13,11 @@ void MainMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& sta
 	panel->setInheritedOpacity(0.75f);
 	gui.add(panel);
 	m_panel = panel;
-
-	m_title = tgui::Label::create();
+	
+	m_title = tgui::Picture::create("data/art/title.png");
 	m_title->setOrigin(0.5f, 0.5f);
 	m_title->setPosition("50%", "33%");
-	m_title->setText("At Odds");
-	m_title->setTextSize(250);
-	m_title->getRenderer()->setTextColor(tgui::Color::Red);
-	m_title->getRenderer()->setFont("data/fonts/Dirga.ttf");
-	m_title->getRenderer()->setTextStyle(tgui::TextStyle::Italic);
+	m_title->setScale(0.75f);
 	gui.add(m_title);
 
 	auto newGameButton = GUI::Button::create("New Game");
