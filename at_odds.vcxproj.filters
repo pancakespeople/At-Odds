@@ -220,6 +220,7 @@
     <ClInclude Include="src\Asteroid.h" />
     <ClInclude Include="src\Serialize.h" />
     <ClInclude Include="src\Keybindings.h" />
+    <ClInclude Include="src\GUI\IconGUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -415,6 +416,7 @@
     <ClCompile Include="src\Asteroid.cpp" />
     <ClCompile Include="src\AsteroidBelt.cpp" />
     <ClCompile Include="src\Keybindings.cpp" />
+    <ClCompile Include="src\GUI\IconGUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\scripts\laserAnimation.lua" />
