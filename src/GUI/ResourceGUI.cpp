@@ -12,10 +12,10 @@ void ResourceGUI::open(tgui::Gui& gui) {
 
 	tgui::ToolTip::setInitialDelay(0);
 
-	auto commonPicture = tgui::Picture::create("data/art/kicon.png");
+	auto commonPicture = tgui::Picture::create("data/art/kathiumicon.png");
 	commonPicture->setPosition("0%", "50%");
 	commonPicture->setOrigin(0.0, 0.5);
-	commonPicture->setScale(0.5f);
+	//commonPicture->setScale(2.0f);
 	m_panel->add(commonPicture, "commonPicture");
 
 	m_commonLabel = tgui::Label::create();
@@ -25,10 +25,10 @@ void ResourceGUI::open(tgui::Gui& gui) {
 	m_commonLabel->getRenderer()->setTextColor(tgui::Color::Red);
 	m_panel->add(m_commonLabel);
 
-	auto uncommonPicture = tgui::Picture::create("data/art/oicon.png");
+	auto uncommonPicture = tgui::Picture::create("data/art/oscilliteicon.png");
 	uncommonPicture->setPosition("20%", "50%");
 	uncommonPicture->setOrigin(0.0, 0.5);
-	uncommonPicture->setScale(0.5f);
+	//uncommonPicture->setScale(2.0f);
 	m_panel->add(uncommonPicture, "uncommonPicture");
 
 	m_uncommonLabel = tgui::Label::create();
@@ -38,10 +38,10 @@ void ResourceGUI::open(tgui::Gui& gui) {
 	m_uncommonLabel->getRenderer()->setTextColor(tgui::Color::Cyan);
 	m_panel->add(m_uncommonLabel);
 
-	auto rarePicture = tgui::Picture::create("data/art/vicon.png");
+	auto rarePicture = tgui::Picture::create("data/art/valkicon2.png");
 	rarePicture->setPosition("40%", "50%");
 	rarePicture->setOrigin(0.0, 0.5);
-	rarePicture->setScale(0.5f);
+	//rarePicture->setScale(2.0f);
 	m_panel->add(rarePicture, "rarePicture");
 
 	m_rareLabel = tgui::Label::create();
