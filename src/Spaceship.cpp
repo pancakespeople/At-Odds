@@ -215,6 +215,15 @@ void Spaceship::update(Star* currentStar, const AllianceList& alliances, Faction
 			}
 		}
 		else if (m_weapons.size() > 0) {
+			
+			// Mining ships automine
+			if (hasWeapon("MINING_LASER")) {
+				auto& asteroids = currentStar->getAsteroids();
+				if (asteroids.size() > 0) {
+					addOrder(MineAsteroidOrder(asteroids[0].get()));
+				}
+			}
+
 			// Attack enemies in system
 
 			attack(currentStar, alliances);
