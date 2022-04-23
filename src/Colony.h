@@ -169,6 +169,9 @@ public:
 	ColonyBuilding(const std::string& type);
 
 	void build(Colony& colony);
+	void setPos(sf::Vector2i pos) { m_pos = pos; }
+
+	sf::Vector2i getPos() { return m_pos; }
 
 	std::string getName() const;
 	std::string getDescription() const;
@@ -196,10 +199,12 @@ private:
 	void serialize(Archive& archive, const unsigned int version) {
 		archive & m_type;
 		archive & m_percentBuilt;
+		archive & m_pos;
 	}
 
 	ColonyBuilding() {}
 
 	std::string m_type;
 	float m_percentBuilt = 0.0f;
+	sf::Vector2i m_pos;
 };

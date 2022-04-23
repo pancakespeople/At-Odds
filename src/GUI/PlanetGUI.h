@@ -22,11 +22,12 @@ private:
 	void createBuildStatusLabel(Planet& planet, const ColonyBuilding& building);
 	void createEventsButton(tgui::Gui& gui, const Planet& planet);
 	void createTradeButton(tgui::Gui& gui, Planet& planet);
-	void createMapButton(tgui::Gui& gui);
+	void createMapButton(tgui::Gui& gui, Faction* playerFaction);
 	void openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* playerFaction);
 	void closePanel(tgui::Gui& gui);
 	void updateTileInfo(sf::Vector2i tile);
 	static void updateTrendWidget(tgui::Label::Ptr& label, float trend);
+	void openMapPanel(tgui::Gui& gui, Faction* playerFaction);
 
 	GUI::Icon m_planetIcon;
 	tgui::Panel::Ptr m_planetInfoPanel;
@@ -39,7 +40,10 @@ private:
 	tgui::Panel::Ptr m_mapInfoPanel;
 
 	bool m_showPopulation = false;
+	bool m_isPlacingBuilding = false;
 	sf::Vector2i m_selectedTile = { -1, -1 };
+
+	std::string m_placingBuildingType;
 
 	Planet* m_currentPlanet = nullptr;
 };

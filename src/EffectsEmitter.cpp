@@ -475,7 +475,7 @@ void EffectsEmitter::drawParticles(const std::vector<sf::Vertex>& vertices) {
 	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, states);
 }
 
-void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window, bool showPopulation, sf::Vector2i selectedTile) {
+void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window, bool showPopulation, bool placingBuilding, sf::Vector2i selectedTile) {
 	sf::RectangleShape shape;
 	shape.setSize(canvas->getSize());
 	shape.setFillColor(planet.getColor());
@@ -528,7 +528,15 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 			relBounds.top += canvas->getAbsolutePosition().y;
 
 			if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
-				gridRect.setFillColor(sf::Color(255, 255, 255, 137));
+				// Mouse in box
+
+				if (placingBuilding) {
+					gridRect.setFillColor({ 0, 255, 0, 137 });
+				}
+				else {
+					gridRect.setFillColor(sf::Color(255, 255, 255, 137));
+				}
+
 				gridRect.setTexture(nullptr);
 			}
 			else {

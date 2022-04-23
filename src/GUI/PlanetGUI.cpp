@@ -7,6 +7,7 @@
 #include "../Util.h"
 #include "../Renderer.h"
 #include "../Constellation.h"
+#include "../Sounds.h"
 
 void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, const Constellation& constellation) {
 	if (m_planetPanel != nullptr) {
@@ -182,7 +183,7 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 	createBuildingsButton(gui, planet, playerFaction);
 	createEventsButton(gui, planet);
 	createTradeButton(gui, planet);
-	createMapButton(gui);
+	createMapButton(gui, playerFaction);
 
 	// Focus camera
 	state.getCamera().setPos(planet.getPos());
@@ -276,6 +277,8 @@ void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 		}
 	}
 	m_updateFunction = nullptr;
+	m_isPlacingBuilding = false;
+	m_placingBuildingType = "";
 }
 
 void PlanetGUI::onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel, const Constellation& constellation) {
@@ -591,7 +594,7 @@ void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* play
 				}
 			}
 
-			listBox->onItemSelect([this, listBox, &planet, playerFaction]() {
+			listBox->onItemSelect([this, listBox, &planet, &gui, playerFaction]() {
 				auto infoGroup = m_sideWindow->get<tgui::Group>("infoGroup");
 				if (infoGroup != nullptr) {
 					m_sideWindow->remove(infoGroup);
@@ -605,20 +608,26 @@ void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* play
 
 							if (!planet.getColony().hasBuildingOfType(building.getType())) {
 								auto buildButton = GUI::Button::create("Build");
-								buildButton->setClickSound("data/sound/build.wav");
+								//buildButton->setClickSound("data/sound/build.wav");
 								buildButton->setPosition("2.5%", "85%");
 								m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
 
-								buildButton->onPress([this, buildButton, building, &planet, playerFaction]() {
+								buildButton->onPress([this, buildButton, building, &planet, &gui, playerFaction]() {
 									if (!planet.getColony().hasBuildingOfType(building.getType())) {
 										auto cost = building.getResourceCost(planet);
 
 										if (playerFaction->canSubtractResources(cost)) {
-											planet.getColony().addBuilding(building);
-											playerFaction->subtractResources(cost);
+											//planet.getColony().addBuilding(building);
+											//playerFaction->subtractResources(cost);
 
-											m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
-											createBuildStatusLabel(planet, building);
+											//m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
+											//createBuildStatusLabel(planet, building);
+
+											// Switch to map for placement picking
+											openMapPanel(gui, playerFaction);
+
+											m_isPlacingBuilding = true;
+											m_placingBuildingType = building.getType();
 										}
 									}
 									});
@@ -911,70 +920,12 @@ void PlanetGUI::closePanel(tgui::Gui& gui) {
 	m_currentPlanet = nullptr;
 }
 
-void PlanetGUI::createMapButton(tgui::Gui& gui) {
+void PlanetGUI::createMapButton(tgui::Gui& gui, Faction* playerFaction) {
 	auto mapButton = GUI::Button::create("Map");
 	m_buttonPanelLayout->add(mapButton);
 
-	mapButton->onPress([this, &gui]() {
-		switchSideWindow("Map", gui);
-		if (m_sideWindow == nullptr) return;
-
-		m_sideWindow->setSize("40%", "70.8%");
-		m_sideWindow->getRenderer()->setOpacity(1.0f);
-
-		m_planetMapCanvas = tgui::Canvas::create();
-		m_planetMapCanvas->getRenderer()->setOpacity(1.0f);
-		m_sideWindow->add(m_planetMapCanvas);
-
-		m_mapInfoPanel = tgui::Panel::create();
-		m_mapInfoPanel->setOrigin({ 0.0f, 1.0f });
-		m_mapInfoPanel->setPosition("planetPanel.left", "planetPanel.top");
-		m_mapInfoPanel->setSize("planetPanel.width + buttonPanel.width", m_sideWindow->getSize().y - m_planetPanel->getSize().y);
-		m_mapInfoPanel->getRenderer()->setOpacity(0.75f);
-		m_mapInfoPanel->getRenderer()->setTextureBackground(tgui::Texture("data/tgui/spacepanelbw.png"));
-		gui.add(m_mapInfoPanel);
-
-		auto populationCheckBox = tgui::CheckBox::create("Show population");
-		populationCheckBox->setPosition("10%", "10%");
-		populationCheckBox->setChecked(m_showPopulation);
-		m_mapInfoPanel->add(populationCheckBox, "populationCheckBox");
-
-		auto tileInfoLabel = tgui::Label::create();
-		tileInfoLabel->setPosition("10%", "20%");
-		m_mapInfoPanel->add(tileInfoLabel, "tileInfoLabel");
-
-		auto anomalyLabel = tgui::Label::create();
-		anomalyLabel->setPosition("10%", "50%");
-		m_mapInfoPanel->add(anomalyLabel, "anomalyLabel");
-
-		auto expeditionButton = tgui::Button::create("Send expedition");
-		expeditionButton->setPosition("10%", "60%");
-		expeditionButton->setVisible(false);
-		m_mapInfoPanel->add(expeditionButton, "expeditionButton");
-
-		auto expeditionTooltip = tgui::Label::create(
-			"Launches an expedition of 500 people from the colony's most populated tile to explore the anomaly. \nRequires there to be a tile of at least 500 population on this planet. \nThe explored tile will gain 500 population when the expedition arrives.");
-		expeditionTooltip->getRenderer()->setBorders(1);
-		expeditionTooltip->getRenderer()->setBackgroundColor(tgui::Color(55, 55, 55));
-		expeditionTooltip->getRenderer()->setBorderColor(tgui::Color(125, 125, 125));
-		expeditionButton->setToolTip(expeditionTooltip);
-
-		m_planetMapCanvas->onClick([this](tgui::Vector2f pos) {
-			sf::Vector2i gridRectSize = sf::Vector2i(sf::Vector2f(m_planetMapCanvas->getSize())) / Colony::GRID_LENGTH;
-
-			int x = std::min((int)pos.x / gridRectSize.x, Colony::GRID_LENGTH - 1);
-			int y = std::min((int)pos.y / gridRectSize.y, Colony::GRID_LENGTH - 1);
-			
-			m_selectedTile = { x, y };
-		});
-
-		populationCheckBox->onChange([this](bool checked) {
-			m_showPopulation = checked;
-		});
-
-		expeditionButton->onClick([this]() {
-			m_currentPlanet->getColony().sendExpedition(m_selectedTile);
-		});
+	mapButton->onPress([this, &gui, playerFaction]() {
+		openMapPanel(gui, playerFaction);
 	});
 }
 
@@ -982,7 +933,7 @@ void PlanetGUI::draw(Renderer& renderer, const sf::RenderWindow& window) {
 	if (m_planetMapCanvas != nullptr) {
 		m_planetMapCanvas->clear();
 
-		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet, window, m_showPopulation, m_selectedTile);
+		renderer.effects.drawPlanetMap(m_planetMapCanvas.get(), *m_currentPlanet, window, m_showPopulation, m_isPlacingBuilding, m_selectedTile);
 
 		m_planetMapCanvas->display();
 	}
@@ -1004,6 +955,12 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	text << "Tile Info: \n";
 	text << "Coordinates: " << "(" << tilePos.x << ", " << tilePos.y << ")\n";
 	text << "Population: " << tilePop << "\n";
+
+	for (ColonyBuilding& building : m_currentPlanet->getColony().getBuildings()) {
+		if (building.getPos() == tilePos) {
+			text << "Building: " << building.getName() << "\n";
+		}
+	}
 
 	auto tileInfoLabel = m_mapInfoPanel->get<tgui::Label>("tileInfoLabel");
 	auto anomalyLabel = m_mapInfoPanel->get<tgui::Label>("anomalyLabel");
@@ -1063,4 +1020,82 @@ void PlanetGUI::update(GameState& state) {
 			}
 		}
 	}
+}
+
+void PlanetGUI::openMapPanel(tgui::Gui& gui, Faction* playerFaction) {
+	switchSideWindow("Map", gui);
+	if (m_sideWindow == nullptr) return;
+
+	m_sideWindow->setSize("40%", "70.8%");
+	m_sideWindow->getRenderer()->setOpacity(1.0f);
+
+	m_planetMapCanvas = tgui::Canvas::create();
+	m_planetMapCanvas->getRenderer()->setOpacity(1.0f);
+	m_sideWindow->add(m_planetMapCanvas);
+
+	m_mapInfoPanel = tgui::Panel::create();
+	m_mapInfoPanel->setOrigin({ 0.0f, 1.0f });
+	m_mapInfoPanel->setPosition("planetPanel.left", "planetPanel.top");
+	m_mapInfoPanel->setSize("planetPanel.width + buttonPanel.width", m_sideWindow->getSize().y - m_planetPanel->getSize().y);
+	m_mapInfoPanel->getRenderer()->setOpacity(0.75f);
+	m_mapInfoPanel->getRenderer()->setTextureBackground(tgui::Texture("data/tgui/spacepanelbw.png"));
+	gui.add(m_mapInfoPanel);
+
+	auto populationCheckBox = tgui::CheckBox::create("Show population");
+	populationCheckBox->setPosition("10%", "10%");
+	populationCheckBox->setChecked(m_showPopulation);
+	m_mapInfoPanel->add(populationCheckBox, "populationCheckBox");
+
+	auto tileInfoLabel = tgui::Label::create();
+	tileInfoLabel->setPosition("10%", "20%");
+	m_mapInfoPanel->add(tileInfoLabel, "tileInfoLabel");
+
+	auto anomalyLabel = tgui::Label::create();
+	anomalyLabel->setPosition("10%", "50%");
+	m_mapInfoPanel->add(anomalyLabel, "anomalyLabel");
+
+	auto expeditionButton = tgui::Button::create("Send expedition");
+	expeditionButton->setPosition("10%", "60%");
+	expeditionButton->setVisible(false);
+	m_mapInfoPanel->add(expeditionButton, "expeditionButton");
+
+	auto expeditionTooltip = tgui::Label::create(
+		"Launches an expedition of 500 people from the colony's most populated tile to explore the anomaly. \nRequires there to be a tile of at least 500 population on this planet. \nThe explored tile will gain 500 population when the expedition arrives.");
+	expeditionTooltip->getRenderer()->setBorders(1);
+	expeditionTooltip->getRenderer()->setBackgroundColor(tgui::Color(55, 55, 55));
+	expeditionTooltip->getRenderer()->setBorderColor(tgui::Color(125, 125, 125));
+	expeditionButton->setToolTip(expeditionTooltip);
+
+	m_planetMapCanvas->onClick([this, playerFaction](tgui::Vector2f pos) {
+		sf::Vector2i gridRectSize = sf::Vector2i(sf::Vector2f(m_planetMapCanvas->getSize())) / Colony::GRID_LENGTH;
+
+		int x = std::min((int)pos.x / gridRectSize.x, Colony::GRID_LENGTH - 1);
+		int y = std::min((int)pos.y / gridRectSize.y, Colony::GRID_LENGTH - 1);
+
+		m_selectedTile = { x, y };
+
+		if (m_isPlacingBuilding) {
+			ColonyBuilding building(m_placingBuildingType);
+			auto cost = building.getResourceCost(*m_currentPlanet);
+			
+			if (playerFaction->canSubtractResources(cost)) {
+				building.setPos(m_selectedTile);
+				m_currentPlanet->getColony().addBuilding(building);
+				
+				playerFaction->subtractResources(cost);
+				Sounds::playUISound("data/sound/build.wav");
+			}
+
+			m_isPlacingBuilding = false;
+		}
+
+		});
+
+	populationCheckBox->onChange([this](bool checked) {
+		m_showPopulation = checked;
+		});
+
+	expeditionButton->onClick([this]() {
+		m_currentPlanet->getColony().sendExpedition(m_selectedTile);
+		});
 }
