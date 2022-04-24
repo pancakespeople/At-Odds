@@ -54,10 +54,10 @@ Planet::Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, fl
 	m_shape.setOrigin(sf::Vector2f(getRadius(), getRadius()));
 }
 
-void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, float time) {
+void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, float time, bool drawPlanetText) {
 	//m_orbit.draw(window);
 	
-	if (isMouseInRadius(window, renderer)) {
+	if (isMouseInRadius(window, renderer) && drawPlanetText) {
 		renderer.effects.drawGlow(m_shape.getPosition(), getRadius() * 5.0f, m_shape.getFillColor());
 
 		// Hover text

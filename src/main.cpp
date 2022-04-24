@@ -183,7 +183,7 @@ int main(int argc, const char* argv[])
             constellation.draw(window, renderer, state.getPlayer());
         }
         else if (state.getState() == GameState::State::LOCAL_VIEW) {
-            state.getLocalViewStar()->drawLocalView(window, renderer, state.getPlayer(), constellation.getAlliances(), time);
+            state.getLocalViewStar()->drawLocalView(window, renderer, state.getPlayer(), constellation.getAlliances(), time, !playerGui.planetGUI.isOpen());
         }
         
         console.runCommands(constellation, state, window, renderer, gui, playerGui);

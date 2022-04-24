@@ -27,6 +27,7 @@ description = "It produces food."
 baseCost = [["COMMON_ORE", 25]]
 habitabilityModifier = 1.5
 foodProductionMultiplier = 2.5
+texturePath = "data/art/colonybuildings/farms.png"
 
 [MILITARY_BASE]
 name = "Military Base"
@@ -64,12 +65,14 @@ name = "Consumer Goods Factory"
 baseCost = [["COMMON_ORE", 20]]
 description = "A massive, polluting factory complex that produces consumer goods. Requires industrial goods and oscillite."
 consumerGoodsMultiplier = 2.0
+texturePath = "data/art/colonybuildings/factory.png"
 
 [WEAPONS_FACTORIES]
 name = "Weapons Factory"
 baseCost = [["COMMON_ORE", 30], ["UNCOMMON_ORE", 10]]
 description = "The profitable military industrial complex."
 armamentsMultiplier = 2.0
+texturePath = "data/art/colonybuildings/factory.png"
 
 [EXPLORING]
 name = "Exploration HQ"
@@ -87,6 +90,7 @@ bombardDamageMultiplier = 0.75
 name = "Factory"
 description = "A generic factory that generically produces the generic 'industrial goods'. So generic. Requires kathium."
 baseCost = [["COMMON_ORE", 25], ["UNCOMMON_ORE", 5]]
+texturePath = "data/art/colonybuildings/factory.png"
 
 [WATER_PUMP]
 name = "Water Pump"

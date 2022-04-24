@@ -475,7 +475,7 @@ void EffectsEmitter::drawParticles(const std::vector<sf::Vertex>& vertices) {
 	m_renderer.draw(&vertices[0], vertices.size(), sf::Quads, states);
 }
 
-void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window, bool showPopulation, bool placingBuilding, sf::Vector2i selectedTile) {
+void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet) {
 	sf::RectangleShape shape;
 	shape.setSize(canvas->getSize());
 	shape.setFillColor(planet.getColor());
@@ -499,92 +499,6 @@ void EffectsEmitter::drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const s
 		m_planetMapShader.setUniform("water", planet.getWater());
 
 		canvas->draw(shape, &m_planetMapShader);
-	}
-
-	const int gridSize = 8;
-	const sf::Vector2f gridRectSize = canvas->getSize() / gridSize;
-
-	// Draw grid
-	sf::RectangleShape gridRect;
-	gridRect.setSize(gridRectSize);
-	gridRect.setFillColor(sf::Color::Transparent);
-	gridRect.setOutlineThickness(1.0f);
-	gridRect.setOutlineColor(sf::Color(55, 55, 55));
-
-	sf::Text text;
-	text.setFont(Fonts::getMainFont());
-	text.setColor(sf::Color(55, 55, 55));
-
-	const Colony& colony = planet.getColony();
-
-	for (int y = 0; y < gridSize; y++) {
-		for (int x = 0; x < gridSize; x++) {
-			sf::Vector2f pos(x * gridRectSize.x, y * gridRectSize.y);
-
-			gridRect.setPosition(pos);
-
-			sf::FloatRect relBounds = gridRect.getGlobalBounds();
-			relBounds.left += canvas->getAbsolutePosition().x;
-			relBounds.top += canvas->getAbsolutePosition().y;
-
-			if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
-				// Mouse in box
-
-				if (placingBuilding) {
-					gridRect.setFillColor({ 0, 255, 0, 137 });
-				}
-				else {
-					gridRect.setFillColor(sf::Color(255, 255, 255, 137));
-				}
-
-				gridRect.setTexture(nullptr);
-			}
-			else {
-				if (colony.isGridGenerated()) {
-					const Colony::Tile& tile = colony.getTile({ x, y });
-					
-					if (tile.anomaly) {
-						text.setString("?");
-						text.setPosition(pos);
-						text.setColor(sf::Color::Red);
-
-						gridRect.setTexture(nullptr);
-						gridRect.setFillColor(sf::Color::Transparent);
-					}
-					else if (tile.population > 0) {
-						if (showPopulation) {
-							text.setString(std::to_string(tile.population));
-							text.setPosition(pos);
-							text.setColor(sf::Color(55, 55, 55));
-						}
-
-						gridRect.setFillColor(sf::Color::White);
-						gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(tile.population, tile.cityVariant)), true);
-					}
-					else {
-						gridRect.setFillColor(sf::Color::Transparent);
-						gridRect.setTexture(nullptr);
-					}
-				}
-				else {
-					gridRect.setFillColor(sf::Color::Transparent);
-				}
-			}
-
-			if (sf::Vector2i{ x, y } == selectedTile) {
-				gridRect.setOutlineColor(sf::Color::Yellow);
-			}
-			else {
-				gridRect.setOutlineColor(sf::Color(55, 55, 55));
-			}
-			
-			canvas->draw(gridRect);
-
-			if (text.getString() != "") {
-				canvas->draw(text);
-				text.setString("");
-			}
-		}
 	}
 }
 

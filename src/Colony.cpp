@@ -743,3 +743,17 @@ std::vector<sf::Vector2i> Colony::getAnomalyTiles() const {
 	}
 	return tiles;
 }
+
+std::string ColonyBuilding::getTexturePath() const {
+	auto& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["texturePath"].value_or("");
+}
+
+const ColonyBuilding* Colony::getBuildingAtTile(sf::Vector2i tile) const {
+	for (const ColonyBuilding& b : m_buildings) {
+		if (b.getPos() == tile) {
+			return &b;
+		}
+	}
+	return nullptr;
+}

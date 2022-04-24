@@ -43,7 +43,7 @@ public:
 	void drawJumpTrail(const sf::RectangleShape& shape);
 	void drawParticles(const std::vector<sf::Vertex>& vertices);
 	void drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
-	void drawPlanetMap(tgui::Canvas* canvas, Planet& planet, const sf::RenderWindow& window, bool showPopulation, bool placingBuilding, sf::Vector2i selectedTile);
+	void drawPlanetMap(tgui::Canvas* canvas, Planet& planet);
 	void drawAsteroid(sf::Sprite& sprite, sf::Vector2f sunPos);
 	void updateTime(float time, float gameTime);
 

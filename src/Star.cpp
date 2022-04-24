@@ -158,7 +158,7 @@ void Star::draw(const sf::RenderWindow & window, Renderer& renderer, Constellati
 	}
 }
 
-void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, const AllianceList& alliances, float time) {
+void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, const AllianceList& alliances, float time, bool drawPlanetText) {
 	m_drawHidden = true;
 
 	if (player.hasFogOfWar()) {
@@ -182,7 +182,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 	if (m_drawHidden) {
 
 		for (Planet& planet : m_planets) {
-			planet.draw(renderer, window, this, time);
+			planet.draw(renderer, window, this, time, drawPlanetText);
 		}
 		for (auto& asteroid : m_asteroids) {
 			asteroid->draw(renderer, *this);

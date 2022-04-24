@@ -45,7 +45,7 @@ public:
 	
 	Planet(sf::Vector2f pos, sf::Vector2f starPos, sf::Vector2f orbitPos, float starTemperature, bool moon = false);
 
-	void draw(Renderer& renderer, sf::RenderWindow& window, Star* star, float time);
+	void draw(Renderer& renderer, sf::RenderWindow& window, Star* star, float time, bool drawPlanetText);
 	void update(Star* currentStar, Faction* faction);
 	void generateGasGiant(float baseTemperature);
 	void generateTerrestrial(float baseTemperature);

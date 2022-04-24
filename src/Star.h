@@ -29,7 +29,7 @@ public:
 
 	void draw(sf::RenderWindow& window);
 	void draw(const sf::RenderWindow & window, Renderer& renderer, Constellation& constellation, Player& player);
-	void drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, const AllianceList& alliances, float time);
+	void drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& player, const AllianceList& alliances, float time, bool drawPlanetText);
 	void setPos(sf::Vector2f pos);
 	void setColor(sf::Color color) { m_shape.setFillColor(color); }
 	void connectHyperlane(Hyperlane* lane);

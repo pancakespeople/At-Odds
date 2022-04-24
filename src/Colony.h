@@ -106,6 +106,7 @@ public:
 	std::vector<sf::Vector2i> getAnomalyTiles() const;
 
 	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
+	const ColonyBuilding* getBuildingAtTile(sf::Vector2i tile) const;
 	ColonyBuilding* getBuildingOfType(const std::string& type);
 
 	TradeGoods& getTradeGoods() { return m_tradeGoods; }
@@ -171,12 +172,13 @@ public:
 	void build(Colony& colony);
 	void setPos(sf::Vector2i pos) { m_pos = pos; }
 
-	sf::Vector2i getPos() { return m_pos; }
+	sf::Vector2i getPos() const { return m_pos; }
 
 	std::string getName() const;
 	std::string getDescription() const;
 	std::string getType() const { return m_type; }
 	std::string getEffectsString() const;
+	std::string getTexturePath() const;
 	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
 	std::vector<std::string> getFlags() const;
 

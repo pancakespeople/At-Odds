@@ -11,6 +11,8 @@ public:
 	void update(GameState& state);
 	void draw(Renderer& renderer, const sf::RenderWindow& window);
 	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel, const Constellation& constellation);
+	void drawGrid(Renderer& renderer, const sf::RenderWindow& window);
+	bool isOpen();
 
 private:
 	void setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& state, Faction* playerFaction, tgui::Gui& gui, int index, const Constellation& constellation);
@@ -44,6 +46,7 @@ private:
 	sf::Vector2i m_selectedTile = { -1, -1 };
 
 	std::string m_placingBuildingType;
+	std::string m_placingBuildingTexturePath;
 
 	Planet* m_currentPlanet = nullptr;
 };
