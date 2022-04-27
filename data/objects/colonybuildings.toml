@@ -41,6 +41,7 @@ description = "No one is gonna visit your planet if the only place to land their
 baseCost = [["COMMON_ORE", 35]]
 truckSpawnTimeMultiplier = 0.5
 busSpawnTimeMultiplier = 0.5
+texturePath = "data/art/colonybuildings/spaceport.png"
 
 [BASIC_MINING]
 name = "Basic Mine"
