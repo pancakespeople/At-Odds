@@ -665,7 +665,7 @@ void PlanetGUI::displayBuildingInfo(ColonyBuilding& building, Planet& planet, bo
 	descriptionLabel->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
 	infoGroup->add(descriptionLabel, "descriptionLabel");
 
-	auto effectsLabel = tgui::Label::create(building.getEffectsString());
+	auto effectsLabel = tgui::Label::create(building.getEffectsString() + building.getExtraInfo());
 	effectsLabel->setPosition("0%", "descriptionLabel.bottom");
 	effectsLabel->setSize("100%", "20%");
 	effectsLabel->getRenderer()->setBorders(1);
@@ -951,6 +951,7 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	text << "Tile Info: \n";
 	text << "Coordinates: " << "(" << tilePos.x << ", " << tilePos.y << ")\n";
 	text << "Population: " << tilePop << "\n";
+	text << "Growth rate: " << std::to_string((colony.getGrowthRate(m_currentPlanet->getHabitability()) + colony.getTileGrowthRate(tilePos)) * 100.0f) << "%\n";
 
 	for (ColonyBuilding& building : m_currentPlanet->getColony().getBuildings()) {
 		if (building.getPos() == tilePos) {

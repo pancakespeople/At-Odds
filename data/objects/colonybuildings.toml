@@ -27,7 +27,9 @@ description = "It produces food."
 baseCost = [["COMMON_ORE", 25]]
 habitabilityModifier = 1.5
 foodProductionMultiplier = 2.5
+neighborTileGrowthRateAdd = 0.05
 texturePath = "data/art/colonybuildings/farms.png"
+extraInfo = "Increases growth rate in surrounding tiles by 5%"
 
 [MILITARY_BASE]
 name = "Military Base"

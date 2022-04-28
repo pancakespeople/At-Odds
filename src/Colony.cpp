@@ -611,9 +611,13 @@ void Colony::updateGrid(Planet& planet) {
 	if (population > 0) {
 		// Grow population
 		
-		float growthRate = getGrowthRate(planet.getHabitability());
-		for (Tile& tile : m_tiles) {
-			changePopulation(tile.population * growthRate, tile);
+		float planetGrowthRate = getGrowthRate(planet.getHabitability());
+		for (int y = 0; y < GRID_LENGTH; y++) {
+			for (int x = 0; x < GRID_LENGTH; x++) {
+				Tile& tile = getTile({ x, y });
+				float tileGrowthRate = getTileGrowthRate({ x,y });
+				changePopulation(tile.population * (planetGrowthRate + tileGrowthRate), tile);
+			}
 		}
 
 		// Spread population out
@@ -756,4 +760,24 @@ const ColonyBuilding* Colony::getBuildingAtTile(sf::Vector2i tile) const {
 		}
 	}
 	return nullptr;
+}
+
+float Colony::getTileGrowthRate(sf::Vector2i tilePos) const {
+	float rate = 0.0f;
+	for (const ColonyBuilding& building : m_buildings) {
+		if (building.isBuilt() && building.isTileAdjacent(tilePos)) {
+			rate += building.getEffect("neighborTileGrowthRateAdd", 0.0f);
+		}
+	}
+	return rate;
+}
+
+bool ColonyBuilding::isTileAdjacent(sf::Vector2i tile) const {
+	return tile.x <= m_pos.x + 1 && tile.x >= m_pos.x - 1 &&
+		tile.y <= m_pos.y + 1 && tile.y >= m_pos.y - 1;
+}
+
+std::string ColonyBuilding::getExtraInfo() const {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["extraInfo"].value_or("");
 }

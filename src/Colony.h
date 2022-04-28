@@ -66,6 +66,7 @@ public:
 	float getStability() const { return m_stability; }
 	float getResourceExploitation(const Resource& resource, const Planet& planet) const;
 	float getPopulationLimit() const;
+	float getTileGrowthRate(sf::Vector2i tilePos) const;
 
 	bool isColonizationLegal(int allegiance) const;
 	bool hasBuildingOfType(const std::string& string, bool builtOnly = false) const;
@@ -179,12 +180,14 @@ public:
 	std::string getType() const { return m_type; }
 	std::string getEffectsString() const;
 	std::string getTexturePath() const;
+	std::string getExtraInfo() const;
 	std::unordered_map<std::string, float> getResourceCost(Planet& planet) const;
 	std::vector<std::string> getFlags() const;
 
 	bool isBuilt() const { return m_percentBuilt >= 100.0f; }
 	bool hasFlag(const std::string& flag) const;
 	bool isBuildable(const Colony& colony) const;
+	bool isTileAdjacent(sf::Vector2i tile) const;
 
 	float getPercentBuilt() const { return m_percentBuilt; }
 
@@ -194,6 +197,7 @@ public:
 
 		return table[m_type][val].value_or(defaultVal);
 	}
+
 
 private:
 	friend class boost::serialization::access;
