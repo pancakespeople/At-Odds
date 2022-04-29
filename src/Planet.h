@@ -56,7 +56,7 @@ public:
 	void addEvent(const std::string& type);
 	void setMoonOf(int planetIndex) { m_parentPlanetIndex = planetIndex; }
 	void setRadius(float radius);
-	void discoverResource(const std::string& resourceType, Faction* faction, Star& star);
+	void discoverResource(const std::string& resourceType, sf::Vector2i pos, Faction* faction, Star& star);
 
 	float getTemperature() const { return m_temperature; }
 	float getAtmosphericPressure() const { return m_atmosphere; }

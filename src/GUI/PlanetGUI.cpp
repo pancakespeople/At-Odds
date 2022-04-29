@@ -157,6 +157,11 @@ void PlanetGUI::setSelectedPlanet(tgui::ComboBox::Ptr planetList, GameState& sta
 
 	m_buttonPanelLayout->removeAllWidgets();
 
+	if (m_mapInfoPanel != nullptr) {
+		gui.remove(m_mapInfoPanel);
+		m_mapInfoPanel = nullptr;
+	}
+
 	Planet& planet = state.getLocalViewStar()->getPlanets()[index];
 	m_currentPlanet = &planet;
 
@@ -1108,9 +1113,9 @@ void PlanetGUI::drawGrid(Renderer& renderer, const sf::RenderWindow& window) {
 	gridRect.setOutlineThickness(1.0f);
 	gridRect.setOutlineColor(sf::Color(55, 55, 55));
 
-	sf::RectangleShape buildingRect;
-	buildingRect.setSize(gridRectSize);
-	buildingRect.setFillColor(sf::Color::Transparent);
+	sf::RectangleShape itemRect;
+	itemRect.setSize(gridRectSize);
+	itemRect.setFillColor(sf::Color::Transparent);
 
 	sf::Text text;
 	text.setFont(Fonts::getMainFont());
@@ -1176,15 +1181,15 @@ void PlanetGUI::drawGrid(Renderer& renderer, const sf::RenderWindow& window) {
 			m_planetMapCanvas->draw(gridRect);
 
 			// Buildings
-			buildingRect.setPosition(pos);
-			buildingRect.setTexture(nullptr);
-			buildingRect.setFillColor(sf::Color::Transparent);
+			itemRect.setPosition(pos);
+			itemRect.setTexture(nullptr);
+			itemRect.setFillColor(sf::Color::Transparent);
 
 			if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
 				if (m_isPlacingBuilding) {
 					if (m_placingBuildingTexturePath != "") {
-						buildingRect.setTexture(&TextureCache::getTexture(m_placingBuildingTexturePath), true);
-						buildingRect.setFillColor({0, 255, 0, 125});
+						itemRect.setTexture(&TextureCache::getTexture(m_placingBuildingTexturePath), true);
+						itemRect.setFillColor({0, 255, 0, 125});
 					}
 				}
 			}
@@ -1193,13 +1198,41 @@ void PlanetGUI::drawGrid(Renderer& renderer, const sf::RenderWindow& window) {
 				if (building != nullptr) {
 					std::string texturePath = building->getTexturePath();
 					if (texturePath != "") {
-						buildingRect.setTexture(&TextureCache::getTexture(texturePath), true);
-						buildingRect.setFillColor(sf::Color::White);
+						itemRect.setTexture(&TextureCache::getTexture(texturePath), true);
+						itemRect.setFillColor(sf::Color::White);
 					}
 				}
 			}
 
-			m_planetMapCanvas->draw(buildingRect);
+			m_planetMapCanvas->draw(itemRect);
+
+			// Resources
+			if (colony.isGridGenerated()) {
+				const Colony::Tile& tile = colony.getTile({ x, y });
+
+				if (!tile.anomaly) {
+					switch (tile.tileFlag) {
+					case Colony::Tile::TileFlag::COMMON_ORE:
+						itemRect.setTexture(&TextureCache::getTexture("data/art/kathiumicon.png"), true);
+						itemRect.setFillColor(sf::Color::White);
+						itemRect.setSize({ 16, 16 });
+						m_planetMapCanvas->draw(itemRect);
+						break;
+					case Colony::Tile::TileFlag::UNCOMMON_ORE:
+						itemRect.setTexture(&TextureCache::getTexture("data/art/oscilliteicon.png"), true);
+						itemRect.setFillColor(sf::Color::White);
+						itemRect.setSize({ 16, 16 });
+						m_planetMapCanvas->draw(itemRect);
+						break;
+					case Colony::Tile::TileFlag::RARE_ORE:
+						itemRect.setTexture(&TextureCache::getTexture("data/art/valkicon.png"), true);
+						itemRect.setFillColor(sf::Color::White);
+						itemRect.setSize({ 16, 16 });
+						m_planetMapCanvas->draw(itemRect);
+						break;
+					}
+				}
+			}
 
 			if (text.getString() != "") {
 				m_planetMapCanvas->draw(text);

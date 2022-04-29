@@ -530,10 +530,11 @@ std::string Planet::getWaterText() {
 	}
 }
 
-void Planet::discoverResource(const std::string& resourceType, Faction* faction, Star& star) {
+void Planet::discoverResource(const std::string& resourceType, sf::Vector2i pos, Faction* faction, Star& star) {
 	Resource resource(resourceType);
 	resource.abundance = 0.5f;
 	resource.hidden = false;
+	resource.pos = pos;
 
 	m_resources.push_back(resource);
 

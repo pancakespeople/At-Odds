@@ -160,13 +160,13 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 
 			switch (tile.tileFlag) {
 				case Tile::TileFlag::COMMON_ORE:
-					planet->discoverResource("COMMON_ORE", faction, *currentStar);
+					planet->discoverResource("COMMON_ORE", m_expeditions[i].tileDestination, faction, *currentStar);
 					break;
 				case Tile::TileFlag::UNCOMMON_ORE:
-					planet->discoverResource("UNCOMMON_ORE", faction, *currentStar);
+					planet->discoverResource("UNCOMMON_ORE", m_expeditions[i].tileDestination, faction, *currentStar);
 					break;
 				case Tile::TileFlag::RARE_ORE:
-					planet->discoverResource("RARE_ORE", faction, *currentStar);
+					planet->discoverResource("RARE_ORE", m_expeditions[i].tileDestination, faction, *currentStar);
 					break;
 			}
 

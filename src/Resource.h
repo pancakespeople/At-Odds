@@ -5,6 +5,7 @@ struct Resource {
 	Resource(const std::string& type);
 
 	std::string type;
+	sf::Vector2i pos;
 	float abundance = 0.0f; // Value between 0 and 1
 	bool hidden = true;
 
@@ -18,5 +19,6 @@ private:
 		archive & type;
 		archive & abundance;
 		archive & hidden;
+		archive & pos;
 	}
 };
