@@ -49,6 +49,7 @@ texturePath = "data/art/colonybuildings/spaceport.png"
 name = "Basic Mine"
 description = "All your ores will be mine."
 buildProgress = 0.05
+texturePath = "data/art/colonybuildings/mine.png"
 
 [MINING]
 name = "Advanced Mine"
@@ -56,6 +57,7 @@ description = "All your ores will be mine!"
 baseCost = [["COMMON_ORE", 40], ["UNCOMMON_ORE", 10]]
 exploitationModifier = 1.7
 requiresBuildings = ["BASIC_MINING"]
+texturePath = "data/art/colonybuildings/mine.png"
 
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"
@@ -105,3 +107,4 @@ buildProgress = 0.05
 name = "Luxury Goods Factory"
 description = "Luxury goods may delay the revolt of our people by a little bit."
 baseCost = [["UNCOMMON_ORE", 15], ["RARE_ORE", 40]]
+texturePath = "data/art/colonybuildings/factory.png"
