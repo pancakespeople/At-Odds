@@ -7,7 +7,7 @@
 #include "../Renderer.h"
 
 void BuildGUI::open(tgui::Gui& gui, Faction* playerFaction) {
-	m_buildIcon.open(gui, { "0%", "90%" }, { "2.5%", "5%" }, "data/art/buildicon.png");
+	m_buildIcon.open(gui, { "0%", "90%" }, { "2.5%", "5%" }, "data/art/buildicon.png", "Build");
 	m_buildIcon.panel->onClick(&BuildGUI::onBuildIconClick, this, std::ref(gui), playerFaction);
 	m_buildIcon.panel->onMouseEnter(&BuildGUI::onBuildIconMouseEnter, this);
 	m_buildIcon.panel->onMouseLeave(&BuildGUI::onBuildIconMouseExit, this);
@@ -115,6 +115,8 @@ void BuildGUI::onBuildingSelectorClick(int selectorIdx) {
 }
 
 void BuildGUI::draw(sf::RenderWindow& window, Renderer& renderer, Star* currentStar, Faction* playerFaction) {
+	m_buildIcon.draw(window);
+
 	if (m_selectedBuildingIdx > -1 && m_buildingSelectors.size() > 0) {
 		window.setView(renderer.getView());
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);

@@ -4,7 +4,8 @@
 #include "../Designs.h"
 
 void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
-	m_icon.open(gui, tgui::Layout2d("0%", "80%"), tgui::Layout2d("2.5%", "5%"), "data/art/shipicon.png");
+	m_icon.open(gui, tgui::Layout2d("0%", "80%"), tgui::Layout2d("2.5%", "5%"), "data/art/shipicon.png", "Ship Designer");
+	m_icon.setLengthScale(2.0f);
 
 	m_icon.panel->onClick([this, &gui, playerFaction]() {
 		if (m_window == nullptr) {
@@ -384,7 +385,9 @@ void ShipDesignerGUI::displayWeaponInfo(const std::string& weaponType) {
 	}
 }
 
-void ShipDesignerGUI::draw() {
+void ShipDesignerGUI::draw(sf::RenderWindow& window) {
+	m_icon.draw(window);
+
 	if (m_shipCanvas) {
 		m_shipCanvas->clear(tgui::Color::Transparent);
 

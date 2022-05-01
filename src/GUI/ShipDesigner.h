@@ -9,7 +9,7 @@ public:
 	void displayShipInfo(Faction* playerFaction);
 	bool canChassisFitWeapons(Faction* playerFaction, std::string& errMsg);
 	void displayShipDesigns(Faction* playerFaction);
-	void draw();
+	void draw(sf::RenderWindow& window);
 
 private:
 	void displayChassisInfo(const std::string& chassisType);

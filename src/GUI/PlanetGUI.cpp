@@ -18,7 +18,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 		m_buttonPanel = nullptr;
 	}
 
-	m_planetIcon.open(gui, { "0%", "85%" }, { "2.5%", "5%" }, "data/art/planetsicon.png");
+	m_planetIcon.open(gui, { "0%", "85%" }, { "2.5%", "5%" }, "data/art/planetsicon.png", "Planets");
 
 	m_planetIcon.panel->onMouseEnter([this]() {
 		m_planetIcon.panel->getRenderer()->setBackgroundColor(tgui::Color::White);
@@ -929,7 +929,9 @@ void PlanetGUI::createMapButton(tgui::Gui& gui, Faction* playerFaction) {
 	});
 }
 
-void PlanetGUI::draw(Renderer& renderer, const sf::RenderWindow& window) {
+void PlanetGUI::draw(Renderer& renderer, sf::RenderWindow& window) {
+	m_planetIcon.draw(window);
+
 	if (m_planetMapCanvas != nullptr) {
 		m_planetMapCanvas->clear();
 

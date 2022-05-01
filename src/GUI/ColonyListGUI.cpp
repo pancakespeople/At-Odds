@@ -4,7 +4,8 @@
 #include "../Constellation.h"
 
 void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellation) {
-	m_icon.open(gui, tgui::Layout2d("0%", "75%"), tgui::Layout2d("2.5%", "5%"), "data/art/colonyicon.png");
+	m_icon.open(gui, tgui::Layout2d("0%", "75%"), tgui::Layout2d("2.5%", "5%"), "data/art/colonyicon.png", "Colony List");
+	m_icon.setLengthScale(1.5f);
 
 	m_icon.panel->onClick([this, &gui, &state, &constellation]() {
 		if (m_window == nullptr) {
@@ -112,4 +113,8 @@ void ColonyListGUI::refreshListViewContents(GameState & state, Constellation & c
 			}
 		}
 	}
+}
+
+void ColonyListGUI::draw(sf::RenderWindow& window) {
+	m_icon.draw(window);
 }

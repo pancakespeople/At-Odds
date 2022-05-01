@@ -18,6 +18,7 @@
 #include "JumpPoint.h"
 #include "GUI/MainMenu.h"
 #include "GUI/UnitGUI.h"
+#include "Fonts.h"
 
 void HelpWindow::open(tgui::Gui& gui) {
 	auto window = tgui::ChildWindow::create("Help");
@@ -128,7 +129,7 @@ void TimescaleGUI::onEvent(sf::Event& ev, tgui::Gui& gui, GameState& state) {
 
 namespace GUI {
 
-	void Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath) {
+	void Icon::open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath, const std::string& title) {
 		panel = tgui::Panel::create();
 		panel->setPosition(pos);
 		panel->setSize(size);
@@ -137,12 +138,14 @@ namespace GUI {
 		panel->onMouseEnter([this]() {
 			panel->getRenderer()->setBackgroundColor(tgui::Color::White);
 			panel->setRenderer(tgui::Theme().getRenderer("Panel"));
+			m_mouseHovered = true;
 			});
 
 		panel->onMouseLeave([this]() {
 			panel->getRenderer()->setBackgroundColor(tgui::Color(80, 80, 80));
 			panel->getRenderer()->setOpacity(0.75f);
 			panel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
+			m_mouseHovered = false;
 			});
 
 		panel->onClick([]() {
@@ -154,6 +157,33 @@ namespace GUI {
 		auto picture = tgui::Picture::create(picPath.c_str());
 		picture->setSize("100%", "100%");
 		panel->add(picture);
+
+		m_titleText.setFont(Fonts::getFont("data/fonts/Pixellari.ttf"));
+		m_titleText.setString(title);
+		m_titleText.setOrigin({ m_titleText.getLocalBounds().width / 2.0f, m_titleText.getLocalBounds().height / 1.25f });
+	}
+
+	void Icon::draw(sf::RenderWindow& window) {
+		if (m_mouseHovered) {
+			m_titleProgress = Math::clamp(m_titleProgress + 0.05f, 0.0f, 1.0f);
+		}
+		else {
+			m_titleProgress = Math::clamp(m_titleProgress - 0.05f, 0.0f, 1.0f);
+		}
+
+		if (m_titleProgress > 0.0f && panel != nullptr) {
+			sf::RectangleShape shape;
+			shape.setPosition({ panel->getPosition().x + panel->getSize().x, panel->getPosition().y });
+			shape.setSize(sf::Vector2f( Math::lerp(0.0f, window.getSize().x * 0.1f * m_lengthScale, Math::clamp(m_titleProgress, 0.0f, 1.0f)), panel->getSize().y));
+			shape.setFillColor({ 55, 55, 55, 175 });
+
+			window.draw(shape);
+
+			if (m_titleProgress == 1.0f && m_titleText.getString() != "") {
+				m_titleText.setPosition({ shape.getPosition().x + shape.getLocalBounds().width / 2.0f, shape.getPosition().y + shape.getLocalBounds().height / 2.0f });
+				window.draw(m_titleText);
+			}
+		}
 	}
 
 	Button::Ptr Button::create(const std::string& text) {

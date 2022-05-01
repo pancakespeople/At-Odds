@@ -9,6 +9,7 @@ public:
 	void open(tgui::Gui& gui, Faction* playerFaction);
 	void updateTechs(Faction * playerFaction);
 	void update(Faction* playerFaction);
+	void draw(sf::RenderWindow& window);
 
 private:
 	GUI::Icon m_icon;

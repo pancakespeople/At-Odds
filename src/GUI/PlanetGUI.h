@@ -9,7 +9,7 @@ public:
 	void open(tgui::Gui& gui, GameState& state, Faction* playerFaction, const Constellation& constellation);
 	void updateSync(GameState& state);
 	void update(GameState& state);
-	void draw(Renderer& renderer, const sf::RenderWindow& window);
+	void draw(Renderer& renderer, sf::RenderWindow& window);
 	void onEvent(const sf::Event& ev, tgui::Gui& gui, GameState& state, Faction* playerFaction, const sf::RenderWindow& window, Renderer& renderer, Star* currentStar, tgui::Panel::Ptr mainPanel, const Constellation& constellation);
 	void drawGrid(Renderer& renderer, const sf::RenderWindow& window);
 	bool isOpen();

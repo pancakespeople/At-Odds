@@ -4,7 +4,7 @@
 #include "../Util.h"
 
 void TechGUI::open(tgui::Gui& gui, Faction* playerFaction) {
-	m_icon.open(gui, tgui::Layout2d("0%", "70%"), tgui::Layout2d("2.5%", "5%"), "data/art/techicon.png");
+	m_icon.open(gui, tgui::Layout2d("0%", "70%"), tgui::Layout2d("2.5%", "5%"), "data/art/techicon.png", "Tech");
 
 	m_icon.panel->onClick([this, &gui, playerFaction]() {
 		if (m_window != nullptr) {
@@ -186,4 +186,8 @@ void TechGUI::update(Faction* playerFaction) {
 			m_description->setText(tech->getExtendedDescription(playerFaction));
 		}
 	}
+}
+
+void TechGUI::draw(sf::RenderWindow& window) {
+	m_icon.draw(window);
 }

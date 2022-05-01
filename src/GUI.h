@@ -50,11 +50,17 @@ private:
 namespace GUI {
 
 	struct Icon {
-		void open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath);
+		void open(tgui::Gui& gui, tgui::Layout2d pos, tgui::Layout2d size, const std::string& picPath, const std::string& title = "");
+		void draw(sf::RenderWindow& window);
+		void setLengthScale(float scale) { m_lengthScale = scale; }
 
 		tgui::Panel::Ptr panel;
 	private:
 		tgui::Theme m_hoverTheme;
+		bool m_mouseHovered = false;
+		float m_titleProgress = 0.0f;
+		float m_lengthScale = 1.0f;
+		sf::Text m_titleText;
 	};
 
 	struct Button : public tgui::Button {
