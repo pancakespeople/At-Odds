@@ -50,6 +50,8 @@ name = "Basic Mine"
 description = "All your ores will be mine."
 buildProgress = 0.05
 texturePath = "data/art/colonybuildings/mine.png"
+buildOnlyOnResources = true
+extraInfo = "Mines resources from tiles. Must be placed on a tile that has a resource."
 
 [MINING]
 name = "Advanced Mine"
@@ -58,6 +60,7 @@ baseCost = [["COMMON_ORE", 40], ["UNCOMMON_ORE", 10]]
 exploitationModifier = 1.7
 requiresBuildings = ["BASIC_MINING"]
 texturePath = "data/art/colonybuildings/mine.png"
+buildOnlyOnResources = true
 
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"

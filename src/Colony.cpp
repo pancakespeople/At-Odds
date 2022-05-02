@@ -781,3 +781,18 @@ std::string ColonyBuilding::getExtraInfo() const {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	return table[m_type]["extraInfo"].value_or("");
 }
+
+bool ColonyBuilding::isBuildableOnTile(const Colony::Tile& tile) const {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	if (table[m_type]["buildOnlyOnResources"].value_or(false)) {
+		if (!tile.anomaly) {
+			if (tile.tileFlag == Colony::Tile::TileFlag::COMMON_ORE ||
+				tile.tileFlag == Colony::Tile::TileFlag::UNCOMMON_ORE ||
+				tile.tileFlag == Colony::Tile::TileFlag::RARE_ORE) {
+				return true;
+			}
+		}
+		return false;
+	}
+	return true;
+}

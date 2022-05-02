@@ -945,6 +945,7 @@ void PlanetGUI::draw(Renderer& renderer, sf::RenderWindow& window) {
 void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	int tilePop = 0;
 	bool anomaly = false;
+	Colony::Tile::TileFlag flag = Colony::Tile::TileFlag::NONE;
 
 	const Colony& colony = m_currentPlanet->getColony();
 
@@ -952,6 +953,7 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 		const Colony::Tile& tile = colony.getTile(tilePos);
 		tilePop = tile.population;
 		anomaly = tile.anomaly;
+		flag = tile.tileFlag;
 	}
 
 	std::stringstream text;
@@ -959,6 +961,18 @@ void PlanetGUI::updateTileInfo(sf::Vector2i tilePos) {
 	text << "Coordinates: " << "(" << tilePos.x << ", " << tilePos.y << ")\n";
 	text << "Population: " << tilePop << "\n";
 	text << "Growth rate: " << std::to_string((colony.getGrowthRate(m_currentPlanet->getHabitability()) + colony.getTileGrowthRate(tilePos)) * 100.0f) << "%\n";
+
+	if (!anomaly) {
+		if (flag == Colony::Tile::TileFlag::COMMON_ORE) {
+			text << "Resource: Kathium\n";
+		}
+		if (flag == Colony::Tile::TileFlag::UNCOMMON_ORE) {
+			text << "Resource: Oscillite\n";
+		}
+		if (flag == Colony::Tile::TileFlag::RARE_ORE) {
+			text << "Resource: Valkrosium\n";
+		}
+	}
 
 	for (ColonyBuilding& building : m_currentPlanet->getColony().getBuildings()) {
 		if (building.getPos() == tilePos) {
@@ -1082,17 +1096,21 @@ void PlanetGUI::openMapPanel(tgui::Gui& gui, Faction* playerFaction) {
 			ColonyBuilding building(m_placingBuildingType);
 			auto cost = building.getResourceCost(*m_currentPlanet);
 			
-			if (playerFaction->canSubtractResources(cost)) {
+			if (playerFaction->canSubtractResources(cost) && building.isBuildableOnTile(m_currentPlanet->getColony().getTile(m_selectedTile))) {
 				building.setPos(m_selectedTile);
 				m_currentPlanet->getColony().addBuilding(building);
 				
 				playerFaction->subtractResources(cost);
 				Sounds::playUISound("data/sound/build.wav");
+			
+				m_isPlacingBuilding = false;
 			}
-
-			m_isPlacingBuilding = false;
 		}
 
+		});
+
+	m_planetMapCanvas->onRightClick([this]() {
+		m_isPlacingBuilding = false;
 		});
 
 	populationCheckBox->onChange([this](bool checked) {
@@ -1135,106 +1153,13 @@ void PlanetGUI::drawGrid(Renderer& renderer, const sf::RenderWindow& window) {
 			relBounds.left += m_planetMapCanvas->getAbsolutePosition().x;
 			relBounds.top += m_planetMapCanvas->getAbsolutePosition().y;
 
-			if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
-				// Mouse in box
-
-				gridRect.setFillColor({ 255, 255, 255, 125 });
-				gridRect.setTexture(nullptr);
-			}
-			else {
-				if (colony.isGridGenerated()) {
-					const Colony::Tile& tile = colony.getTile({ x, y });
-
-					if (tile.anomaly) {
-						text.setString("?");
-						text.setPosition(pos);
-						text.setColor(sf::Color::Red);
-
-						gridRect.setTexture(nullptr);
-						gridRect.setFillColor(sf::Color::Transparent);
-					}
-					else if (tile.population > 0) {
-						if (m_showPopulation) {
-							text.setString(std::to_string(tile.population));
-							text.setPosition(pos);
-							text.setColor(sf::Color(55, 55, 55));
-						}
-
-						gridRect.setFillColor(sf::Color::White);
-						gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(tile.population, tile.cityVariant)), true);
-					}
-					else {
-						gridRect.setFillColor(sf::Color::Transparent);
-						gridRect.setTexture(nullptr);
-					}
-				}
-				else {
-					gridRect.setFillColor(sf::Color::Transparent);
-				}
-			}
-
-			if (sf::Vector2i{ x, y } == m_selectedTile) {
-				gridRect.setOutlineColor(sf::Color::Yellow);
-			}
-			else {
-				gridRect.setOutlineColor(sf::Color(55, 55, 55));
-			}
-
-			m_planetMapCanvas->draw(gridRect);
-
-			// Buildings
 			itemRect.setPosition(pos);
 			itemRect.setTexture(nullptr);
 			itemRect.setFillColor(sf::Color::Transparent);
 
-			if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
-				if (m_isPlacingBuilding) {
-					if (m_placingBuildingTexturePath != "") {
-						itemRect.setTexture(&TextureCache::getTexture(m_placingBuildingTexturePath), true);
-						itemRect.setFillColor({0, 255, 0, 125});
-					}
-				}
-			}
-			else {
-				const ColonyBuilding* building = colony.getBuildingAtTile({ x, y });
-				if (building != nullptr) {
-					std::string texturePath = building->getTexturePath();
-					if (texturePath != "") {
-						itemRect.setTexture(&TextureCache::getTexture(texturePath), true);
-						itemRect.setFillColor(sf::Color::White);
-					}
-				}
-			}
-
-			m_planetMapCanvas->draw(itemRect);
-
-			// Resources
-			if (colony.isGridGenerated()) {
-				const Colony::Tile& tile = colony.getTile({ x, y });
-
-				if (!tile.anomaly) {
-					switch (tile.tileFlag) {
-					case Colony::Tile::TileFlag::COMMON_ORE:
-						itemRect.setTexture(&TextureCache::getTexture("data/art/kathiumicon.png"), true);
-						itemRect.setFillColor(sf::Color::White);
-						itemRect.setSize({ 16, 16 });
-						m_planetMapCanvas->draw(itemRect);
-						break;
-					case Colony::Tile::TileFlag::UNCOMMON_ORE:
-						itemRect.setTexture(&TextureCache::getTexture("data/art/oscilliteicon.png"), true);
-						itemRect.setFillColor(sf::Color::White);
-						itemRect.setSize({ 16, 16 });
-						m_planetMapCanvas->draw(itemRect);
-						break;
-					case Colony::Tile::TileFlag::RARE_ORE:
-						itemRect.setTexture(&TextureCache::getTexture("data/art/valkicon.png"), true);
-						itemRect.setFillColor(sf::Color::White);
-						itemRect.setSize({ 16, 16 });
-						m_planetMapCanvas->draw(itemRect);
-						break;
-					}
-				}
-			}
+			drawGridTile(x, y, relBounds, window, gridRect, colony, text, pos);
+			drawBuildings(x, y, itemRect, pos, relBounds, window, colony);
+			drawResources(x, y, colony, itemRect);
 
 			if (text.getString() != "") {
 				m_planetMapCanvas->draw(text);
@@ -1246,4 +1171,113 @@ void PlanetGUI::drawGrid(Renderer& renderer, const sf::RenderWindow& window) {
 
 bool PlanetGUI::isOpen() {
 	return m_planetPanel != nullptr;
+}
+
+void PlanetGUI::drawResources(int x, int y, const Colony& colony, sf::RectangleShape& itemRect) {
+	if (colony.isGridGenerated()) {
+		const Colony::Tile& tile = colony.getTile({ x, y });
+
+		if (!tile.anomaly) {
+			switch (tile.tileFlag) {
+			case Colony::Tile::TileFlag::COMMON_ORE:
+				itemRect.setTexture(&TextureCache::getTexture("data/art/kathiumicon.png"), true);
+				itemRect.setFillColor(sf::Color::White);
+				itemRect.setSize({ 16, 16 });
+				m_planetMapCanvas->draw(itemRect);
+				break;
+			case Colony::Tile::TileFlag::UNCOMMON_ORE:
+				itemRect.setTexture(&TextureCache::getTexture("data/art/oscilliteicon.png"), true);
+				itemRect.setFillColor(sf::Color::White);
+				itemRect.setSize({ 16, 16 });
+				m_planetMapCanvas->draw(itemRect);
+				break;
+			case Colony::Tile::TileFlag::RARE_ORE:
+				itemRect.setTexture(&TextureCache::getTexture("data/art/valkicon.png"), true);
+				itemRect.setFillColor(sf::Color::White);
+				itemRect.setSize({ 16, 16 });
+				m_planetMapCanvas->draw(itemRect);
+				break;
+			}
+		}
+	}
+}
+
+void PlanetGUI::drawBuildings(int x, int y, sf::RectangleShape& itemRect, sf::Vector2f& pos, sf::FloatRect& relBounds, const sf::RenderWindow& window, const Colony& colony) {
+	if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
+		if (m_isPlacingBuilding) {
+			ColonyBuilding building(m_placingBuildingType);
+
+			if (m_placingBuildingTexturePath != "") {
+				itemRect.setTexture(&TextureCache::getTexture(m_placingBuildingTexturePath), true);
+
+				if (building.isBuildableOnTile(colony.getTile({ x, y }))) {
+					itemRect.setFillColor({ 0, 255, 0, 125 });
+				}
+				else {
+					itemRect.setFillColor({ 255, 0, 0, 125 });
+				}
+			}
+		}
+	}
+	else {
+		const ColonyBuilding* building = colony.getBuildingAtTile({ x, y });
+		if (building != nullptr) {
+			std::string texturePath = building->getTexturePath();
+			if (texturePath != "") {
+				itemRect.setTexture(&TextureCache::getTexture(texturePath), true);
+				itemRect.setFillColor(sf::Color::White);
+			}
+		}
+	}
+
+	m_planetMapCanvas->draw(itemRect);
+}
+
+void PlanetGUI::drawGridTile(int x, int y, sf::FloatRect& relBounds, const sf::RenderWindow& window, sf::RectangleShape& gridRect, const Colony& colony, sf::Text& text, sf::Vector2f& pos) {
+	if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
+		// Mouse in box
+
+		gridRect.setFillColor({ 255, 255, 255, 125 });
+		gridRect.setTexture(nullptr);
+	}
+	else {
+		if (colony.isGridGenerated()) {
+			const Colony::Tile& tile = colony.getTile({ x, y });
+
+			if (tile.anomaly) {
+				text.setString("?");
+				text.setPosition(pos);
+				text.setColor(sf::Color::Red);
+
+				gridRect.setTexture(nullptr);
+				gridRect.setFillColor(sf::Color::Transparent);
+			}
+			else if (tile.population > 0) {
+				if (m_showPopulation) {
+					text.setString(std::to_string(tile.population));
+					text.setPosition(pos);
+					text.setColor(sf::Color(55, 55, 55));
+				}
+
+				gridRect.setFillColor(sf::Color::White);
+				gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(tile.population, tile.cityVariant)), true);
+			}
+			else {
+				gridRect.setFillColor(sf::Color::Transparent);
+				gridRect.setTexture(nullptr);
+			}
+		}
+		else {
+			gridRect.setFillColor(sf::Color::Transparent);
+		}
+	}
+
+	if (sf::Vector2i{ x, y } == m_selectedTile) {
+		gridRect.setOutlineColor(sf::Color::Yellow);
+	}
+	else {
+		gridRect.setOutlineColor(sf::Color(55, 55, 55));
+	}
+
+	m_planetMapCanvas->draw(gridRect);
 }

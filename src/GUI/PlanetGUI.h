@@ -30,6 +30,9 @@ private:
 	void updateTileInfo(sf::Vector2i tile);
 	static void updateTrendWidget(tgui::Label::Ptr& label, float trend);
 	void openMapPanel(tgui::Gui& gui, Faction* playerFaction);
+	void drawResources(int x, int y, const Colony& colony, sf::RectangleShape& itemRect);
+	void drawBuildings(int x, int y, sf::RectangleShape& itemRect, sf::Vector2f& pos, sf::FloatRect& relBounds, const sf::RenderWindow& window, const Colony& colony);
+	void drawGridTile(int x, int y, sf::FloatRect& relBounds, const sf::RenderWindow& window, sf::RectangleShape& gridRect, const Colony& colony, sf::Text& text, sf::Vector2f& pos);
 
 	GUI::Icon m_planetIcon;
 	tgui::Panel::Ptr m_planetInfoPanel;

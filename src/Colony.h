@@ -187,6 +187,7 @@ public:
 	bool isBuilt() const { return m_percentBuilt >= 100.0f; }
 	bool hasFlag(const std::string& flag) const;
 	bool isBuildable(const Colony& colony) const;
+	bool isBuildableOnTile(const Colony::Tile& tile) const;
 	bool isTileAdjacent(sf::Vector2i tile) const;
 
 	float getPercentBuilt() const { return m_percentBuilt; }
