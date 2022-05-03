@@ -74,15 +74,27 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 		m_ticksToNextBus--;
 	}
 
-
 	// Resource exploitation
 	if (faction != nullptr) {
 		if (m_ticksToNextResourceExploit == 0) {
-			if (hasBuildingOfType("BASIC_MINING", true)) {
-				for (Resource& resource : planet->getResources()) {
-					if (!resource.hidden) {
-						float amount = getResourceExploitation(resource, *planet);
-						faction->addResource(resource.type, amount);
+			if (isGridGenerated()) {
+				for (ColonyBuilding& building : m_buildings) {
+					if (building.isMine() && building.isBuilt()) {
+						Tile& tile = getTile(building.getPos());
+						std::string resourceType;
+
+						if (tile.tileFlag == Tile::TileFlag::COMMON_ORE) resourceType = "COMMON_ORE";
+						if (tile.tileFlag == Tile::TileFlag::UNCOMMON_ORE) resourceType = "UNCOMMON_ORE";
+						if (tile.tileFlag == Tile::TileFlag::RARE_ORE) resourceType = "RARE_ORE";
+
+						if (resourceType != "") {
+							Resource resource(resourceType);
+							resource.abundance = 0.1f;
+							resource.hidden = false;
+
+							float amount = std::min(getResourceExploitation(resource, *planet), 100.0f);
+							faction->addResource(resource.type, amount);
+						}
 					}
 				}
 			}
@@ -469,7 +481,7 @@ float Colony::getResourceExploitation(const Resource& resource, const Planet& pl
 		}
 	}
 
-	return (getPopulation() * planet.getResourceAbundance(resource.type) / 250.0f) * multiplier;
+	return (getPopulation() * resource.abundance / 250.0f) * multiplier;
 }
 
 void Colony::onColonization(Planet& planet) {
@@ -782,17 +794,37 @@ std::string ColonyBuilding::getExtraInfo() const {
 	return table[m_type]["extraInfo"].value_or("");
 }
 
-bool ColonyBuilding::isBuildableOnTile(const Colony::Tile& tile) const {
+bool ColonyBuilding::isBuildableOnTile(const Colony& colony, sf::Vector2i tilePos) const {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
-	if (table[m_type]["buildOnlyOnResources"].value_or(false)) {
-		if (!tile.anomaly) {
-			if (tile.tileFlag == Colony::Tile::TileFlag::COMMON_ORE ||
-				tile.tileFlag == Colony::Tile::TileFlag::UNCOMMON_ORE ||
-				tile.tileFlag == Colony::Tile::TileFlag::RARE_ORE) {
-				return true;
-			}
-		}
+	const Colony::Tile& tile = colony.getTile(tilePos);
+
+	if (tile.anomaly) {
 		return false;
 	}
+
+	if (colony.hasBuildingOnTile(tilePos)) {
+		return false;
+	}
+
+
+	if (table[m_type]["buildOnlyOnResources"].value_or(false)) {
+		if (tile.tileFlag != Colony::Tile::TileFlag::COMMON_ORE &&
+			tile.tileFlag != Colony::Tile::TileFlag::UNCOMMON_ORE &&
+			tile.tileFlag != Colony::Tile::TileFlag::RARE_ORE) {
+			return false;
+		}
+	}
 	return true;
+}
+
+bool ColonyBuilding::isMine() const {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["mine"].value_or(false);
+}
+
+bool Colony::hasBuildingOnTile(sf::Vector2i tile) const {
+	for (const ColonyBuilding& building : m_buildings) {
+		if (building.getPos() == tile) return true;
+	}
+	return false;
 }

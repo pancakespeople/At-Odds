@@ -52,6 +52,7 @@ buildProgress = 0.05
 texturePath = "data/art/colonybuildings/mine.png"
 buildOnlyOnResources = true
 extraInfo = "Mines resources from tiles. Must be placed on a tile that has a resource."
+mine = true
 
 [MINING]
 name = "Advanced Mine"
@@ -61,6 +62,7 @@ exploitationModifier = 1.7
 requiresBuildings = ["BASIC_MINING"]
 texturePath = "data/art/colonybuildings/mine.png"
 buildOnlyOnResources = true
+mine = true
 
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"

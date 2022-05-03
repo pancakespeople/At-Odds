@@ -1096,7 +1096,7 @@ void PlanetGUI::openMapPanel(tgui::Gui& gui, Faction* playerFaction) {
 			ColonyBuilding building(m_placingBuildingType);
 			auto cost = building.getResourceCost(*m_currentPlanet);
 			
-			if (playerFaction->canSubtractResources(cost) && building.isBuildableOnTile(m_currentPlanet->getColony().getTile(m_selectedTile))) {
+			if (playerFaction->canSubtractResources(cost) && building.isBuildableOnTile(m_currentPlanet->getColony(), m_selectedTile)) {
 				building.setPos(m_selectedTile);
 				m_currentPlanet->getColony().addBuilding(building);
 				
@@ -1156,6 +1156,7 @@ void PlanetGUI::drawGrid(Renderer& renderer, const sf::RenderWindow& window) {
 			itemRect.setPosition(pos);
 			itemRect.setTexture(nullptr);
 			itemRect.setFillColor(sf::Color::Transparent);
+			itemRect.setSize(gridRectSize);
 
 			drawGridTile(x, y, relBounds, window, gridRect, colony, text, pos);
 			drawBuildings(x, y, itemRect, pos, relBounds, window, colony);
@@ -1203,6 +1204,8 @@ void PlanetGUI::drawResources(int x, int y, const Colony& colony, sf::RectangleS
 }
 
 void PlanetGUI::drawBuildings(int x, int y, sf::RectangleShape& itemRect, sf::Vector2f& pos, sf::FloatRect& relBounds, const sf::RenderWindow& window, const Colony& colony) {
+	bool placingBuildingOnTile = false;
+
 	if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
 		if (m_isPlacingBuilding) {
 			ColonyBuilding building(m_placingBuildingType);
@@ -1210,16 +1213,19 @@ void PlanetGUI::drawBuildings(int x, int y, sf::RectangleShape& itemRect, sf::Ve
 			if (m_placingBuildingTexturePath != "") {
 				itemRect.setTexture(&TextureCache::getTexture(m_placingBuildingTexturePath), true);
 
-				if (building.isBuildableOnTile(colony.getTile({ x, y }))) {
+				if (building.isBuildableOnTile(colony, {x, y})) {
 					itemRect.setFillColor({ 0, 255, 0, 125 });
 				}
 				else {
 					itemRect.setFillColor({ 255, 0, 0, 125 });
 				}
 			}
+
+			placingBuildingOnTile = true;
 		}
 	}
-	else {
+	
+	if (!placingBuildingOnTile) {
 		const ColonyBuilding* building = colony.getBuildingAtTile({ x, y });
 		if (building != nullptr) {
 			std::string texturePath = building->getTexturePath();
@@ -1234,42 +1240,34 @@ void PlanetGUI::drawBuildings(int x, int y, sf::RectangleShape& itemRect, sf::Ve
 }
 
 void PlanetGUI::drawGridTile(int x, int y, sf::FloatRect& relBounds, const sf::RenderWindow& window, sf::RectangleShape& gridRect, const Colony& colony, sf::Text& text, sf::Vector2f& pos) {
-	if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
-		// Mouse in box
+	if (colony.isGridGenerated()) {
+		const Colony::Tile& tile = colony.getTile({ x, y });
 
-		gridRect.setFillColor({ 255, 255, 255, 125 });
-		gridRect.setTexture(nullptr);
-	}
-	else {
-		if (colony.isGridGenerated()) {
-			const Colony::Tile& tile = colony.getTile({ x, y });
+		if (tile.anomaly) {
+			text.setString("?");
+			text.setPosition(pos);
+			text.setColor(sf::Color::Red);
 
-			if (tile.anomaly) {
-				text.setString("?");
+			gridRect.setTexture(nullptr);
+			gridRect.setFillColor(sf::Color::Transparent);
+		}
+		else if (tile.population > 0) {
+			if (m_showPopulation) {
+				text.setString(std::to_string(tile.population));
 				text.setPosition(pos);
-				text.setColor(sf::Color::Red);
+				text.setColor(sf::Color(55, 55, 55));
+			}
 
-				gridRect.setTexture(nullptr);
-				gridRect.setFillColor(sf::Color::Transparent);
-			}
-			else if (tile.population > 0) {
-				if (m_showPopulation) {
-					text.setString(std::to_string(tile.population));
-					text.setPosition(pos);
-					text.setColor(sf::Color(55, 55, 55));
-				}
-
-				gridRect.setFillColor(sf::Color::White);
-				gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(tile.population, tile.cityVariant)), true);
-			}
-			else {
-				gridRect.setFillColor(sf::Color::Transparent);
-				gridRect.setTexture(nullptr);
-			}
+			gridRect.setFillColor(sf::Color::White);
+			gridRect.setTexture(&TextureCache::getTexture(Colony::getCityTexturePath(tile.population, tile.cityVariant)), true);
 		}
 		else {
 			gridRect.setFillColor(sf::Color::Transparent);
+			gridRect.setTexture(nullptr);
 		}
+	}
+	else {
+		gridRect.setFillColor(sf::Color::Transparent);
 	}
 
 	if (sf::Vector2i{ x, y } == m_selectedTile) {
@@ -1277,6 +1275,12 @@ void PlanetGUI::drawGridTile(int x, int y, sf::FloatRect& relBounds, const sf::R
 	}
 	else {
 		gridRect.setOutlineColor(sf::Color(55, 55, 55));
+	}
+
+	if (relBounds.contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
+		// Mouse in box
+
+		gridRect.setOutlineColor({ 255, 255, 255, 125 });
 	}
 
 	m_planetMapCanvas->draw(gridRect);

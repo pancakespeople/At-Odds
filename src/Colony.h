@@ -74,6 +74,7 @@ public:
 	bool hasUndiscoveredResources(const Planet& planet) const;
 	bool isGridGenerated() const { return m_tiles.size() > 0; }
 	bool hasExpeditionToTile(sf::Vector2i tilePos) const;
+	bool hasBuildingOnTile(sf::Vector2i tile) const;
 
 	// Buys a building for a faction, returns false if failed
 	bool buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet);
@@ -187,8 +188,9 @@ public:
 	bool isBuilt() const { return m_percentBuilt >= 100.0f; }
 	bool hasFlag(const std::string& flag) const;
 	bool isBuildable(const Colony& colony) const;
-	bool isBuildableOnTile(const Colony::Tile& tile) const;
+	bool isBuildableOnTile(const Colony& colony, sf::Vector2i tilePos) const;
 	bool isTileAdjacent(sf::Vector2i tile) const;
+	bool isMine() const;
 
 	float getPercentBuilt() const { return m_percentBuilt; }
 
