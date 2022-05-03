@@ -105,6 +105,8 @@ name = "Water Pump"
 description = "You definitely want one of these. Otherwise we'll all die of thirst. Wait, you did settle us on a planet with water on it, right?"
 baseCost = [["COMMON_ORE", 10]]
 buildProgress = 0.05
+texturePath = "data/art/colonybuildings/waterpump.png"
+extraInfo = "Extracts water from planets"
 
 [LUXURY_GOODS_FACTORY]
 name = "Luxury Goods Factory"
