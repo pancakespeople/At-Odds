@@ -594,7 +594,7 @@ void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* play
 
 			// Add buildable buildings to listbox
 			for (const ColonyBuilding& building : buildings) {
-				if (building.isBuildable(planet.getColony()) && planet.getColony().getBuildingOfType(building.getType()) == nullptr) {
+				if (building.isBuildable(planet.getColony())) {
 					listBox->addItem(building.getName());
 				}
 			}
@@ -611,14 +611,14 @@ void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* play
 						if (building.getName() == listBox->getSelectedItem()) {
 							displayBuildingInfo(building, planet, true);
 
-							if (!planet.getColony().hasBuildingOfType(building.getType())) {
+							if (building.isBuildable(planet.getColony())) {
 								auto buildButton = GUI::Button::create("Build");
 								//buildButton->setClickSound("data/sound/build.wav");
 								buildButton->setPosition("2.5%", "85%");
 								m_sideWindow->get<tgui::Group>("infoGroup")->add(buildButton);
 
 								buildButton->onPress([this, buildButton, building, &planet, &gui, playerFaction]() {
-									if (!planet.getColony().hasBuildingOfType(building.getType())) {
+									if (building.isBuildable(planet.getColony())) {
 										auto cost = building.getResourceCost(planet);
 
 										if (playerFaction->canSubtractResources(cost)) {

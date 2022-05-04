@@ -524,7 +524,20 @@ bool ColonyBuilding::isBuildable(const Colony& colony) const {
 		}
 	}
 
-	return hasRequiredBuildings;
+	if (!hasRequiredBuildings) {
+		return false;
+	}
+
+	// Check for duplicates
+	if (!table[m_type]["allowDuplicates"].value_or(false)) {
+		for (const ColonyBuilding& building : colony.getBuildings()) {
+			if (building.getType() == m_type) {
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 int Colony::getPopulation() const {
