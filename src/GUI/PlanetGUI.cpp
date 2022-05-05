@@ -1097,6 +1097,11 @@ void PlanetGUI::openMapPanel(tgui::Gui& gui, Faction* playerFaction) {
 			auto cost = building.getResourceCost(*m_currentPlanet);
 			
 			if (playerFaction->canSubtractResources(cost) && building.isBuildableOnTile(m_currentPlanet->getColony(), m_selectedTile)) {
+				
+				if (m_currentPlanet->getColony().hasBuildingOnTile(m_selectedTile)) {
+					m_currentPlanet->getColony().removeBuildingOnTile(m_selectedTile);
+				}
+				
 				building.setPos(m_selectedTile);
 				m_currentPlanet->getColony().addBuilding(building);
 				

@@ -36,6 +36,7 @@ name = "Military Base"
 description = "For defense of the nation."
 baseCost = [["UNCOMMON_ORE", 20], ["RARE_ORE", 5]]
 invasionEffectiveness = 0.5
+texturePath = "data/art/colonybuildings/militarybase.png"
 
 [SPACEPORT]
 name = "Spaceport"
@@ -60,11 +61,11 @@ name = "Advanced Mine"
 description = "All your ores will be mine!"
 baseCost = [["COMMON_ORE", 40], ["UNCOMMON_ORE", 10]]
 exploitationModifier = 1.25
-requiresBuildings = ["BASIC_MINING"]
 texturePath = "data/art/colonybuildings/mine.png"
 buildOnlyOnResources = true
 mine = true
 allowDuplicates = true
+upgradesBuilding = "BASIC_MINING"
 
 [ORBITAL_DEFENSE]
 name = "Orbital Defense"

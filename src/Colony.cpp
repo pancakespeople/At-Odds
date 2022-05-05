@@ -88,12 +88,8 @@ void Colony::update(Star* currentStar, Faction* faction, Planet* planet) {
 						if (tile.tileFlag == Tile::TileFlag::RARE_ORE) resourceType = "RARE_ORE";
 
 						if (resourceType != "") {
-							Resource resource(resourceType);
-							resource.abundance = 0.1f;
-							resource.hidden = false;
-
-							float amount = std::min(getResourceExploitation(resource, *planet), 100.0f);
-							faction->addResource(resource.type, amount);
+							float amount = std::min((getPopulation() * 0.1f / 250.0f) * building.getEffect("exploitationModifier", 1.0f), 100.0f);
+							faction->addResource(resourceType, amount);
 						}
 					}
 				}
@@ -416,6 +412,7 @@ std::string ColonyBuilding::getEffectsString() const {
 	effects << std::fixed << std::setprecision(1);
 
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildingeffectstext.toml");
+	const toml::table& buildingsTable = TOMLCache::getTable("data/objects/colonybuildings.toml");
 
 	for (auto& item : *table["MODIFIERS"].as_table()) {
 		float modifier = getEffect(item.first, 1.0f);
@@ -435,6 +432,12 @@ std::string ColonyBuilding::getEffectsString() const {
 		if (adder != 0.0f) {
 			effects << item.second.value_or("") << ": " << Util::cutOffDecimal(adder, 2) << "\n";
 		}
+	}
+
+	std::string upgradesBuilding = buildingsTable[m_type]["upgradesBuilding"].value_or("");
+	if (upgradesBuilding != "") {
+		std::string name = buildingsTable[upgradesBuilding]["name"].value_or("");
+		effects << "Can replace a " << name << "\n";
 	}
 
 	return effects.str();
@@ -816,7 +819,12 @@ bool ColonyBuilding::isBuildableOnTile(const Colony& colony, sf::Vector2i tilePo
 	}
 
 	if (colony.hasBuildingOnTile(tilePos)) {
-		return false;
+		const ColonyBuilding* building = colony.getBuildingAtTile(tilePos);
+
+		// Check if building is upgradeable
+		if (table[m_type]["upgradesBuilding"].value_or("") != building->getType()) {
+			return false;
+		}
 	}
 
 
@@ -840,4 +848,12 @@ bool Colony::hasBuildingOnTile(sf::Vector2i tile) const {
 		if (building.getPos() == tile) return true;
 	}
 	return false;
+}
+
+void Colony::removeBuildingOnTile(sf::Vector2i tilePos) {
+	auto it = std::remove_if(m_buildings.begin(), m_buildings.end(), [tilePos](const ColonyBuilding& building) {
+		return building.getPos() == tilePos;
+	});
+
+	m_buildings.erase(it, m_buildings.end());
 }

@@ -98,6 +98,7 @@ public:
 	void onColonization(Planet& planet);
 	void generateAnomalies();
 	void sendExpedition(sf::Vector2i tilePos);
+	void removeBuildingOnTile(sf::Vector2i tilePos);
 
 	sf::Color getFactionColor() { return m_factionColor; }
 
