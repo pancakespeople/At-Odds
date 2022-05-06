@@ -72,6 +72,7 @@ name = "Orbital Defense"
 baseCost = [["COMMON_ORE", 10], ["UNCOMMON_ORE", 10], ["RARE_ORE", 10]]
 description = "A gigantic and powerful SRTSP (surface-to-space) cannon that may do mild damage to enemy spaceships."
 flags = ["ENABLE_ORBITAL_CANNON"]
+texturePath = "data/art/colonybuildings/orbitaldefense.png"
 
 [CONSUMER_GOODS_FACTORIES]
 name = "Consumer Goods Factory"
@@ -98,6 +99,7 @@ name = "Bomb Shelter"
 baseCost = [["COMMON_ORE", 40]]
 description = "A place for people to hide when someone decides to rain hellfire upon the planet."
 bombardDamageMultiplier = 0.75
+texturePath = "data/art/colonybuildings/bombshelter.png"
 
 [FACTORY]
 name = "Factory"
