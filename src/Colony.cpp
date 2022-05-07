@@ -857,3 +857,8 @@ void Colony::removeBuildingOnTile(sf::Vector2i tilePos) {
 
 	m_buildings.erase(it, m_buildings.end());
 }
+
+bool ColonyBuilding::isGlobal() const {
+	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
+	return table[m_type]["global"].value_or(false);
+}

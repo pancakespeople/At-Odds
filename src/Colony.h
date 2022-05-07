@@ -192,6 +192,7 @@ public:
 	bool isBuildableOnTile(const Colony& colony, sf::Vector2i tilePos) const;
 	bool isTileAdjacent(sf::Vector2i tile) const;
 	bool isMine() const;
+	bool isGlobal() const;
 
 	float getPercentBuilt() const { return m_percentBuilt; }
 

@@ -622,12 +622,25 @@ void PlanetGUI::openBuildingsPanel(tgui::Gui& gui, Planet& planet, Faction* play
 										auto cost = building.getResourceCost(planet);
 
 										if (playerFaction->canSubtractResources(cost)) {
-											// Switch to map for placement picking
-											openMapPanel(gui, playerFaction);
+											if (!building.isGlobal()) {
+												// Switch to map for placement picking
+												openMapPanel(gui, playerFaction);
 
-											m_isPlacingBuilding = true;
-											m_placingBuildingType = building.getType();
-											m_placingBuildingTexturePath = building.getTexturePath();
+												m_isPlacingBuilding = true;
+												m_placingBuildingType = building.getType();
+												m_placingBuildingTexturePath = building.getTexturePath();
+											}
+											else {
+												ColonyBuilding toBuild = building;
+												toBuild.setPos({ -1, -1 });
+												m_currentPlanet->getColony().addBuilding(toBuild);
+
+												playerFaction->subtractResources(cost);
+												Sounds::playUISound("data/sound/build.wav");
+
+												m_sideWindow->get<tgui::Group>("infoGroup")->remove(buildButton);
+												createBuildStatusLabel(planet, building);
+											}
 										}
 									}
 									});
