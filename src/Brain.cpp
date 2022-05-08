@@ -603,8 +603,17 @@ void EconomyAI::handleStars(Faction & faction) {
 void removeBuildings(Planet& planet, std::vector<std::string>& wantedBuildings, Faction* faction) {
 	for (int i = 0; i < wantedBuildings.size(); i++) {
 		ColonyBuilding building(wantedBuildings[i]);
-		if (planet.getColony().hasBuildingOfType(building.getType()) || !faction->hasColonyBuilding(building.getType()) ||
-			!building.isBuildable(planet.getColony())) {
+		bool remove = false;
+
+		if (!faction->hasColonyBuilding(building.getType()) || !building.isBuildable(planet.getColony())) {
+			remove = true;
+		}
+
+		if (building.getType() == "WATER_PUMP" && planet.getWater() == 0.0) {
+			remove = true;
+		}
+
+		if (remove) {
 			wantedBuildings.erase(wantedBuildings.begin() + i);
 			i--;
 		}
@@ -625,11 +634,12 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 
 	std::vector<std::string> lowPriorityBuildings = {
 		"SPACEPORT",
-		"EXPLORING",
 		"ORBITAL_DEFENSE",
 		"BOMB_SHELTER",
 		"MILITARY_BASE",
 		"WEAPONS_FACTORIES",
+		"FACTORY",
+		"LUXURY_GOODS_FACTORY",
 		"MINING",
 		"IMPROVED_INFRASTRUCTURE",
 		"ADVANCED_INFRASTRUCTURE"
@@ -643,6 +653,17 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 		int rnd = Random::randInt(0, wantedBuildings.size() - 1);
 
 		ColonyBuilding toBuild(wantedBuildings[rnd]);
+		if (toBuild.isGlobal()) {
+			toBuild.setPos({ -1, -1 });
+		}
+		else {
+			toBuild.setPos(decideColonyBuildingPlacement(toBuild.getType(), planet.getColony()));
+
+			if (toBuild.getPos() == sf::Vector2i{-1, -1}) {
+				return false;
+			}
+		}
+
 		if (planet.getColony().buyBuilding(toBuild, &faction, planet)) {
 			AI_DEBUG_PRINT("Building colony building " << toBuild.getName());
 		}
@@ -652,6 +673,42 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 		// All wanted buildings built
 		return true;
 	}
+}
+
+sf::Vector2i EconomyAI::decideColonyBuildingPlacement(const ColonyBuilding& building, const Colony& colony) {
+	if (building.getType() == "FARMING") {
+		sf::Vector2i mostPopulated = colony.getMostPopulatedTile();
+		auto adjacent = colony.getAdjacentTiles(mostPopulated);
+		if (adjacent.size() > 0) {
+			int rnd = Random::randInt(0, adjacent.size() - 1);
+			return adjacent[rnd];
+		}
+	}
+
+	if (building.getType() == "BASIC_MINING" || building.getType() == "MINING") {
+		auto resourceTiles = colony.getResourceTiles();
+		if (resourceTiles.size() > 0) {
+			int rnd = Random::randInt(0, resourceTiles.size() - 1);
+			return resourceTiles[rnd];
+		}
+	}
+
+	// Find tiles with no building on them
+	std::vector<sf::Vector2i> rndTiles;
+	for (int y = 0; y < Colony::GRID_LENGTH; y++) {
+		for (int x = 0; x < Colony::GRID_LENGTH; x++) {
+			if (building.isBuildableOnTile(colony, {x, y})) {
+				rndTiles.push_back({ x, y });
+			}
+		}
+	}
+
+	if (rndTiles.size() > 0) {
+		int rnd = Random::randInt(0, rndTiles.size() - 1);
+		return rndTiles[rnd];
+	}
+
+	return { -1, -1 };
 }
 
 void EconomyAI::researchRandomTech(Faction& faction) {

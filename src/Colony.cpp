@@ -266,7 +266,16 @@ bool Colony::hasBuildingFlag(const std::string& flag) const {
 }
 
 bool Colony::buyBuilding(const ColonyBuilding& building, Faction* faction, Planet& planet) {
-	if (!hasBuildingOfType(building.getType())) {
+	if (building.isGlobal()) {
+		if (building.isBuildable(planet.getColony())) {
+			if (faction->canSubtractResources(building.getResourceCost(planet))) {
+				faction->subtractResources(building.getResourceCost(planet));
+				planet.getColony().addBuilding(building);
+				return true;
+			}
+		}
+	}
+	else if (building.isBuildable(planet.getColony()) && building.isBuildableOnTile(planet.getColony(), building.getPos())) {
 		if (faction->canSubtractResources(building.getResourceCost(planet))) {
 			faction->subtractResources(building.getResourceCost(planet));
 			planet.getColony().addBuilding(building);
@@ -861,4 +870,21 @@ void Colony::removeBuildingOnTile(sf::Vector2i tilePos) {
 bool ColonyBuilding::isGlobal() const {
 	const toml::table& table = TOMLCache::getTable("data/objects/colonybuildings.toml");
 	return table[m_type]["global"].value_or(false);
+}
+
+std::vector<sf::Vector2i> Colony::getResourceTiles() const {
+	std::vector<sf::Vector2i> tiles;
+
+	for (int y = 0; y < GRID_LENGTH; y++) {
+		for (int x = 0; x < GRID_LENGTH; x++) {
+			const Tile& tile = getTile({ x, y });
+			if (tile.tileFlag == Tile::TileFlag::COMMON_ORE ||
+				tile.tileFlag == Tile::TileFlag::UNCOMMON_ORE ||
+				tile.tileFlag == Tile::TileFlag::RARE_ORE) {
+				tiles.push_back({x, y});
+			}
+		}
+	}
+
+	return tiles;
 }

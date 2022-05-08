@@ -107,6 +107,7 @@ public:
 	std::vector<sf::Vector2i> getAdjacentTiles(sf::Vector2i point) const;
 	const std::vector<Expedition>& getExpeditions() const { return m_expeditions; }
 	std::vector<sf::Vector2i> getAnomalyTiles() const;
+	std::vector<sf::Vector2i> getResourceTiles() const;
 
 	const std::vector<ColonyBuilding>& getBuildings() const { return m_buildings; }
 	const ColonyBuilding* getBuildingAtTile(sf::Vector2i tile) const;

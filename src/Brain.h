@@ -6,6 +6,7 @@ class Colony;
 class Planet;
 class Constellation;
 class AllianceList;
+class ColonyBuilding;
 
 class SubAI {
 public:
@@ -95,6 +96,7 @@ private:
 
 	// Returns true if all wanted buildings were built
 	bool buildColonyBuilding(Planet& planet, Faction& faction);
+	sf::Vector2i decideColonyBuildingPlacement(const ColonyBuilding& building, const Colony& colony);
 
 	EconomyState m_state = EconomyState::NONE;
 	int m_stateChangeTimer = 0;
