@@ -221,6 +221,8 @@
     <ClInclude Include="src\Serialize.h" />
     <ClInclude Include="src\Keybindings.h" />
     <ClInclude Include="src\GUI\IconGUI.h" />
+    <ClInclude Include="src\GUI\FactoriesGUI.h" />
+    <ClInclude Include="src\GUI\ShipFactoryGUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -417,6 +419,8 @@
     <ClCompile Include="src\AsteroidBelt.cpp" />
     <ClCompile Include="src\Keybindings.cpp" />
     <ClCompile Include="src\GUI\IconGUI.cpp" />
+    <ClCompile Include="src\GUI\FactoriesGUI.cpp" />
+    <ClCompile Include="src\GUI\ShipFactoryGUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\scripts\laserAnimation.lua" />

@@ -25,6 +25,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		colonyListGUI.open(gui, state, constellation);
 		techGUI.open(gui, playerFaction);
 		newsGUI.open(gui);
+		factoriesGUI.open(gui, *playerFaction);
 	}
 	else if (guiState == PlayerGUIState::SPECTATOR) {
 		unitGUI.open(gui, state.getPlayer());
@@ -89,5 +90,6 @@ void PlayerGUI::draw(sf::RenderWindow& window, Renderer& renderer, GameState& st
 		iconGUI.draw(window, renderer, state.getLocalViewStar(), state.getCamera());
 		techGUI.draw(window);
 		colonyListGUI.draw(window);
+		factoriesGUI.draw(window);
 	}
 }

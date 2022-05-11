@@ -54,19 +54,9 @@ public:
 
 	float getBuildSpeedMultiplier();
 
-private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive& archive, const unsigned int version) {
-		archive & boost::serialization::base_object<Mod>(*this);
-		archive & m_shipBuildData;
-		archive & m_weaponsStockpile;
-		archive & m_checkForWeaponsTimer;
-	}
-	
 	struct ShipBuildData {
 		ShipBuildData(const std::string shipName) { this->shipName = shipName; }
-		
+
 		bool selected = false;
 		bool build = false;
 		bool resourcesSubtracted = false;
@@ -80,17 +70,27 @@ private:
 		friend class boost::serialization::access;
 		template<class Archive>
 		void serialize(Archive& archive, const unsigned int version) {
-			archive & build;
-			archive & resourcesSubtracted;
-			archive & progressPercent;
-			archive & continuous;
-			archive & amount;
-			archive & buildTimeMultiplier;
-			archive & shipName;
+			archive& build;
+			archive& resourcesSubtracted;
+			archive& progressPercent;
+			archive& continuous;
+			archive& amount;
+			archive& buildTimeMultiplier;
+			archive& shipName;
 		}
 
 		ShipBuildData() = default;
 	};
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version) {
+		archive & boost::serialization::base_object<Mod>(*this);
+		archive & m_shipBuildData;
+		archive & m_weaponsStockpile;
+		archive & m_checkForWeaponsTimer;
+	}
 
 	std::deque<ShipBuildData> m_shipBuildData;
 	tgui::ProgressBar::Ptr m_buildProgressBar;

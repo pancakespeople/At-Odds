@@ -11,6 +11,7 @@
 #include "NewsGUI.h"
 #include "ColonyListGUI.h"
 #include "IconGUI.h"
+#include "FactoriesGUI.h"
 
 enum class PlayerGUIState {
 	CLOSED,
@@ -46,6 +47,7 @@ struct PlayerGUI {
 	TechGUI techGUI;
 	NewsGUI newsGUI;
 	IconGUI iconGUI;
+	FactoriesGUI factoriesGUI;
 
 private:
 	bool m_visible = true;
