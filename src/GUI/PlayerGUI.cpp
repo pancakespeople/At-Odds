@@ -48,6 +48,7 @@ void PlayerGUI::update(sf::RenderWindow& window, Renderer& renderer, GameState& 
 		minimapGUI.update(window, state, unitGUI);
 		newsGUI.update(playerFaction);
 		planetGUI.update(state);
+		factoriesGUI.update(constellation, playerFaction);
 	}
 }
 

@@ -2,7 +2,7 @@
 #include "../GUI.h"
 #include "../Mod.h"
 
-class ShipFactoryGUI {
+class DesignListGUI {
 public:
 	void open(tgui::Gui& gui, Faction& faction, tgui::Group* group);
 	void updateDesigns(Faction* faction);
@@ -10,7 +10,7 @@ public:
 
 private:
 	std::deque<FactoryMod::ShipBuildData> m_shipBuildData;
-	tgui::ProgressBar::Ptr m_buildProgressBar;
+	//tgui::ProgressBar::Ptr m_buildProgressBar;
 	tgui::Group::Ptr m_shipWidgets;
 	tgui::Label::Ptr m_armamentsLabel;
 	tgui::Label::Ptr m_buildSpeedLabel;

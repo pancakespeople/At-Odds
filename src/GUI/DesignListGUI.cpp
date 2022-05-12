@@ -1,11 +1,11 @@
 #include "gamepch.h"
-#include "ShipFactoryGUI.h"
+#include "DesignListGUI.h"
 #include "../Faction.h"
 
-void ShipFactoryGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) {
+void DesignListGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) {
 	m_designsListBox = tgui::ListBox::create();
 	m_designsListBox->setPosition("2.5%", "5%");
-	m_designsListBox->setSize("33% - 2.5%", "50% - 2.5%");
+	m_designsListBox->setSize("33% - 2.5%", "90%");
 	
 	m_designsListBox->onItemSelect([this, &faction]() {
 		if (m_designsListBox->getSelectedItemIndex() != -1) {
@@ -49,7 +49,7 @@ void ShipFactoryGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) 
 			amountLabel->setPosition("amountEditBox.right + 1%", "amountEditBox.top");
 			m_shipWidgets->add(amountLabel);
 
-			auto moveDownButton = GUI::Button::create("Queue Down");
+			/*auto moveDownButton = GUI::Button::create("Queue Down");
 			moveDownButton->setPosition("33% + 2.5%", "50%");
 			moveDownButton->setSize("15%", "5%");
 			m_shipWidgets->add(moveDownButton, "moveUpButton");
@@ -57,7 +57,7 @@ void ShipFactoryGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) 
 			auto moveUpButton = GUI::Button::create("Queue Up");
 			moveUpButton->setPosition("33% + 2.5%", "moveUpButton.top - moveUpButton.height");
 			moveUpButton->setSize("15%", "5%");
-			m_shipWidgets->add(moveUpButton);
+			m_shipWidgets->add(moveUpButton);*/
 
 			// Create ship build data if it doesnt exist or init the widget values with the data if it does
 			if (buildIndex == -1) {
@@ -82,11 +82,11 @@ void ShipFactoryGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) 
 				}
 			}
 
-			m_buildProgressBar = tgui::ProgressBar::create();
+			/*m_buildProgressBar = tgui::ProgressBar::create();
 			m_buildProgressBar->setPosition("parent.designsListBox.right + 2.5%", "80%");
 			m_buildProgressBar->setSize("66% - 5%", "10%");
 			m_buildProgressBar->setValue(m_shipBuildData[buildIndex].progressPercent);
-			m_shipWidgets->add(m_buildProgressBar);
+			m_shipWidgets->add(m_buildProgressBar);*/
 
 			// Callbacks
 			amountEditBox->onUnfocus([this, ship, buildIndex, amountEditBox]() {
@@ -104,34 +104,34 @@ void ShipFactoryGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) 
 				updateDesignsListBox(buildIndex);
 				});
 
-			moveUpButton->onClick([this, buildIndex]() {
-				if (buildIndex != 0) {
-					// Swap elements
-					FactoryMod::ShipBuildData before = m_shipBuildData[static_cast<size_t>(buildIndex) - 1];
-					m_shipBuildData[static_cast<size_t>(buildIndex) - 1] = m_shipBuildData[buildIndex];
-					m_shipBuildData[buildIndex] = before;
-					updateDesignsListBox(buildIndex - 1);
-				}
-				});
+			//moveUpButton->onClick([this, buildIndex]() {
+			//	if (buildIndex != 0) {
+			//		// Swap elements
+			//		FactoryMod::ShipBuildData before = m_shipBuildData[static_cast<size_t>(buildIndex) - 1];
+			//		m_shipBuildData[static_cast<size_t>(buildIndex) - 1] = m_shipBuildData[buildIndex];
+			//		m_shipBuildData[buildIndex] = before;
+			//		updateDesignsListBox(buildIndex - 1);
+			//	}
+			//	});
 
-			moveDownButton->onClick([this, buildIndex]() {
-				if (buildIndex != m_shipBuildData.size() - 1) {
-					// Swap elements
-					FactoryMod::ShipBuildData after = m_shipBuildData[static_cast<size_t>(buildIndex) + 1];
-					m_shipBuildData[static_cast<size_t>(buildIndex) + 1] = m_shipBuildData[buildIndex];
-					m_shipBuildData[buildIndex] = after;
-					updateDesignsListBox(buildIndex + 1);
-				}
-				});
+			//moveDownButton->onClick([this, buildIndex]() {
+			//	if (buildIndex != m_shipBuildData.size() - 1) {
+			//		// Swap elements
+			//		FactoryMod::ShipBuildData after = m_shipBuildData[static_cast<size_t>(buildIndex) + 1];
+			//		m_shipBuildData[static_cast<size_t>(buildIndex) + 1] = m_shipBuildData[buildIndex];
+			//		m_shipBuildData[buildIndex] = after;
+			//		updateDesignsListBox(buildIndex + 1);
+			//	}
+			//	});
 		}
 		else {
 			m_shipWidgets->removeAllWidgets();
-			m_buildProgressBar = nullptr;
+			//m_buildProgressBar = nullptr;
 		}
 		});
 	group->add(m_designsListBox, "designsListBox");
 
-	auto designsLabel = tgui::Label::create("Design Queue");
+	auto designsLabel = tgui::Label::create("Ship Designs");
 	designsLabel->setOrigin(0.5f, 0.0f);
 	designsLabel->setPosition("designsListBox.width / 2 + designsListBox.left", "0%");
 	group->add(designsLabel);
@@ -143,7 +143,7 @@ void ShipFactoryGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) 
 	group->add(m_shipWidgets, "shipWidgets");
 }
 
-void ShipFactoryGUI::updateDesigns(Faction* faction) {
+void DesignListGUI::updateDesigns(Faction* faction) {
 	for (DesignerShip ship : faction->getShipDesigns()) {
 		bool found = false;
 		for (const FactoryMod::ShipBuildData& data : m_shipBuildData) {
@@ -160,7 +160,7 @@ void ShipFactoryGUI::updateDesigns(Faction* faction) {
 	}
 }
 
-void ShipFactoryGUI::updateDesignsListBox(int selectedIndex) {
+void DesignListGUI::updateDesignsListBox(int selectedIndex) {
 	if (m_designsListBox != nullptr) {
 		m_designsListBox->removeAllItems();
 		for (const FactoryMod::ShipBuildData& build : m_shipBuildData) {
