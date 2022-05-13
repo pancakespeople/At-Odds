@@ -3,12 +3,13 @@
 #include "../Faction.h"
 #include "../Sounds.h"
 #include "../Constellation.h"
+#include "../Mod.h"
 
-void FactoriesGUI::open(tgui::Gui& gui, Faction& faction) {
+void FactoriesGUI::open(tgui::Gui& gui, Faction& faction, Constellation& constellation) {
 	m_icon.open(gui, { "0%", "65%" }, { "2.5%", "5%" }, "data/art/factory.png", "Ship Factories");
 	m_icon.setLengthScale(2.0f);
 
-	m_icon.panel->onClick([this, &gui, &faction]() {
+	m_icon.panel->onClick([this, &gui, &faction, &constellation]() {
 		if (m_window != nullptr) {
 			m_window->close();
 			m_window = nullptr;
@@ -56,6 +57,38 @@ void FactoriesGUI::open(tgui::Gui& gui, Faction& faction) {
 		m_factoriesToUpdateLabel->setPosition("50%", "5%");
 		m_factoriesToUpdateLabel->setOrigin({ 0.5, 0.0 });
 		m_window->add(m_factoriesToUpdateLabel);
+
+		auto applyButton = GUI::Button::create("Apply Settings");
+		applyButton->setSize("10%", "10%");
+		applyButton->setPosition("87.5%", "15%");
+		applyButton->setOrigin({ 0.5f, 0.5f });
+		m_window->add(applyButton);
+
+		applyButton->onClick([this, &constellation, &faction]() {
+			int numShipFactories = countNumShipFactories(constellation, faction.getID());
+			int factoriesToUpdate = std::round((m_slider->getValue() / m_slider->getMaximum()) * numShipFactories);
+			int factoriesUpdated = 0;
+
+			for (auto& star : constellation.getStars()) {
+				if (factoriesUpdated == factoriesToUpdate) {
+					break;
+				}
+
+				for (auto& building : star->getBuildings()) {
+					if (factoriesUpdated == factoriesToUpdate) {
+						break;
+					}
+
+					if (building->getType() == "SHIP_FACTORY" && building->getAllegiance() == faction.getID()) {
+						FactoryMod* mod = building->getMod<FactoryMod>();
+						if (mod != nullptr) {
+							mod->setShipBuildData(m_designListGUI.shipBuildData);
+							factoriesUpdated++;
+						}
+					}
+				}
+			}
+		});
 	});
 }
 
@@ -65,15 +98,7 @@ void FactoriesGUI::draw(sf::RenderWindow& window) {
 
 void FactoriesGUI::update(Constellation& constellation, Faction* playerFaction) {
 	if (m_infoLabel != nullptr && playerFaction != nullptr) {
-		int numShipFactories = 0;
-
-		for (auto& star : constellation.getStars()) {
-			for (auto& building : star->getBuildings()) {
-				if (building->getType() == "SHIP_FACTORY" && building->getAllegiance() == playerFaction->getID()) {
-					numShipFactories++;
-				}
-			}
-		}
+		int numShipFactories = countNumShipFactories(constellation, playerFaction->getID());
 
 		std::stringstream stream;
 		stream << "Ship factory count: " << numShipFactories;
@@ -91,4 +116,18 @@ void FactoriesGUI::update(Constellation& constellation, Faction* playerFaction) 
 
 		m_slider->setMaximum(numShipFactories);
 	}
+}
+
+int FactoriesGUI::countNumShipFactories(Constellation& constellation, int allegiance) {
+	int numShipFactories = 0;
+
+	for (auto& star : constellation.getStars()) {
+		for (auto& building : star->getBuildings()) {
+			if (building->getType() == "SHIP_FACTORY" && building->getAllegiance() == allegiance) {
+				numShipFactories++;
+			}
+		}
+	}
+
+	return numShipFactories;
 }

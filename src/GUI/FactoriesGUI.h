@@ -5,10 +5,12 @@
 
 class FactoriesGUI {
 public:
-	void open(tgui::Gui& gui, Faction& faction);
+	void open(tgui::Gui& gui, Faction& faction, Constellation& constellation);
 	void draw(sf::RenderWindow& window);
 	void update(Constellation& constellation, Faction* playerFaction);
 private:
+	int countNumShipFactories(Constellation& constellation, int allegiance);
+
 	GUI::Icon m_icon;
 	tgui::ChildWindow::Ptr m_window;
 	tgui::Panel::Ptr m_shipFactoryPanel;

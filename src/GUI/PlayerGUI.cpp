@@ -25,7 +25,7 @@ void PlayerGUI::open(tgui::Gui& gui, GameState& state, Constellation& constellat
 		colonyListGUI.open(gui, state, constellation);
 		techGUI.open(gui, playerFaction);
 		newsGUI.open(gui);
-		factoriesGUI.open(gui, *playerFaction);
+		factoriesGUI.open(gui, *playerFaction, constellation);
 	}
 	else if (guiState == PlayerGUIState::SPECTATOR) {
 		unitGUI.open(gui, state.getPlayer());

@@ -7,9 +7,10 @@ public:
 	void open(tgui::Gui& gui, Faction& faction, tgui::Group* group);
 	void updateDesigns(Faction* faction);
 	void updateDesignsListBox(int selectedIndex);
+	
+	std::deque<FactoryMod::ShipBuildData> shipBuildData;
 
 private:
-	std::deque<FactoryMod::ShipBuildData> m_shipBuildData;
 	//tgui::ProgressBar::Ptr m_buildProgressBar;
 	tgui::Group::Ptr m_shipWidgets;
 	tgui::Label::Ptr m_armamentsLabel;

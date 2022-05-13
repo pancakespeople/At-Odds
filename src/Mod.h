@@ -42,18 +42,6 @@ private:
 
 class FactoryMod : public Mod {
 public:
-
-	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
-	virtual std::string getInfoString() override;
-	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
-	virtual void onShipInteract(Spaceship* ship);
-
-	void updateDesigns(Faction* faction);
-	void setBuildAll(bool build);
-	void setBuild(const std::string& name, bool build);
-
-	float getBuildSpeedMultiplier();
-
 	struct ShipBuildData {
 		ShipBuildData(const std::string shipName) { this->shipName = shipName; }
 
@@ -81,6 +69,18 @@ public:
 
 		ShipBuildData() = default;
 	};
+
+	virtual void update(Unit& unit, Star& currentStar, Faction* faction, const AllianceList& alliances) override;
+	virtual std::string getInfoString() override;
+	virtual void openGUI(tgui::ChildWindow::Ptr window, Faction* faction) override;
+	virtual void onShipInteract(Spaceship* ship);
+
+	void updateDesigns(Faction* faction);
+	void setBuildAll(bool build);
+	void setBuild(const std::string& name, bool build);
+	void setShipBuildData(std::deque<ShipBuildData>& data) { m_shipBuildData = data; }
+
+	float getBuildSpeedMultiplier();
 
 private:
 	friend class boost::serialization::access;

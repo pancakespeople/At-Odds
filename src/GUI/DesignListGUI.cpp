@@ -13,8 +13,8 @@ void DesignListGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) {
 			int buildIndex = -1;
 
 			// Find build index
-			for (int i = 0; i < m_shipBuildData.size(); i++) {
-				if (m_shipBuildData[i].shipName == ship.name) buildIndex = i;
+			for (int i = 0; i < shipBuildData.size(); i++) {
+				if (shipBuildData[i].shipName == ship.name) buildIndex = i;
 			}
 
 			if (ship.name == "") return;
@@ -62,18 +62,18 @@ void DesignListGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) {
 			// Create ship build data if it doesnt exist or init the widget values with the data if it does
 			if (buildIndex == -1) {
 				FactoryMod::ShipBuildData data(ship.name);
-				m_shipBuildData.push_back(data);
+				shipBuildData.push_back(data);
 
-				buildIndex = m_shipBuildData.size() - 1;
+				buildIndex = shipBuildData.size() - 1;
 			}
 			else {
-				buildCheckbox->setChecked(m_shipBuildData[buildIndex].build);
-				continuousCheckbox->setChecked(m_shipBuildData[buildIndex].continuous);
-				amountEditBox->setText(std::to_string(m_shipBuildData[buildIndex].amount));
+				buildCheckbox->setChecked(shipBuildData[buildIndex].build);
+				continuousCheckbox->setChecked(shipBuildData[buildIndex].continuous);
+				amountEditBox->setText(std::to_string(shipBuildData[buildIndex].amount));
 			}
 
 			// Set selected design
-			for (auto& data : m_shipBuildData) {
+			for (auto& data : shipBuildData) {
 				if (data.shipName == ship.name) {
 					data.selected = true;
 				}
@@ -91,16 +91,16 @@ void DesignListGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) {
 			// Callbacks
 			amountEditBox->onUnfocus([this, ship, buildIndex, amountEditBox]() {
 				if (amountEditBox->getText().size() > 0) {
-					m_shipBuildData[buildIndex].amount = amountEditBox->getText().toInt();
+					shipBuildData[buildIndex].amount = amountEditBox->getText().toInt();
 				}
 				});
 
 			continuousCheckbox->onChange([this, ship, buildIndex, continuousCheckbox]() {
-				m_shipBuildData[buildIndex].continuous = continuousCheckbox->isChecked();
+				shipBuildData[buildIndex].continuous = continuousCheckbox->isChecked();
 				});
 
 			buildCheckbox->onChange([this, ship, buildIndex, buildCheckbox]() {
-				m_shipBuildData[buildIndex].build = buildCheckbox->isChecked();
+				shipBuildData[buildIndex].build = buildCheckbox->isChecked();
 				updateDesignsListBox(buildIndex);
 				});
 
@@ -146,7 +146,7 @@ void DesignListGUI::open(tgui::Gui& gui, Faction& faction, tgui::Group* group) {
 void DesignListGUI::updateDesigns(Faction* faction) {
 	for (DesignerShip ship : faction->getShipDesigns()) {
 		bool found = false;
-		for (const FactoryMod::ShipBuildData& data : m_shipBuildData) {
+		for (const FactoryMod::ShipBuildData& data : shipBuildData) {
 			if (data.shipName == ship.name) {
 				found = true;
 				break;
@@ -155,7 +155,7 @@ void DesignListGUI::updateDesigns(Faction* faction) {
 
 		if (!found) {
 			FactoryMod::ShipBuildData data(ship.name);
-			m_shipBuildData.push_back(data);
+			shipBuildData.push_back(data);
 		}
 	}
 }
@@ -163,7 +163,7 @@ void DesignListGUI::updateDesigns(Faction* faction) {
 void DesignListGUI::updateDesignsListBox(int selectedIndex) {
 	if (m_designsListBox != nullptr) {
 		m_designsListBox->removeAllItems();
-		for (const FactoryMod::ShipBuildData& build : m_shipBuildData) {
+		for (const FactoryMod::ShipBuildData& build : shipBuildData) {
 			m_designsListBox->addItem(build.shipName);
 		}
 
