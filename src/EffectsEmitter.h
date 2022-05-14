@@ -45,6 +45,8 @@ public:
 	void drawGatlingLaserAnimation(sf::Vector2f sourcePos, sf::Vector2f endPos, float step);
 	void drawPlanetMap(tgui::Canvas* canvas, Planet& planet);
 	void drawAsteroid(sf::Sprite& sprite, sf::Vector2f sunPos);
+	void drawShadowedText(const sf::Text& text, sf::RenderTarget* target, float offset = 1.0f);
+	void drawShadowedText(const sf::Text& text, float offset = 1.0f);
 	void updateTime(float time, float gameTime);
 
 private:
@@ -65,7 +67,7 @@ private:
 	sf::RectangleShape m_fogOfWar;
 	sf::RectangleShape m_starLocalView;
 	sf::RectangleShape m_glow;
-	
+
 	sf::Shader m_distanceShader;
 	sf::Shader m_starLocalViewShader;
 	sf::Shader m_planetShader;

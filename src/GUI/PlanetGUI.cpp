@@ -1181,7 +1181,8 @@ void PlanetGUI::drawGrid(Renderer& renderer, const sf::RenderWindow& window) {
 			drawResources(x, y, colony, itemRect);
 
 			if (text.getString() != "") {
-				m_planetMapCanvas->draw(text);
+				//m_planetMapCanvas->draw(text);
+				renderer.effects.drawShadowedText(text, &m_planetMapCanvas->getRenderTexture());
 				text.setString("");
 			}
 		}
@@ -1273,7 +1274,7 @@ void PlanetGUI::drawGridTile(int x, int y, sf::FloatRect& relBounds, const sf::R
 			if (m_showPopulation) {
 				text.setString(std::to_string(tile.population));
 				text.setPosition(pos);
-				text.setColor(sf::Color(55, 55, 55));
+				text.setColor(sf::Color::White);
 			}
 
 			gridRect.setFillColor(sf::Color::White);

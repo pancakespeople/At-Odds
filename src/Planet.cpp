@@ -68,7 +68,7 @@ void Planet::draw(Renderer& renderer, sf::RenderWindow& window, Star* star, floa
 		text.setScale({ getRadius() / 100.0f, getRadius() / 100.0f });
 		text.setOrigin({ text.getLocalBounds().width / 2.0f, 0.0f });
 
-		renderer.draw(text);
+		renderer.effects.drawShadowedText(text, 5.0f);
 	}
 
 	switch (m_type) {

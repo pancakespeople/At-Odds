@@ -25,6 +25,7 @@ public:
 
 	sf::Vector2f mapPixelToCoords(sf::Vector2i pixel) const { return m_texture.mapPixelToCoords(pixel); }
 	sf::Vector2i mapCoordsToPixel(sf::Vector2f coords) const { return m_texture.mapCoordsToPixel(coords); }
+	sf::RenderTexture& getTexture() { return m_texture; }
 
 private:
 	sf::Sprite m_sprite;

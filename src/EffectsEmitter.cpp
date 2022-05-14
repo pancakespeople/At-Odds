@@ -513,3 +513,16 @@ void EffectsEmitter::drawAsteroid(sf::Sprite& sprite, sf::Vector2f sunPos) {
 
 	m_renderer.draw(sprite, &m_asteroidShader);
 }
+
+void EffectsEmitter::drawShadowedText(const sf::Text& text, sf::RenderTarget* target, float offset) {
+	sf::Text shadowText = text;
+	shadowText.move({ offset, offset });
+	shadowText.setFillColor(sf::Color::Black);
+
+	target->draw(shadowText);
+	target->draw(text);
+}
+
+void EffectsEmitter::drawShadowedText(const sf::Text& text, float offset) {
+	drawShadowedText(text, &m_renderer.getTexture(), offset);
+}
