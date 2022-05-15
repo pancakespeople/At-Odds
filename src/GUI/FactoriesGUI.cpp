@@ -6,7 +6,7 @@
 #include "../Mod.h"
 
 void FactoriesGUI::open(tgui::Gui& gui, Faction& faction, Constellation& constellation) {
-	m_icon.open(gui, { "0%", "65%" }, { "2.5%", "5%" }, "data/art/factory.png", "Ship Factories");
+	m_icon.open(gui, { "0%", "65%" }, { "2.5%", "5%" }, "data/art/factoryicon.png", "Ship Factories");
 	m_icon.setLengthScale(2.0f);
 
 	m_icon.panel->onClick([this, &gui, &faction, &constellation]() {
