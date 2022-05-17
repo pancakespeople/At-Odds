@@ -282,8 +282,8 @@ void Star::worldViewClicked(sf::Event ev, GameState& state) {
 void Star::setupJumpPoints() {
 	std::vector<Hyperlane*> outgoingHyperlanes;
 	std::vector<Hyperlane*> incomingHyperlanes;
-	const int minDist = 5000;
-	const int maxDist = 20000;
+	const int minDist = getInnerStarRadius();
+	const int maxDist = getOuterBoundary();
 
 	for (Hyperlane* h : m_hyperlanes) {
 		if (h->getEndStar() == this) {

@@ -64,6 +64,7 @@ public:
 	float getRadius() const { return m_shape.getRadius(); }
 	float distBetweenStar(Star& s);
 	float getOuterBoundary();
+	float getInnerStarRadius() const { return m_localViewRect.getSize().x / 2.0f * m_localViewRect.getScale().x; }
 
 	bool isStarInRadius(Star& s, float radius) const;
 	bool isInShapeRadius(float x, float y) const;
