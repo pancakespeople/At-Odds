@@ -387,8 +387,8 @@ EstablishPirateBaseOrder::EstablishPirateBaseOrder(sf::Vector2f pos, int theftAl
 }
 
 bool EstablishPirateBaseOrder::execute(Spaceship& ship, Star& currentStar, const AllianceList& alliances, Faction* faction) {
-	if (currentStar.getBuildingsOfType("PIRATE_BASE").size() > 1) {
-		// Pick a different star if this one already has 2 bases
+	if (currentStar.getBuildingsOfType("PIRATE_BASE").size() > 0) {
+		// Pick a different star if this one already has a base
 
 		Star* rndNeighbor = currentStar.getConnectedStars()[Random::randInt(0, currentStar.getConnectedStars().size() - 1)];
 		ship.addOrderFront<TravelOrder>(TravelOrder(rndNeighbor));

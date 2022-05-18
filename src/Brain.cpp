@@ -567,7 +567,7 @@ void EconomyAI::handleStars(Faction & faction) {
 		bool builtShipFactory = false;
 
 		// Build ship factories
-		if (star->numAlliedBuildings(faction.getID(), "SHIP_FACTORY") < 5 && faction.numIdleConstructionShips() > 0 &&
+		if (star->numAlliedBuildings(faction.getID(), "SHIP_FACTORY") < 1 && faction.numIdleConstructionShips() > 0 &&
 			!builtShipFactory) {
 			Building* factory = star->createBuilding("SHIP_FACTORY", star->getRandomLocalPos(-10000.0f, 10000.0f), &faction, false);
 

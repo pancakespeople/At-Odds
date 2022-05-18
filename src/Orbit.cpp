@@ -7,7 +7,7 @@ Orbit::Orbit(sf::Vector2f orbiterPos, sf::Vector2f parentPos) {
 	m_parentPos = parentPos;
 	
 	m_orbiterAngle = Math::angleBetween(orbiterPos, parentPos);
-	m_orbitSpeed = 500.0f / m_radius;
+	m_orbitSpeed = 250.0f / m_radius;
 
 	m_orbitIndicator.setFillColor(sf::Color::Transparent);
 	m_orbitIndicator.setOutlineColor(sf::Color(175, 175, 175, 150));

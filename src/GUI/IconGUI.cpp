@@ -45,6 +45,7 @@ void IconGUI::draw(sf::RenderWindow& window, const Renderer& renderer, Star* cur
 				case Planet::PLANET_TYPE::LAVA:
 					texturePath += "lavaicon.png";
 					tooltipText = "Lava Planet";
+					break;
 				case Planet::PLANET_TYPE::VOLCANIC:
 					texturePath += "lavaicon.png";
 					tooltipText = "Volcanic Planet";

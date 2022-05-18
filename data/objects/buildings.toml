@@ -59,7 +59,7 @@ texturePath = "data/art/factory.png"
 health = 2500.0
 constructionSpeedMultiplier = 1.5
 mods = ["Factory"]
-numPerStar = 5
+numPerStar = 1
 category = "Economy"
 
 [SPACE_HABITAT]
