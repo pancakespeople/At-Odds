@@ -7,6 +7,7 @@ mods = ["FighterBay"]
 numPerStar = 1
 weapons = ["$RAND_WEAPON", "$RAND_WEAPON", "$RAND_WEAPON"]
 category = "Defense"
+cost = [["COMMON_ORE", 75.0]]
 
 # Turrets
 
@@ -61,6 +62,7 @@ constructionSpeedMultiplier = 1.5
 mods = ["Factory"]
 numPerStar = 1
 category = "Economy"
+cost = [["COMMON_ORE", 125.0]]
 
 [SPACE_HABITAT]
 name = "Space Habitat"
@@ -78,6 +80,7 @@ health = 500.0
 scienceLab = true
 mods = ["Science"]
 category = "Economy"
+cost = [["COMMON_ORE", 10.0], ["UNCOMMON_ORE", 50.0]]
 
 [PIRATE_BASE]
 name = "Pirate Base"

@@ -19,7 +19,7 @@ public:
 
 	void draw(Renderer& renderer);
 	void update(Star* currentStar, const AllianceList& alliances);
-	void construct(const Spaceship* constructor);
+	void construct(const Spaceship& constructor, Faction& faction);
 	void reinitAfterLoad(Star* star);
 	void setPos(sf::Vector2f pos) { m_sprite.setPosition(pos); }
 	void onBuild();
@@ -46,6 +46,7 @@ private:
 		archive & m_constructionSpeedMultiplier;
 		archive & m_type;
 		archive & m_rotates;
+		archive & m_resourceCost;
 	}
 
 	void attackEnemies(const AllianceList& alliances);
@@ -59,6 +60,8 @@ private:
 	float m_constructionSpeedMultiplier = 1.0f;
 
 	bool m_rotates = true;
+
+	std::unordered_map<std::string, float> m_resourceCost;
 };
 
 class BuildingPrototype {

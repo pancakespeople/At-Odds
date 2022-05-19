@@ -201,12 +201,12 @@ bool InteractWithBuildingOrder::execute(Spaceship& ship, Star& currentStar, cons
 	if (m_building->getCurrentStar() != ship.getCurrentStar() || m_building->isDead()) {
 		return true;
 	}
-	if (ship.hasWeapon("CONSTRUCTION_GUN")) {
+	if (ship.hasWeapon("CONSTRUCTION_GUN") && faction != nullptr) {
 		// Construction ship
 		float insideRadius = m_building->getCollider().getRadius() * 4.0f;
 		if (Math::distance(ship.getPos(), m_building->getPos()) < insideRadius) {
 			if (!m_building->isBuilt()) {
-				m_building->construct(&ship);
+				m_building->construct(ship, *faction);
 				
 				for (Weapon& weapon : ship.getWeapons()) {
 					if (weapon.getType() == "CONSTRUCTION_GUN") {

@@ -48,7 +48,19 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 					}
 				}
 				else {
-					addWeapon(Weapon(val.value()));
+					Weapon weapon(val.value());
+					DesignerWeapon weaponDesign(val.value());
+
+					addWeapon(weapon);
+
+					// Add weapon cost to building cost
+					for (auto& item : weaponDesign.resourceCost) {
+						if (m_resourceCost.count(item.first) == 0) {
+							m_resourceCost[item.first] = 0.0f;
+						}
+
+						m_resourceCost[item.first] += item.second;
+					}
 				}
 			}
 		}
@@ -95,6 +107,13 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	else {
 		m_constructionPercent = 1.0f;
 		m_health = m_maxHealth * (m_constructionPercent / 100.0f);
+
+		if (table[type]["cost"].as_array() != nullptr) {
+			for (int i = 0; i < table[type]["cost"].as_array()->size(); i++) {
+				std::string resourceType = table[type]["cost"][i][0].value_or("");
+				m_resourceCost[resourceType] = table[type]["cost"][i][1].value_or(0.0f);
+			}
+		}
 	}
 }
 
@@ -183,18 +202,30 @@ void Building::attackEnemies(const AllianceList& alliances) {
 	}
 }
 
-void Building::construct(const Spaceship* constructor) {
+void Building::construct(const Spaceship& constructor, Faction& faction) {
 	if (m_constructionPercent >= 100.0f) {
 		return;
 	}
 
-	float percentIncrease = constructor->getConstructionSpeed() / m_health;
-	m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
+	float percentIncrease = constructor.getConstructionSpeed() / m_maxHealth;
+	float percentChange = (m_constructionPercent + percentIncrease * m_constructionSpeedMultiplier) - m_constructionPercent;
 
-	m_health = m_maxHealth * (m_constructionPercent / 100.0f);
+	std::unordered_map<std::string, float> cost = m_resourceCost;
+	for (auto& item : cost) {
+		item.second *= percentChange / 100.0f;
+	}
 
-	if (m_constructionPercent >= 100.0f) {
-		onBuild();
+	if (faction.canSubtractResources(cost)) {
+
+		faction.subtractResources(cost);
+		m_constructionPercent += percentIncrease * m_constructionSpeedMultiplier;
+
+		m_health = m_maxHealth * (m_constructionPercent / 100.0f);
+
+		if (m_constructionPercent >= 100.0f) {
+			m_resourceCost.clear();
+			onBuild();
+		}
 	}
 }
 
