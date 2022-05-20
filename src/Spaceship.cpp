@@ -86,7 +86,7 @@ Spaceship::Spaceship(const std::string& type, const sf::Vector2f& pos, Star* sta
 	init(pos, star, allegiance, color);
 }
 
-void Spaceship::draw(Renderer& renderer, float time) {
+void Spaceship::draw(Renderer& renderer, float time, sf::Vector2f mouseWorldPos) {
 	if (m_disabled) return;
 	
 	if (m_pirate) {
@@ -100,7 +100,8 @@ void Spaceship::draw(Renderer& renderer, float time) {
 	}
 
 	renderer.draw(m_sprite);
-	renderer.draw(m_collider);
+
+	m_collider.draw(renderer, mouseWorldPos);
 	
 	if (m_percentJumpDriveCharged > 0.0f) {
 		renderer.effects.drawJumpBubble(m_collider.getPosition(), m_collider.getRadius(), m_percentJumpDriveCharged);

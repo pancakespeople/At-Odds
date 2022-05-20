@@ -117,7 +117,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	}
 }
 
-void Building::draw(Renderer& renderer) {
+void Building::draw(Renderer& renderer, sf::Vector2f mouseWorldPos) {
 	if (m_constructionPercent < 100.0f) {
 		sf::Color oldColor = m_sprite.getColor();
 		sf::Color newColor = oldColor;
@@ -131,7 +131,8 @@ void Building::draw(Renderer& renderer) {
 	else {
 		renderer.draw(m_sprite);
 	}
-	renderer.draw(m_collider);
+	
+	m_collider.draw(renderer, mouseWorldPos);
 
 	if (m_selected) {
 		drawSelectionCircle(renderer);

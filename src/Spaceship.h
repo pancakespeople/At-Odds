@@ -26,7 +26,7 @@ public:
 	Spaceship(const std::string& type, const sf::Vector2f& pos, Star* star, int allegiance, sf::Color color);
 	Spaceship(const Spaceship& old) = delete;
 	
-	void draw(Renderer& renderer, float time);
+	void draw(Renderer& renderer, float time, sf::Vector2f mouseWorldPos);
 	void accelerate(float amount);
 	void update(Star* currentStar, const AllianceList& alliances, Faction* faction);
 	void keepSpeed(float speed);

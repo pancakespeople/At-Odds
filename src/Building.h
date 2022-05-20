@@ -17,7 +17,7 @@ public:
 	Building(const std::string& type, Star* star, sf::Vector2f pos, Faction* faction, bool built = true);
 	Building() {}
 
-	void draw(Renderer& renderer);
+	void draw(Renderer& renderer, sf::Vector2f mouseWorldPos);
 	void update(Star* currentStar, const AllianceList& alliances);
 	void construct(const Spaceship& constructor, Faction& faction);
 	void reinitAfterLoad(Star* star);

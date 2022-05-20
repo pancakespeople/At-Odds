@@ -180,6 +180,7 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 	}
 
 	if (m_drawHidden) {
+		sf::Vector2f mouseWorldPos = renderer.mapPixelToCoords(sf::Mouse::getPosition(window));
 
 		for (Planet& planet : m_planets) {
 			planet.draw(renderer, window, this, time, drawPlanetText);
@@ -189,10 +190,10 @@ void Star::drawLocalView(sf::RenderWindow& window, Renderer& renderer, Player& p
 		}
 		
 		for (std::unique_ptr<Spaceship>& s : m_localShips) {
-			s->draw(renderer, time);
+			s->draw(renderer, time, mouseWorldPos);
 		}
 		for (std::unique_ptr<Building>& b : m_buildings) {
-			b->draw(renderer);
+			b->draw(renderer, mouseWorldPos);
 		}
 		for (Derelict& d : m_derelicts) {
 			d.draw(renderer);

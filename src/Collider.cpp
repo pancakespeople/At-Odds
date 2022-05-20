@@ -1,16 +1,17 @@
 #include "gamepch.h"
 #include "Collider.h"
 #include "Math.h"
+#include "Renderer.h"
 
 Collider::Collider() {
 	setOutlineThickness(5.0f);
-	setBlur(0.05);
+	setFillColor(sf::Color::Transparent);
 }
 
 Collider::Collider(const sf::Vector2f& pos, const sf::Color& color, float radius) {
-	setColor(color);
+	setFillColor(sf::Color::Transparent);
+	setOutlineColor(color);
 	setOutlineThickness(5.0f);
-	setBlur(0.05);
 	setRadius(radius);
 	setPosition(pos);
 }
@@ -21,7 +22,7 @@ void Collider::update(const sf::Vector2f& pos) {
 
 void Collider::setRadius(float radius) {
 	setOrigin(sf::Vector2f(radius, radius));
-	SmoothCircle::setRadius(radius);
+	sf::CircleShape::setRadius(radius);
 }
 
 bool Collider::isCollidingWith(const Collider& other) const {
@@ -33,4 +34,13 @@ bool Collider::isCollidingWith(const Collider& other) const {
 bool Collider::contains(const sf::Vector2f& point) const {
 	if (Math::distance(point, getPosition()) < getRadius()) return true;
 	return false;
+}
+
+void Collider::draw(Renderer& renderer, sf::Vector2f mouseWorldPos) {
+	sf::Color prevColor = getColor();
+	if (contains(mouseWorldPos)) {
+		setColor(prevColor + sf::Color(125, 125, 125));
+	}
+	renderer.draw(*this);
+	setColor(prevColor);
 }
