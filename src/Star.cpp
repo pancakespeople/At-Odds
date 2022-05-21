@@ -260,12 +260,18 @@ void Star::connectHyperlane(Hyperlane* lane) {
 }
 
 void Star::factionTakeOwnership(Faction* faction, bool spawnClaimUnit) {
-	m_allegiance = faction->getID();
-	setColor(faction->getColor());
-	faction->addOwnedSystem(this);
+	if (faction == nullptr) {
+		m_allegiance = -1;
+		setColor(sf::Color::White);
+	}
+	else {
+		m_allegiance = faction->getID();
+		setColor(faction->getColor());
+		faction->addOwnedSystem(this);
 
-	if (spawnClaimUnit) {
-		createSpaceship("CLAIM_SHIP", getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor());
+		if (spawnClaimUnit) {
+			createSpaceship("CLAIM_SHIP", getRandomLocalPos(-10000.0f, 10000.0f), faction->getID(), faction->getColor());
+		}
 	}
 }
 
@@ -477,13 +483,14 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 		}
 	}
 
+	Faction* owningFaction = constellation->getFaction(m_allegiance);
+	
 	// For the flashy thing
 	if (hostileFactions > 0) {
 		m_underAttack = true;
 
 		if (m_peaceful) {
 			m_peaceful = false;
-			Faction* owningFaction = constellation->getFaction(m_allegiance);
 			if (owningFaction != nullptr) {
 				owningFaction->addNewsEvent("Enemies have arrived in " + m_name + "!", tgui::Color::Red);
 			}
@@ -494,6 +501,13 @@ void Star::update(Constellation* constellation, const Player& player, EffectsEmi
 
 		if (!m_peaceful) {
 			m_peaceful = true;
+		}
+	}
+
+	// System flipping to neutral
+	if (owningFaction != nullptr) {
+		if (factions.count(m_allegiance) == 0) {
+			factionTakeOwnership(nullptr);
 		}
 	}
 
