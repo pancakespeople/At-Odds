@@ -271,5 +271,5 @@ private:
 	int m_lifetimeTicks = 0;
 	float m_nextShipPercent = 0.0f;
 	std::deque<DesignerShip> m_stolenDesigns;
-	int m_spawnNewBaseTime = 20000.0f;
+	int m_spawnNewBaseTime = 40000.0f;
 };
