@@ -49,18 +49,8 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 				}
 				else {
 					Weapon weapon(val.value());
-					DesignerWeapon weaponDesign(val.value());
-
+					
 					addWeapon(weapon);
-
-					// Add weapon cost to building cost
-					for (auto& item : weaponDesign.resourceCost) {
-						if (m_resourceCost.count(item.first) == 0) {
-							m_resourceCost[item.first] = 0.0f;
-						}
-
-						m_resourceCost[item.first] += item.second;
-					}
 				}
 			}
 		}
@@ -107,13 +97,7 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 	else {
 		m_constructionPercent = 1.0f;
 		m_health = m_maxHealth * (m_constructionPercent / 100.0f);
-
-		if (table[type]["cost"].as_array() != nullptr) {
-			for (int i = 0; i < table[type]["cost"].as_array()->size(); i++) {
-				std::string resourceType = table[type]["cost"][i][0].value_or("");
-				m_resourceCost[resourceType] = table[type]["cost"][i][1].value_or(0.0f);
-			}
-		}
+		m_resourceCost = getResourceCost(type);
 	}
 }
 
@@ -325,4 +309,40 @@ void Building::onBuild() {
 	for (auto& mod : m_mods) {
 		mod->onBuild(this, m_currentStar);
 	}
+}
+
+std::unordered_map<std::string, float> Building::getResourceCost(const std::string& type) {
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+	assert(table.contains(type));
+
+	std::unordered_map<std::string, float> cost;
+
+	if (table[type]["cost"].as_array() != nullptr) {
+		for (int i = 0; i < table[type]["cost"].as_array()->size(); i++) {
+			std::string resourceType = table[type]["cost"][i][0].value_or("");
+			cost[resourceType] = table[type]["cost"][i][1].value_or(0.0f);
+		}
+	}
+
+	// Add weapon cost to building cost
+	if (table[type].as_table()->contains("weapons")) {
+		for (auto& weapon : *table[type]["weapons"].as_array()) {
+			auto val = weapon.value<std::string>();
+			if (val) {
+				if (val.value() != "$RAND_WEAPON") {
+					DesignerWeapon weaponDesign(val.value());
+
+					for (auto& item : weaponDesign.resourceCost) {
+						if (cost.count(item.first) == 0) {
+							cost[item.first] = 0.0f;
+						}
+
+						cost[item.first] += item.second;
+					}
+				}
+			}
+		}
+	}
+
+	return cost;
 }

@@ -11,6 +11,7 @@ struct Resource {
 
 	std::string getName();
 	static std::string getResourceString(const std::unordered_map<std::string, float>& resources);
+	static std::unordered_map<std::string, float> nodeToMap(const toml::node_view<const toml::node>& node);
 
 private:
 	friend class boost::serialization::access;

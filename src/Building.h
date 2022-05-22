@@ -25,6 +25,7 @@ public:
 	void onBuild();
 
 	static bool checkBuildCondition(const std::string& type, sf::Vector2f pos, float radius, Star* star, Faction* faction, bool player = false);
+	static std::unordered_map<std::string, float> getResourceCost(const std::string& type);
 
 	bool isBuilt() { return m_constructionPercent >= 100.0f; }
 

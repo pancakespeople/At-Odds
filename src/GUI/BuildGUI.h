@@ -26,9 +26,11 @@ private:
 	void onBuildingSelectorMouseExit(int selectorIdx);
 	void onBuildingSelectorClick(int selectorIdx);
 	void updateBuildingSelectors(Faction* playerFaction);
+	void updateBuildInfo(const BuildingSelector& selector);
 
 	GUI::Icon m_buildIcon;
 	tgui::Panel::Ptr m_buildPanel;
+	tgui::Panel::Ptr m_buildInfoPanel;
 	tgui::Tabs::Ptr m_tabs;
 	std::vector<BuildingSelector> m_buildingSelectors;
 

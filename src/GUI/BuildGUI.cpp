@@ -30,7 +30,24 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 		m_buildPanel->setInheritedOpacity(0.75);
 		m_buildPanel->setPosition("2.5%", "66%");
 		m_buildPanel->setSize("20%", "29%");
-		gui.add(m_buildPanel);
+		gui.add(m_buildPanel, "buildPanel");
+
+		m_buildInfoPanel = tgui::Panel::create();
+		m_buildInfoPanel->setPosition("buildPanel.right", "buildPanel.top");
+		m_buildInfoPanel->setSize("10%", "buildPanel.height");
+		m_buildInfoPanel->getRenderer()->setOpacity(0.75f);
+		m_buildInfoPanel->setVisible(false);
+		gui.add(m_buildInfoPanel);
+
+		auto buildingName = tgui::Label::create("Test Name");
+		buildingName->setPosition("50%", "5%");
+		buildingName->setOrigin({ 0.5f, 0.5f });
+		m_buildInfoPanel->add(buildingName, "buildingName");
+
+		auto buildingInfo = tgui::Label::create("Test building info");
+		buildingInfo->setPosition("0%", "10%");
+		buildingInfo->setSize("100%", "90%");
+		m_buildInfoPanel->add(buildingInfo, "buildingInfo");
 
 		m_tabs = tgui::Tabs::create();
 		m_tabs->setSize("100%", "10%");
@@ -45,8 +62,10 @@ void BuildGUI::onBuildIconClick(tgui::Gui& gui, Faction* playerFaction) {
 	}
 	else {
 		gui.remove(m_buildPanel);
+		gui.remove(m_buildInfoPanel);
 		m_buildingSelectors.clear();
 		m_buildPanel = nullptr;
+		m_buildInfoPanel = nullptr;
 	}
 }
 
@@ -96,6 +115,8 @@ void BuildGUI::onBuildingSelectorMouseEnter(int selectorIdx) {
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setBackgroundColor(tgui::Color::White);
 	m_buildingSelectors[selectorIdx].panel->setRenderer(tgui::Theme().getRenderer("Panel"));
 	m_canReceiveEvents = false;
+	m_buildInfoPanel->setVisible(true);
+	updateBuildInfo(m_buildingSelectors[selectorIdx]);
 }
 
 void BuildGUI::onBuildingSelectorMouseExit(int selectorIdx) {
@@ -103,6 +124,7 @@ void BuildGUI::onBuildingSelectorMouseExit(int selectorIdx) {
 	m_buildingSelectors[selectorIdx].panel->getRenderer()->setOpacity(0.75f);
 	m_buildingSelectors[selectorIdx].panel->setRenderer(tgui::Theme::getDefault()->getRenderer("Panel"));
 	m_canReceiveEvents = true;
+	m_buildInfoPanel->setVisible(false);
 }
 
 void BuildGUI::onBuildingSelectorClick(int selectorIdx) {
@@ -199,4 +221,16 @@ void BuildGUI::updateBuildingSelectors(Faction* playerFaction) {
 	}
 
 	m_selectedBuildingIdx = -1;
+}
+
+void BuildGUI::updateBuildInfo(const BuildingSelector& selector) {
+	const toml::table& table = TOMLCache::getTable("data/objects/buildings.toml");
+	std::string type = selector.prototype.getType();
+	auto nameWidget = m_buildInfoPanel->get<tgui::Label>("buildingName");
+	auto infoWidget = m_buildInfoPanel->get<tgui::Label>("buildingInfo");
+	auto resourceCost = Building::getResourceCost(type);
+
+	nameWidget->setText(table[type]["name"].value_or(""));
+
+	infoWidget->setText("Cost: " + Resource::getResourceString(resourceCost));
 }

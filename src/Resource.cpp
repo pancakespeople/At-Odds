@@ -29,3 +29,16 @@ std::string Resource::getResourceString(const std::unordered_map<std::string, fl
 
 	return ss.str();
 }
+
+std::unordered_map<std::string, float> Resource::nodeToMap(const toml::node_view<const toml::node>& node) {
+	std::unordered_map<std::string, float> map;
+
+	if (node.as_array() != nullptr) {
+		for (int i = 0; i < node.as_array()->size(); i++) {
+			std::string resourceType = node[i][0].value_or("");
+			map[resourceType] = node[i][1].value_or(0.0f);
+		}
+	}
+
+	return map;
+}
