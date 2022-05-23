@@ -78,11 +78,35 @@ flags = ["ENABLE_ORBITAL_CANNON"]
 texturePath = "data/art/colonybuildings/orbitaldefense.png"
 
 [CONSUMER_GOODS_FACTORIES]
-name = "Consumer Goods Factory"
+name = "Computer Factory"
 baseCost = [["COMMON_ORE", 20]]
-description = "A massive, polluting factory complex that produces consumer goods. Requires industrial goods and oscillite."
+description = "Computers are when you put lightning into a rock to make colors appear on a screen, and other things. With this awesome technology you can browse the internet, fiddle with spreadsheets, and play good computer games like At Odds. Requires Electronics and Oscillite."
 consumerGoodsMultiplier = 2.0
 texturePath = "data/art/colonybuildings/factory.png"
+requiresResource = "UNCOMMON_ORE"
+consumesTradeGood = "INDUSTRIAL_GOODS"
+producesTradeGood = "CONSUMER_GOODS"
+productionMultiplier = 0.085
+
+[CONSUMER_GOODS_FACTORIES_2]
+name = "TV Factory"
+baseCost = [["COMMON_ORE", 10], ["UNCOMMON_ORE", 20]]
+description = "The space-o-vision! The future's replacement for the television. This one beams the picture directly into your mind. Requires Electronics and Oscillite."
+texturePath = "data/art/colonybuildings/factory.png"
+requiresResource = "UNCOMMON_ORE"
+consumesTradeGood = "INDUSTRIAL_GOODS"
+producesTradeGood = "CONSUMER_GOODS_2"
+productionMultiplier = 0.085
+
+[CONSUMER_GOODS_FACTORIES_3]
+name = "Phone Factory"
+baseCost = [["RARE_ORE", 15]]
+description = "What if we had phones that were fully sentient? That is the question the CEO of Orange Inc. answered back in the year 2186 with the invention of the Geniusphone. A phone so smart that it has gained sentience. Never again will anyone be lonely, when you can simply talk to your Geniusphone. Never again will anyone have to call their friends to invite them to a party when you can simply party with your Geniusphone. It is truly an amazing invention. Requires Electronics and Valkrosium."
+texturePath = "data/art/colonybuildings/factory.png"
+requiresResource = "RARE_ORE"
+consumesTradeGood = "INDUSTRIAL_GOODS"
+producesTradeGood = "CONSUMER_GOODS_3"
+productionMultiplier = 0.06
 
 [WEAPONS_FACTORIES]
 name = "Weapons Factory"
@@ -90,6 +114,9 @@ baseCost = [["COMMON_ORE", 30], ["UNCOMMON_ORE", 10]]
 description = "The profitable military industrial complex."
 armamentsMultiplier = 2.0
 texturePath = "data/art/colonybuildings/factory.png"
+consumesTradeGood = "INDUSTRIAL_GOODS"
+producesTradeGood = "ARMAMENTS"
+productionMultiplier = 0.005
 
 [EXPLORING]
 name = "Exploration HQ"
@@ -105,10 +132,13 @@ bombardDamageMultiplier = 0.75
 texturePath = "data/art/colonybuildings/bombshelter.png"
 
 [FACTORY]
-name = "Factory"
-description = "A generic factory that generically produces the generic 'industrial goods'. So generic. Requires kathium."
+name = "Electronics Factory"
+description = "What can I say? It produces electronics. Requires Kathium."
 baseCost = [["COMMON_ORE", 25], ["UNCOMMON_ORE", 5]]
 texturePath = "data/art/colonybuildings/factory.png"
+requiresResource = "COMMON_ORE"
+producesTradeGood = "INDUSTRIAL_GOODS"
+productionMultiplier = 0.1
 
 [WATER_PUMP]
 name = "Water Pump"
@@ -119,7 +149,17 @@ texturePath = "data/art/colonybuildings/waterpump.png"
 extraInfo = "Extracts water from planets"
 
 [LUXURY_GOODS_FACTORY]
-name = "Luxury Goods Factory"
-description = "Luxury goods may delay the revolt of our people by a little bit."
+name = "Game Studio"
+description = "Where underappreciated indie devs produce video games for the masses."
 baseCost = [["UNCOMMON_ORE", 15], ["RARE_ORE", 40]]
 texturePath = "data/art/colonybuildings/factory.png"
+producesTradeGood = "LUXURY_GOODS"
+productionMultiplier = 0.05
+
+[LUXURY_GOODS_FACTORY_2]
+name = "Organ Factory"
+description = "Organs are large musical instruments that use pipes to make evil sounding music."
+baseCost = [["UNCOMMON_ORE", 15], ["RARE_ORE", 40]]
+texturePath = "data/art/colonybuildings/factory.png"
+producesTradeGood = "LUXURY_GOODS_2"
+productionMultiplier = 0.04

@@ -8,16 +8,28 @@ name = "Food"
 price = 2.0
 
 [INDUSTRIAL_GOODS]
-name = "Industrial Goods"
+name = "Electronics"
 price = 4.5
 
 [CONSUMER_GOODS]
-name = "Consumer Goods"
+name = "Computers"
 price = 7.0
 
+[CONSUMER_GOODS_2]
+name = "Space-o-visions"
+price = 5.0
+
+[CONSUMER_GOODS_3]
+name = "Geniusphones"
+price = 6.0
+
 [LUXURY_GOODS]
-name = "Luxury Goods"
+name = "Video Games"
 price = 15.0
+
+[LUXURY_GOODS_2]
+name = "Organs"
+price = 20.0
 
 [ARMAMENTS]
 name = "Armaments"
