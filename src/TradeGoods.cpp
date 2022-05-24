@@ -68,46 +68,44 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 
 		// Production from resources
 		for (ColonyBuilding& building : planet->getColony().getBuildings()) {
-			std::string producesTradeGood = building.getEffect("producesTradeGood", "");
-			if (producesTradeGood != "") {
-				std::string requiresResource = building.getEffect("requiresResource", "");
+			if (building.isBuilt()) {
 
-				if (planet->hasResource(requiresResource) || requiresResource == "") {
-					float productionMultiplier = building.getEffect("productionMultiplier", 0.0f);
-					float production = planet->getColony().getPopulation() * productionMultiplier * 0.5f;
-					float deficit = 0.0f;
-					std::string consumesTradeGood = building.getEffect("consumesTradeGood", "");
+				std::string producesTradeGood = building.getEffect("producesTradeGood", "");
+				if (producesTradeGood != "") {
+					std::string requiresResource = building.getEffect("requiresResource", "");
 
-					if (consumesTradeGood != "") {
-						deficit = removeSupply(consumesTradeGood, production);
+					if (planet->hasResource(requiresResource) || requiresResource == "") {
+						float productionMultiplier = building.getEffect("productionMultiplier", 0.0f);
+						float production = planet->getColony().getPopulation() * productionMultiplier * 0.5f;
+						float deficit = 0.0f;
+						std::string consumesTradeGood = building.getEffect("consumesTradeGood", "");
+
+						if (consumesTradeGood != "") {
+							deficit = removeSupply(consumesTradeGood, production);
+						}
+
+						addSupply(producesTradeGood, production - deficit);
 					}
-
-					addSupply(producesTradeGood, production - deficit);
 				}
+
 			}
 		}
 
-		//float wealthFactor = std::clamp((1000.0f / std::abs(planet->getColony().getWealth() - 100.0f)) - 9.0f, 1.0f, 30.0f);
-		float wealthFactor = planet->getColony().getWealth() / 100.0f;
-		float consumerGoodsConsumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
+		// Consumption of consumer goods and luxury goods
+		const toml::table& table = TOMLCache::getTable("data/objects/tradegoods.toml");
+		for (auto& good : m_items) {
+			float happiness = table[good.first]["happiness"].value_or(0.0f);
 
-		//wealthFactor = std::min(std::pow(2.0f, (planet->getColony().getWealth() - 100.0f) / 30.0f), 100.0f);
-		wealthFactor = planet->getColony().getWealth() / 500.0f;
-		float luxuryGoodsConsumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
+			if (happiness > 0.0f) {
+				float wealthFactor = planet->getColony().getWealth() / table[good.first]["wealthDivide"].value_or(100.0f);
+				float consumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
 
-		float deficit = removeSupply("CONSUMER_GOODS", consumerGoodsConsumption);
-		if (deficit > 0.0f) {
-			planet->getColony().removeStability(deficit / 20000.0f);
-			planet->getColony().removeWealth(deficit / 10.0f);
+				planet->getColony().addStability(happiness * consumption);
+				removeSupply(good.first, consumption);
+			}
 		}
-		else planet->getColony().addStability(0.05f);
 
-		deficit = removeSupply("LUXURY_GOODS", luxuryGoodsConsumption);
-		if (deficit > 0.0f) {
-			planet->getColony().removeStability(deficit / 30000.0f);
-			planet->getColony().removeWealth(deficit);
-		}
-		else planet->getColony().addStability(0.05f);
+		// Todo: make stability go down if not enough consumer goods and luxury goods
 		
 		for (auto& good : m_items) {
 			// Set prices and trends

@@ -30,18 +30,25 @@ addsColonyBuildings = ["EXPLORING"]
 category = "Colony"
 
 [MANUFACTURING]
-name = "Colony Manufactories"
+name = "Colony Factories"
 description = "No empire can thrive without a solid manufacturing base."
 researchRequired = 1600.0
-addsColonyBuildings = ["FACTORY", "CONSUMER_GOODS_FACTORIES", "WEAPONS_FACTORIES"]
+addsColonyBuildings = ["FACTORY", "CONSUMER_GOODS_FACTORIES", "CONSUMER_GOODS_FACTORIES_2", "CONSUMER_GOODS_FACTORIES_3"]
 category = "Colony"
-unlocksTech = ["LUXURIES"]
+unlocksTech = ["LUXURIES", "WEAPON_FACTORIES"]
+
+[WEAPON_FACTORIES]
+name = "Weapon Factories"
+description = "Mass produced weapons of war."
+researchRequired = 2500.0
+addsColonyBuildings = ["WEAPONS_FACTORIES"]
+category = "Colony"
 
 [LUXURIES]
 name = "Luxuries"
 description = "Shall we fancy some luxuries upon our domain? That would be quite exquisite indeed."
 researchRequired = 2500.0
-addsColonyBuildings = ["LUXURY_GOODS_FACTORY"]
+addsColonyBuildings = ["LUXURY_GOODS_FACTORY", "LUXURY_GOODS_FACTORY_2"]
 category = "Colony"
 
 [MINING]
