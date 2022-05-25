@@ -640,9 +640,12 @@ bool EconomyAI::buildColonyBuilding(Planet& planet, Faction& faction) {
 		"WEAPONS_FACTORIES",
 		"FACTORY",
 		"LUXURY_GOODS_FACTORY",
+		"LUXURY_GOODS_FACTORY_2",
 		"MINING",
 		"IMPROVED_INFRASTRUCTURE",
-		"ADVANCED_INFRASTRUCTURE"
+		"ADVANCED_INFRASTRUCTURE",
+		"CONSUMER_GOODS_FACTORIES_2",
+		"CONSUMER_GOODS_FACTORIES_3"
 	};
 
 	removeBuildings(planet, wantedBuildings, &faction);
