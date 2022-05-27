@@ -196,6 +196,17 @@ namespace GUI {
 
 		return button;
 	}
+
+	ChildWindow::Ptr ChildWindow::create(const std::string& title, unsigned int titleButtons) {
+		auto window = std::make_shared<GUI::ChildWindow>();
+		window->setTitle(title);
+
+		window->onClose([window]() {
+			Sounds::playUISound(window->m_closeSoundPath);
+		});
+
+		return window;
+	}
 }
 
 void AnnouncerGUI::open(tgui::Gui& gui) {

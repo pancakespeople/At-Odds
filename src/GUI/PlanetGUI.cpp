@@ -34,7 +34,7 @@ void PlanetGUI::open(tgui::Gui& gui, GameState& state, Faction* playerFaction, c
 	m_planetIcon.panel->onClick([this, &gui, &state, &constellation, playerFaction]() {
 		if (m_planetPanel == nullptr) {
 			if (state.getLocalViewStar() != nullptr) {
-				m_planetPanel = tgui::ChildWindow::create("Planets");
+				m_planetPanel = GUI::ChildWindow::create("Planets");
 				m_planetPanel->setInheritedOpacity(0.75);
 				m_planetPanel->setPosition("2.5%", "61%");
 				m_planetPanel->setSize("20%", "29%");
@@ -248,7 +248,7 @@ void PlanetGUI::updateSync(GameState& state) {
 
 void PlanetGUI::switchSideWindow(const std::string& name, tgui::Gui& gui) {
 	if (m_sideWindow == nullptr) {
-		m_sideWindow = tgui::ChildWindow::create(name);
+		m_sideWindow = GUI::ChildWindow::create(name);
 		m_sideWindow->setOrigin(0.0f, 1.0f);
 		m_sideWindow->setPosition("buttonPanel.right", "buttonPanel.bottom");
 		m_sideWindow->setSize("20%", "29%");

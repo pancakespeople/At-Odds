@@ -9,7 +9,7 @@ void ColonyListGUI::open(tgui::Gui& gui, GameState& state, Constellation& conste
 
 	m_icon.panel->onClick([this, &gui, &state, &constellation]() {
 		if (m_window == nullptr) {
-			m_window = tgui::ChildWindow::create("Colony List");
+			m_window = GUI::ChildWindow::create("Colony List");
 			m_window->setSize("50%", "50%");
 			m_window->setOrigin(0.5, 0.5);
 			m_window->setPosition(gui.getTarget()->getSize().x / 2.0, gui.getTarget()->getSize().y / 2.0);

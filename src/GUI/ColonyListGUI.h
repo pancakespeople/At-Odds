@@ -11,6 +11,6 @@ public:
 
 private:
 	GUI::Icon m_icon;
-	tgui::ChildWindow::Ptr m_window = nullptr;
+	GUI::ChildWindow::Ptr m_window = nullptr;
 	bool m_systemOnly = false;
 };

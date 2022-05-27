@@ -29,7 +29,7 @@ private:
 	void saveSettingsToFile();
 	void changeSettings(tgui::Gui& gui);
 
-	tgui::ChildWindow::Ptr m_window;
+	GUI::ChildWindow::Ptr m_window;
 	tgui::Group::Ptr m_group;
 
 	Settings m_settings;

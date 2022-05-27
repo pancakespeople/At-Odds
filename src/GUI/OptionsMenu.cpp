@@ -42,11 +42,11 @@ void OptionsMenu::saveSettingsToFile() {
 }
 
 void OptionsMenu::open(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu) {
-	auto guiWindow = tgui::ChildWindow::create("Options");
+	auto guiWindow = GUI::ChildWindow::create("Options");
 	guiWindow->setSize("50%", "50%");
 	guiWindow->setPosition("(parent.size - size) / 2");
 	guiWindow->setInheritedOpacity(0.75f);
-	guiWindow->setTitleButtons(tgui::ChildWindow::TitleButton::None);
+	guiWindow->setTitleButtons(GUI::ChildWindow::TitleButton::None);
 	gui.add(guiWindow);
 
 	m_window = guiWindow;

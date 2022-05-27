@@ -16,7 +16,7 @@ private:
 	void displayWeaponInfo(const std::string& weaponType);
 
 	GUI::Icon m_icon;
-	tgui::ChildWindow::Ptr m_window;
+	GUI::ChildWindow::Ptr m_window;
 	tgui::Canvas::Ptr m_shipCanvas;
 	std::string m_shipTexturePath;
 	float m_shipRotation = 0.0f;

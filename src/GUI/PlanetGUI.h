@@ -38,8 +38,8 @@ private:
 	tgui::Panel::Ptr m_planetInfoPanel;
 	tgui::Panel::Ptr m_buttonPanel;
 	tgui::VerticalLayout::Ptr m_buttonPanelLayout;
-	tgui::ChildWindow::Ptr m_planetPanel;
-	tgui::ChildWindow::Ptr m_sideWindow;
+	GUI::ChildWindow::Ptr m_planetPanel;
+	GUI::ChildWindow::Ptr m_sideWindow;
 	tgui::Canvas::Ptr m_planetMapCanvas;
 	std::function<void(Planet&)> m_updateFunction = nullptr;
 	tgui::Panel::Ptr m_mapInfoPanel;

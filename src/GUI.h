@@ -72,6 +72,15 @@ namespace GUI {
 	private:
 		std::string m_clickSoundPath = "data/sound/click.wav";
 	};
+
+	struct ChildWindow : public tgui::ChildWindow {
+		typedef std::shared_ptr<ChildWindow> Ptr;
+
+		static ChildWindow::Ptr create(const std::string& title = "", unsigned int titleButtons = TitleButton::Close);
+
+	private:
+		std::string m_closeSoundPath = "data/sound/scifiboop.wav";
+	};
 }
 
 class AnnouncerGUI {

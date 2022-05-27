@@ -16,7 +16,7 @@ void FactoriesGUI::open(tgui::Gui& gui, Faction& faction, Constellation& constel
 			return;
 		}
 		
-		m_window = tgui::ChildWindow::create("Ship Factories");
+		m_window = GUI::ChildWindow::create("Ship Factories");
 		m_window->setOrigin(0.5, 0.5);
 		m_window->setPosition("50%", "50%");
 		m_window->setSize("75%", "75%");

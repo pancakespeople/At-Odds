@@ -9,7 +9,7 @@ void ShipDesignerGUI::open(tgui::Gui& gui, Faction* playerFaction) {
 
 	m_icon.panel->onClick([this, &gui, playerFaction]() {
 		if (m_window == nullptr) {
-			m_window = tgui::ChildWindow::create("Ship Designer");
+			m_window = GUI::ChildWindow::create("Ship Designer");
 			m_window->setOrigin(0.5f, 0.5f);
 			m_window->setPosition("50%", "50%");
 			m_window->setSize("75%", "75%");

@@ -19,7 +19,7 @@ private:
 	void onFactionsSliderChange(tgui::Gui& gui);
 	void startNewGame(tgui::Gui& gui, Constellation& constellation, GameState& state, MainMenu* mainMenu);
 
-	tgui::ChildWindow::Ptr m_window;
+	GUI::ChildWindow::Ptr m_window;
 
 	PlayerGUI m_playerGui;
 

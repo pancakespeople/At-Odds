@@ -12,7 +12,7 @@ private:
 	int countNumShipFactories(Constellation& constellation, int allegiance);
 
 	GUI::Icon m_icon;
-	tgui::ChildWindow::Ptr m_window;
+	GUI::ChildWindow::Ptr m_window;
 	tgui::Panel::Ptr m_shipFactoryPanel;
 	DesignListGUI m_designListGUI;
 	tgui::Label::Ptr m_infoLabel;

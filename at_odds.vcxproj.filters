@@ -18,7 +18,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AllianceList.h" />
     <ClInclude Include="src\Animation.h" />
+    <ClInclude Include="src\Asteroid.h" />
     <ClInclude Include="src\AsteroidBelt.h" />
     <ClInclude Include="src\Background.h" />
     <ClInclude Include="src\Brain.h" />
@@ -47,6 +49,15 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GUI\DebugInfo.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\DesignListGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\FactoriesGUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\IconGUI.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GUI\MainMenu.h">
@@ -86,6 +97,7 @@
     <ClInclude Include="src\Hyperlane.h" />
     <ClInclude Include="src\Identifiable.h" />
     <ClInclude Include="src\JumpPoint.h" />
+    <ClInclude Include="src\Keybindings.h" />
     <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\Mod.h" />
     <ClInclude Include="src\MusicPlayer.h" />
@@ -103,6 +115,7 @@
     <ClInclude Include="src\Resource.h" />
     <ClInclude Include="src\SaveLoader.h" />
     <ClInclude Include="src\Script.h" />
+    <ClInclude Include="src\Serialize.h" />
     <ClInclude Include="src\SmoothCircle.h" />
     <ClInclude Include="src\Sounds.h" />
     <ClInclude Include="src\Spaceship.h" />
@@ -216,16 +229,12 @@
     <ClInclude Include="src\pch\gamepch.h">
       <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="src\AllianceList.h" />
-    <ClInclude Include="src\Asteroid.h" />
-    <ClInclude Include="src\Serialize.h" />
-    <ClInclude Include="src\Keybindings.h" />
-    <ClInclude Include="src\GUI\IconGUI.h" />
-    <ClInclude Include="src\GUI\FactoriesGUI.h" />
-    <ClInclude Include="src\GUI\DesignListGUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AllianceList.cpp" />
     <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\Asteroid.cpp" />
+    <ClCompile Include="src\AsteroidBelt.cpp" />
     <ClCompile Include="src\Background.cpp" />
     <ClCompile Include="src\Brain.cpp" />
     <ClCompile Include="src\Building.cpp" />
@@ -252,6 +261,15 @@
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\DebugInfo.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\DesignListGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\FactoriesGUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\IconGUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\MainMenu.cpp">
@@ -291,6 +309,7 @@
     <ClCompile Include="src\Hyperlane.cpp" />
     <ClCompile Include="src\Identifiable.cpp" />
     <ClCompile Include="src\JumpPoint.cpp" />
+    <ClCompile Include="src\Keybindings.cpp" />
     <ClCompile Include="src\Mod.cpp" />
     <ClCompile Include="src\MusicPlayer.cpp" />
     <ClCompile Include="src\NameGenerator.cpp" />
@@ -414,33 +433,5 @@
     </ClCompile>
     <ClCompile Include="src\gamepch.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\AllianceList.cpp" />
-    <ClCompile Include="src\Asteroid.cpp" />
-    <ClCompile Include="src\AsteroidBelt.cpp" />
-    <ClCompile Include="src\Keybindings.cpp" />
-    <ClCompile Include="src\GUI\IconGUI.cpp" />
-    <ClCompile Include="src\GUI\FactoriesGUI.cpp" />
-    <ClCompile Include="src\GUI\DesignListGUI.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="data\scripts\laserAnimation.lua" />
-    <None Include="data\scripts\smallExplosion.lua" />
-    <None Include="data\scripts\largeExplosion.lua" />
-    <None Include="data\scripts\laserRing.lua" />
-    <None Include="data\scripts\lightningAOE.lua" />
-    <None Include="data\scripts\knockAll.lua" />
-    <None Include="data\scripts\blackHole.lua" />
-    <None Include="data\shaders\parallaxshader.shader" />
-    <None Include="data\shaders\lightning.shader" />
-    <None Include="data\shaders\jumpshader.shader" />
-    <None Include="data\shaders\jumppointshader.shader" />
-    <None Include="data\shaders\jumptrailshader.shader" />
-    <None Include="data\shaders\particleshader.shader" />
-    <None Include="data\shaders\beamshader.shader" />
-    <None Include="data\shaders\newasteroidbeltshader.shader" />
-    <None Include="data\shaders\asteroidbeltvertex.shader" />
-    <None Include="data\shaders\planetmapshader.shader" />
-    <None Include="data\shaders\lavaplanetmapshader.shader" />
-    <None Include="data\shaders\asteroidshader.shader" />
   </ItemGroup>
 </Project>

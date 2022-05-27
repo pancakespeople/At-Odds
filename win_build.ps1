@@ -3,5 +3,5 @@ echo "Getting dependencies..."
 ./vcpkg/vcpkg integrate install
 
 echo "Building..."
-./premake5.exe vs2019
+./premake5.exe vs2022
 msbuild /m /p:Configuration=Release .

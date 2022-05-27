@@ -26,7 +26,7 @@ void BuildingGUI::onEvent(const sf::Event& ev, const sf::RenderWindow& window, R
 					gui.remove(m_window);
 				}
 
-				m_window = tgui::ChildWindow::create();
+				m_window = GUI::ChildWindow::create();
 				m_window->getRenderer()->setOpacity(0.75f);
 				m_window->setSize("10%", "15%");
 				m_window->setOrigin(0.5f, 0.5f);
