@@ -38,12 +38,13 @@ void main() {
 		float radius = length(newUv - blackHolePos) * zoom / 10.0;
 		float angle = atan(newUv.y - blackHolePos.y, newUv.x - blackHolePos.x);
 		blackHoleDistortion = 0.1 / radius;
+		blackHoleDistortion *= smoothstep(0.6, 0.5, radius);
 
 		uv -= blackHoleDistortion * vec2(cos(angle), sin(angle));
 	}
 
 	col = texture(screen, uv);
-	col *= smoothstep(1.0, 0.9, blackHoleDistortion);
+	col *= smoothstep(0.6, 0.5, blackHoleDistortion);
 	col += clamp(light, 0.0, 1.0);
 
 	gl_FragColor = col;
