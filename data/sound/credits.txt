@@ -16,3 +16,4 @@ electric - https://freesound.org/people/pluralz/sounds/475806/
 boop - https://freesound.org/people/plasterbrain/sounds/423166/
 click - https://freesound.org/people/Bertsz/sounds/577062/
 build - https://freesound.org/people/Bertsz/sounds/577062/
+mining - https://freesound.org/people/szegvari/sounds/545291/
