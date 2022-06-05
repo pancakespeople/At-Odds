@@ -14,32 +14,32 @@ price = 4.5
 [CONSUMER_GOODS]
 name = "Computers"
 price = 7.0
-happiness = 0.0001
-wealthDivide = 100.0
+happiness = 0.001
+wealthFactor = 1.0
 
 [CONSUMER_GOODS_2]
 name = "Space-o-visions"
 price = 5.0
-happiness = 0.00008
-wealthDivide = 100.0
+happiness = 0.0008
+wealthFactor = 1.0
 
 [CONSUMER_GOODS_3]
 name = "Geniusphones"
 price = 6.0
-happiness = 0.0002
-wealthDivide = 100.0
+happiness = 0.002
+wealthFactor = 1.0
 
 [LUXURY_GOODS]
 name = "Video Games"
 price = 15.0
-happiness = 0.0003
-wealthDivide = 500.0
+happiness = 0.003
+wealthFactor = 2.0
 
 [LUXURY_GOODS_2]
 name = "Organs"
 price = 20.0
-happiness = 0.00035
-wealthDivide = 500.0
+happiness = 0.0035
+wealthFactor = 2.0
 
 [ARMAMENTS]
 name = "Armaments"

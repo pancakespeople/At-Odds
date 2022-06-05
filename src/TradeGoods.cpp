@@ -97,8 +97,8 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 			float happiness = table[good.first]["happiness"].value_or(0.0f);
 
 			if (happiness > 0.0f) {
-				float wealthFactor = planet->getColony().getWealth() / table[good.first]["wealthDivide"].value_or(100.0f);
-				float consumption = std::min(planet->getColony().getPopulation() * 0.001f * wealthFactor, 1000.0f);
+				float wealthFactor = planet->getColony().getWealth() * table[good.first]["wealthFactor"].value_or(1.0f);
+				float consumption = std::min(planet->getColony().getPopulation() * 0.001f + wealthFactor, 1000.0f);
 
 				planet->getColony().addStability(happiness * consumption);
 				removeSupply(good.first, consumption);
@@ -114,35 +114,43 @@ void TradeGoods::update(Star* currentStar, Faction* faction, Planet* planet) {
 			good.second.demandChange = good.second.demand - m_oldItems[good.first].demand;
 			good.second.priceChange = good.second.price - m_oldItems[good.first].price;
 
-			// News events
-			if (!good.second.shortage) {
-				if (good.second.supply < good.second.demand) {
-					good.second.shortage = true;
-					
+			if (faction != nullptr) {
+				faction->tradeGoods.insert(good.first);
+
+				for (const std::string& type : faction->tradeGoods) {
+					addSupply(type, 0.0f);
+				}
+
+				// News events
+				if (!good.second.shortage) {
+					if (good.second.supply < good.second.demand) {
+						good.second.shortage = true;
+
+						int rnd = Random::randInt(0, 1);
+
+						switch (rnd) {
+						case 0:
+							faction->addNewsEvent("There is a shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + ".");
+							break;
+						case 1:
+							faction->addNewsEvent("We have run out of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + "!");
+							break;
+						}
+					}
+				}
+				else if (good.second.supply > good.second.demand && good.second.shortage) {
+					good.second.shortage = false;
+
 					int rnd = Random::randInt(0, 1);
 
 					switch (rnd) {
 					case 0:
-						faction->addNewsEvent("There is a shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + ".");
+						faction->addNewsEvent("The shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + " has been resolved.");
 						break;
 					case 1:
-						faction->addNewsEvent("We have run out of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + "!");
+						faction->addNewsEvent("We have finally ended the shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + ".");
 						break;
 					}
-				}
-			}
-			else if (good.second.supply > good.second.demand && good.second.shortage) {
-				good.second.shortage = false;
-
-				int rnd = Random::randInt(0, 1);
-
-				switch (rnd) {
-				case 0:
-					faction->addNewsEvent("The shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + " has been resolved.");
-					break;
-				case 1:
-					faction->addNewsEvent("We have finally ended the shortage of " + getGoodName(good.first) + " on " + planet->getName(currentStar) + ".");
-					break;
 				}
 			}
 		}

@@ -80,10 +80,10 @@ texturePath = "data/art/colonybuildings/orbitaldefense.png"
 [CONSUMER_GOODS_FACTORIES]
 name = "Computer Factory"
 baseCost = [["COMMON_ORE", 20]]
-description = "Computers are when you put lightning into a rock to make colors appear on a screen, and other things. With this awesome technology you can browse the internet, fiddle with spreadsheets, and play good computer games like At Odds. Requires Electronics and Oscillite."
+description = "Computers are when you put lightning into a rock to make colors appear on a screen, and other things. With this awesome technology you can browse the internet, fiddle with spreadsheets, and play good computer games like At Odds. Requires Electronics and Kathium."
 consumerGoodsMultiplier = 2.0
 texturePath = "data/art/colonybuildings/factory.png"
-requiresResource = "UNCOMMON_ORE"
+requiresResource = "COMMON_ORE"
 consumesTradeGood = "INDUSTRIAL_GOODS"
 producesTradeGood = "CONSUMER_GOODS"
 productionMultiplier = 0.085
@@ -133,7 +133,7 @@ texturePath = "data/art/colonybuildings/bombshelter.png"
 
 [FACTORY]
 name = "Electronics Factory"
-description = "What can I say? It produces electronics. Requires Kathium."
+description = "In the future, everything is electronic. Requires Kathium."
 baseCost = [["COMMON_ORE", 25], ["UNCOMMON_ORE", 5]]
 texturePath = "data/art/colonybuildings/factory.png"
 requiresResource = "COMMON_ORE"

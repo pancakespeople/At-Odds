@@ -137,6 +137,8 @@ public:
 		}
 	}
 
+	std::unordered_set<std::string> tradeGoods;
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -162,6 +164,7 @@ private:
 		archive & m_newsEvents;
 		archive & m_neverColonized;
 		archive & m_numTicksAlive;
+		archive & tradeGoods;
 	}
 	
 	Faction() {}
