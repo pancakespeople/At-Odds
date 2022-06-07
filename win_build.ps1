@@ -1,5 +1,6 @@
 echo "Getting dependencies..."
-./vcpkg/vcpkg install sfml tgui[sfml] boost-serialization --triplet=x64-windows
+./vcpkg/vcpkg install sfml boost-serialization --triplet=x64-windows
+./vcpkg/vcpkg install tgui[sfml]:x64-windows --head
 ./vcpkg/vcpkg integrate install
 
 echo "Building..."
