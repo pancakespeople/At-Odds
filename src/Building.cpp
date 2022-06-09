@@ -78,6 +78,14 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 		}
 	}
 
+	if (table[type].as_table()->contains("color")) {
+		auto arr = *table[type]["color"].as_array();
+		int r = arr[0].value_or(0);
+		int g = arr[1].value_or(0);
+		int b = arr[2].value_or(0);
+		m_sprite.setColor(sf::Color(r, g, b));
+	}
+
 	m_sprite.setPosition(pos);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
 	

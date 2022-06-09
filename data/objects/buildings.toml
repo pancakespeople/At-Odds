@@ -19,6 +19,26 @@ weapons = ["LASER_GUN"]
 weaponRequirements = ["LASER_GUN"]
 category = "Defense"
 
+[LASER_ARTILLERY]
+name = "Laser Artillery"
+texturePath = "data/art/artillery.png"
+health = 250.0
+weapons = ["LASER_GUN"]
+weaponRequirements = ["LASER_GUN"]
+category = "Defense"
+scale = 3.0
+color = [255, 0, 0]
+
+[HOWITZER]
+name = "Howitzer"
+texturePath = "data/art/artillery.png"
+health = 250.0
+weapons = ["MACHINE_GUN"]
+weaponRequirements = ["MACHINE_GUN"]
+category = "Defense"
+scale = 3.0
+color = [255, 255, 0]
+
 [MACHINE_GUN_TURRET]
 name = "Machine Gun Turret"
 texturePath = "data/art/machinegunturret.png"
@@ -43,6 +63,16 @@ health = 150.0
 weapons = ["ROCKET_LAUNCHER"]
 weaponRequirements = ["ROCKET_LAUNCHER"]
 category = "Defense"
+
+[ROCKET_ARTILLERY]
+name = "Rocket Artillery"
+texturePath = "data/art/artillery.png"
+health = 250.0
+weapons = ["ROCKET_LAUNCHER"]
+weaponRequirements = ["ROCKET_LAUNCHER"]
+category = "Defense"
+scale = 3.0
+color = [255, 165, 0]
 
 [FLAK_TURRET]
 name = "Flak Turret"
