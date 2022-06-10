@@ -48,6 +48,7 @@ private:
 		archive & m_type;
 		archive & m_rotates;
 		archive & m_resourceCost;
+		archive & m_rotateToTarget;
 	}
 
 	void attackEnemies(const AllianceList& alliances);
@@ -61,6 +62,7 @@ private:
 	float m_constructionSpeedMultiplier = 1.0f;
 
 	bool m_rotates = true;
+	bool m_rotateToTarget = false;
 
 	std::unordered_map<std::string, float> m_resourceCost;
 };

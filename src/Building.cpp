@@ -49,7 +49,9 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 				}
 				else {
 					Weapon weapon(val.value());
-					
+					weapon.getProjectile().setLife(weapon.getProjectile().getLife() * table[type]["weaponLifeMultiplier"].value_or(1.0f));
+					weapon.getProjectile().setSpeed(weapon.getProjectile().getSpeed() * table[type]["weaponSpeedMultiplier"].value_or(1.0f));
+
 					addWeapon(weapon);
 				}
 			}
@@ -85,6 +87,8 @@ Building::Building(const std::string& type, Star* star, sf::Vector2f pos, Factio
 		int b = arr[2].value_or(0);
 		m_sprite.setColor(sf::Color(r, g, b));
 	}
+
+	m_rotateToTarget = table[type]["rotateToTarget"].value_or(false);
 
 	m_sprite.setPosition(pos);
 	m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2.0f, m_sprite.getLocalBounds().height / 2.0f);
@@ -149,10 +153,11 @@ void Building::update(Star* currentStar, const AllianceList& alliances) {
 		return;
 	}
 	
+	if (m_rotates) m_sprite.rotate(0.1f);
+	
 	updateWeapons();
 	attackEnemies(alliances);
 
-	if (m_rotates) m_sprite.rotate(0.1f);
 	m_collider.update(getPos());
 }
 
@@ -171,6 +176,11 @@ void Building::attackEnemies(const AllianceList& alliances) {
 			if (dist < weaponRange && m_attackTarget->getCurrentStar() == m_currentStar) {
 				for (Weapon& weapon : m_weapons) {
 					weapon.fireAt(getPos(), getAllegiance(), m_attackTarget->getPos(), m_currentStar);
+				}
+
+				if (m_rotateToTarget) {
+					float angle = Math::angleBetween(getPos(), m_attackTarget->getPos());
+					m_sprite.setRotation(-angle + 90.0f);
 				}
 			}
 			else {

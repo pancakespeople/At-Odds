@@ -35,6 +35,7 @@ public:
 	float getDamage() const { return m_projectile.getDamage(); }
 
 	const Projectile& getProjectile() const { return m_projectile; }
+	Projectile& getProjectile() { return m_projectile; }
 
 	std::string getSoundPath() const;
 	std::string getType() const { return m_type; }

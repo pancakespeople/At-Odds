@@ -30,10 +30,13 @@ public:
 	void setAllegiance(int allegiance);
 	void setDamage(float damage) { m_damage = damage; }
 	void onDeath(Star* star);
+	void setLife(float life) { m_life = life; }
+	void setSpeed(float speed) { m_speed = speed; }
 
 	float getDamage() const { return m_damage; }
 	float getRange() const { return m_life * m_speed; }
 	float getLife() const { return m_life; }
+	float getSpeed() const { return m_speed; }
 
 	bool isDead() const { return m_life <= 0.0f; }
 	bool isCollidingWith(const Collider& collider);

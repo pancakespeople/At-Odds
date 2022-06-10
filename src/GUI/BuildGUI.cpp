@@ -100,7 +100,17 @@ void BuildGUI::addBuildingSelector(const std::string& type) {
 
 	selector.prototype = BuildingPrototype(type);
 
-	selector.icon = tgui::Picture::create(table[type]["texturePath"].value_or(""));
+	tgui::Texture texture(table[type]["texturePath"].value_or(""));
+	
+	if (table[type].as_table()->contains("color")) {
+		auto arr = *table[type]["color"].as_array();
+		int r = arr[0].value_or(0);
+		int g = arr[1].value_or(0);
+		int b = arr[2].value_or(0);
+		texture.setColor(tgui::Color(r, g, b));
+	}
+
+	selector.icon = tgui::Picture::create(texture);
 	selector.icon->setSize("100%", "100%");
 	selector.panel->add(selector.icon);
 
