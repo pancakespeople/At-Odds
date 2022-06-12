@@ -31,6 +31,7 @@ color = [255, 0, 0]
 rotateToTarget = true
 weaponSpeedMultiplier = 2.0
 weaponLifeMultiplier = 10.0
+requiresTech = "ARTILLERY"
 
 [HOWITZER]
 name = "Howitzer"
@@ -44,6 +45,7 @@ color = [255, 255, 0]
 rotateToTarget = true
 weaponSpeedMultiplier = 2.0
 weaponLifeMultiplier = 10.0
+requiresTech = "ARTILLERY"
 
 [MACHINE_GUN_TURRET]
 name = "Machine Gun Turret"
@@ -82,6 +84,7 @@ color = [255, 165, 0]
 rotateToTarget = true
 weaponSpeedMultiplier = 2.0
 weaponLifeMultiplier = 10.0
+requiresTech = "ARTILLERY"
 
 [FLAK_TURRET]
 name = "Flak Turret"

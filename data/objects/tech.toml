@@ -98,7 +98,7 @@ category = "Weapons"
 [NUCLEAR_WEAPONS]
 name = "Nuclear Weapons"
 description = "When diplomacy fails..."
-researchRequired = 500.0
+researchRequired = 1500.0
 addsWeapons = ["NUKE_LAUNCHER"]
 category = "Weapons"
 
@@ -131,3 +131,10 @@ description = "Ways of improving our colonist's well-being that you'd never drea
 researchRequired = 4000.0
 addsColonyBuildings = ["ADVANCED_INFRASTRUCTURE"]
 category = "Colony"
+
+[ARTILLERY]
+name = "Artillery"
+description = "Artillery. The art of artillery. Artillery functions similar to regular turrets but has a much longer range."
+researchRequired = 1000.0
+category = "Weapons"
+unlocksTech = ["NUCLEAR_WEAPONS"]

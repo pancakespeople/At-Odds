@@ -320,6 +320,12 @@ bool BuildingPrototype::meetsDisplayRequirements(const std::string& type, Factio
 		}
 	}
 
+	if (table[type]["requiresTech"].value_or("") != "") {
+		if (!faction->hasResearchedTech(table[type]["requiresTech"].value_or(""))) {
+			return false;
+		}
+	}
+
 	return true;
 }
 
